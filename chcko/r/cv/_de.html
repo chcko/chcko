@@ -1,0 +1,36 @@
+%path = "Mathematik/Entropie"
+%kind = kinda["Texte"]
+%level = 12
+<!-- html --><p>Um exklusiv ein Element v (Wert, Zustand, Punkt) von einer Variablen V
+(Kardinalität <span class="math notranslate nohighlight">\(|V|=n\)</span>, n-Menge) auszuwählen, braucht es <span class="math notranslate nohighlight">\(\log_bn\)</span> b-Mengen
+(normalerweise <span class="math notranslate nohighlight">\(b=2\)</span>, bit).</p>
+<div class="math notranslate nohighlight">
+\[I(V)=log\;n\]</div>
+<p><span class="math notranslate nohighlight">\(I(V)\)</span> ist die Breite der Variable, d.h. die Informationsmenge (Anzahl von bits),
+die es braucht, um Werte von V auszuwählen. <span class="math notranslate nohighlight">\(I\)</span> ist gleich für alle Werte von V.
+<span class="math notranslate nohighlight">\(I\)</span> bezieht sich auf die Variable.</p>
+<div class="admonition-zufallsvariable-variate-variable admonition">
+<p class="admonition-title">Zufallsvariable, Variate, Variable</p>
+<p>Im Englischen gibt es Variate für Zufallsvariable (random variable).</p>
+<p>Oft ist diese Unterscheidung zwischen Zufallsvariable und Variable nicht
+notwendig. Beides meinen hier die reale Größe mit Werten, die wiederholt
+auftreten können.</p>
+</div>
+<p>Wenn man jeden bekannten Auftritt (Verweis, Ereignis) <span class="math notranslate nohighlight">\(c \in C\)</span> der
+Werte von <span class="math notranslate nohighlight">\(V\)</span> betrachtet, dann ist das ein zusätzlicher Weg, um auf die
+Werte von <span class="math notranslate nohighlight">\(V\)</span> zu verweisen.  Man wählt zuerst einen beliebigen Auftritt aus
+mit <span class="math notranslate nohighlight">\(I(c)=\log |C|\)</span> und subtrahiert davon die Auswahl eines Auftritts eines
+bestimmten Wertes <span class="math notranslate nohighlight">\(v\)</span> (<span class="math notranslate nohighlight">\(I(c_v)=\log |C_v|\)</span>).  <span class="math notranslate nohighlight">\(\frac{|C|}{|C_v|}\)</span> ist die
+Anzahl von <span class="math notranslate nohighlight">\(|C_v|\)</span> großen Untermengen von <span class="math notranslate nohighlight">\(C\)</span>.  Um einen solchen Untermenge einmal
+auszuwählen braucht es</p>
+<div class="math notranslate nohighlight">
+\[I(v)=\log\frac{|C|}{|C_v|}=-\log\;p(v)\]</div>
+<p><span class="math notranslate nohighlight">\(I(v)\)</span> ist für jedes <span class="math notranslate nohighlight">\(v\in V\)</span> anders und stellt den optimalen Code dar
+(Entropie Code, Huffman code).</p>
+<p>Die durchschnittliche Codebreite ist</p>
+<div class="math notranslate nohighlight">
+\[I(V)=-\sum_vp(v)\log\;p(v)\]</div>
+<p><span class="math notranslate nohighlight">\(I(V)\)</span> ist die <strong>Entropie</strong> der Variablen <span class="math notranslate nohighlight">\(V\)</span> (und nicht eines Wertes von <span class="math notranslate nohighlight">\(V\)</span>).</p>
+<p>Wenn für alle <span class="math notranslate nohighlight">\(v\)</span> <span class="math notranslate nohighlight">\(p=\frac{1}{n}\)</span> ist, dann sind erhält man wieder <span class="math notranslate nohighlight">\(I(V)=log\;n\)</span>.</p>
+<p>Die Information in einer Variablen hängt von der Wahrscheinlichkeitsverteilung
+der Wertauftritte (= Wahrscheinlichkeitsereignis) ab.</p>

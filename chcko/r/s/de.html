@@ -1,0 +1,10 @@
+%path = "Mathematik/LGS/Mischen"
+%kind = kinda["Übungen"]
+%level = 10
+
+Aus 3 Speiseölen S1 ({{g.A[0][0]}} €/l), S2 ({{g.A[0][1]}} €/l) und S3 ({{g.A[0][2]}} €/l) 
+möchte man ein Mischöl erzeugen, das {{"{0:.2f}".format(g.b[0])}} €/l kosten soll,
+günstiger als das teure Öl S1. 
+Die anderen beiden Öle zusammen sollen {{int(-100*g.A[1][0])}}% der S1 Menge ausmachen.
+Wie groß sind die jeweiligen Anteile der Öle gerundet auf volle Prozent?
+%include('getorshow',names=util.F(['S{0} = '],[1,2,3]))

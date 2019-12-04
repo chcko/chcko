@@ -1,0 +1,17 @@
+%path = "Mathematik/Potenzen/kürzen"
+%kind = kinda["Übungen"]
+%level = 9
+
+\[T=\frac{ \\
+%for li,i in enumerate(g.en):
+{{g.bn[li]}}^{ {{i}} } \\
+%end 
+}{ \\
+%for li,i in enumerate(g.ed):
+{{g.bd[li]}}^{ {{i}} } \\
+%end
+}\] 
+
+%#\[T=\frac{ {{!util.tex(g.nm)}} }{ {{!util.tex(g.dm)}} }\]
+
+%include('getorshow',show=util.Tx(util.tex))

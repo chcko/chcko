@@ -1,0 +1,8 @@
+bottle
+bottle-oauthlib
+numpy
+matplotlib
+lxml
+sympy
+google-cloud-ndb
+

@@ -1,0 +1,78 @@
+%path = "Mathematik/Vektoren/Transformation und Inverse"
+%kind = kinda["Texte"]
+%level = 11
+<!-- html --><div class="section" id="koordinatentransformation-und-inverse-matrix">
+<h1>Koordinatentransformation und Inverse Matrix<a class="headerlink" href="#koordinatentransformation-und-inverse-matrix" title="Permalink to this headline">¶</a></h1>
+<p>Nicht immer sind die Basisvektoren unabhängig, d.h.  orthogonal zueinander.</p>
+<p>Wenn man etwa die Zutaten von einer Auswahl von Kuchen als Vektorraum auffasst
+(<em>Zutatenvektorraum</em>), dann ist jeder Kuchen ein Vektor, d.h. eine unabhängige
+Auswahl aus mehreren Variablen (Quantitäten der Zutaten, 0 falls nicht
+verwendet).</p>
+<p>Die Zutaten kann man als orthogonal zueinander ansehen. Der Kontext macht
+einen genaueren Vergleich nicht notwendit.
+<em>Das skalare Produkt ist 0.</em></p>
+<p>Die Kuchen wollen wir aber genauer vergleichen und zwar über deren Zutaten.
+Dann werden etwa Kuchen A und Kuchen B sicher gleiche Zutaten haben.
+Die Einheitsvektoren im <em>Kuchenvektorraum</em> sind nicht orthogonal zueinander,
+wenn man genauer hinschaut, was man aber nicht tun muss.
+<em>Das skalare Produkt ist nicht 0.</em></p>
+<p>Ein Vektor im Kuchenvektorraum (Wieviel von jeder Sorte Kuchen?) kann auf den Vektorraum der Zutaten
+transformiert werden, indem man ihn mit einer Matrix multipliziert.
+Jede Spalte in dieser Matrix stellt einen Kuchen dar.</p>
+<p>Was man bei Matrizen und Vektoren macht, ist eine Positionskodierung. Die Position einer Zahl
+bestimmt, was sie bedeutet. Das macht man auch im Zahlensystem so (Einer, Zehner, Hunderter,…).</p>
+<p>In diesem Beispiel mit den Kuchen und den Zutaten sind die Anzahl der Variablen (=Dimension)
+in den zwei Vektorräumen nicht notwendigerweise gleich. Die Dimensionen können anders sein,
+etwa 10 Zutaten und 3 Kuchensorten. Die Transformationsmatrix ist dann 10x3 (10 Zeilen, 3 Spalten).
+Eine solche <span class="math notranslate nohighlight">\(m\times n\)</span> Matrix mit <span class="math notranslate nohighlight">\(m\not = n\)</span> kann man nicht invertieren,
+d.h. man kann nicht aus einem Zutatenvektor auf die Kuchensorten (Kuchenvektor) schließen.
+Oder anders ausgedrückt: Es gibt nicht für jede Kombination von Zutaten eine Kombination
+(<em>Linearkombination</em>) von Kuchen, die genau diese Zutatenmengen brauchen.</p>
+<p>Fixiert man die Anzahl der Kuchen in einer kleinen Sortenauswahl
+wird weniger Information festgelegt, d.h. es werden weniger Auswahlentscheidungen getroffen,
+als im Zutatenraum, der im Beispiel als größer angenommen wird.</p>
+<div class="admonition-pseudoinverse admonition">
+<p class="admonition-title">Pseudoinverse</p>
+<p>Man kann sie aber pseudo-invertieren (Moore-Penrose Pseudoinverse).  Im
+Beispiel erzeugt letztere aus den Zutaten einen Kuchensortenvektor der
+minimal Zutatenreste zurück lässt (Methode der kleinsten Quadrate) bzw. die
+Zutaten bestmöglichst ausnützt (maximale Entropie).</p>
+</div>
+<p>Wenn man von einem Vektorraum in einen mit gleicher Dimension transformiert,
+dann kann man wieder auf die urspünglichen Vektoren kommen,
+indem man mit der <em>inversen Matrix</em> multipliziert.</p>
+<p>Damit die Inverse existiert, muss zusätzlich zur quadratischen Form jede
+Spalte/Zeile <em>linear unabhängig</em> von den anderen sein, sonst befindet man sich
+effektiv in einer kleineren Matrix (<em>Rang einer Matrix</em>).  Im Kuchenbeispiel
+bedeutet das, dass jede Kuchensorte eine andere Zutatenkombination haben muss,
+damit man sie von den anderen unterscheiden kann und damit mit ihr zusätzliche
+Information kodiert werden kann.</p>
+<div class="admonition-lineare-unabhangigkeit admonition">
+<p class="admonition-title">Lineare Unabhängigkeit</p>
+<p>Quadratische Matrizen können invertiert werden,
+wenn eine Spalte (oder Zeile) sich nicht aus den anderen durch Linearkombination
+ergibt. Der Rang der Matrix ist gleich seiner Dimension.</p>
+</div>
+<p>Die Inverse einer quadratischen Matrix kann man allgemein berechnen indem man:</p>
+<ul class="simple">
+<li><p>das <span class="math notranslate nohighlight">\(ij\)</span> Kreuz weglässt und Determinante berechnet = Minor <span class="math notranslate nohighlight">\(M_{ij}\)</span></p></li>
+<li><p>das Vorzeichen ändert, falls <span class="math notranslate nohighlight">\(i+j\)</span> ungerade ist</p></li>
+<li><p>dann transponiert, d.h. an der Diagonale spiegelt
+(unten:<span class="math notranslate nohighlight">\(ij\)</span> bei <span class="math notranslate nohighlight">\(A\)</span> und <span class="math notranslate nohighlight">\(ji\)</span> bei <span class="math notranslate nohighlight">\(M\)</span>)</p></li>
+<li><p>alles durch die Determinante teilt</p></li>
+</ul>
+<p>Kurz</p>
+<div class="math notranslate nohighlight">
+\[(A^{-1})_{ij} = \frac{1}{det(A)}(-1)^{i+j} M_{ji}\]</div>
+<p><span class="math notranslate nohighlight">\(\frac{1}{det(A)}\)</span> schreibt man oft vor der Matrix. Man kann diesen Wert aber
+auch mit jeder Zahl in der Matrix multiplizieren.</p>
+<p>Für eine <em>2x2 Matrix</em> ist <span class="math notranslate nohighlight">\(M_{ij}\)</span> die diagonal gegenüberliegende Zahl.
+Wegen des Transponierens bleibt die Zahl links unten und rechts oben (Nebendiagonale),
+aber das Vorzeichen ändert sich.
+Auf der Hauptdiagonalen werden die Zahlen vertauscht und da <span class="math notranslate nohighlight">\(i+j\)</span> gerade ist,
+bleibt das Vorzeichen.</p>
+<ul class="simple">
+<li><p>Hauptdiagonale <span class="math notranslate nohighlight">\(\rightarrow\)</span> Vorzeichen bleibt</p></li>
+<li><p>Nebendiagonale <span class="math notranslate nohighlight">\(\rightarrow\)</span> Position bleibt</p></li>
+</ul>
+</div>

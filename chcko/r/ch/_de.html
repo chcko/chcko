@@ -1,0 +1,71 @@
+%path = "Mathemtik/Folgen und Reihen"
+%kind = kinda["Texte"]
+%level = 10
+<!-- html --><div class="section" id="folgen-und-reihen">
+<h1>Folgen und Reihen<a class="headerlink" href="#folgen-und-reihen" title="Permalink to this headline">¶</a></h1>
+<p>Eine <strong>Folge</strong> ist eine Funktion der natürlichen Zahlen.</p>
+<p>Die natürliche Zahl ist eine Methode, um auf die Glieder der Folge zu verweisen.
+Sie heißt auch Index.</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(a_1\)</span> ist das erste Glied der Folge</p></li>
+<li><p><span class="math notranslate nohighlight">\(a_2\)</span> ist das zweite Glied der Folge</p></li>
+<li><p>…</p></li>
+<li><p><span class="math notranslate nohighlight">\(a_n\)</span> ist das n-te Glied der Folge</p></li>
+</ul>
+<p>Werden die ersten n Glieder einer Folge aufsummiert,
+dann ist das das n-te glied der Summenfolge oder <strong>Reihe</strong>.</p>
+<p>Der Begriff <em>Funktion</em> bedeutet:
+Weiß ich das wievielte Glied, dann weiß ich die Zahl dort.</p>
+<p>Viele Folgen haben eine Regelmäßigkeit, die es erlaubt sie viel kürzer zu beschreiben
+(Kurze Beschreibung = geringe Komplexität).</p>
+<div class="section" id="arithmetische-folge">
+<h2>arithmetische Folge<a class="headerlink" href="#arithmetische-folge" title="Permalink to this headline">¶</a></h2>
+<p>Bei der arithmetischen Folge ergibt sich ein Glied der Folge aus dem
+vorhergehenden durch Addieren einer gleichbleibenden Zahl.</p>
+<p><span class="math notranslate nohighlight">\(a_{n+1} = a_n + d\)</span>.</p>
+<p>Das ist die <strong>rekursive</strong> Darstellung der arithmetischen Folge.</p>
+<p>Um zum n-ten Glied zu kommen, wiederholt man das n-1 mal:</p>
+<p><span class="math notranslate nohighlight">\(a_n = a_1 + (n-1) d\)</span></p>
+<p>Das ist die <strong>Termdarstellung</strong> der arithmetischen Folge.</p>
+<div class="admonition-hinweis admonition">
+<p class="admonition-title">Hinweis</p>
+<p>In vielen Programmiersprachen wird bei 0 gestartet, da man dann <span class="math notranslate nohighlight">\(nd\)</span> hat, statt <span class="math notranslate nohighlight">\((n-1)d\)</span>.</p>
+</div>
+<p>Um eine gegebene Folge als arithmetische Folge zu erkennen, schaut man, ob die
+Differenz aufeinanderfolgender Glieder gleich bleibt.</p>
+</div>
+<div class="section" id="arithmetische-reihe">
+<h2>arithmetische Reihe<a class="headerlink" href="#arithmetische-reihe" title="Permalink to this headline">¶</a></h2>
+<p>Betrachtet man die Summe die ersten n Glieder, dann kann man eine Regelmäßigkeit erkennen,
+und solche sind immer Anlass für einfachere Berechnungsmethoden.</p>
+<p>Betrachtet man obige Termdarstellung, kann man erkennen, dass wenn man vom
+Anfang der Folge startet immer d dazu kommt, wenn man aber vom letzten (n-ten)
+Glied der Folge rückwärts geht immer d wegkommt. Diese Operationen heben sich auf.
+Man kann deshalb Anzahl/2 mal die Summe vom ersten und letzten Glied machen.</p>
+<p><span class="math notranslate nohighlight">\(\sum_{k=1}^{n} a_k = \frac{n(a_1+a_n)}{2}\)</span></p>
+<p>Insbesondere ist <span class="math notranslate nohighlight">\(1+2+...n=\frac{(n+1)n}{2}\)</span>.</p>
+</div>
+<div class="section" id="geometrische-folge">
+<h2>geometrische Folge<a class="headerlink" href="#geometrische-folge" title="Permalink to this headline">¶</a></h2>
+<p>Bei der geometrischen Folge ergibt sich ein Glied der Folge aus dem
+vorhergehenden durch Multiplikation mit einer gleichbleibenden Zahl.</p>
+<p><span class="math notranslate nohighlight">\(a_{n+1} = a_n \cdot q\)</span>.</p>
+<p>Das ist die <strong>rekursive</strong> Darstellung der geometrischen Folge.</p>
+<p>Um zum n-ten Glied zu kommen, wiederholt man das n-1 mal:</p>
+<p><span class="math notranslate nohighlight">\(a_n = a_1 q^{n-1}\)</span></p>
+<p>Das ist die <strong>Termdarstellung</strong> der geometrischen Folge.</p>
+<p>Um eine gegebene Folge als geometrisch zu erkennen, schaut man, ob der
+Quotient aufeinanderfolgender Glieder gleich bleibt.</p>
+</div>
+<div class="section" id="geometrische-reihe">
+<h2>geometrische Reihe<a class="headerlink" href="#geometrische-reihe" title="Permalink to this headline">¶</a></h2>
+<p>Betrachtet man</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{matrix}
+1+&amp;q+q^2+...+q^{n-1}&amp;=&amp;S_n\\
+  &amp;q+q^2+...+q^n&amp;=&amp;q S_n\\
+\end{matrix}\end{split}\]</div>
+<p>so sieht man, dass viele Summanden gleich sind. Durch Subtraktion erhält man</p>
+<p><span class="math notranslate nohighlight">\(\sum_{k=1}^{n} q^{k-1} = 1 + q + ... + q^{n-1} = \frac{q^n-1}{q-1}=\frac{1-q^n}{1-q}\)</span></p>
+</div>
+</div>

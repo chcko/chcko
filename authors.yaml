@@ -1,0 +1,11 @@
+# The URL request to a resource is: author.id
+# The location in the file system is: author/id
+# author is a short base26 id ([a-z]+) 
+# id is a counter which is base26 encoded
+# 'doit new' creates folder and increases id counter
+- author_id:      r
+  gitname:        Roland Puntaier
+  gitemail:       roland.puntaier@gmail.com
+  default_lang:   en
+  translate_to:   [de,en,it]
+  translate_from: [fr,es]

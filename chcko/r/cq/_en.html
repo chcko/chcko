@@ -1,0 +1,37 @@
+%path = "maths/operations"
+%kind = kinda["texts"]
+%level = 9
+<!-- html --><p>A very basic operation is the <strong>addition</strong>.
+Addition can be seen as cardinality of the union of two disjoint sets.</p>
+<blockquote>
+<div><p><span class="math notranslate nohighlight">\(|M\cup N|=|M|+|N|\)</span> if <span class="math notranslate nohighlight">\(M\cap N = \emptyset\)</span></p>
+</div></blockquote>
+<p>This abstract view can be applied to concrete cases, if we identify the unit of
+a resource (length, mass, …) with an element and there is no overlapping,
+because the resource can be dispatched only once.</p>
+<p>In the application one must take the physical system into account though.
+For example elastic rods inserted vertically into a tube might not add their
+lengths due to their elasticity and weights.
+Volumes of liquids when mixed might not add, because the molecules can
+use the space more efficiently in the mixture.</p>
+<p><strong>Multiplication</strong> one first encounters when calculating the area of a rectangle.
+One either can add all unit squares (Addition) or
+one repeats (multiplication) the rows or the columns (commutativity of <span class="math notranslate nohighlight">\(\cdot\)</span>)
+If we address every unit square with coordinates <span class="math notranslate nohighlight">\((i,j)\)</span>, then multiplication
+counts all combinations of <span class="math notranslate nohighlight">\(0 &lt;= i &lt;= a\)</span> and <span class="math notranslate nohighlight">\(0 &lt;= j &lt;= b\)</span>, which yields <span class="math notranslate nohighlight">\(a\cdot b\)</span>.</p>
+<p>In a square of side length <span class="math notranslate nohighlight">\(a\)</span> one has <span class="math notranslate nohighlight">\(a\cdot a\)</span> unit squares, in a cube of
+side length <span class="math notranslate nohighlight">\(a\)</span> one has <span class="math notranslate nohighlight">\(a^3\)</span> unit cubes …  Here we count combinations of a
+set <span class="math notranslate nohighlight">\(M\)</span> <span class="math notranslate nohighlight">\(n\)</span> times with itself.  <span class="math notranslate nohighlight">\(|M\times \dots \times M| = |M|^n\)</span>.  Thus we
+have come to the <strong>power</strong> operation.</p>
+<ul class="simple">
+<li><p>Multiplication is a shorthand for addition.
+So multiplication is a second level operation.</p></li>
+<li><p>Power is a shorthand for multiplication.
+Power therefore is a third level operation.</p></li>
+</ul>
+<p><strong>Operation</strong> is another name for <strong>function</strong> ({{!util.a("r.cr")}}), if certain rules
+like <strong>assoziative law</strong> or <strong>commutative law</strong> apply.  An <strong>operation</strong> can
+easily be made to a new set by combining it with a value {(value,operation)}.
+(see Zahlen: {{!util.a("r.ci")}} and <a class="reference external" href="http://en.wikipedia.org/wiki/Lambda_calculus">lambda calculus</a>).
+These are then sets of instructions or <strong>operators</strong>, which can be applied to
+other values of other variables, e.g. 3m = (3,times) m, i.e. 3 = (3,times).</p>

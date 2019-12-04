@@ -1,0 +1,33 @@
+<script>
+    function validate() {
+        var password = document.pwd.password.value;
+        if (password == "") {
+            alert("{{tpassword}}");
+            return false;
+        }
+        var confirmp = document.pwd.confirmp.value;
+        if (confirmp == "") {
+            alert("{{tconfirm}}");
+            return false;
+        } else if(confirmp != document.pwd.password.value){
+            alert("{{tnopasswordmatch}}"); 
+            return false; 
+        }
+        return true;
+    }
+</script>
+
+<h1>{{ ttitle }}</h1>
+
+<form method="POST" name=pwd onsubmit='return validate()'>
+    <label>{{tselect}}</label>
+    <br>
+    <label for="password">{{tpassword}}*</label>
+    <input type="password" name="password" /><br>
+    <label for="confirmp">{{tconfirm}}*</label>
+    <input type="password" name="confirmp" />
+    <input type="hidden" name="t" value="{{ defined('token') and token or ''}}" />
+    <input type="submit" value="{{ tupdate }}" />
+</form>
+
+% include('main')

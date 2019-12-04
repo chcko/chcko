@@ -1,0 +1,307 @@
+% if not defined('header'):
+% def header():
+
+    %for page, txt in [('edits',tedit),('content',tcontent),('done',tdone),('todo',ttodo),('contexts',tcontexts)]:
+    <div class="grid_2"
+        %if request.pagename == page:
+        style="text-align:center;border-bottom:1px solid;background-color:{{contextcolor}}"
+        %else:
+        style="text-align:center"
+        %end
+        >
+        %if user is None and page=='contexts':
+            <p> &nbsp;</p>
+        %else:
+            <p><a href="/{{request.lang}}/{{page}}">{{txt}}</a></p>
+        %end
+    </div>
+    %end
+
+    <div class="header" style="background-color:{{contextcolor}}">
+
+    %skey = request.student.key
+    %if user:
+        %for prnt,is_users in util.user_path(skey,user):
+        <div class="grid_2">
+            %if prnt.kind()=='Student':
+            <ul id="nav">
+                {{util.translate(prnt.kind())}}<br>
+                <li>
+                %qs = lambda x: request.query_string+'&'+x if request.query_string else x
+                <a href="/{{request.lang}}/{{request.pagename}}?{{! qs(keyparams(prnt)) }}">
+                    {{prnt.id()}} </a>
+                <ul style="text-align:right">
+                    %for anc in util.all_of(user):
+                    <li><a href="/{{request.lang}}/{{request.pagename}}?{{! qs(keyparams(anc[-1][0])) }}">
+                        %cntxt = [not users and '<em>'+an.string_id()+'</em>' or an.string_id() for an,users in anc]
+                        {{!' &nbsp;&nbsp; '.join(cntxt)}}
+                    </a><li>
+                    %end
+                </ul></li>
+                </li>
+            </ul>
+            %else:
+                {{util.translate(prnt.kind())}}<br>
+                %if not is_users:
+                    <em>{{prnt.id()}}</em>
+                %else:
+                    {{prnt.id()}}
+                %end
+            %end
+        </div>
+        %end
+    %else:
+        %for prnt,is_users in util.user_path(skey,None):
+            %if prnt.kind()=='Student':
+            <div class="grid_2" style="text-align:right">
+            %else:
+            <div class="grid_2">
+            %end
+            {{util.translate(prnt.kind())}}<br>
+            %if not is_users:
+                <em>{{prnt.id()}}</em>
+            %else:
+                {{prnt.id()}}
+            %end
+        </div>
+        %end
+    %end
+
+    <div class='clear'>&nbsp;</div>
+    </div>
+
+% end
+% end
+
+% if not defined('footer'):
+% def footer():
+    
+    % if user:
+    % social = hasattr(user,'link')
+
+    <div class="footer" style="border-top:double;background-color:{{contextcolor}}">
+    <div class="grid_10">
+        %if social:
+        <a href="{{ user.link }}" target="_blank" rel="nofollow">
+        %end
+        {{ user.name }}
+        %if social:
+        </a>
+        %end
+        &nbsp;
+        <a href="/{{request.lang}}/logout">{{ tlogout }} </a>
+        &nbsp;
+        %if not social:
+            <a href="/{{request.lang}}/password">{{ tchangepassword }} </a>
+        %end
+    </div> 
+    </div>
+
+    % elif request.pagename not in ['login','forgot','verification','password']:
+
+    <div class="footer" style="border-top:double;background-color:{{contextcolor}}">
+    <div class="grid_10">
+        {{ tloginat }}
+    </div> 
+    </div>
+
+    <div class="footer" style="background-color:{{contextcolor}}">
+    <div class="grid_2">
+    <a href="/{{request.lang}}/login">Mamchecker</a>
+    {{ torvia }}
+    </div> 
+    <div class="grid_2"> 
+    <a href="/auth/facebook">Facebook</a>
+    </div> 
+    <div class="grid_2">
+    <a href="/auth/google">Google</a>
+    </div> 
+    <div class="grid_2">
+    <a href="/auth/linkedin2">LinkedIn</a>
+    </div> 
+    <div class="grid_2"> 
+    <a href="/auth/twitter">Twitter</a>
+    </div> 
+    %#because of http://stackoverflow.com/questions/2981226/app-engine-remote-api-with-openid
+    %#<div class="grid_2">
+    %#<a href="/auth/openid?identity_url=me.yahoo.com">Yahoo!</a>
+    %#</div> 
+    </div>
+
+    %end
+
+
+    <div class="footer" style="background-color:{{contextcolor}}"> &nbsp; </div>
+
+    <div class="grid_10">
+        {{development}} <a href="https://github.com/mamchecker/mamchecker">Github</a>
+    </div>
+
+    <div class="footer" style="background-color:{{contextcolor}}"> &nbsp; </div>
+
+    <div class="grid_10">
+        %for lng in langs:
+        {{!util.newlang(lng)}} &nbsp;
+        %end
+    </div>
+
+    </div>
+
+% end
+% end
+
+% if not defined('title'):
+% def title():
+    % if user:
+        {{user.name}}
+    % else:
+        mamchecker
+    % end
+% end
+% end
+
+<!doctype html>
+<html>
+<head>
+    <!--<link href="/static/reset.css" rel="stylesheet" type="text/css"/>-->
+    <link href="/static/960.css?column_width=0&column_amount=10&gutter_width=0" media="screen" rel="stylesheet" type="text/css" />
+    <link href="/static/main.css" type="text/css" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/pygments.css" type="text/css" />
+    <script type="text/javascript"
+% if 'HTTPS' not in request.environ or request.environ['HTTPS']=='off':
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+% else:
+      src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+% end
+    </script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+
+    <%
+    if defined('scripts'):
+        for n,js in sorted(scripts.items()):
+           js()
+        end
+    end
+    %>
+
+    % if user:
+    <style>
+    ul#nav {
+        display: inline;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        width:auto;
+        float:right;
+    }
+    ul#nav>li {
+        position: relative;
+        width:auto;
+        float:left;
+        clear:left;
+    }
+    ul#nav>li>ul {
+        display: none;
+        list-style: none;
+        position: absolute;
+        top: 0;
+        min-height:0;
+    }
+    ul#nav li a {
+        display:block;
+        text-decoration: none;
+        line-height:2em;
+        height:2em;	
+        padding:0 5px;
+        width:290%;
+        border: 1px solid;
+        margin-top:-1px;
+        background-color: {{contextcolor}};
+    }
+    ul#nav>li>a {
+        line-height:auto;
+        height:auto;	
+        padding:0;
+        width:auto;
+        border:none;
+    }
+    ul#nav li a:hover { 
+        text-decoration: underline;
+    }
+
+    ul#nav>li:hover>ul{
+        margin-top:2em;
+        display: block;
+        width:auto;
+        z-index:999;
+    } 
+    </style>
+
+    <script>
+    sizemenu = function(){
+            var vwidth = $(".container_10").width();
+            $("#nav>li>ul>li>a").width(vwidth);
+            $("#nav>li>ul").css("margin-left",0.5*$("#nav>li>a").width()-vwidth+"px");
+            }
+    $(document).ready(sizemenu);
+    $(window).bind("resize",sizemenu);
+    //FIXME:
+    //content on back button previously checked checkbox will be checked. don't know how to avoid this
+    //does not work: window.onbeforeunload = function() { $("input:checked").removeAttr("checked");};
+    </script>
+
+    % end
+
+
+
+    <style>
+
+    .subproblem0 {
+      margin-top: 1em;
+      padding-top: 1em;
+    }
+
+    .subproblem1 {
+      margin-top: 1em;
+      padding-top: 1em;
+      background-color: {{contextcolor}};
+    }
+
+    .inlined {
+        background-color: {{contextcolor}};
+    }
+
+    input[type=submit] {
+        border-radius: 0px;
+        border: solid 1px;
+        width: 100%;
+        font-weight: bold;
+        text-align: left;
+        margin-top: 1em;
+        margin-bottom: 1em;
+    }
+
+    </style>
+
+    <title> 
+        % title()
+    </title>
+</head>
+<body >
+
+    <div class="container_10">
+
+    % header()
+
+    <div class="grid_10" style="padding-top:1em;">
+    {{!base}}
+    <p>&nbsp;</p>
+    </div>
+
+    % footer()
+    </div>
+
+</body>
+</html>
+
+

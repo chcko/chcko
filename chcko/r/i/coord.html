@@ -1,0 +1,24 @@
+%def script():
+    <script type="text/javascript" src="/static/graph.js">
+    </script>
+%end
+%scripts['0_graph.js']=script 
+
+%def script():
+    <script type="text/javascript">
+    %for i,f in enumerate(g.funcs):
+    function fun{{nr}}{{i}}(x) { {{f[1]}}; }
+    %end
+    function drawall{{nr}}() {
+        var cs = createCS("{{nr}}","cs_div{{nr}}");
+        cs.context.font = "20px sans-serif";
+        % for i,f in enumerate(g.funcs):
+            lastpos = cs.show(fun{{nr}}{{i}},{{i}},2); 
+            cs.context.strokeText("{{str(i+1)}}",lastpos[0],lastpos[1]);
+        %end
+    }
+    document.addEventListener("DOMContentLoaded",function(){drawall{{nr}}();})
+    </script>
+%end
+%scripts['funcs'+str(nr)]=script 
+

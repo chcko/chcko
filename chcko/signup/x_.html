@@ -1,0 +1,51 @@
+<script>
+    function validate() {
+        var username = document.signup.username.value;
+        if (username == "") {
+            alert("{{tusername}}");
+            return false;
+        }
+        var email = document.signup.email.value;
+        var valid = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (!valid.test(email)) {
+            alert("{{temail}}");
+            return false;
+        }
+        var password = document.signup.password.value;
+        if (password == "") {
+            alert("{{tpassword}}");
+            return false;
+        }
+        var confirmp = document.signup.confirmp.value;
+        if (confirmp == "") {
+            alert("{{tconfirm}}");
+            return false;
+        } else if(confirmp != document.signup.password.value){
+            alert("{{tnopasswordmatch}}"); 
+            return false; 
+        }
+        return true;
+    }
+</script>
+
+<form method="POST" name=signup onsubmit='return validate()'>
+<label for="username">{{tusername}}*</label>
+<input type="text" name="username" /><br>
+<label for="email">{{temail}}*</label>
+<input type="text" name="email" /><br>
+<label for="password">{{tpassword}}*</label>
+<input type="password" name="password" /><br>
+<label for="confirmp">{{tconfirm}}*</label>
+<input type="password" name="confirmp"/><br>
+<label for="name">{{tfirst}}</label>
+<input type="text" name="name" /><br>
+<label for="lastname">{{tlast}}</label>
+<input type="text" name="lastname" /><br>
+<input type="submit" value="{{tcreate}}" />
+</form>
+
+<script>
+</script>
+
+
+% include('main')

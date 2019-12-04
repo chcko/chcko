@@ -1,0 +1,24 @@
+%path = "maths/functions/function graphs"
+%kind = kinda["problems"]
+%level = 10
+
+<!-- harbors the diagram -->
+<div id="cs_div{{nr}}">
+</div>
+
+<div>
+<table>
+    Enter the number that fits to the function 
+    %for i in range(len(g.order)):
+    <tr>
+        <td>\(y={{g.funcs[g.order[i]][0]}}\)</td>
+        <td>
+            %include('getorshow',idx=i)
+        </td>
+    </tr>
+    %end
+</table>
+</div>
+
+%include('r/i/coord')
+

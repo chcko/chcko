@@ -1,0 +1,239 @@
+%path = "maths/functions/graph"
+%kind = kinda["texts"]
+%level = 10
+
+
+<div id="graph_contentwrap" style="position:fixed;width:90%;background:#EEE">
+<div id="graph_contentdiv" styile="height:500px">
+</div>
+</div>
+
+<div id="graph_description">
+<p>
+Instructions: If you change the values in a field and go to the next field,
+the old curve stays on the diagram to allow comparison with the new one.
+Click [-1-] to show only the last curve.
+</p>
+
+<h3>Funktionsgraphen</h3>
+
+<p>
+A <em>function equation</em> (like y=1/x), determines a dependence of the two variables x and y.
+Often x is chosen as <em>independent variable</em> 
+and y as <em>dependent variable</em>.<br>
+Note: Not every function has a equation and not every function can be represented as a curve.
+</p><p>
+If y is given and x can be calculated, then one swaps the names x and y to get the 
+<em>inverse function</em>, which graphically results by mirroring at the line y=x (due to the swapping).
+</p><p>
+<em>Exercise</em>: Above 
+<a href="javascript:fillFields('Power',[['a',1],['n',1],['u',0],['v',0]]);">a=1, n=1, u=0, v=0</a>. 
+This is y=x.
+</p>
+
+<h4>Value Table</h4>
+<p>
+You make a table with two columns, one for x and one for y.<br>
+Then you choose more values for x equally space over the x range and write them in the x column.<br>
+Then you calculate y for each such x value and write it in the row with the used x value.<br>
+</p>
+
+<h4>Function Graph</h4>
+<p>
+You use the values from the value table and draw the according points into the coordinate system,
+then you connect the points. Here the computer does it, but you should be able to do it on a piece 
+of paper as well.
+</p>
+<p>
+<em>Exercise</em>: Draw the graph of y=1/x on a piece of paper.
+Take positive and negative values for x. What is with 0?
+</p>
+
+<h4>Power Function</h4>
+
+<h5>Quadratic, Cubic And Beyond</h5>
+<p>
+y=x^n 
+</p><p>
+<em>Exercise</em>:<br> 
+<a href="javascript:fillFields('Power',[['a',1],['n',2],['u',0],['v',0]]);">a=1, n=2, u=0, v=0</a><br>
+<a href="javascript:fillFields('Power',[['a',1],['n',3],['u',0],['v',0]]);">a=1, n=3, u=0, v=0</a>.<br>
+What symmetries do these curves have?<br>
+</p>
+
+<p>
+An even exponent makes the curve symmetric with at the y Achse.<br>
+Try n=<a href="javascript:fillFields('Power',[['a',1],['n',4],['u',0],['v',0]]);">4</a>, 
+n=<a href="javascript:fillFields('Power',[['a',1],['n',6],['u',0],['v',0]]);">6</a>,...
+</p>
+<p>
+An uneven exponent makes the curve point-symmetric at the origin.<br>
+Try n=<a href="javascript:fillFields('Power',[['a',1],['n',3],['u',0],['v',0]]);">3</a>, 
+n=<a href="javascript:fillFields('Power',[['a',1],['n',5],['u',0],['v',0]]);">5</a>,...
+</p>
+
+<h5>Root</h5>
+<p>
+E.g. y=x^(1/2)
+</p><p>
+<p>
+(x^2)^(1/2)=x^(2/2)=x. The exponent 1/2=0.5 is the inverse of "to the power 2".
+This is traditionally written with the root symbol: √x=x^0.5.<br>
+x^0.1=x^(1/10) is the 10th root of x and the inverse of x^10.
+</p><p>
+Roots are defined only for positive numbers, that's why the graph with n=0.5 shows only the right part.
+The same is true for all none-integer exponents.
+</p><p>
+<em>Exercise</em>:<br>
+<a href="javascript:fillFields('Power',[['a',1],['n',0.5],['u',0],['v',0]]);">a=1, n=0.5, u=0, v=0</a>.<br>
+Press [-1-].<br>
+Go to the n field, enter 2 and click on another field, but not on [-1-].<br>
+Go back to the n field and enter 1, then another field, but not [-1-].<br>
+Compare the two curves with y=x.
+</p>
+
+
+<h5>Negative exponent</h5>
+<p>
+y=x^n, n negative.
+</p><p>
+y=x^(-2)=1/x^2, i.e. negative exponent yields the reciprocal.
+Whare x^n is large, x^(-n) becomes small and vice versa.
+</p><p>
+Symmetry for negative n is the same as for positive n.
+</p><p>
+With x=0, one cannot compute 1/x^n, because it becomes infinite. This is called a <em>Pole</em>.
+
+</p><p>
+<em>Exercise</em>: <br>
+<a href="javascript:fillFields('Power',[['a',1],['n',1],['u',0],['v',0]]);">a=1, n=1, u=0, v=0</a><br>
+<a href="javascript:fillFields('Power',[['a',1],['n',-1],['u',0],['v',0]]);">a=1, n=-1, u=0, v=0</a><br>
+Compare.<br>
+<a href="javascript:fillFields('Power',[['a',1],['n',2],['u',0],['v',0]]);">a=1, n=2, u=0, v=0</a><br>
+<a href="javascript:fillFields('Power',[['a',1],['n',-2],['u',0],['v',0]]);">a=1, n=-2, u=0, v=0</a><br>
+Compare.<br>
+<a href="javascript:fillFields('Power',[['a',1],['n',3],['u',0],['v',0]]);">a=1, n=3, u=0, v=0</a><br>
+<a href="javascript:fillFields('Power',[['a',1],['n',-3],['u',0],['v',0]]);">a=1, n=-3, u=0, v=0</a><br>
+Compare.
+</p><p>
+
+<h5>The power function with translation u, v and stretching a </h5>
+<p>
+y=a(x-u)^n + v  
+</p>
+<p>
+<em>Exercise</em>:<br> 
+Starting from <a href="javascript:fillFields('Power',[['a',1],['n',2],['u',0],['v',0]]);">a=1, n=2, u=0, v=0</a><br>
+set u to
+<a href="javascript:fillFields('Power',[['a',1],['n',2],['u',-2],['v',0]]);">-2</a>,
+<a href="javascript:fillFields('Power',[['a',1],['n',2],['u',-1],['v',0]]);">-1</a>,
+<a href="javascript:fillFields('Power',[['a',1],['n',2],['u',0],['v',0]]);">0</a>,
+<a href="javascript:fillFields('Power',[['a',1],['n',2],['u',1],['v',0]]);">1</a>,
+<a href="javascript:fillFields('Power',[['a',1],['n',2],['u',2],['v',0]]);">2</a>,...<br>
+set v to 
+<a href="javascript:fillFields('Power',[['a',1],['n',2],['u',0],['v',-2]]);">-2</a>,
+<a href="javascript:fillFields('Power',[['a',1],['n',2],['u',0],['v',-1]]);">-1</a>,
+<a href="javascript:fillFields('Power',[['a',1],['n',2],['u',0],['v',0]]);">0</a>,
+<a href="javascript:fillFields('Power',[['a',1],['n',2],['u',0],['v',1]]);">1</a>,
+<a href="javascript:fillFields('Power',[['a',1],['n',2],['u',0],['v',2]]);">2</a>,...<br>
+</p>
+<p>
+<em>Translation via u, v.</em>
+If you replace x by x-u, then the graph moves u to the right,
+or to the left, if u is negative.
+</p><p>
+Set u = 2, then u = -2. With u=-2 we have x-(-2) = x+2.
+</p>
+
+<p>
+<em>Stretching and crushing and turn upside down with a.</em><br>
+Start from a=
+<a href="javascript:fillFields('Power',[['a',1],['n',2],['u',0],['v',0]]);">1</a>,<br>
+If a becomes larger (like a=
+<a href="javascript:fillFields('Power',[['a',2],['n',2],['u',0],['v',0]]);">2</a>), 
+then the curve becomes stretched.<br>
+If a=
+<a href="javascript:fillFields('Power',[['a',0.5],['n',2],['u',0],['v',0]]);">0.5</a>
+or becomes even smaller, then the curve gets crushed.<br>
+With a=
+<a href="javascript:fillFields('Power',[['a',-1],['n',2],['u',0],['v',0]]);">-1</a>,
+the parabola (n=2) is turned upside down and opens downward.
+</p>
+
+<h4>Exponential Function</h4>
+
+<p>
+y=b^x<br>
+e.g. y=2^x  
+</p>
+
+<p>
+<em>Exercise</em>: <br>
+For b=2 calculate in your head some function values for b=2 and x=-3,-2,-1,0,1,2,3<br>
+Note that b^0 = 1 independent of the basis.<br>
+Above choose exponential function.<br>
+Set
+<a href="javascript:fillFields('Exponential',[['a',1],['b',2],['u',0],['v',0]]);">a=1, b=2, u=0, v=0</a><br>
+Press [-1-]<br>
+Change b to 
+<a href="javascript:fillFields('Exponential',[['a',1],['b',3],['u',0],['v',0]]);">3</a>,
+<a href="javascript:fillFields('Exponential',[['a',1],['b',4],['u',0],['v',0]]);">4</a>,
+<a href="javascript:fillFields('Exponential',[['a',1],['b',5],['u',0],['v',0]]);">5</a>,...<br>
+For b=1/2 calculate in your head some function values for e.g. x=-3,-2,-1,0,1,2,3<br>
+Then do above
+<a href="javascript:fillFields('Exponential',[['a',1],['b',0.5],['u',0],['v',0]]);">a=1, b=0.5, u=0, v=0</a><br>
+Compare with basis b=<a href="javascript:fillFields('Exponential',[['a',1],['b',2],['u',0],['v',0]]);">2</a><br>
+The same difference as between b=2 und b=0.5 you get by replacing x and -x.
+</p>
+<p>Try negative a values and change u and v.</p>
+
+<p>
+The exponential function y=b^x is defined in all of ℝ.
+</p>
+
+
+<h4>Logarithm</h4>
+<p>
+The logarithm is the exponent. So \(log_2\) of 8 is "2's exponent to get 8". Or:<br>
+2 to the power 2 Logarithm of 8 is 8.<br>
+2 to the power 2 Logarithm of 16 is 16.<br>
+...<br>
+b^log_b(z)=z<br>
+</p>
+
+<p>Because the exponent gets added when doing multiplication, we have:<br>
+log(ab)=log(a)+log(b)<br>
+log(a/b)=log(a)-log(b)<br>
+Similarly because of (u^v)^w=u^(vw) we have<br> 
+log_b(c^d)=d*log_b(c) (=log_b(b^(log_b(c)*d)))<br>
+</p>
+<p>
+<em>Exercise</em>: <br>
+Calculate in your head the logarithm to the basis 2 of 1/32,1/16,1/8,1/4,1/2,0,2,4,8,16,32,...
+</p>
+
+<p>
+The logarithm is the inverse of the exponential function.<br>
+Der graph therefore follows from the exponential function through mirroring at y=x.
+</p>
+
+<p>
+<em>Exercise</em>: <br>
+Above choose logarithm with <a href="javascript:fillFields('Logarithm',[['b',2],['u',0],['v',0]]);">b=2, u=0, v=0</a><br>
+Compare the graph with the values calucated in your head.<br> 
+Note: log 1 = 0, independent of which basis is used.<br>
+Change the basis. It must not be 1 though, why?:
+<a href="javascript:fillFields('Logarithm',[['b',0.25],['u',0],['v',0]]);">0.25</a>,
+<a href="javascript:fillFields('Logarithm',[['b',0.5],['u',0],['v',0]]);">0.5</a>,
+<a href="javascript:fillFields('Logarithm',[['b',0.75],['u',0],['v',0]]);">0.75</a>,
+<a href="javascript:fillFields('Logarithm',[['b',3],['u',0],['v',0]]);">3</a>,
+<a href="javascript:fillFields('Logarithm',[['b',5],['u',0],['v',0]]);">5</a>,...
+</p>
+
+</div>
+
+%tpower = 'Power'
+%texp = 'Exponential'
+%tlog = 'Logarithm'
+%include('r/cf/coords')
+

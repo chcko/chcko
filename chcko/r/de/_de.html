@@ -1,0 +1,50 @@
+%path = "Abfrageberechtigungen"
+%kind = kinda["Meta"]
+%level = 0
+<!-- html --><p>Eine Ebene des Datenschutzes ist über die IDs.
+Wie die IDs sich mit den realen Dingen verknüpfen ist nur dir bekannt.
+Du könntest Anfangsbuchstaben oder Endbuchstaben der Namen verwenden,
+zufällige Zeichen hinzufügen oder eine andere Art Verdunkelung machen,
+welche nicht einer einfachen Zuordnung für dich entgegensteht.</p>
+<p>Alle nicht registrierten Benutzer fallen in eine Benutzerkategorie.
+Deshalb können alle nicht registrierten Benutzer die gemachten Übungen
+aller anderen nicht registrierten Benutzer abfragen.</p>
+<p>Wenn du dich registrierst und Instanzen
+Schule, Periode, Lehrer, Klasse und Student anlegst,
+dann sind diese mit dir verknüpft.
+Dann kannst du alle Instanzen unterhalb deiner Instanz abfragen.</p>
+<div class="line-block">
+<div class="line">Schule</div>
+<div class="line-block">
+<div class="line">n Perioden</div>
+<div class="line-block">
+<div class="line">n Lehrer</div>
+<div class="line-block">
+<div class="line">n Klassen</div>
+<div class="line-block">
+<div class="line">n Studenten</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Zum Beispiel</p>
+<ul class="simple">
+<li><p>Wenn eine Lehrerrolle dir gehört, d.h. du sie angelegt hast, dann kannst du
+mit eine <code class="docutils literal notranslate"><span class="pre">done</span></code> Abfrage die gemachten Übungen von Klassen und Studenten abfragen,
+welche die gleichen IDs von Schule bis einschließlich Lehrer haben wie dein Kontext,
+auch wenn sie anderen Benutzern gehören.</p></li>
+<li><p>Ein Direktor einer Schule könnte eine Schule-ID anlegen.
+Wenn alle Lehrer diese benutzen, dann kann der Direktor die ganze Hierarchie abfragen.</p></li>
+</ul>
+<p>Wenn du andererseits eine Abfrage startest einer Instanz die nicht dir
+gehört, dann wirst du Instanzen darunter nicht sehen, auch wenn dort Instanzen sind,
+die dir gehören.</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">/&lt;sprache&gt;/done?&lt;schule&gt;&amp;&lt;periode&gt;&amp;&lt;lehrer&gt;&amp;&lt;klasse&gt;&amp;&lt;student&gt;&amp;&lt;problem&gt;</span></code>
+kannst du IDs nach <code class="docutils literal notranslate"><span class="pre">?</span></code> weglassen. <code class="docutils literal notranslate"><span class="pre">/&lt;sprache&gt;/done?aclass&amp;*&amp;d&gt;2</span></code> würde alle
+Übungen abfragen von allen Student der Klasse <code class="docutils literal notranslate"><span class="pre">aclass</span></code>, die nicht älter als 2
+Tage sind.
+Damit das funktioniert, muss <code class="docutils literal notranslate"><span class="pre">aclass</span></code> dir gehören.
+Wenn <code class="docutils literal notranslate"><span class="pre">aclass</span></code> nicht dir gehört, aber die Lehrer ID darüber schon,
+dann kannst du mit <code class="docutils literal notranslate"><span class="pre">/&lt;sprache&gt;/done?ateacher&amp;aclass&amp;*&amp;d&gt;2</span></code> trotzdem alle
+Schüler in <code class="docutils literal notranslate"><span class="pre">aclass</span></code> abfragen.</p>

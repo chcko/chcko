@@ -1,0 +1,32 @@
+%path = "Mathematik/Morphismen"
+%kind = kinda["Texte"]
+%level = 10
+<!-- html --><p>Der Begriff der Funktion aus der Mengenlehre, Elemente einer Menge
+(Definitionsbereich) in eine andere Menge (Wertebereich) eindeutig abzubilden,
+wird mit dem Begriff des Morphismus in der Kategorientheorie in der Hinsicht
+abgeändert/verallgemeinert, dass man die ganze Abbildung ins Zentrum rückt und
+Objekte unabhängig ob Quelle (domain) oder Ziel (codomain) zu einer Menge von Objekten O
+zusammenfasst. Quelle und Ziel in der Menge der Objekte sind durch den
+Morphismus bestimmt, bzw. Teil davon
+(<span class="math notranslate nohighlight">\(D_f\)</span> ist Quelle von f, <span class="math notranslate nohighlight">\(C_f\)</span> ist Ziel von f, beide müssen nicht Mengen sein).
+Mehrere Morphismen in der Menge der Morphismen M können sich ein Paar
+(Quelle,Ziel) teilen.  (O,M,id) ist eine Kategorie. id ist der identische
+Morphismus.</p>
+<p>Ein wichtiger Aspekt bezüglich Morphismen ist, dass eine Struktur erhalten bleibt
+(Ordnungsstruktur, Algebraische Struktur, topologische Struktur) und
+je nach betrachteter Struktur gibt es Unterbegriffe (<span class="math notranslate nohighlight">\(f\circ g (D_g) = f(g(D_g))\)</span>):</p>
+<ul class="simple">
+<li><p>Monomorphismus: <span class="math notranslate nohighlight">\(f\circ g=f\circ h \implies g=h\)</span> (linkskürzbares <span class="math notranslate nohighlight">\(f\)</span>)
+oder <span class="math notranslate nohighlight">\(f\)</span> injektiv für Mengen als Objekte
+(<a class="reference external" href="http://www.proofwiki.org/wiki/Injection_iff_Monomorphism_in_Category_of_Sets">Beweis</a>)</p></li>
+<li><p>Epimorphismus: <span class="math notranslate nohighlight">\(g\circ f=h \circ f \implies g=h\)</span> (rightkürzbar es <span class="math notranslate nohighlight">\(f\)</span>)
+oder <span class="math notranslate nohighlight">\(f\)</span> surjektiv für Mengen als Objekte
+(<a class="reference external" href="http://www.proofwiki.org/wiki/Surjection_iff_Epimorphism_in_Category_of_Sets">Beweis</a>)</p></li>
+<li><p>Isomorphismus: <span class="math notranslate nohighlight">\(f\)</span> hat ein <span class="math notranslate nohighlight">\(g\)</span> für das <span class="math notranslate nohighlight">\(f\circ g=id_{D_g}\)</span> und <span class="math notranslate nohighlight">\(g \circ f = id_{D_f}\)</span>
+(Linksinverse = Rechtsinverse) oder <span class="math notranslate nohighlight">\(f\)</span> bijektiv für Mengen als Objekte</p></li>
+<li><p>Endomorphismus: <span class="math notranslate nohighlight">\(X\rightarrow X\)</span></p></li>
+<li><p>Automorphismus: <span class="math notranslate nohighlight">\(X\rightarrow X\)</span> + Isomorphismus</p></li>
+<li><p>Homomorphismus (Algebra): <span class="math notranslate nohighlight">\(f(a+b)=f(a)+f(b)\)</span> (<span class="math notranslate nohighlight">\(+\)</span> möglicherweise unterschiedlich)</p></li>
+<li><p>Homöomorphismus (Topologie): <span class="math notranslate nohighlight">\(f\)</span> und <span class="math notranslate nohighlight">\(f^{-1}\)</span> stetig</p></li>
+<li><p>Diffeomorphismus (Differentialgeometrie): bijektiv, <span class="math notranslate nohighlight">\(f\)</span> und <span class="math notranslate nohighlight">\(f^{-1}\)</span> stetig differenzierbar</p></li>
+</ul>

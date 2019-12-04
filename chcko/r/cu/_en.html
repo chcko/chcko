@@ -1,0 +1,21 @@
+%path = "maths/functions/integral of 1÷z"
+%kind = kinda["texts"]
+%level = 12
+<!-- html --><p>From real calculus we know, that
+<span class="math notranslate nohighlight">\(\frac{dy}{dx}=\frac{d\,e^x}{dx}=e^x=y\)</span>, and therefore for the inverse <span class="math notranslate nohighlight">\(\ln\)</span>
+<span class="math notranslate nohighlight">\(\frac{dx}{dy}=\frac{d\,\ln y}{dy}=\frac{1}{y}\)</span> for <span class="math notranslate nohighlight">\(y&gt;0\)</span>.  For the antiderivative
+of <span class="math notranslate nohighlight">\(\frac{1}{y}\)</span> we can include negative <span class="math notranslate nohighlight">\(y\)</span>, if we take the absolute value:
+<span class="math notranslate nohighlight">\(\int\frac{1}{y}dy=ln|y|+C\)</span>.  This follows from the symmetry of <span class="math notranslate nohighlight">\(\frac{1}{y}\)</span>.
+At 0 there is a singularity, i.e. one cannot integrate over it.</p>
+<p>In <span class="math notranslate nohighlight">\(\mathbb{C}\)</span> we have <span class="math notranslate nohighlight">\(e^z=e^{x+iy}=e^xe^{iy}\)</span>,
+i.e. the real part becomes the absolute value <span class="math notranslate nohighlight">\(e^x\)</span> and the imaginary part becomes the argument.
+That is the reason for the period <span class="math notranslate nohighlight">\(2\pi i\)</span> along the imaginary axis.
+The antiderivative of <span class="math notranslate nohighlight">\(\frac{1}{z}\)</span> is the inverse of <span class="math notranslate nohighlight">\(e^z\)</span>,
+which means that the absolute value becomes the real part <span class="math notranslate nohighlight">\(ln|z|\)</span> and the argument
+becomes the imaginary part.</p>
+<p><span class="math notranslate nohighlight">\(\int \frac{1}{z}dz=ln|z|+i\arg(z)+C\)</span></p>
+<p>In <span class="math notranslate nohighlight">\(\mathbb{C}\)</span> one can integrate around the singularity:</p>
+<div class="math notranslate nohighlight">
+\[\oint_{|z|=1}\frac{1}{z}dz =
+(\ln|z| + i\arg z)\bigr|_{\arg z=0,\,|z|=1}^{\arg z=2\pi,\,|z|=1} = 2\pi i\]</div>
+<p>This is the precursor of the residue theorem.</p>

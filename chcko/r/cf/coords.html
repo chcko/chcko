@@ -1,0 +1,48 @@
+%def script():
+    <script type="text/javascript">
+    var pow = {
+        params: {
+            u: [0,-5,5,1],
+            v: [0,-5,5,1],
+            a: [1,-9,9,0.5],
+            n: [1,-9,9,0.5]
+        },
+        createfunc:function (p) { return function(x){return p.a*Math.pow(x-p.u,p.n)+p.v;}; }
+    };
+
+    var exp = {
+        params: {
+            u: [0,-5,5,1],
+            v: [0,-5,5,1],
+            a: [1,-9,9,1],
+            b: [2,0.2,9,0.2]
+        },
+        createfunc:function (p) { return function(x){return p.a*Math.pow(p.b,x-p.u)+p.v;}; }
+    };
+
+    var log = {
+        params: {
+            u: [0,-5,5,1],
+            v: [0,-5,5,1],
+            b: [2,0.2,9,0.2]
+        },
+        createfunc:function (p) { return function(x){if (p.b !== 1) return Math.log(x-p.u)/Math.log(p.b)+p.v;}; }
+    };
+
+    var functions = {
+        {{tpower}}:[pow,'\\(a(x-u)^n+v\\)'],
+        {{texp}}:[exp,'\\(ab^{(x-u)}+v\\)'],
+        {{tlog}}:[log,'\\(\\mathtt{log}_b(x-u)+v\\)']
+    };
+    </script>
+
+    <script type="text/javascript" src="/static/graph.js">
+    </script>
+
+    <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded",function(){createCS("",'graph_contentdiv');createRadios('graph_contentdiv');});
+    </script>
+
+%end
+%scripts['funcgraphs'+str(nr)]=script 
+

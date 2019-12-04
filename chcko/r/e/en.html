@@ -1,0 +1,13 @@
+%path = "physics/electricity/capacitor"
+%kind = kinda["fragments"]
+%level = 12
+
+In a capacitor negative charge \(Q\) (unit A(mpere)s=C(oulomb)) is brought close to positive charge via 
+a voltage \(U\) (unit V(olt)). Because of the mutual attraction of the opposite charge the capacitor
+discharges only slowly.
+The capacity \(C\) (unit F(arad)) says how much charge per voltage can be loaded:
+\(C=\frac{Q}{U}\) oder \(Q=CU\).
+If we unload a capacitor via a resistor \(R\), we have
+\(-RI=\frac{Q}{C}\), i.e.. -voltage drop at resistor (\(U=RI\)) is equal to voltage drop at capacitor.
+Because \(I=\frac{dQ}{dt}\) we get a differential equation \(\frac{dQ}{dt}=-\frac{Q}{CR}\),
+which can be solved via separation of variables ({{!util.a('r.f')}}).

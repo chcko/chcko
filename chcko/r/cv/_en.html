@@ -1,0 +1,31 @@
+%path = "maths/entropy"
+%kind = kinda["texts"]
+%level = 12
+<!-- html --><p>To exclusively select an element v (value, state, point) of a variable V
+(cardinality <span class="math notranslate nohighlight">\(|V|=n\)</span>, n-set) we need <span class="math notranslate nohighlight">\(\log_bn\)</span> b-sets (normally <span class="math notranslate nohighlight">\(b=2\)</span>, bit).</p>
+<div class="math notranslate nohighlight">
+\[I(V)=log\;n\]</div>
+<p><span class="math notranslate nohighlight">\(I(V)\)</span> is the code width of the variable, i.e. die information (in bits) needed
+to select a value and it is the same for all values. <span class="math notranslate nohighlight">\(I\)</span> is a property of the variable.</p>
+<div class="admonition-random-variable-variate-variable admonition">
+<p class="admonition-title">random variable, variate, variable</p>
+<p>A variate is a random variable.</p>
+<p>Often the distinction between random variable and variable is not
+necessary. Both mean a real quantity, whose values can occur repeatedly.</p>
+</div>
+<p>If we consider every occurrence <span class="math notranslate nohighlight">\(c \in C\)</span> of values of <span class="math notranslate nohighlight">\(V\)</span>,
+then there is another way to refer to values of <span class="math notranslate nohighlight">\(V\)</span>.
+We first choose an occurrence of any value with  <span class="math notranslate nohighlight">\(I(c)=\log |C|\)</span>
+and subtract the information to select occurrences of <span class="math notranslate nohighlight">\(v\in V\)</span> (<span class="math notranslate nohighlight">\(I(c_v)=\log |C_v|\)</span>).
+<span class="math notranslate nohighlight">\(\frac{|C|}{|C_v|}\)</span> is the number of <span class="math notranslate nohighlight">\(|C_v|\)</span> sized subsets of <span class="math notranslate nohighlight">\(C\)</span>.
+So to select such a <span class="math notranslate nohighlight">\(v\)</span> occurrences subset we need</p>
+<div class="math notranslate nohighlight">
+\[I(v)=\log\frac{|C|}{|C_v|}=-\log\;p(v)\]</div>
+<p>This is different for all <span class="math notranslate nohighlight">\(v\in V\)</span> and represents the optimal code length for every value
+(entropy code, Huffman code).</p>
+<p>The average code width is</p>
+<div class="math notranslate nohighlight">
+\[H(V)=-\sum_vp(v)\log\;p(v)\]</div>
+<p><span class="math notranslate nohighlight">\(H(V)\)</span> is the <strong>entropy</strong> of the variable <span class="math notranslate nohighlight">\(V\)</span> (note: not of a value of <span class="math notranslate nohighlight">\(V\)</span>).</p>
+<p>The information in a variable depends on the probability distribution
+of value occurrences (= random event).</p>

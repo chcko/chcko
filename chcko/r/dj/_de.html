@@ -1,0 +1,70 @@
+%path = "Mathematik/Trogonometrie"
+%kind = kinda["Texte"]
+%level = 11
+<!-- html --><p>Im folgenden Diagramm hat der Kreis den Radius 1.
+Die Länge des Bogens diese Einheitskreises ist ein Maß für den <strong>Winkel</strong>,
+das <strong>Bogenmaß</strong> genannt wird und die Einheit <code class="docutils literal notranslate"><span class="pre">rad</span></code> (Radiant) besitzt.
+Der rechte Winkel (90°) ist <span class="math notranslate nohighlight">\(\pi/2\)</span>.
+Im Allgemeinen:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\pi}{180}\alpha[°] = \alpha[rad]\]</div>
+<p>Wenn man den Winkel ändert, dann ändern sich auch die Längen, die mit
+<span class="math notranslate nohighlight">\(\sin\alpha\)</span>, <span class="math notranslate nohighlight">\(\cos\alpha\)</span> und <span class="math notranslate nohighlight">\(\tan\alpha\)</span> beschriftet sind.
+Diese Längen sind durch den Winkel bestimmt.
+Anders gesagt: Diese Längen sind <strong>Funktionen des Winkels</strong>.</p>
+<div class="figure">
+<p><img src="_images/tikz-1400ee56889bde311c23a2283ccad7393c769b55.png" alt="\coordinate (O) at (0,0);
+\coordinate (C) at ({2*cos(60)},{2*sin(60)});
+\coordinate (P) at ({2*cos(60)},0);
+\coordinate (D) at (2,{2*tan(60)});
+\draw[black, very thin] (O) circle [radius=2];
+\draw[red,thick] (2,0) arc [radius=2, start angle=0, end angle=60] node[midway,above]{\tiny $\alpha$};
+\draw[blue,thick] (O) -- (C) node[midway,above]{\tiny $1$};
+\draw[blue,thick] (P) -- (C) node[midway,right]{\tiny $\sin\alpha$};
+\draw[blue,thick] (O) -- (P) node[midway,below]{\tiny $\cos\alpha$};
+\draw[green,thick] (P) -- (2,0);
+\draw[green,thick] (2,0) -- (D) node[midway,right]{\tiny $\tan\alpha$};
+\draw[green,thick] (C) -- (D);
+\draw[xshift=-1.1cm,yshift=-1cm] node[right,text width=2.2cm]
+{ \tiny $\tan\alpha=\frac{\sin\alpha}{\cos\alpha}$\\$\sin^2\alpha+\cos^2\alpha=1$ };" /></p>
+</div><div class="admonition-ahnlichkeit-affine-abbildung admonition">
+<p class="admonition-title">Ähnlichkeit = Affine Abbildung</p>
+<p>Man kann dieses Diagramm auf die Größe eines tatsächlichen rechtwinkligen
+Dreiecks skalieren und dieses Dreieck vollständig bestimmen, wenn man eine
+Seitenlänge und einen Winkel desselben weiß.</p>
+</div>
+<p>Die Graphen der obigen <strong>trigonometrischen Funktionen</strong> sind die folgenden</p>
+<div class="figure">
+<p><img src="_images/tikz-01804021412cb95dcb40e40d8f0f30a907574188.png" alt="\begin{axis}
+    [
+    ymin=-1,ymax=1,
+    xmin=0,xmax=2*pi,
+    xtick=\empty,
+    ytick={-1,0,1},
+    extra x ticks={1.5708,3.1416,4.712,6.2832},
+    extra x tick labels={$\frac{\pi}{2}$, $\pi$, $\frac{3\pi}{2}$, $2\pi$},
+    every extra x tick/.style={
+            xticklabel style={anchor=north west},
+            grid=major,
+            major grid style={thick,dashed,red}
+    },
+    axis lines = center,
+    xlabel=$x$,ylabel=$y$,
+    enlargelimits=0.2,
+    domain=0:2*pi,
+    samples=100,
+    axis equal,
+    ]
+    \addplot [green,thick] {tan(deg(x))} node [midway,left]{tan};
+    \addplot [red,thick] {sin(deg(x))} node [above]{sin};
+    \addplot [blue,thick] {cos(deg(x))} node [above]{cos};
+\end{axis}" /></p>
+</div><p>Einige Werte der Funktionen ergeben sich durch Berechnungen am gleichseitigen Dreieck
+(<span class="math notranslate nohighlight">\(\pi/3\)</span>, <span class="math notranslate nohighlight">\(\pi/6\)</span>) oder am Quadrates der Seitenlänge 1 (<span class="math notranslate nohighlight">\(\pi/4\)</span>).</p>
+<p><span class="math notranslate nohighlight">\(\cos\)</span> ist symmetrisch: <span class="math notranslate nohighlight">\(\cos(-\alpha)=\cos\alpha\)</span></p>
+<p><span class="math notranslate nohighlight">\(\sin\)</span> ist antisymmetrisch: <span class="math notranslate nohighlight">\(\sin(-\alpha)=-\sin\alpha\)</span>.</p>
+<p>Alle trigonometrischen Funktionen haben eine Periode von <span class="math notranslate nohighlight">\(2\pi\)</span>: <span class="math notranslate nohighlight">\(sin|cos|tan(\alpha+2\pi)=sin|cos|tan(\alpha)\)</span>.</p>
+<p>Weil die spitzen Winkel eines rechtwinkligen Dreiecks sich zu <span class="math notranslate nohighlight">\(\pi/2\)</span> addieren, gilt</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\sin(\pi/2 - \alpha)=\cos\alpha\\
+\cos(\pi/2 - \alpha)=\sin\alpha\end{split}\]</div>

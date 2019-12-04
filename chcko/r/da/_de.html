@@ -1,0 +1,69 @@
+%path = "Ideen"
+%kind = kinda["Meta"]
+%level = 0
+<!-- html --><ul>
+<li><p>Jeder Inhalt hat eine eindeutige ID = ID_Author.ID_Inhalt.
+Auf diese weise ist keine Koordination für die IDs von Inhalten notwendig.</p></li>
+<li><p>Jeder ID entspricht ein Verzeichnis</p>
+<ul>
+<li><p>ID_author</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>ID_content1</p></li>
+<li><p>ID_content2</p></li>
+<li><p>…</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</li>
+<li><p>IDs sollen so kurz wie möglich sein. Deshalb entstehen sie
+am besten durch Durchnummerierung mit a-z.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Ziffern können nicht verwendet werden, da sie keine Python IDs sind.</p></li>
+<li><p>Großbuchstaben würden im Windows Verzeichnissystem nicht unterschieden werden.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Jedes Inhaltsverzeichnis enthält Python Code und Sprachdateien.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>einen Pythonteil (<code class="docutils literal notranslate"><span class="pre">__init__.py</span></code>), um gegebene Werte von Übungen
+zufällig zu generieren (nicht notwendig für statische Inhalte).</p></li>
+<li><p>Sprachdateien (Vorlagen zur Generierung von HTML (template))
+(<code class="docutils literal notranslate"><span class="pre">en.html</span></code>, <code class="docutils literal notranslate"><span class="pre">de.html</span></code>, <code class="docutils literal notranslate"><span class="pre">it.html</span></code>, <code class="docutils literal notranslate"><span class="pre">fr.html</span></code>,…)
+<code class="docutils literal notranslate"><span class="pre">en.html</span></code> sollte immer vorhanden sein als Ausgangspunkt für weitere Übersetzungen.</p></li>
+<li><p>ein statischer off-line Schritt ist möglich, um Inhalt aus anderen Formaten
+zu generieren, derzeit von Restructured Text (.rst) mit Sphinx.
+Das ermöglicht es Sphinx Erweiterungen wie <code class="docutils literal notranslate"><span class="pre">tikz</span></code> and <code class="docutils literal notranslate"><span class="pre">texfigure</span></code> (<code class="docutils literal notranslate"><span class="pre">tex</span></code>,
+<code class="docutils literal notranslate"><span class="pre">tikz</span></code>, <code class="docutils literal notranslate"><span class="pre">chemfig</span></code>, …) für Graphiken zu Verwenden.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Der Kontextpfad zu Übungen und Schlüsselwörter sind sprachspezifisch
+und deshalb in den Sprachdateien enthalten.</p></li>
+<li><p>Mehrere Übungen kann man in einer URL / HTTP Anfrage kombinieren
+und somit über eine URL einen umfangreicheren Arbeitsauftrag erteilen.
+(<code class="docutils literal notranslate"><span class="pre">content</span></code> Abfrage).</p></li>
+<li><p>Übungen/Inhalte können andere Inhalte referenzieren oder einfügen,
+letzteres über den Vorlagen-Mechanismus (Templates).</p></li>
+<li><p>Antworten zu Übungen werden in einer Datenbank gespeichert und
+beim laden mit den Texten in den jeweiligen Sprachen vereint.</p></li>
+<li><p>Eine Studentenrolle ist gegeben durch einen ID-Pfad / eine Hierarchie:</p>
+<p>Schule 1-n Periode 1-n Lehrer 1-n Klasse 1-n, Student</p>
+</li>
+<li><p>Durch diese Hierarchie hat ein Lehrer einen schnellen Zugriff
+auf die gemachten Übungen seiner Klassen und Schüler über eine URL Abfrage.</p></li>
+<li><p>Lehrer können ihren Klassen und Schülern Arbeitsaufträge erteilen,
+welche diese über “Aufträge” (<code class="docutils literal notranslate"><span class="pre">todo</span></code> Abfrage) sehen.</p></li>
+<li><p>Lehrer können sehen, welche Übungen ihre Schüler schon gemacht haben
+(<code class="docutils literal notranslate"><span class="pre">done</span></code> query).</p></li>
+<li><p>Benutzer bekommen anfangs einen Kontext mit generierten IDs.
+Sie können sich aber dann eigene machen (<code class="docutils literal notranslate"><span class="pre">edits</span></code> Abfrage).
+(Benutzer können sich eine Farbe aussuchen,
+um leichter zu erkennen in welchem Kontext sie sich befinden).</p></li>
+<li><p>Registrierte Benutzer können mehrere Kontexte verwalten
+und zwischen ihnen wechseln (<code class="docutils literal notranslate"><span class="pre">contexts</span></code> Abfrage).
+Eine Registrierung geht auch mit Google, Twitter, Facebook or LinkedIn.</p></li>
+</ul>

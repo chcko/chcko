@@ -1,0 +1,26 @@
+\documentclass{article}
+\usepackage{siunitx}
+\usepackage{circuitikz}
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{circuitikz} \draw
+    (1,-2) -- (1,0) -- (1,1)
+    to[R=R] (7,1)
+    -- (7,0)
+    to[short,*-o](8,0)
+    node[anchor=west]{$V_{th}$}
+    -- (7,0)
+    to[C=C,*-*](4,0)
+    to[R=R,*-*](4,-2)
+    -- (7,-2)
+    to[short,*-o](8,-2)
+    node[anchor=west]{$0$}
+    (1,0)
+    to[C=C,*-*](4,0)
+    (1,-2)--(4,-2);
+\end{circuitikz}
+
+
+\end{document}

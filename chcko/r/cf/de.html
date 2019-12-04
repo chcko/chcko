@@ -1,0 +1,239 @@
+%path = "Mathematik/Funktionen/Funktionsgraph"
+%kind = kinda["Texte"]
+%level = 10
+
+
+<div id="graph_contentwrap" style="position:fixed;width:90%;background:#EEE">
+<div id="graph_contentdiv" styile="height:500px">
+</div>
+</div>
+
+<div id="graph_description">
+<p>
+Anleitung: Wenn man die Werte in einem Feld ändert und auf ein anderes Feld klickt, 
+bleibt die alte Kurve erhalten (zum Vergleichen). 
+Mit Klick auf [-1-] wird nur die eine letzte Kurve dargestellt.
+</p>
+
+<h3>Funktionsgraphen</h3>
+
+<p>
+Eine <em>Funktionsgleichung</em> (etwa y=1/x), 
+gibt eine Abhängigkeit zwischen x und y wieder.
+Man wählt oft x als <em>unabhängige Variable</em> (Urbildmenge, Definitionsbereich)
+und y als <em>abhängige Variable</em> (Wertebereich, Bildmenge).<br>
+Abgrenzung: Nicht jede Funktion hat eine Gleichung und nicht jede Funktion kann als Kurve dargestellt werden.
+</p><p>
+Wenn y gegeben ist und x daraus berechnet werden kann, dann vertauscht man die Buchstaben. 
+Das ist dann die <em>Umkehrfunktion</em>. 
+Graphisch ergibt sie sich durch Spiegelung an y=x.
+</p><p>
+<em>Übung</em>: Oben <a href="javascript:fillFields('Potenz',[['a',1],['n',1],['u',0],['v',0]]);">a=1, n=1, u=0, v=0</a>. Das ist y=x.
+</p>
+
+<h4>Wertetabelle</h4>
+<p>
+Man macht eine Tabelle mit 2 Spalten. Eine Spalte nennt man x die andere y.<br>
+Man wählt mehrere Werte für x aus und trägt sie in die Tabelle in Spalte x ein.<br>
+Man berechnet y nach Funktionsgleichung für jedes x und trägt sie in die Tabelle in Spalte y ein.<br>
+</p>
+
+<h4>Funktionsgraphen</h4>
+<p>
+Man zieht die Werte aus einer Wertetabelle heran, zeichnet sie in ein Koordinatensystem ein und 
+verbindet die Punkte. Hier macht das der Computer. Das sollte jedoch auch 
+auf einem Blatt Papier gemacht werden.
+</p>
+<p>
+<em>Übung</em>: Zeichne den Graphen für y=1/x auf einem Blatt Papier.
+Nimm positive und negative Werte für x. Was ist mit 0?
+</p>
+
+<h4>Potenzfunktionen</h4>
+
+<h5>Quadratisch und mehr</h5>
+<p>
+y=x^n 
+</p><p>
+<em>Übung</em>:<br> 
+<a href="javascript:fillFields('Potenz',[['a',1],['n',2],['u',0],['v',0]]);">a=1, n=2, u=0, v=0</a><br>
+Symmetrisch bzgl. was?<br>
+<a href="javascript:fillFields('Potenz',[['a',1],['n',3],['u',0],['v',0]]);">a=1, n=3, u=0, v=0</a>.<br>
+Symmetrisch bzgl. was?<br>
+</p>
+<p>
+Gerade Hochzahl bedeutet, dass die Kurve symmetrisch zur y Achse ist.<br>
+Versuche n=<a href="javascript:fillFields('Potenz',[['a',1],['n',4],['u',0],['v',0]]);">4</a>, 
+n=<a href="javascript:fillFields('Potenz',[['a',1],['n',6],['u',0],['v',0]]);">6</a>,...
+</p>
+<p>
+Ungerade Hochzahl bedeutet, dass  die Kurve punktsymmetrisch zum Ursprung ist.<br>
+Versuche n=<a href="javascript:fillFields('Potenz',[['a',1],['n',3],['u',0],['v',0]]);">3</a>, 
+n=<a href="javascript:fillFields('Potenz',[['a',1],['n',5],['u',0],['v',0]]);">5</a>,...
+</p>
+
+<h5>Wurzel</h5>
+<p>
+y=x^(1/n)<br>
+z.B. y=x^(1/2)
+</p><p>
+<p>
+(x^2)^(1/2)=x^(2/2)=x. Wenn die Hochzahl 1/2=0.5 ist, dann ist das die Umkehrung von "hoch 2".
+Man schreibt das auch in Wurzelschreibweise: √x=x^0.5.<br>
+x^0.1=x^(1/10) ist die 10ner Wurzel von x, also die Umkehrung von x^10.
+</p><p>
+Wurzeln sind nur für positive Zahlen definiert, deshalb sieht man bei n=0.5 nur den rechten Teil.
+Das gleiche gilt für alle nicht-ganzzahligen Hochzahlen.
+</p><p>
+<em>Übung</em>:<br>
+<a href="javascript:fillFields('Potenz',[['a',1],['n',0.5],['u',0],['v',0]]);">a=1, n=0.5, u=0, v=0</a>.<br>
+[-1-] drücken.<br>
+Wieder auf das n Feld klicken, dann 2 eingeben und auf ein anderes Feld wechseln, nicht [-1-].<br>
+Wieder auf das n Feld klicken, dann 1 eingeben und auf ein anderes Feld wechseln, nicht [-1-].<br>
+Vergleiche die beiden Kurven im ersten Quadranten (oben rechts) mit y=x.
+</p>
+
+
+<h5>Negative Hochzahl</h5>
+<p>
+\(y=x^n\), n negative.
+</p><p>
+y=x^(-2)=1/x^2, d.h. negative Hochzahl liefert den Kehrwert.
+Dort wo x^n groß ist, wird x^(-n) klein und umgekehrt.
+</p><p>
+Symmetrie ist bei negativem n gleich wie bei positivem.
+</p><p>
+Bei x=0, kann man 1/x^n nicht berechnen, da unendlich. Das nennt man einen <em>Pol</em>.
+</p><p>
+<em>Übung</em>: <br>
+<a href="javascript:fillFields('Potenz',[['a',1],['n',1],['u',0],['v',0]]);">a=1, n=1, u=0, v=0</a><br>
+<a href="javascript:fillFields('Potenz',[['a',1],['n',-1],['u',0],['v',0]]);">a=1, n=-1, u=0, v=0</a><br>
+Vergleiche.<br>
+<a href="javascript:fillFields('Potenz',[['a',1],['n',2],['u',0],['v',0]]);">a=1, n=2, u=0, v=0</a><br>
+<a href="javascript:fillFields('Potenz',[['a',1],['n',-2],['u',0],['v',0]]);">a=1, n=-2, u=0, v=0</a><br>
+Vergleiche.<br>
+<a href="javascript:fillFields('Potenz',[['a',1],['n',3],['u',0],['v',0]]);">a=1, n=3, u=0, v=0</a><br>
+<a href="javascript:fillFields('Potenz',[['a',1],['n',-3],['u',0],['v',0]]);">a=1, n=-3, u=0, v=0</a><br>
+Vergleiche.
+</p><p>
+
+<h5>Die Potenzfunktion mit Verschiebung u,v und Streckung a </h5>
+<p>
+\(y=a(x-u)^n + v\)
+</p>
+<p>
+<em>Übung</em>:<br> 
+Ausgehend von <a href="javascript:fillFields('Potenz',[['a',1],['n',2],['u',0],['v',0]]);">a=1, n=2, u=0, v=0</a><br>
+setze u auf 
+<a href="javascript:fillFields('Potenz',[['a',1],['n',2],['u',-2],['v',0]]);">-2</a>,
+<a href="javascript:fillFields('Potenz',[['a',1],['n',2],['u',-1],['v',0]]);">-1</a>,
+<a href="javascript:fillFields('Potenz',[['a',1],['n',2],['u',0],['v',0]]);">0</a>,
+<a href="javascript:fillFields('Potenz',[['a',1],['n',2],['u',1],['v',0]]);">1</a>,
+<a href="javascript:fillFields('Potenz',[['a',1],['n',2],['u',2],['v',0]]);">2</a>,...<br>
+setze v auf 
+<a href="javascript:fillFields('Potenz',[['a',1],['n',2],['u',0],['v',-2]]);">-2</a>,
+<a href="javascript:fillFields('Potenz',[['a',1],['n',2],['u',0],['v',-1]]);">-1</a>,
+<a href="javascript:fillFields('Potenz',[['a',1],['n',2],['u',0],['v',0]]);">0</a>,
+<a href="javascript:fillFields('Potenz',[['a',1],['n',2],['u',0],['v',1]]);">1</a>,
+<a href="javascript:fillFields('Potenz',[['a',1],['n',2],['u',0],['v',2]]);">2</a>,...<br>
+</p>
+<p>
+<em>Verschiebung durch u,v.</em>
+Ersetzt man x durch x-u, dann wandert der Graph um u nach rechts,
+bzw. nach links, wenn u negativ ist.
+</p><p>
+Setze also u=2, dann u gleich -2. Bei u=-2 ist x-(-2) = x+2.
+</p>
+
+<p>
+<em>Streckung/Stauchung/Kopfstellen durch a.</em><br>
+Ausgehend von a=
+<a href="javascript:fillFields('Potenz',[['a',1],['n',2],['u',0],['v',0]]);">1</a>,<br>
+wenn a größer wird (etwa a=
+<a href="javascript:fillFields('Potenz',[['a',2],['n',2],['u',0],['v',0]]);">2</a>), 
+dann wird die Kurve gestreckt.<br>
+Wenn a=
+<a href="javascript:fillFields('Potenz',[['a',0.5],['n',2],['u',0],['v',0]]);">0.5</a>
+ist oder noch kleiner, dann wird die Kurve gestaucht.<br>
+Mit a=
+<a href="javascript:fillFields('Potenz',[['a',-1],['n',2],['u',0],['v',0]]);">-1</a>,
+wird die Parabel (n=2) nach unten geöffnet.
+</p>
+
+<h4>Exponentialfunktion</h4>
+
+<p>
+\(y=b^x\)<br>
+z.B. y=2^x  
+</p>
+
+<p>
+<em>Übung</em>: <br>
+Rechne im Kopf für b=2 einige Funktionswerte aus, für etwa x=-3,-2,-1,0,1,2,3<br>
+Beachte: b^0 = 1, unabhängig von der Basis.<br>
+Wähle oben Exponentialfunktion aus.<br>
+Setze 
+<a href="javascript:fillFields('Exponent',[['a',1],['b',2],['u',0],['v',0]]);">a=1, b=2, u=0, v=0</a><br>
+Drücke [-1-]<br>
+Ändere die Basis b auf 
+<a href="javascript:fillFields('Exponent',[['a',1],['b',3],['u',0],['v',0]]);">3</a>,
+<a href="javascript:fillFields('Exponent',[['a',1],['b',4],['u',0],['v',0]]);">4</a>,
+<a href="javascript:fillFields('Exponent',[['a',1],['b',5],['u',0],['v',0]]);">5</a>,...<br>
+Rechne im Kopf für b=1/2 einige Funktionswerte aus, für etwa x=-3,-2,-1,0,1,2,3<br>
+Dann oben 
+<a href="javascript:fillFields('Exponent',[['a',1],['b',0.5],['u',0],['v',0]]);">a=1, b=0.5, u=0, v=0</a><br>
+Vergleiche mit Basis b=<a href="javascript:fillFields('Exponent',[['a',1],['b',2],['u',0],['v',0]]);">2</a><br>
+Den gleichen Unterschied wie zwischen b=2 und b=0.5 erhält man beim Ersetzen von x durch -x.
+</p>
+<p>Versuche auch a negative zu machen und u und v zu verändern.</p>
+
+<p>
+Die Exponentialfunktion y=b^x ist auf ganz ℝ definiert.
+</p>
+
+
+<h4>Logarithmus</h4>
+<p>
+Logarithmus steht für Hochzahl. Also 2er Logarithmus von 8 ist die "2er Hochzahl von 8". Oder:<br>
+2 hoch 2er Logarithmus von 8 ist 8.<br>
+2 hoch 2er Logarithmus von 16 ist 16.<br>
+...<br>
+b^(log_b(z))=z<br>
+</p>
+
+<p>Weil die Hochzahl bei Multiplikation addiert wird, bzw. bei Division subtrahiert, gilt:<br>
+log(ab)=log(a)+log(b)<br>
+log(a/b)=log(a)-log(b)<br>
+Entsprechend gilt wegen (u^v)^w=u^(vw)<br>
+log_b(c^d)=d*log_b(c) (=log_b(b^(log_b(c)*d)))<br>
+</p>
+<p>
+<em>Übung</em>: <br>
+Berechne im Kopf den Logarithmus zur Basis 2 von 1/32,1/16,1/8,1/4,1/2,0,2,4,8,16,32,...
+</p>
+
+<p>
+Die Logarithmusfunktion ist die Umkehrung der Exponentialfunktion.<br>
+Der Funktionsgraph des Logarithmus ergibt sich aus der Exponentialfunktion durch Spiegelung an y=x.
+</p>
+
+<p>
+<em>Übung</em>: <br>
+Oben Logarithmus mit <a href="javascript:fillFields('Logarithmus',[['b',2],['u',0],['v',0]]);">b=2, u=0, v=0</a><br>
+Vergleich den Graphen mit den im Kopf berechneten Werten.<br> 
+Beachte: log 1 = 0, unabhängig von der Basis.<br>
+Verändere die Basis. (Sie darf aber nicht 1 sein, wieso?):
+<a href="javascript:fillFields('Logarithmus',[['b',0.25],['u',0],['v',0]]);">0.25</a>,
+<a href="javascript:fillFields('Logarithmus',[['b',0.5],['u',0],['v',0]]);">0.5</a>,
+<a href="javascript:fillFields('Logarithmus',[['b',0.75],['u',0],['v',0]]);">0.75</a>,
+<a href="javascript:fillFields('Logarithmus',[['b',3],['u',0],['v',0]]);">3</a>,
+<a href="javascript:fillFields('Logarithmus',[['b',5],['u',0],['v',0]]);">5</a>,...
+</p>
+
+</div>
+
+%tpower = 'Potenz'
+%texp = 'Exponent'
+%tlog = 'Logarithmus'
+%include('r/cf/coords')
+

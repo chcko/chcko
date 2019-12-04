@@ -1,0 +1,179 @@
+%path = "participate"
+%kind = kinda["meta"]
+%level = 0
+<!-- html --><div class="section" id="skills">
+<h1>Skills<a class="headerlink" href="#skills" title="Permalink to this headline">¶</a></h1>
+<p>You need to know:</p>
+<ul class="simple">
+<li><p>some HTML</p></li>
+<li><p>some Python (with numpy and sympy)</p></li>
+<li><p>possibly Javascript</p></li>
+<li><p>basic understanding and working with the tools</p></li>
+</ul>
+</div>
+<div class="section" id="tools">
+<h1>Tools<a class="headerlink" href="#tools" title="Permalink to this headline">¶</a></h1>
+<p>If your are a little familiar with Linux, use it, possibly on a virtual machine
+like <a class="reference external" href="https://www.virtualbox.org/wiki/Downloads">virtualbox</a> .
+Then you can use <code class="docutils literal notranslate"><span class="pre">git</span></code> and other tools with less problems
+(e.g. easy installation via package managers, symlinks supported,…).
+But all the needed tools are also available for Windows and Mac.</p>
+<p>Collaboration is done via <a class="reference external" href="https://github.com/mamchecker">github</a>.
+Exercises contain Python code (also in the HTML templates), therefore
+handling them like code is appropriate. Reviews are necessary for safety
+reasons.</p>
+<p>On your PC you will need</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://rogerdudler.github.io/git-guide/">git</a>
+(use <a class="reference external" href="http://msysgit.github.io/">msys git</a> on Windows).
+<a class="reference external" href="http://git-scm.com/book/en/Getting-Started-First-Time-Git-Setup">Introduction</a></p></li>
+<li><p><a class="reference external" href="http://www.python.org/download/releases/2.7/">python</a>
+with <a class="reference external" href="http://stackoverflow.com/questions/4750806/how-to-install-pip-on-windows">pip</a>
+(Python 3 is not yet supported by Google Appengine)</p></li>
+<li><p><a class="reference external" href="https://developers.google.com/appengine/downloads">google appengine</a></p></li>
+<li><p><a class="reference external" href="http://pydoit.org/">doit</a> (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">doit</span></code>)</p></li>
+<li><p><a class="reference external" href="http://pytest.org/latest/">pytest</a> for testing  (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">pytest</span></code>)</p></li>
+</ul>
+<p>and optionally</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://sphinx-doc.org/latest/install.html">sphinx</a> if you want to use restructured text (rst)
+(<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">sphinx</span></code>).</p></li>
+<li><p>latex (use <a class="reference external" href="http://miktex.org/">miktex</a> on Windows) for sphinx plugins
+(<a class="reference external" href="https://bitbucket.org/philexander/tikz">sphinxcontrib.tikz</a>,
+<a class="reference external" href="https://bitbucket.org/prometheus/sphinxcontrib-texfigure">sphinxcontrib.texfigure</a>).</p></li>
+<li><p><a class="reference external" href="http://nedbatchelder.com/code/coverage/">coverage</a> (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">coverage</span></code>)</p></li>
+</ul>
+<p>As browser Chrome has the best <a class="reference external" href="http://html5test.com/results/desktop.html">HTML5</a> support
+and a good debugging environment for Javascript.</p>
+<p>For editing use your editor of choice. It should allow you to execute selected python code
+(<a class="reference external" href="http://pydev.org/manual_adv_interactive_console.html">pydev</a>, <a class="reference external" href="http://www.vim.org/">vim</a>).</p>
+</div>
+<div class="section" id="get-started">
+<h1>Get Started<a class="headerlink" href="#get-started" title="Permalink to this headline">¶</a></h1>
+<p>Fork it on github.</p>
+<blockquote>
+<div><ul>
+<li><p>Use your browser to create a fork of Mamchecker on github</p></li>
+<li><p>On your local command prompt you <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span></code> your forked repository to a local folder
+(msys bash on Windows):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="o">--</span><span class="n">recursive</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">mamchecker</span><span class="o">/</span><span class="n">mamchecker</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<p>If you didn’t use <a class="reference external" href="http://stackoverflow.com/questions/3796927/how-to-git-clone-including-submodules">–recursive</a>
+you have to additionally do <a class="reference external" href="http://stackoverflow.com/questions/9493645/fork-github-repo-with-submodules">git submodule update –init –recursive</a>).</p>
+</li>
+</ul>
+</div></blockquote>
+<p>Add yourself as author.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Register yourself with an <code class="docutils literal notranslate"><span class="pre">author_id</span></code> in the sources in <code class="docutils literal notranslate"><span class="pre">authors.yaml</span></code>.
+<code class="docutils literal notranslate"><span class="pre">default_lang:</span> <span class="pre">en</span></code> influences the <code class="docutils literal notranslate"><span class="pre">doit</span></code> commands below.</p></li>
+<li><p>Create a folder (parallel to the existing <code class="docutils literal notranslate"><span class="pre">r</span></code> folder) named with your author id.</p></li>
+</ul>
+</div></blockquote>
+<p>Add exercises. To see how easy that is, look at the examples in the existing <code class="docutils literal notranslate"><span class="pre">r</span></code> folder.</p>
+<blockquote>
+<div><ul>
+<li><p>Add a folder in your authors folder and populate it with <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code>, <code class="docutils literal notranslate"><span class="pre">en.html</span></code>, …
+then edit. To do this use <code class="docutils literal notranslate"><span class="pre">doit</span></code>; it generates the next id and uses it to create a folder
+(see <code class="docutils literal notranslate"><span class="pre">nextids.yaml</span></code> and <code class="docutils literal notranslate"><span class="pre">dodo.py</span></code>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">doit</span> <span class="pre">-kd.</span> <span class="pre">new</span></code> will add a folder, then you would manually add the files</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">doit</span> <span class="pre">-kd.</span> <span class="pre">problem</span></code> adds a folder and <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;default_lang&gt;.html</span></code>,
+add <code class="docutils literal notranslate"><span class="pre">en.html</span></code> and possibly others manually. Remove <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code>, if there is no code involved.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">doit</span> <span class="pre">-kd.</span> <span class="pre">rst</span></code> adds a folder and <code class="docutils literal notranslate"><span class="pre">&lt;default_lang&gt;.rst</span></code>.
+After editing <code class="docutils literal notranslate"><span class="pre">doit</span> <span class="pre">-kd.</span> <span class="pre">html</span></code> will convert rst files to html.
+Generated files start with a underscore. Sphinx generates e.g. <code class="docutils literal notranslate"><span class="pre">_en.html</span></code> from <code class="docutils literal notranslate"><span class="pre">en.rst</span></code>.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">__init__.py</span></code> must provide the functions <code class="docutils literal notranslate"><span class="pre">given</span></code> and <code class="docutils literal notranslate"><span class="pre">calc</span></code> and
+optionally <code class="docutils literal notranslate"><span class="pre">norm</span></code>, <code class="docutils literal notranslate"><span class="pre">equal</span></code>, <code class="docutils literal notranslate"><span class="pre">points</span></code> and <code class="docutils literal notranslate"><span class="pre">names</span></code>
+(see <code class="docutils literal notranslate"><span class="pre">from_py</span></code> in <code class="docutils literal notranslate"><span class="pre">hlp.py</span></code> and examples in the <code class="docutils literal notranslate"><span class="pre">r</span></code>-folder).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;lang&gt;.html</span></code> is html and <code class="docutils literal notranslate"><span class="pre">{{'{{}}'}}</span></code>-enclosed or <code class="docutils literal notranslate"><span class="pre">%</span></code>-started python
+(<a class="reference external" href="http://bottlepy.org/docs/dev/stpl.html">SimpleTemplate</a>) just for the one exercise.
+Also use the template <code class="docutils literal notranslate"><span class="pre">getorshow</span></code> as done in the examples in the <code class="docutils literal notranslate"><span class="pre">r</span></code>-folder.
+The generated HTML will be enclosed in a <code class="docutils literal notranslate"><span class="pre">&lt;div&gt;</span></code>
+(see <code class="docutils literal notranslate"><span class="pre">inc</span></code> in <code class="docutils literal notranslate"><span class="pre">util.py</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;lang&gt;.rst</span></code> can use the roles <code class="docutils literal notranslate"><span class="pre">inl</span></code> for inlining and <code class="docutils literal notranslate"><span class="pre">lnk</span></code> to reference
+(see <code class="docutils literal notranslate"><span class="pre">inl.py</span></code> and look for examples in the <code class="docutils literal notranslate"><span class="pre">r</span></code>-folder).</p></li>
+<li><p>At the beginning of the language file have the following lines, where</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;kind&gt;</span></code> is one the language specific kind strings in <code class="docutils literal notranslate"><span class="pre">kind.py</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">level</span></code> must be last and means years starting from elementary school (1, 2, …)</p></li>
+</ul>
+<dl>
+<dt>for <code class="docutils literal notranslate"><span class="pre">&lt;lang&gt;.rst</span></code>::</dt><dd><div class="line-block">
+<div class="line"><br /></div>
+<div class="line">.. raw:: html</div>
+<div class="line"><br /></div>
+<div class="line-block">
+<div class="line">%path = “path/to/create/a/hierarchical/order”</div>
+<div class="line">%kind = kinda[“&lt;kind&gt;”]</div>
+<div class="line">%level = 0</div>
+<div class="line">&lt;!– html –&gt;</div>
+<div class="line"><br /></div>
+</div>
+<div class="line">.. role:: asis(raw)</div>
+<div class="line-block">
+<div class="line">:format: html latex</div>
+<div class="line"><br /></div>
+</div>
+</div>
+</dd>
+<dt>for <code class="docutils literal notranslate"><span class="pre">&lt;lang&gt;.html</span></code>::</dt><dd><div class="line-block">
+<div class="line"><br /></div>
+<div class="line-block">
+<div class="line">%path = “path/to/create/a/hierarchical/order”</div>
+<div class="line">%kind = kinda[“&lt;kind&gt;”]</div>
+<div class="line">%level = 9</div>
+<div class="line"><br /></div>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+<li><p>From above the mamchecker folder (where app.yaml is) do <code class="docutils literal notranslate"><span class="pre">dev_appserver</span> <span class="pre">mamchecker</span></code>
+and test your exercise on the browser (<code class="docutils literal notranslate"><span class="pre">http://localhost:8080/en/?&lt;yourid&gt;.&lt;problemid&gt;</span></code>).
+Check different nonsense,  almost correct and correct inputs.</p></li>
+</ul>
+</div></blockquote>
+<p>Ready for commit.</p>
+<blockquote>
+<div><blockquote>
+<div><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">doit</span> <span class="pre">-kd.</span> <span class="pre">initdb</span></code> must be executed to generate <code class="docutils literal notranslate"><span class="pre">initdb.py</span></code>, which
+creates the content overview page. If you have <code class="docutils literal notranslate"><span class="pre">rst</span></code> files, do <code class="docutils literal notranslate"><span class="pre">doit</span> <span class="pre">-kd.</span> <span class="pre">html</span></code> first.</p></li>
+<li><p>On your local command prompt in the mamchecker folder do</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">status</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">diff</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span> <span class="pre">-am</span> <span class="pre">&quot;what</span> <span class="pre">you</span> <span class="pre">did&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span></code> to your github repository</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<ul>
+<li><p>There is a test script which you can start locally. In your command prompt where <code class="docutils literal notranslate"><span class="pre">dodo.py</span></code> is
+do:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">doit</span> <span class="pre">test</span></code>.</p></li>
+</ul>
+</div></blockquote>
+<p>This tests more than is needed, if you only added an exercise.
+But do it, if you have made other changes in code.</p>
+</li>
+</ul>
+</div></blockquote>
+<p>Add your contribution to the main repository.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>In the browser you create a <strong>pull request</strong>.
+This way all contributions come together.</p></li>
+</ul>
+</div></blockquote>
+</div>

@@ -1,0 +1,118 @@
+%path = "maths/vectors"
+%kind = kinda["texts"]
+%level = 11
+<!-- html --><div class="section" id="vectors">
+<h1>Vectors<a class="headerlink" href="#vectors" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="what-is-a-vector">
+<h2>What is a Vector?<a class="headerlink" href="#what-is-a-vector" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>A <strong>multidimensional vector</strong> can be seen as independently choosing (value)
+from more variables (categories, quantities, dimensions).</p>
+<p>The values (number+unit) must be <strong>addable</strong> independently.</p>
+<p>The units are the <strong>unit vectors</strong>. Together they form the <strong>basis</strong>
+and are therefore also called <strong>basis vectors</strong>.</p>
+<p>The choice from one variable is a vector, too, a <strong>one-dimensional</strong> vector.</p>
+<p>The whole vector can be multiplied by a number, the <strong>scalar</strong>, and yields a vector again.</p>
+</div></blockquote>
+<p>Example:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>If I go into a shop, then the products there are my vector space
+(coordinate system, CS) and my shopping basket is a vector, i.e. a fixing
+of the value (how much?) of each variable (here product).</p></li>
+<li><p>If my wife went shopping, too, then the baskets add up independently at home,
+i.e. milk + milk, butter + butter, …</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="coordinate-transformation">
+<h2>Coordinate Transformation<a class="headerlink" href="#coordinate-transformation" title="Permalink to this headline">¶</a></h2>
+<p>A matrix transforms a vector from one coordinate system to a vector of another
+coordinate system.  Therefore we learn first about vectors. The matrix comes
+into play, when we want to change from one coordinate system to another.</p>
+<p>Example</p>
+<blockquote>
+<div><p>If we see the ingredients of a set of cake recipes as vector space, then
+every cake <span class="math notranslate nohighlight">\(z\)</span> is a vector of the <em>ingredient vector space</em>, i.e. we
+independently choose (value <span class="math notranslate nohighlight">\(z_i\)</span>) from each ingredient (variable <span class="math notranslate nohighlight">\(i\)</span>) (0
+for not used at all).</p>
+<p>If we only look at the cakes, then a choice from them is a vector <span class="math notranslate nohighlight">\(k\)</span>
+in the <em>cake vector space</em>. Every <span class="math notranslate nohighlight">\(k_j\)</span> is the number of cakes of kind <span class="math notranslate nohighlight">\(j\)</span>.</p>
+<p>When going from the cakes to the ingredients mathematically one does a
+coordinate transformation. To get the total amount of ingredient <span class="math notranslate nohighlight">\(z_i\)</span> one
+needs to multiply the number of every cake <span class="math notranslate nohighlight">\(k_j\)</span> with the amount of
+ingredient <span class="math notranslate nohighlight">\(i\)</span> for that cake. This is a matrix multiplication.</p>
+<p><span class="math notranslate nohighlight">\(z = ZK \cdot k = \sum_j ZK_{ij}k_j\)</span></p>
+<p>In <span class="math notranslate nohighlight">\(ZK\)</span> every column is a recipe, i.e. the ingredients (<strong>components</strong>) for cake <span class="math notranslate nohighlight">\(j\)</span>.</p>
+<p>To obtain the price <span class="math notranslate nohighlight">\(p\)</span> in the <em>price vector space</em>, i.e. what is the cost
+of all ingredients for a set of cakes, we multiply again</p>
+<p><span class="math notranslate nohighlight">\(p = PZ \cdot z = PZ_{1i} z_i\)</span></p>
+<p><span class="math notranslate nohighlight">\(PZ\)</span> is a matrix with one row. The number of rows is the dimension of the
+target vector space.</p>
+</div></blockquote>
+</div>
+<div class="section" id="how-do-we-notate-vectors">
+<h2>How do we notate vectors?<a class="headerlink" href="#how-do-we-notate-vectors" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>As column of numbers <span class="math notranslate nohighlight">\(\vec{x}=\begin{pmatrix}x_1\\x_2\end{pmatrix}\)</span>
+The unit vectors, i.e. what the rows mean, one specifies separately.</p></li>
+<li><p>Written explicitly with units: <span class="math notranslate nohighlight">\(\vec{x}=x_1\vec{e_1}+x_2\vec{e_2}\)</span>
+(3 milk + 5 butter). If without arrow, then the superscript index
+normally mean the scalar (number) and the subscript index the unit
+(dimension, direction): <span class="math notranslate nohighlight">\(x=x^1e_1+x^2e_2\)</span>.</p></li>
+</ul>
+<p>Notation is not the vector itself.</p>
+</div>
+</div>
+<div class="section" id="vector-operations">
+<h1>Vector Operations<a class="headerlink" href="#vector-operations" title="Permalink to this headline">¶</a></h1>
+<div class="figure">
+<p><img src="_images/tikz-67ea466ddcc69dee8236e8d23bab2cbff8cd84c2.png" alt="\coordinate (0) at (0,0);
+\coordinate (A) at (1,3);
+\coordinate (B) at (4,2);
+\coordinate (C) at (2,1);
+\tikzset{-&gt;}
+\draw[black,very thick] (0) -- (A) node [midway,left]{$\vec{x}$};
+\draw[black,very thick] (0) -- (B) node [near end,right,below]{$\vec{y}$};
+\draw[black,very thin]  (0) -- (C) node [midway,right,below]{$x_y$};
+\draw[-,thin] (A) -- (C) node [midway,right]{$x_{\perp y}$};" /></p>
+</div><p>Apart from addition there are to other important vector operations.</p>
+<ul>
+<li><p><strong>dot-product (scalar product)</strong>. It yields a number (scalar) that represents the dependence
+or with how much independence one can choose values.</p>
+<div class="math notranslate nohighlight">
+\[\vec{x}\vec{y}=x_yy=y_xx=x_1y_1+x_2y_2\]</div>
+<ul class="simple">
+<li><p>Orthogonal vectors result in 0.</p></li>
+<li><p>For parallel vectors it is the product of the lengths.
+The length of a vector <span class="math notranslate nohighlight">\(\vec{x}\)</span> is thus <span class="math notranslate nohighlight">\(\sqrt{\vec{x}\vec{x}}\)</span>
+The length is denoted as <span class="math notranslate nohighlight">\(|\vec{x}|\)</span> or simply <span class="math notranslate nohighlight">\(x\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\vec{x_o}=\frac{\vec{x}}{x}\)</span> is the unit vector (length 1 in the direction of <span class="math notranslate nohighlight">\(\vec{x}\)</span>)</p></li>
+<li><p>The dot-product defines an angle between two vectors: <span class="math notranslate nohighlight">\(\cos\alpha = \frac{\vec{x}\vec{y}}{xy}\)</span></p></li>
+</ul>
+</li>
+<li><p><strong>Vector product or cross product</strong>. For a dimension <span class="math notranslate nohighlight">\(= 3\)</span> it produces
+a vector orthogonal to <span class="math notranslate nohighlight">\(\vec{x}\)</span> and <span class="math notranslate nohighlight">\(\vec{y}\)</span> and of length equal to the area
+of the parallelogram created by the two vectors.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\vec{x}\times\vec{y}=x_{\perp y}y=y_{\perp x}x=
+\begin{vmatrix}
+\vec{e_1} &amp; \vec{e_2} &amp; \vec{e_3} \\
+x_1 &amp; x_2 &amp; x_3 \\
+y_1 &amp; y_2 &amp; y_3
+\end{vmatrix}\end{split}\]</div>
+<p>If <span class="math notranslate nohighlight">\(\vec{x}\)</span> and <span class="math notranslate nohighlight">\(\vec{y}\)</span> are two-dimensional, then only the <span class="math notranslate nohighlight">\(\vec{e_3}\)</span> component of
+<span class="math notranslate nohighlight">\(\vec{x}\times\vec{y}\)</span> is different from 0. It is
+<span class="math notranslate nohighlight">\(\begin{vmatrix}
+x_1 &amp; x_2 \\
+y_1 &amp; y_2
+\end{vmatrix}=
+\begin{vmatrix}
+x_1 &amp; y_1 \\
+x_2 &amp; y_2
+\end{vmatrix}\)</span>
+Compare this to: Determinant of 3 vectors in the 3D space are the volume of the parallelepiped
+created by the three vectors.</p>
+</li>
+</ul>
+</div>

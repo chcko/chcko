@@ -1,0 +1,21 @@
+%path = "Mathematik/Funktionen/Integral von 1÷z"
+%kind = kinda["Texte"]
+%level = 12
+<!-- html --><p>Aus der reellen Analysis wissen wir, dass
+<span class="math notranslate nohighlight">\(\frac{dy}{dx}=\frac{d\,e^x}{dx}=e^x=y\)</span>, weswegen die Umkehrung
+<span class="math notranslate nohighlight">\(\frac{dx}{dy}=\frac{d\,\ln y}{dy}=\frac{1}{y}\)</span> für <span class="math notranslate nohighlight">\(y&gt;0\)</span>.  Für die
+Stammfunktion von <span class="math notranslate nohighlight">\(\frac{1}{y}\)</span> kann man auch negative <span class="math notranslate nohighlight">\(y\)</span> mit einschließen,
+wenn man den Betrag nimmt: <span class="math notranslate nohighlight">\(\int\frac{1}{y}dy=ln|y|+C\)</span>.  Das ergibt sich aus der
+Symmetrie von <span class="math notranslate nohighlight">\(\frac{1}{y}\)</span>.  Bei 0 besteht eine Singularität, d.h. man kann dort nicht
+darüber integrieren.</p>
+<p>In <span class="math notranslate nohighlight">\(\mathbb{C}\)</span> ist <span class="math notranslate nohighlight">\(e^z=e^{x+iy}=e^xe^{iy}\)</span>,
+d.h. der Realteil wird Betrag <span class="math notranslate nohighlight">\(e^x\)</span> und der Imaginärteil wird Argument des Wertes.
+Daher kommt auch die Periode <span class="math notranslate nohighlight">\(2\pi i\)</span> entlang der imaginären Achse.
+Die Stammfunktion von <span class="math notranslate nohighlight">\(\frac{1}{z}\)</span> ist die Umkehrfunktion von <span class="math notranslate nohighlight">\(e^z\)</span>,
+d.h. der Betrag wird Realteil <span class="math notranslate nohighlight">\(ln|z|\)</span> und das Argument wird Imaginärteil:</p>
+<p><span class="math notranslate nohighlight">\(\int \frac{1}{z}dz=ln|z|+i\arg(z)+C\)</span>.</p>
+<p>In <span class="math notranslate nohighlight">\(\mathbb{C}\)</span> kann man um die Singularität herum integrieren:</p>
+<div class="math notranslate nohighlight">
+\[\oint_{|z|=1}\frac{1}{z}dz =
+(\ln|z| + i\arg z)\bigr|_{\arg z=0,\,|z|=1}^{\arg z=2\pi,\,|z|=1} = 2\pi i\]</div>
+<p>Das ist ein Vorläufer des Residuensatzes.</p>

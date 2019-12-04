@@ -1,0 +1,11 @@
+% for anc in util.all_of(user):
+    % cntxt = [not users and '<em>'+an.string_id()+'</em>' or an.string_id() for an,users in anc]
+    <p>
+    <a href="/{{ request.lang }}/todo?{{!keyparams(anc[-1][0])}}">
+        {{!' &nbsp;&nbsp; '.join(cntxt)}}
+    </a>
+    <p>
+% end
+
+% include('main')
+

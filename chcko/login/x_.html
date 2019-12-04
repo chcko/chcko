@@ -1,0 +1,36 @@
+% if failed:
+
+<strong>{{tfail}}</strong> {{tcheckagain}}
+
+% end
+
+<script>
+    function validate() {
+        var username = document.login.username.value;
+        if (username == "") {
+            alert("{{tusername}}");
+            return false;
+        }
+        var password = document.login.password.value;
+        if (password == "") {
+            alert("{{tpassword}}");
+            return false;
+        }
+        return true;
+    }
+</script>
+
+<form method="POST" name=login onsubmit='return validate()'>
+<label for="username">{{tusername}}</label>
+<input type="text" value="{{ username }}" name="username"/><br>
+<label for="password">{{tpassword}}</label>
+<input type="password" name="password"/><br>
+<input type="submit" value="{{tlogin}}"/>
+</form>
+
+% if email_enabled:
+<a href="/{{request.lang}}/forgot">{{tforgot}}</a><br>
+% end
+<a href="/{{request.lang}}/signup">{{tsignup}}</a>
+
+% include('main')

@@ -1,0 +1,109 @@
+%path = "Mathematik/Funktionen/exponentiell"
+%kind = kinda["Übungen"]
+%level = 11
+<!-- html --><div class="section" id="grundlegendes">
+<h1>Grundlegendes<a class="headerlink" href="#grundlegendes" title="Permalink to this headline">¶</a></h1>
+<p>In der <strong>exponentiellen Funktion</strong></p>
+<div class="math notranslate nohighlight">
+\[y = a^x\]</div>
+<p>nennen wir</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(x\)</span> den <strong>Exponenten</strong></p></li>
+<li><p><span class="math notranslate nohighlight">\(a\)</span> die <strong>Basis</strong></p></li>
+<li><p><span class="math notranslate nohighlight">\(y\)</span> die <strong>exponentielle Funktion</strong> von <span class="math notranslate nohighlight">\(x\)</span> zur Basis <span class="math notranslate nohighlight">\(a\)</span></p></li>
+</ul>
+<p>Der <strong>Exponent</strong> sagt, wie oft die <em>Multiplikation</em> mit <span class="math notranslate nohighlight">\(a\)</span> wiederholt wird.
+<span class="math notranslate nohighlight">\(a\)</span> muss eine positive reelle Zahl sein : <span class="math notranslate nohighlight">\(a\in\mathbb{R}\)</span>.</p>
+<div class="admonition-multiplikaton admonition">
+<p class="admonition-title">Multiplikaton</p>
+<p>Multiplikation ist eine Operation der realen Welt, die als
+Zahl codiert wird. In der Zahlenmenge <span class="math notranslate nohighlight">\(\mathbb{Q}\)</span>
+ist die Operation Teil der Zahl: <span class="math notranslate nohighlight">\(2\)</span> meint <span class="math notranslate nohighlight">\(\cdot 2\)</span> und <span class="math notranslate nohighlight">\(1/2\)</span> meint <span class="math notranslate nohighlight">\(/2\)</span>.
+Das Zeichen <span class="math notranslate nohighlight">\(\cdot\)</span> steht für die Multiplikation und <span class="math notranslate nohighlight">\(/\)</span> steht für die umgekehrte (inverse)
+Operation, die Division, welche mit der Einbindung der Brüche in <span class="math notranslate nohighlight">\(\mathbb{Q}\)</span> Teil der Zahl wurde.
+Also sprechen wir nur mehr von Multiplikation und meinen die Anwendung
+der Operation aus <span class="math notranslate nohighlight">\(\mathbb{Q}\subset\mathbb{R}\)</span>.</p>
+</div>
+<p>Wenn <span class="math notranslate nohighlight">\(a\)</span> größer als <span class="math notranslate nohighlight">\(1\)</span> ist, dann wächst <span class="math notranslate nohighlight">\(y\)</span> mit <span class="math notranslate nohighlight">\(x\)</span> <em>strikt monoton</em>: <span class="math notranslate nohighlight">\(x_1&lt;x_2 \Rightarrow y_1&lt;y_2\)</span>.</p>
+<div class="figure">
+<p><img src="_images/tikz-e9e6f1a445ab137a9fc7bf342a63780e0f23ea18.png" alt="\begin{axis}[grid=both,axis lines=middle,xmin=-3,xmax=3,ymin=0,ymax=8, samples=50]
+ \addplot[green]  {pow(2,x)} node[above]{$y=2^x$};
+\end{axis}" /></p>
+</div><p>Wenn <span class="math notranslate nohighlight">\(a\)</span> kleiner als <span class="math notranslate nohighlight">\(1\)</span> ist, dann fällt <span class="math notranslate nohighlight">\(y\)</span> mit <span class="math notranslate nohighlight">\(x\)</span> <em>strikt monoton</em>: <span class="math notranslate nohighlight">\(x_1&lt;x_2 \Rightarrow y_1&gt;y_2\)</span>.</p>
+<div class="figure">
+<p><img src="_images/tikz-d6c3eac40ee7e510d72da06f1d3706f6be24d115.png" alt="\begin{axis}[grid=both,axis lines=middle,xmin=-3,xmax=3,ymin=0,ymax=8, samples=50]
+ \addplot[green]  {pow(1/2,x)} node[above]{$y=(\frac{1}{2})^x$};
+\end{axis}" /></p>
+</div></div>
+<div class="section" id="diskussion">
+<h1>Diskussion<a class="headerlink" href="#diskussion" title="Permalink to this headline">¶</a></h1>
+<p>Vergleichen wir die Anzahl der Wertekombinationen von <span class="math notranslate nohighlight">\(n\)</span> bits:</p>
+<div class="math notranslate nohighlight">
+\[2^n\]</div>
+<p>mit dem Wachstumsprozess, wie etwa das Anwachsen des Kapitals mit der jährlichen Verzinsung</p>
+<div class="math notranslate nohighlight">
+\[(1+\frac{i}{100})^n\]</div>
+<p>oder das besonders interessante natürliche Wachstum</p>
+<div class="math notranslate nohighlight">
+\[e^x = \lim_{n-&gt;\infty}(1+\frac{1}{n})^{nx} =
+\lim_{m-&gt;\infty}(1+\frac{x}{m})^m = (1+\frac{x}{\infty})^\infty\]</div>
+<p><span class="math notranslate nohighlight">\(e\)</span> ist <a class="reference external" href="https://de.wikipedia.org/wiki/Eulersche_Zahl">Eulersche Zahl</a>
+deren Bedeutung auf dem gegebenen Zusammenhang beruht.</p>
+<p>Der Schlüssel zum Vestehen der Gemeinsamkeiten steckt in der Interpretation
+von <strong>Information</strong> als Wachstumsprozess.
+Jedes Bit vergößert um <span class="math notranslate nohighlight">\(1\)</span> Mal die vorhandene Anzahl von Wertekombinationen.</p>
+<p>Notieren wir diesen Aspekt des Bits mit <span class="math notranslate nohighlight">\((1+1)\)</span>, um zu betonen, dass <span class="math notranslate nohighlight">\(1\)</span> dazu kommt.
+Die Klammern machen den Ausdruck zu einem Operator, einem Element der Zahlenmenge <span class="math notranslate nohighlight">\(\mathbb Q\)</span>.
+<span class="math notranslate nohighlight">\(n\)</span> wiederholte Anwendungen von <span class="math notranslate nohighlight">\((1+1)\)</span> erzeugen eine Vielzahl der Größe</p>
+<div class="math notranslate nohighlight">
+\[(1+1)^n = 2^n\]</div>
+<p>Jedes Bit wird zur bestehenden Menge von Wertekombinationen “dazuverzinst”.</p>
+<p>Das Informationmaß einer realen Variablen der Größe <span class="math notranslate nohighlight">\(C\)</span> ist die Anzahl
+<span class="math notranslate nohighlight">\(n=\log_2 C\)</span> Bits, die notwendig sind, damit wir auf <span class="math notranslate nohighlight">\(C\)</span> Kombinationen kommen.</p>
+<div class="admonition-vergleich-mit-welcher-anderen-variablen admonition">
+<p class="admonition-title">Vergleich mit welcher anderen Variablen?</p>
+<p>Statt Bits könnten wir ebensogut die betrachtete Variable selbst nehmen,
+weil diese ist physikalisch present. Kombinationen sind aber auch
+physikalisch und auch die Auswahl von Werten, welche letztendlich Veriablen
+erzeugt, ist ein physicalischer Prozess.  Die Anzahl der beteiligten
+Variablen spielt dabei eine Rolle. Das bedeutet erstens, dass Information
+physikalisch ist und zweitens, in Hinsicht auf die Quantenmechanik, dass die
+Anzahl der beteiligten Variablen immens groß ist und die individuellen
+Beiträge minimal sind.</p>
+</div>
+<p>Wenn wir von der <em>Anzahl an Variablen</em> starten, dann gibt uns die
+<em>Exponentialfunktion</em> die <em>Anzahl and Wertekombinationen</em>. Wenn wir von der
+<em>Anzahl der Werte</em> starten, dann gibt uns der <em>Logarithmus</em> die <em>Anzahl der
+Variablen</em>, die zur Wertegenerierung notwendig ist.</p>
+<p>Bei der <strong>Zinsrechnung</strong> schauen wir auf die Geldmenge (die <span class="math notranslate nohighlight">\(1\)</span>),
+welche auf der Bank <span class="math notranslate nohighlight">\(i\)</span> Prozent zinsen abgibt.
+In <span class="math notranslate nohighlight">\(n\)</span> Jahren wächst die <span class="math notranslate nohighlight">\(1\)</span> zu</p>
+<div class="math notranslate nohighlight">
+\[(1+i/100)^n = q^n\]</div>
+<p>Der <em>Wachstumsfaktor</em> <span class="math notranslate nohighlight">\(q\)</span> ist nicht <span class="math notranslate nohighlight">\(2\)</span>, sondern normalerweise nur etwas über <span class="math notranslate nohighlight">\(1\)</span>. Das
+“Informationsmaß” in diesem finanziellen Kontext würde die Anzahl
+der Jahre sein.</p>
+<p>Der essentielle Unterschied bezüglich den Bits
+ist, dass, was hinzugefügt wird, ein <em>Bruchteil</em> von dem ist, was da ist.
+Aber ob Bruchteil oder nicht ist nur ein Frage der Einheit.</p>
+<p>Die Einheiten von Lebewesen sind Zellen und die ultimativen Einheiten der
+realen Welt sind Quanten.  Beide sind sehr klein im Vergleich zu den Dingen
+unserer täglichen Wahrnehmung.  Mit solchen kleinen Einheiten können wir auch
+beliebig oft (= unendlich oft) “verzinsen”:</p>
+<div class="math notranslate nohighlight">
+\[\lim_{m-&gt;\infty}(1+\frac{x}{m})^m = \lim_{n-&gt;\infty}(1+\frac{1}{n})^{nx} = e^x\]</div>
+<p>In der ersteren Gleichung können wir sehen, dass wir mit dem Verändern der
+<em>Verzinsungsschritte</em> auch die <em>Wachstumsfaktor</em> verändern. Wegen der
+Bedeutung von <span class="math notranslate nohighlight">\(e^x\)</span> wird der Wachstumsfactor <span class="math notranslate nohighlight">\(q\)</span> in <span class="math notranslate nohighlight">\(y=q^n\)</span> oft zum Exponenten von <span class="math notranslate nohighlight">\(e\)</span>
+verlegt (<span class="math notranslate nohighlight">\(y=e^{kx}\)</span>).  <span class="math notranslate nohighlight">\(k = \ln q\)</span> heißt dann <em>Wachstumskonstante</em>.</p>
+<div class="admonition-naturliche-verzinsung-in-der-finanzwelt admonition">
+<p class="admonition-title">Natürliche Verzinsung in der Finanzwelt</p>
+<p>Auch in der finanziellen Welt sind die tatsächlichen
+Verzinsungsschritte sehr klein. Aber die Bank gibt sie ihren Kunden in
+größeren Zeiteinheiten weiter.</p>
+</div>
+<p><span class="math notranslate nohighlight">\(x\)</span> ist die Information in der <strong>natürlichen Informationseinheit</strong>
+<a class="reference external" href="https://de.wikipedia.org/wiki/Nit_(Informationseinheit)">nat</a>.
+Im Pinzip teilen wir dabei eine Variable in unendliche viele undendlich kleine Variablen auf,
+so dass der Wachstumsfaktor pro Schritt beinahe bei <span class="math notranslate nohighlight">\(1\)</span> liegt.</p>
+</div>

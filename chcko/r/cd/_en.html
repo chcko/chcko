@@ -1,0 +1,88 @@
+%path = "maths/finance/interest"
+%kind = kinda["texts"]
+%level = 10
+<!-- html --><p><span class="math notranslate nohighlight">\(K\)</span> Capital</p>
+<blockquote>
+<div><p>An amount of money.</p>
+</div></blockquote>
+<p><span class="math notranslate nohighlight">\(i\)</span> Interest rate</p>
+<blockquote>
+<div><p>The increase or decrease of capital <span class="math notranslate nohighlight">\(K\)</span> is notated in percent %=1/100.</p>
+<ul class="simple">
+<li><p>interest value: <span class="math notranslate nohighlight">\(3\% K = 0.03 K\)</span>.</p></li>
+<li><p>increase : <span class="math notranslate nohighlight">\(K + 3\% K = (1+3\%) K = 1.03 K\)</span>.</p></li>
+<li><p>decrease : <span class="math notranslate nohighlight">\(K - 3\% K = (1-3\%) K = 0.97 K\)</span>.</p></li>
+</ul>
+</div></blockquote>
+<p><span class="math notranslate nohighlight">\(n\)</span> Period (Year/Quarter/Month/Day)</p>
+<blockquote>
+<div><p>The interest rate <span class="math notranslate nohighlight">\(i\)</span> always refers to a time period, in which the increase or decrease
+takes place (is compounded)</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(i\)</span> normally refers to a full year (annual interest rate, effective annual interest rate)</p></li>
+<li><p><span class="math notranslate nohighlight">\(i_{12}\)</span> is a monthly interest rate</p></li>
+<li><p><span class="math notranslate nohighlight">\(i_4\)</span> is a quarterly interest rate</p></li>
+</ul>
+<p>After this time period <span class="math notranslate nohighlight">\(K\)</span> has grown by <span class="math notranslate nohighlight">\(iK\)</span>, i.e. <span class="math notranslate nohighlight">\(K_{n=1} = K_0 (1+i) = K_0 q\)</span> (q = 1+i).</p>
+</div></blockquote>
+<p>Compound interest</p>
+<blockquote>
+<div><p>After one period the capital becomes <span class="math notranslate nohighlight">\(K_{n=1} = K_0 (1+i) = K_0 q\)</span>,
+after n=2 periods <span class="math notranslate nohighlight">\(K_0 q^2\)</span>, after n=3 periods <span class="math notranslate nohighlight">\(K_0 q^3\)</span>…</p>
+<p>After n periods:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(K_n = K_0 q^n\)</span></p></li>
+<li><p>compound interests: multiply the starting capital (principal) with <span class="math notranslate nohighlight">\(q^n\)</span>
+to get the value <span class="math notranslate nohighlight">\(n\)</span> periods later.</p></li>
+<li><p>discount interests: multiply the capital with <span class="math notranslate nohighlight">\(q^{-n}\)</span> to get the value <span class="math notranslate nohighlight">\(n\)</span> periods earlier.</p></li>
+</ul>
+</div></blockquote>
+<p>Annuity</p>
+<blockquote>
+<div><p>An annuity is a payment <span class="math notranslate nohighlight">\(r\)</span> in regular time periods.
+The number of periods for the annuity depends on the payment.
+The accrued payments make up the lump-sum. This is the pension or <strong>annuity formula</strong>:</p>
+<p><span class="math notranslate nohighlight">\(R_n = \sum_{m=0}^{n-1} r_m = \sum_{m=0}^{n-1} r q^m = r \frac{q^n - 1}{q-1}\)</span></p>
+<p>The formula can be used to calculate the <strong>future value</strong> (FV)`R_n`
+when the interests are compounded at the end of the periods.</p>
+<p>Annuity due is when compounded at the beginning: <span class="math notranslate nohighlight">\(R_n^v = q R_n\)</span></p>
+<p>The <strong>present value</strong> (PV) of an annuity is obtained by discounting from the FV:
+<span class="math notranslate nohighlight">\(B_n = R_n q^{-n}\)</span>.</p>
+</div></blockquote>
+<p>Compounding periods smaller than a year</p>
+<blockquote>
+<div><p>To compare the effective annual rate of interest with the rate for the period one converts the rates.</p>
+<p>In a linear conversion we use when there is no compounding taking place</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(i_{12} = i/12\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(i_4 = i/4\)</span></p></li>
+</ul>
+<p>With compounding the effective annual interest rate is calculated with the <strong>conformal</strong> conversion:
+Effective <span class="math notranslate nohighlight">\(i_{eff}\)</span> distinguishes from nominal interest rate <span class="math notranslate nohighlight">\(i\)</span>.</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(i_{eff} = (i_{12} + 1)^{12} - 1\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(i_{eff} = (i_4 + 1)^4 - 1\)</span></p></li>
+</ul>
+<p>Normally the annual interest rate is given.
+For a monthly or quarterly compounding this first needs to be converted.</p>
+</div></blockquote>
+<p>Annuity rest</p>
+<blockquote>
+<div><p>To calculate the remaining value of the annuity at a certain time
+one subtracts the future value of the annuity for that time from
+the capital value for that time.</p>
+</div></blockquote>
+<p>Convert one annuity to another</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>First one finds the future value <span class="math notranslate nohighlight">\(R_n\)</span>.</p></li>
+<li><p>This <span class="math notranslate nohighlight">\(R_n\)</span> needs to be compounded to the end of the other annuity.</p></li>
+<li><p>Using the annuity formula one can calculate the requested quantity (<span class="math notranslate nohighlight">\(n\)</span>, <span class="math notranslate nohighlight">\(q\)</span>, <span class="math notranslate nohighlight">\(r\)</span>)
+of the new annuity.</p></li>
+</ul>
+</div></blockquote>
+<p>Comparison of capitals or offers</p>
+<blockquote>
+<div><p>To compare values one must first compound their values to the same time
+(time-value, e.g. present value) using the compounding or annuity formulas.</p>
+</div></blockquote>

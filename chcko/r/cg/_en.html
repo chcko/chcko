@@ -1,0 +1,70 @@
+%path = "maths/vectors/transformation and inverse"
+%kind = kinda["texts"]
+%level = 11
+<!-- html --><div class="section" id="coordinate-transformation-and-inverse-matrix">
+<h1>Coordinate Transformation and Inverse Matrix<a class="headerlink" href="#coordinate-transformation-and-inverse-matrix" title="Permalink to this headline">¶</a></h1>
+<p>Though convenient it is not a necessity that the basis vectors are independent,
+i.e. orthogonal.</p>
+<p>As an example think of ingredients of cakes as a vector space (<em>ingedient vector space</em>).
+Then every cake is a vector, an independent choice from more variables,
+which in this case are the quantities for each ingredient (0 for not used at all).</p>
+<p>The ingredients can be regarded orthogonal to each other. The context does not
+ask for a detailed comparison. <em>The dot product is 0.</em></p>
+<p>Let’s compare the cakes in detail though via their ingredients.
+Cake A and cake B surely have ingredients in common.
+So the unit vectors in the <em>cake vector space</em> are not orthogonal to each other
+with this comparison. <em>The scalar product is not 0.</em></p>
+<p>A vector in the cake vector space (How many of each type of cake?) can be transformed
+to the ingredient vector space by multiplying with a matrix.
+Every column in the matrix is the recipe of one cake.</p>
+<p>In a matrix and vector written as a set of numbers, every number means
+something.  What it means is coded by the position the number takes.  This is
+called position coding. The same we do with our number system where the units,
+the tens, the hundreds,… have their own position.</p>
+<p>In this example the cake space and ingredient space do not necessarily need to
+have the same number of variables (number of variables = dimension).
+We can have 10 ingredients and
+3 types of cakes. Then the transformation matrix is 10x3 (10 rows, 3 columns).
+Such a <span class="math notranslate nohighlight">\(m\times n\)</span> matrix with <span class="math notranslate nohighlight">\(m\not = n\)</span> cannot be inverted,
+i.e. one cannot infer from the ingredients how many of each type of cake are baked.
+Said differently: Not for every combination of ingredients there
+is a combination of cakes (linear combination), which needs exactly that amount of ingredients.</p>
+<p>If we fix a number for each cake in a smaller assortment of cakes
+we use less information, i.e. we make fewer decisions,
+than in the bigger space of ingredients.</p>
+<p>If we change from one vector space to another with same dimensions,
+then we can get back to the starting one by multiplying with the <em>inverse matrix</em>.</p>
+<p>In order for the inverse to exist, in addition to being square, the
+columns/rows of the matrix must be <em>linearly independent</em>.  If not, then that
+is like effectively being in a smaller matrix (<em>rank of matrix</em>). For the
+cake example this means that every type of cake must have a different combination of
+ingredients, which is some extra information that distinguishes it from the
+others and that can be used to code something.</p>
+<div class="admonition-linear-independence admonition">
+<p class="admonition-title">Linear Independence</p>
+<p>A square matrix can be inverted, if columns (rows) cannot be expressed as
+linear combination of the others, i.e. the rank of the matrix is equal to
+its dimension.</p>
+</div>
+<p>One can calculate the inverse of a square Matrix by:</p>
+<ul class="simple">
+<li><p>leaving out the <span class="math notranslate nohighlight">\(ij\)</span> cross and calculate the determinant = Minor <span class="math notranslate nohighlight">\(M_{ij}\)</span></p></li>
+<li><p>change the sign, if <span class="math notranslate nohighlight">\(i+j\)</span> is odd</p></li>
+<li><p>transpose, i.e. mirror at the main diagonal
+(compare below: <span class="math notranslate nohighlight">\(ij\)</span> for <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(ji\)</span> for <span class="math notranslate nohighlight">\(M\)</span>)</p></li>
+<li><p>divide everything by the determinant</p></li>
+</ul>
+<p>Short:</p>
+<div class="math notranslate nohighlight">
+\[(A^{-1})_{ij} = \frac{1}{det(A)}(-1)^{i+j} M_{ji}\]</div>
+<p>Normally we write <span class="math notranslate nohighlight">\(\frac{1}{det(A)}\)</span> in front of the matrix,
+but it can be multiplied with every number of the matrix.</p>
+<p>For a <em>2x2 Matrix</em> <span class="math notranslate nohighlight">\(M_{ij}\)</span> is the diagonally opposite number.  Because of the
+transposing the numbers left bottom and right top (secondary diagonal) stay
+where they are, but the sign changes.  At the main diagonal the numbers get
+swapped, but since <span class="math notranslate nohighlight">\(i+j\)</span> is even the sign does not change.</p>
+<ul class="simple">
+<li><p>Main diagonal <span class="math notranslate nohighlight">\(\rightarrow\)</span> sign stays</p></li>
+<li><p>Secondary diagonal <span class="math notranslate nohighlight">\(\rightarrow\)</span> position stays</p></li>
+</ul>
+</div>

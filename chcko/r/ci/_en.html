@@ -1,0 +1,233 @@
+%path = "maths/numbers/NZQR long"
+%kind = kinda["texts"]
+%level = 9
+<!-- html --><div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#natural-numbers-mathbb-n" id="id1">Natural Numbers (<span class="math notranslate nohighlight">\(\mathbb{N}\)</span>)</a></p>
+<ul>
+<li><p><a class="reference internal" href="#zero" id="id2">Zero</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#the-integers-mathbb-z-and-the-addition" id="id3">The Integers <span class="math notranslate nohighlight">\(\mathbb{Z}\)</span> and the Addition</a></p></li>
+<li><p><a class="reference internal" href="#the-integers-mathbb-z-and-multiplication" id="id4">The Integers <span class="math notranslate nohighlight">\(\mathbb{Z}\)</span> and Multiplication</a></p></li>
+<li><p><a class="reference internal" href="#multiplication-und-die-rationalen-numbers-mathbb-q" id="id5">Multiplication und die Rationalen Numbers (<span class="math notranslate nohighlight">\(\mathbb{Q}\)</span>)</a></p></li>
+<li><p><a class="reference internal" href="#mathbb-r-as-extension-with-the-irrational-numbers-mathbb-i" id="id6"><span class="math notranslate nohighlight">\(\mathbb{R}\)</span> as extension with the irrational numbers <span class="math notranslate nohighlight">\(\mathbb{I}\)</span></a></p></li>
+</ul>
+</div>
+<p>This is not a first introduction to number,
+but a discussion and interpretation with links to further resources
+and an emphasis on algorithmic aspects ({{!util.a("r.cp")}}).</p>
+<div class="section" id="natural-numbers-mathbb-n">
+<h1><a class="toc-backref" href="#id1">Natural Numbers (<span class="math notranslate nohighlight">\(\mathbb{N}\)</span>)</a><a class="headerlink" href="#natural-numbers-mathbb-n" title="Permalink to this headline">¶</a></h1>
+<p>The natural numbers are the real numbers in the sense that they represent a
+count. All other sets of numbers have additional information or are quite
+different altogether</p>
+<p>The <strong>count</strong> is a real variable, which specifies the <strong>cardinality</strong> of a set.
+A value of this variable, like three, means three things.
+Further properties are not considered, they are abstracted away.
+That is why every natural number can be seen as <strong>equivalence class</strong> ({{!util.a("r.co")}}).</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>In mathematics one makes a further distinction: <strong>cardinal numbers</strong> as above
+and <strong>ordinal numbers</strong> to specify the order.</p>
+</div>
+<p>The intuitive idea of <span class="math notranslate nohighlight">\(\mathbb{N}\)</span> is formalized with the
+<a class="reference external" href="http://de.wikipedia.org/wiki/Peano-Axiome">Peano Axioms</a>.</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>Essentially <span class="math notranslate nohighlight">\(\mathbb{N}\)</span> is a construction
+of an ordered multitude (0 with successors),
+to address values of other variables (like count),
+just like words address concepts.</p>
+</div>
+<div class="section" id="zero">
+<h2><a class="toc-backref" href="#id2">Zero</a><a class="headerlink" href="#zero" title="Permalink to this headline">¶</a></h2>
+<p>Zero was a great invention for the number representation, which the roman
+system did not yet have. In general one can now include variables, even if they
+are not there every time. This often helps to generalize description. As an
+example in 103 the position coded tens variable is there, even if there is no
+ten grouping in the number ({{!util.a("r.cn")}}). Another example are vectors
+({{!util.a("r.cg")}}).</p>
+</div>
+</div>
+<div class="section" id="the-integers-mathbb-z-and-the-addition">
+<h1><a class="toc-backref" href="#id3">The Integers <span class="math notranslate nohighlight">\(\mathbb{Z}\)</span> and the Addition</a><a class="headerlink" href="#the-integers-mathbb-z-and-the-addition" title="Permalink to this headline">¶</a></h1>
+<p><span class="math notranslate nohighlight">\(\mathbb{Z}\)</span> is more than the count.</p>
+<p>As motivation for the integers one can add to every element of <span class="math notranslate nohighlight">\(\mathbb{N}\)</span>
+a process or a direction. 2 is then not only the count 2,
+but has the additional information to add the 2 things (<span class="math notranslate nohighlight">\(2 = {2,+} = +2\)</span>).</p>
+<p>If you understand <span class="math notranslate nohighlight">\(\mathbb{N}\)</span> already associated with a process
+or direction, then it is a good idea to extend this to include
+the same values but the undoing process or counter direction
+to get back to the original situation. This way one intuitively comes
+to the integers <span class="math notranslate nohighlight">\(\mathbb{Z}\)</span>.</p>
+<p><span class="math notranslate nohighlight">\(+\)</span> means to add and <span class="math notranslate nohighlight">\(-\)</span> means to subtract, but that can change.
+The <span class="math notranslate nohighlight">\(+\)</span> is often dropped, but it must be implicitly assumed,
+because an integer is not the same thing as a natural number.
+It has additionally the reversible process or direction.</p>
+<p>If you understand only count with <span class="math notranslate nohighlight">\(\mathbb{N}\)</span>,
+then <span class="math notranslate nohighlight">\(\mathbb{Z}=\mathbb{N}\times\{+,-\}\)</span>.
+Then <span class="math notranslate nohighlight">\(\mathbb{N}\)</span> is not a subset of <span class="math notranslate nohighlight">\(\mathbb{Z}\)</span>, but an
+<a class="reference external" href="http://en.wikipedia.org/wiki/Homomorphism">isomorph</a>
+<a class="reference external" href="http://en.wikipedia.org/wiki/Embedding">embedding</a>.</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>An formal introduction of <span class="math notranslate nohighlight">\(\mathbb{Z}\)</span>, starting from <span class="math notranslate nohighlight">\(\mathbb{N}\)</span> with as few new concepts
+as possible (no <span class="math notranslate nohighlight">\(+\)</span> und <span class="math notranslate nohighlight">\(-\)</span>), is via <strong>equivalence classes</strong> ({{!util.a("r.co")}})
+of number pairs <span class="math notranslate nohighlight">\((n,m)\)</span> from <span class="math notranslate nohighlight">\(\mathbb{N}\)</span> with the equivalence relation:
+<span class="math notranslate nohighlight">\((n_1,m_1)\sim(n_2,m_2)\equiv n_1+m_2=n_2+m_1\)</span>.
+In the canonical representation one number is 0. <span class="math notranslate nohighlight">\(+2 = (2,0)\)</span> und <span class="math notranslate nohighlight">\(-2 = (0,2)\)</span>.</p>
+</div>
+<p>With <span class="math notranslate nohighlight">\(+\)</span> and <span class="math notranslate nohighlight">\(-\)</span> as opposite processes one has encoded this process in the number.
+The <span class="math notranslate nohighlight">\(Addition\)</span> itself is then algorithmically a sequential execution or <strong>sequence</strong>:
+<span class="math notranslate nohighlight">\(+2+(-2)\)</span> means: add 2 then(=+) subtract 2.
+If you swap the numbers <span class="math notranslate nohighlight">\(((-2)+(+2))\)</span> you get the same result (<strong>commutative law</strong>).
+With more numbers you can choose freely which to calculate first
+<span class="math notranslate nohighlight">\((-2)+((+2)+(+3))=((-2)+(+2))+(+3)\)</span> (<strong>associative law</strong>).</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>The subtraction 2-2 is an abbreviation for +2+(-2).</p>
+</div>
+<p>The result of +2+(-2)= 0, the <strong>neutral element</strong> of addition.
++2 is the <strong>opposite number (additive inverse)</strong> of -2 and vice versa.
+<span class="math notranslate nohighlight">\((\mathbb{Z},+)\)</span> is an <strong>abelean Group</strong> ({{!util.a("r.cl")}}).</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p><span class="math notranslate nohighlight">\(+\)</span> as part of the number and <span class="math notranslate nohighlight">\(+\)</span> as binary operation are not the same.
+Similarly for <span class="math notranslate nohighlight">\(-\)</span>. <span class="math notranslate nohighlight">\(-\)</span> in addition can be a unary operation that returns the
+opposite number (additive inverse).</p>
+</div>
+</div>
+<div class="section" id="the-integers-mathbb-z-and-multiplication">
+<h1><a class="toc-backref" href="#id4">The Integers <span class="math notranslate nohighlight">\(\mathbb{Z}\)</span> and Multiplication</a><a class="headerlink" href="#the-integers-mathbb-z-and-multiplication" title="Permalink to this headline">¶</a></h1>
+<p>A process can be repeated and multiplication says how often
+addition (+2) or subtraction (-2) is repeated.  Algorithmically multiplication
+is a loop:</p>
+<blockquote>
+<div><p><span class="math notranslate nohighlight">\(3\cdot(-2) = (-2)+(-2)+(-2)\)</span></p>
+</div></blockquote>
+<p>Multiplication with 1 means the thing itself.
+1 is the <strong>neutral element</strong> of the multiplication.</p>
+<p>The multiplication with -1 means: revert the process,
+i.e. make plus (+) to minus (-).</p>
+<blockquote>
+<div><p><span class="math notranslate nohighlight">\((-1)\cdot(-2) = +2\)</span></p>
+<p><span class="math notranslate nohighlight">\((-1)\cdot(-1)\cdot(-2) = -2\)</span></p>
+</div></blockquote>
+<p>With this one can multiply every integer with every other integer and one gets
+an integer again.`(mathbb{Z},cdot)` is <strong>closed</strong> and the <strong>assoziative law</strong>
+holds.  This makes <span class="math notranslate nohighlight">\((\mathbb{Z},+,\cdot)\)</span> to an <strong>integrity ring</strong>
+({{!util.a("r.cm")}}).  <span class="math notranslate nohighlight">\((\mathbb{N},+,\cdot)\)</span> alone is only a <strong>semiring</strong>
+({{!util.a("r.cm")}}) .</p>
+</div>
+<div class="section" id="multiplication-und-die-rationalen-numbers-mathbb-q">
+<h1><a class="toc-backref" href="#id5">Multiplication und die Rationalen Numbers (<span class="math notranslate nohighlight">\(\mathbb{Q}\)</span>)</a><a class="headerlink" href="#multiplication-und-die-rationalen-numbers-mathbb-q" title="Permalink to this headline">¶</a></h1>
+<p>Analogous to <span class="math notranslate nohighlight">\(\mathbb{Z}=\mathbb{N}\times\{+,-\}\)</span> one can
+think the repeating process united with the number and it is a good
+idea to include the inverse process (dividing).</p>
+<p>Which subtraction do I need to repeat 3 times in order to get a (-6) subtraction?</p>
+<blockquote>
+<div><p>(-6)/3 = -2</p>
+</div></blockquote>
+<p>Analogous to <span class="math notranslate nohighlight">\(\mathbb{Z}=\mathbb{N}\times\{+,-\}\)</span> one can unite
+<span class="math notranslate nohighlight">\(\mathbb{N}\times\{\cdot,\div\}\)</span> with the count multiplication and division.</p>
+<p>The binary operations <span class="math notranslate nohighlight">\(\cdot\)</span> and <span class="math notranslate nohighlight">\(+\)</span> must be handled separately,
+only the <strong>distributive law</strong> ties them together.</p>
+<blockquote>
+<div><p><span class="math notranslate nohighlight">\(a\cdot(b+c) = a\cdot b + a\cdot c\)</span></p>
+<p>e.g. <span class="math notranslate nohighlight">\(2\cdot(3+4)=2\cdot 3+2\cdot 4=14\)</span></p>
+</div></blockquote>
+<p>If you look for the part that repeated (multiplied)
+yields no change, i.e. 1, then we get to the <strong>reciprocal</strong>,
+which is the <strong>inverse element of multiplication</strong>.</p>
+<p>While with (-6)/3 we still get a whole number, i.e. a multiple of 1,
+this is not the case for the reciprocal in general.</p>
+<p>Therefore the set is extended by these reciprocals to make it closed.
+This is analogous to the extension from <span class="math notranslate nohighlight">\(\mathbb{N}\)</span> to <span class="math notranslate nohighlight">\(\mathbb{Z}\)</span>.</p>
+<ul class="simple">
+<li><p>There the process “add” was united to form a tuple (count,add).
+“add” has a reverse process “away”.
+One has extended by (count, away).</p></li>
+<li><p>With <span class="math notranslate nohighlight">\(\mathbb{Q}\)</span> one extends (count,repeat) with the <em>reciprocal</em> (count,divide).</p></li>
+</ul>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>In analogy to <span class="math notranslate nohighlight">\(\mathbb{N}\times\{+,-\}\)</span>
+one could write <span class="math notranslate nohighlight">\(\mathbb{Q}\)</span>-elements as:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\cdot 2\)</span> corresponds to +2</p></li>
+<li><p><span class="math notranslate nohighlight">\(\div 2\)</span> corresponds to -2</p></li>
+</ul>
+<p>The binary operation <span class="math notranslate nohighlight">\(\cdot\)</span> then is only a successive processing and can be dropped.</p>
+<p><span class="math notranslate nohighlight">\((\cdot 2)\cdot(\div 2) = \cdot 2\div 2 = 1\)</span></p>
+<p>But actually we write</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(2\cdot 2^{-1} = 1\)</span> or</p></li>
+<li><p><span class="math notranslate nohighlight">\(2\cdot \frac{1}{2} = 1\)</span></p></li>
+</ul>
+<p>the first is because one can add the exponent for the same basis
+and so we have <span class="math notranslate nohighlight">\(2\cdot 2^{-1}=2^1\cdot 2^{-1}=2^{1-1}=2⁰=1\)</span>.</p>
+</div>
+<p><span class="math notranslate nohighlight">\((\mathbb{Q},\cdot)\)</span> is a <strong>abelean Group</strong> with neutral element 1.</p>
+<p>Because the multiplication in <span class="math notranslate nohighlight">\((\mathbb{Q},\cdot)\)</span> shall yield an element of
+<span class="math notranslate nohighlight">\((\mathbb{Q},\cdot)\)</span> again (closure), one takes all fractions
+<span class="math notranslate nohighlight">\(p/q=pq^{-1}\)</span> into <span class="math notranslate nohighlight">\((\mathbb{Q},\cdot)\)</span>.
+3/2 means to first do <span class="math notranslate nohighlight">\(\cdot 3\)</span> and then <span class="math notranslate nohighlight">\(\div 2\)</span> (reciprocal of 2).</p>
+<blockquote>
+<div><p><span class="math notranslate nohighlight">\(\frac{3}{2}=3\cdot 2^{-1}=3\frac{1}{2}=\frac{1}{2}\cdot 3=2^{-1}\cdot 3\)</span></p>
+</div></blockquote>
+<p><span class="math notranslate nohighlight">\(pq^{-1}\)</span> means to copy/repeat p times then divided q times.
+To additionally multiply r times and undo that by dividing r times,
+one doesn’t change a thing.</p>
+<blockquote>
+<div><p><span class="math notranslate nohighlight">\(pq^{-1}=rr^{-1}pq^{-1}=rp(rq)^{-1}=\frac{rp}{rq}\)</span></p>
+</div></blockquote>
+<p>All such pairs of numbers are equivalent and the canonical representation is
+with p and q without common divisor.</p>
+<div class="admonition-hinweis admonition">
+<p class="admonition-title">Hinweis</p>
+<p><span class="math notranslate nohighlight">\(\mathbb{Q}\)</span> formally is introduced as set of equivalence classes
+of such equivalent number pairs:
+<span class="math notranslate nohighlight">\((n_1,n_2)\sim(n_2,m_2)\equiv n_1m_2=n_2m_1\)</span>.</p>
+</div>
+</div>
+<div class="section" id="mathbb-r-as-extension-with-the-irrational-numbers-mathbb-i">
+<h1><a class="toc-backref" href="#id6"><span class="math notranslate nohighlight">\(\mathbb{R}\)</span> as extension with the irrational numbers <span class="math notranslate nohighlight">\(\mathbb{I}\)</span></a><a class="headerlink" href="#mathbb-r-as-extension-with-the-irrational-numbers-mathbb-i" title="Permalink to this headline">¶</a></h1>
+<p>Count (<span class="math notranslate nohighlight">\(\mathbb{N}\)</span>) with addition (+) and subtraction (-) is <span class="math notranslate nohighlight">\(\mathbb{Z}\)</span>.
+<span class="math notranslate nohighlight">\(\mathbb{Z}\)</span> with repetition (<span class="math notranslate nohighlight">\(\cdot\)</span>) and division (<span class="math notranslate nohighlight">\(\div\)</span>) is <span class="math notranslate nohighlight">\(\mathbb{Q}\)</span>.
+If we stay with <span class="math notranslate nohighlight">\(+,-,\cdot,\div\)</span>, then we can do with <span class="math notranslate nohighlight">\(\mathbb{Q}\)</span>.</p>
+<p>But if we want the power operation to be reversible, then we must extend again.
+There is for example no <span class="math notranslate nohighlight">\(p/q\)</span> in <span class="math notranslate nohighlight">\(\mathbb{Q}\)</span>, for which <span class="math notranslate nohighlight">\(p^2/q^2=2\)</span>.
+(Proof: p/q shall have no common divisor. If <span class="math notranslate nohighlight">\(p^2\)</span> is even, so is p (p=2n).
+<span class="math notranslate nohighlight">\(p^2=4n^2=2q^2\)</span> means that q is even, but that is a contradiction).</p>
+<p>There are though <strong>algorithms</strong> that make rationale Numbers (<strong>sequences</strong>),
+whose square gets arbitrarily close to 2. All such algorithms are
+combined into a equivalence class and this is then the new number <span class="math notranslate nohighlight">\(\sqrt{2}\)</span></p>
+<p>The irrational numbers <span class="math notranslate nohighlight">\(\mathbb{I}\)</span> are equivalence classes of number
+sequences.  By naming the algorithm, and <span class="math notranslate nohighlight">\(\sqrt{}\)</span> refers to such an algorithm,
+the irrational number is determined. One cannot write an irrational number as
+decimal number. One can also not run the algorithm to an end, because it
+does not terminate. So the irrational number is really the algorithm itself.</p>
+<p>The irrational numbers get further classified as <strong>algebraische</strong> irrationals,
+which are those that are roots of polynomials, and the <strong>transcendental</strong>
+irrationals.  The latter exist, because there are functions beyond finite
+polynomials, like Sin, Cos, … most of which can be expressed with infinite
+polynomials (series), though. <span class="math notranslate nohighlight">\(\pi\)</span> and <span class="math notranslate nohighlight">\(e\)</span> are transcendental.</p>
+<p>New operations/functions lead to new numbers. But the definition
+<strong>equivalence classes of sequences</strong> is so general that it
+includes algebraic and transcendental numbers and <span class="math notranslate nohighlight">\(\mathbb{Q}\)</span> itself.</p>
+<p>This is <span class="math notranslate nohighlight">\(\mathbb{R}\)</span>:</p>
+<blockquote>
+<div><p><span class="math notranslate nohighlight">\(\mathbb{R} = \mathbb{Q} \cup \mathbb{I}\)</span></p>
+</div></blockquote>
+<p>Another very useful and exciting extension are the complex numbers <span class="math notranslate nohighlight">\(\mathbb{C}\)</span>).</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>Since <span class="math notranslate nohighlight">\(\mathbb{R}\)</span> includes all never ending number sequences, one could
+include <span class="math notranslate nohighlight">\(\infty\)</span> and <span class="math notranslate nohighlight">\(-\infty\)</span>, which are also never ending sequences of
+numbers, if it weren’t for <span class="math notranslate nohighlight">\(\infty+1=\infty\)</span> and the like.
+Still in complex analysis (function theory) the complex number set is
+extended with <span class="math notranslate nohighlight">\(\infty\)</span> fruitfully.</p>
+</div>
+</div>

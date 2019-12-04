@@ -1,0 +1,110 @@
+%path = "URL-Abfragen"
+%kind = kinda["Meta"]
+%level = 0
+<!-- html --><div class="section" id="url">
+<h1>URL<a class="headerlink" href="#url" title="Permalink to this headline">¶</a></h1>
+<p>Das URL-Format ist <code class="docutils literal notranslate"><span class="pre">../&lt;sprache&gt;/&lt;seite&gt;?&lt;abfrage&gt;</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;sprache&gt;</span></code> ist <code class="docutils literal notranslate"><span class="pre">en</span></code>, <code class="docutils literal notranslate"><span class="pre">de</span></code>, … (siehe <code class="docutils literal notranslate"><span class="pre">languages.py</span></code>).
+Falls nicht angegeben, wird dein zuletzt verwendete Sprache genommen
+oder die Browsereinstellung herangezogen.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;seite&gt;</span></code> ist eine von <code class="docutils literal notranslate"><span class="pre">content</span></code> (Inhalt), <code class="docutils literal notranslate"><span class="pre">done</span></code> (Erledigt), <code class="docutils literal notranslate"><span class="pre">todo</span></code> (Aufträge),
+<code class="docutils literal notranslate"><span class="pre">edits</span></code> (Änderungen) and <code class="docutils literal notranslate"><span class="pre">contexts</span></code> (Kontexte/Rollen).
+<code class="docutils literal notranslate"><span class="pre">contexts</span></code> ist nur für registrierte Benutzer zugänglich,
+die mehrere Kontext/Rollen haben können. <code class="docutils literal notranslate"><span class="pre">content</span></code> wird verwendet, falls nicht angegeben.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;abfrage&gt;</span></code> beginnt nach <code class="docutils literal notranslate"><span class="pre">?</span></code> und ist eine mit <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> getrennte Liste.
+Darin kann für alle Seiten
+<code class="docutils literal notranslate"><span class="pre">School=&lt;LLL&gt;&amp;Period=&lt;DDD&gt;&amp;Teacher=&lt;RRR&gt;&amp;Class=&lt;SSS&gt;&amp;Student=&lt;TTT&gt;</span></code> enthalten sein.</p>
+</div>
+<div class="section" id="content-inhalt">
+<h1>content (Inhalt)<a class="headerlink" href="#content-inhalt" title="Permalink to this headline">¶</a></h1>
+<p>Mit <code class="docutils literal notranslate"><span class="pre">../&lt;sprache&gt;/content</span></code> werden alle Inhalte aufgelisted.
+Davon kann man mehrere Einträge auswählen.</p>
+<p><code class="docutils literal notranslate"><span class="pre">../de/content?r.a&amp;r.by=2</span></code> (<code class="docutils literal notranslate"><span class="pre">r.a</span></code> is äquivalent zu <code class="docutils literal notranslate"><span class="pre">r.a=1</span></code>) würde
+eine deutsche Seite mit einer  <code class="docutils literal notranslate"><span class="pre">r.a</span></code>-Übung und zwei <code class="docutils literal notranslate"><span class="pre">r.by</span></code>-Übungen abrufen.
+<code class="docutils literal notranslate"><span class="pre">../de/?r.a&amp;r.by=2</span></code>, d.h. ohne <code class="docutils literal notranslate"><span class="pre">content</span></code>, ergibt das gleiche.</p>
+<p>Für registrierte Benutzer erlaubt eine solche Seite Klassen oder Schülern
+mit gleichem Schule-Periode-Lehrer Präfix
+<strong>Arbeitsaufträge</strong> (assignments) zu geben.
+Die Lehrerrolle des ausgewählten Kontexts muss jedoch dem Benutzer gehören, d.h.
+von ihm erstellt worden sein.</p>
+<p>Eine Übung besteht aus mehreren Fragen und jede Frage hat Punkte (1, falls
+nicht angegeben).  Nach der Überprüfung gibt es am Anfang der Seite eine
+Zusammenfassung von erreichten Punkten/mögliche Punkte zweimal, wovon einmal die nicht
+ausgefüllten Felder nicht mitgezählt werden.</p>
+</div>
+<div class="section" id="done-erledigt">
+<h1>done (erledigt)<a class="headerlink" href="#done-erledigt" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">../&lt;sprache&gt;/done</span></code> listed gemachte Übungen auf, mit Datum und Zeit
+und ob richtig. Ein Link erlaubt zur Übung zu gehen oder sie nochmal zu machen.
+Man kann ausgewählte Übungen löschen.</p>
+<p>Die Abfrage</p>
+<p><code class="docutils literal notranslate"><span class="pre">../&lt;sprache&gt;/done?&lt;schule&gt;&amp;&lt;periode&gt;&amp;&lt;lehrer&gt;&amp;&lt;klasse&gt;&amp;&lt;student&gt;&amp;&lt;übung&gt;</span></code></p>
+<p>erlaubt es</p>
+<ul class="simple">
+<li><p>einen Studenten seine Übungen zu filtern. Dafür braucht er nur <code class="docutils literal notranslate"><span class="pre">&lt;übung&gt;</span></code>.</p></li>
+<li><p>einen Lehrer die Übungen seiner Klassen oder Schüler zu sehen.</p></li>
+</ul>
+<p>Von links werden nicht angeführte IDs mit denen vom aktuellen Kontext ersetzt.
+Deslhalb braucht ein Student nur  <code class="docutils literal notranslate"><span class="pre">&lt;exercise&gt;</span></code>, wenn überhaupt gefiltert werden soll.
+<code class="docutils literal notranslate"><span class="pre">&lt;..&gt;</span></code> sind Platzhalter für die tatsächlichen IDs.</p>
+<p>Für ‘alle’ kann man <code class="docutils literal notranslate"><span class="pre">*</span></code> verwenden.</p>
+<p>Jeder Eintrag hat dieses Format:</p>
+<blockquote>
+<div><p>name|feld op wert[,feld op wert[,…]]</p>
+</div></blockquote>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code> ist der Name des Datensatzes</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">feld</span></code> ist ein Feld (Variable) des Datensatzes</p>
+<blockquote>
+<div><p>Alle Datensätze haben einen Namen sowie <code class="docutils literal notranslate"><span class="pre">userkey</span></code> und <code class="docutils literal notranslate"><span class="pre">created</span></code>.
+Schule, Periode, Lehrer und Klasse haben keine anderen Felder.
+Der Datensatz für Student hat zusätzlich <code class="docutils literal notranslate"><span class="pre">color</span></code> (Farbe).
+Problem hat zusätzlich <code class="docutils literal notranslate"><span class="pre">query_string</span></code> (abfrage), <code class="docutils literal notranslate"><span class="pre">lang</span></code> (sprache),
+<code class="docutils literal notranslate"><span class="pre">given</span></code> (gegeben), <code class="docutils literal notranslate"><span class="pre">created</span></code> (erzeugt),
+<code class="docutils literal notranslate"><span class="pre">answered</span></code> (beantwortet), <code class="docutils literal notranslate"><span class="pre">collection</span></code> (Unterübungen),
+<code class="docutils literal notranslate"><span class="pre">inputids</span></code> (IDs der Eingabefelder), <code class="docutils literal notranslate"><span class="pre">results</span></code> (Resultate), <code class="docutils literal notranslate"><span class="pre">oks</span></code> (richtige),
+<code class="docutils literal notranslate"><span class="pre">points</span></code> (Punkte), <code class="docutils literal notranslate"><span class="pre">answers</span></code> (Antworten), <code class="docutils literal notranslate"><span class="pre">nr</span></code> (Nummer).
+Die englischen Ausdrücke müssen verwendet werden.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">op</span></code> besteht aus <code class="docutils literal notranslate"><span class="pre">~=!&lt;&gt;</span></code>, wo <code class="docutils literal notranslate"><span class="pre">~</span></code> für <code class="docutils literal notranslate"><span class="pre">=</span></code> steht.
+Für das Alter (<code class="docutils literal notranslate"><span class="pre">answered</span></code>) der Übung kann man diese Abkürzungen verwenden:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">=</span><span class="n">Tage</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="n">Stunden</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">Minuten</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="n">Sekunden</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">1DK&amp;*&amp;d&gt;3,d&lt;1</span></code> würde alle Übungen anzeigen, die von Studenten der Klasse <code class="docutils literal notranslate"><span class="pre">1DK</span></code>
+vor nicht mehr als 3 Tage (<code class="docutils literal notranslate"><span class="pre">d</span></code>) und mehr als einen Tag gemacht wurden.</p>
+<div class="admonition-tip admonition">
+<p class="admonition-title">Tip</p>
+<p>Öfter gemachte Abfragen können als Lesezeichen gespeichert werden.</p>
+</div>
+<p>Registrierte Benutzer sind gegen Abfragen von anderen Benutzern und nicht registrierten
+Benutzern geschützt.</p>
+</div>
+<div class="section" id="todo-auftrage">
+<h1>todo (Aufträge)<a class="headerlink" href="#todo-auftrage" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">../&lt;sprache&gt;/todo</span></code> listet die Aufträge mit Datum und Zeit von Erhalt und Abgabe auf.</p>
+</div>
+<div class="section" id="edits-anderungen">
+<h1>edits (Änderungen)<a class="headerlink" href="#edits-anderungen" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">../&lt;sprache&gt;/edits</span></code> ermöglicht es die IDs für
+Schule, Periode, Lehrer, Klasse, Student neu anzulegen, zu verändern oder zu löschen.
+Für leer gelassene Felder werden die IDs <code class="docutils literal notranslate"><span class="pre">myschool</span></code>, <code class="docutils literal notranslate"><span class="pre">myperiod</span></code>, <code class="docutils literal notranslate"><span class="pre">myteacher</span></code>,
+<code class="docutils literal notranslate"><span class="pre">myclass</span></code> und <code class="docutils literal notranslate"><span class="pre">myself</span></code> verwendet.</p>
+<p>Werden alle IDs eines Kontextpfades schon verwendet, gibt es eine Meldung.
+Werden Pfadpräfixe von anderen Verwendet erscheinen diese kursiv.
+Diese anderen Benutzer können dein gemachten Übungen abfragen.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Neu</span></code> erstellt einen neuen Kontext.
+<code class="docutils literal notranslate"><span class="pre">Ändern</span></code> erstellt einen neuen Kontext, kopiert alle Übungen vom alten und löscht diesen.
+<code class="docutils literal notranslate"><span class="pre">Löschen</span></code> löscht den Kontext mit allen Übungen.</p>
+<p>Die <strong>Farbe</strong> dient dazu, leichter zu erkennen, in welchem Kontext man sich befindet.</p>
+</div>
+<div class="section" id="contexts-kontexte">
+<h1>contexts (Kontexte)<a class="headerlink" href="#contexts-kontexte" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">../&lt;sprache&gt;/contexts</span></code> listet alle Kontexte/Rollen des registrierten Benutzers auf.</p>
+<p>Diese Kontexte/Rollen kann man auch über das Menü erreichen,
+das aufklappt, wenn die Maus sich über der Studenten-ID befindet.
+Über den Menüeintrag wird die aktuelle Seite mit dem neuen Kontext geöffnet.</p>
+</div>

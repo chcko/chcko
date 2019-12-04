@@ -1,0 +1,71 @@
+%path = "maths/functions"
+%kind = kinda["texts"]
+%level = 9
+<!-- html --><p>A <strong>function (= mapping)</strong> can be seen as set of value pairs <span class="math notranslate nohighlight">\((x,y)\)</span> with
+<span class="math notranslate nohighlight">\(x\in X\)</span> (<strong>domain</strong>, <strong>preimage</strong>) and <span class="math notranslate nohighlight">\(y\in Y\)</span> (<strong>codomain</strong>, <strong>image</strong>, <strong>range</strong>).
+Important is the <strong>uniqueness</strong> of the image: for any <span class="math notranslate nohighlight">\(x\)</span> there is exactly one <span class="math notranslate nohighlight">\(y\)</span>.
+<span class="math notranslate nohighlight">\(x\)</span> can be freely chosen. <span class="math notranslate nohighlight">\(x\)</span> is <strong>independent value, preimage, argument or position</strong>.
+<span class="math notranslate nohighlight">\(y\)</span> is determined by <span class="math notranslate nohighlight">\(x\)</span>. No new information is needed to select <span class="math notranslate nohighlight">\(y\)</span>.
+This is why functions are important.
+<span class="math notranslate nohighlight">\(y\)</span> is called <strong>(dependent or function) value or image</strong>.</p>
+<p>If the uniqueness is not satisfied, then it is called a <strong>relation</strong>.</p>
+<p>A function <span class="math notranslate nohighlight">\(f\)</span> as a direction from the set of all <span class="math notranslate nohighlight">\(x\)</span> (<span class="math notranslate nohighlight">\(X\)</span>) to the set
+of all <span class="math notranslate nohighlight">\(y\)</span> (<span class="math notranslate nohighlight">\(Y\)</span>). This is notated as <span class="math notranslate nohighlight">\(f:X\rightarrow Y\)</span>.</p>
+<p>The value pairs normally cannot be written down because too many or infinite.
+Therefore one describes the function via an <strong>analytic expression</strong>, i.e.
+<span class="math notranslate nohighlight">\(y=x^2+1\)</span>. This basically is an algorithm, a program.</p>
+<div class="admonition-basic-concepts admonition">
+<p class="admonition-title">Basic Concepts:</p>
+<ul class="simple">
+<li><p>domain</p></li>
+<li><p>codomain</p></li>
+<li><p>mapping</p></li>
+</ul>
+</div>
+<p>If we do not want to have a separate letter <span class="math notranslate nohighlight">\(f\)</span> for the mapping,
+we can write: <span class="math notranslate nohighlight">\(y(x)\)</span>, i.e. the parentheses say that
+<span class="math notranslate nohighlight">\(y\)</span> follow from <span class="math notranslate nohighlight">\(x\)</span>, i.e. is function of <span class="math notranslate nohighlight">\(x\)</span>.
+Sometimes <span class="math notranslate nohighlight">\(f\)</span> can mean both the mapping or the function value.</p>
+<p>If we concentrate only on the mapping, instead of <span class="math notranslate nohighlight">\(g(f(x))\)</span>
+we can write <span class="math notranslate nohighlight">\(g\circ f\)</span> meaning: first we map via <span class="math notranslate nohighlight">\(f\)</span>, then via <span class="math notranslate nohighlight">\(g\)</span>,
+i.e. the ordering is the same in both writings.</p>
+<p>There can be more <span class="math notranslate nohighlight">\(x\)</span> with the same <span class="math notranslate nohighlight">\(y\)</span> and it is still a function.
+If there is only one preimage <span class="math notranslate nohighlight">\(x\)</span> for a <span class="math notranslate nohighlight">\(y\)</span>, then the function
+is <strong>injective</strong>, i.e. it keeps the distinction or does not loose information.
+If in addition every element of <span class="math notranslate nohighlight">\(Y\)</span> is reached (<strong>surjective</strong>),
+then the function is <strong>bijektive</strong>.
+In this case by choosing <span class="math notranslate nohighlight">\(y\)</span> we also choose <span class="math notranslate nohighlight">\(x\)</span> (<span class="math notranslate nohighlight">\(x(y)\)</span>, <strong>inverse function</strong>).</p>
+<p>If the images of elements that are close together are also close together,
+then the function is <strong>continuous</strong>. Close is intuitive, but still needs
+a formal definition. This is done via a <strong>metric</strong> <span class="math notranslate nohighlight">\(d\)</span> (<span class="math notranslate nohighlight">\(d(x,y)\ge 0\)</span>,
+<span class="math notranslate nohighlight">\(d(x,y)=d(y,x)\)</span> and <span class="math notranslate nohighlight">\(d(x,z)\le d(x,y)+d(y,z)\)</span>, e.g. <span class="math notranslate nohighlight">\(d(x,y)=|y-x|\)</span>)
+(or in a more abstract way in topology via sets of nested open sets).</p>
+<div class="admonition-continuity-at-x admonition">
+<p class="admonition-title">Continuity at <span class="math notranslate nohighlight">\(x\)</span></p>
+<p>For every <span class="math notranslate nohighlight">\(\varepsilon &gt; 0\)</span> there is a <span class="math notranslate nohighlight">\(\delta\)</span>, such that
+for all <span class="math notranslate nohighlight">\(y\)</span> with <span class="math notranslate nohighlight">\(d(x,y)&lt;\delta\)</span> we have <span class="math notranslate nohighlight">\(d(f(x),f(y))&lt;\varepsilon\)</span>.</p>
+<p>For every <span class="math notranslate nohighlight">\(\varepsilon\)</span>-neighbourhood there is a <span class="math notranslate nohighlight">\(\delta\)</span>-neighbourhood.</p>
+</div>
+<p>A function does not presuppose order of domain and codomain. But if it is given,
+then a function is said <strong>(strictly) monotonically increasing</strong>,
+if <span class="math notranslate nohighlight">\(x\le y\)</span> (<span class="math notranslate nohighlight">\(x&lt;y\)</span>) makes <span class="math notranslate nohighlight">\(f(x)\le f(y)\)</span> (<span class="math notranslate nohighlight">\(f(x)&lt;f(y)\)</span>).
+Analogously one defines <strong>(strictly) monotonically decreasing</strong>.</p>
+<p>Morphisms are related to functions (see {{!util.a("r.cs")}}).</p>
+<p>Regarding graphical representation of a function in a <strong>coordinate system</strong>:</p>
+<ul class="simple">
+<li><p>First values of variables <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span> are mapped via units to numbers</p></li>
+<li><p>A unit for the graph is chosen (e.g. cm).
+The ratio of unit in graph to unit in reality (kg, km, m/s,…) is the <strong>scale</strong>.</p></li>
+<li><p>For a value of the independent variable <span class="math notranslate nohighlight">\(X\)</span> one goes the number
+of graph units to the left (<span class="math notranslate nohighlight">\(x\)</span>-coordinate, abscissa).</p></li>
+<li><p>For a value of the dependent variable <span class="math notranslate nohighlight">\(Y\)</span> one goes the number of
+graph units upward (<span class="math notranslate nohighlight">\(y\)</span>-coordinate, ordinate).</p></li>
+<li><p>This one repeats for a few pairs of values.
+These <span class="math notranslate nohighlight">\((x,y)\)</span>-pairs can also be written into a table as a intermediate step
+(<strong>value table</strong>).</p></li>
+<li><p>Since usually it will be a continuous function,
+one can connect the points with a continuous line.
+If the line is linear then it is called a <strong>linearen function</strong>.</p></li>
+</ul>
+<p>Examples of graphs for fundamental types of functions of one variable
+can be found here: {{!util.a("r.cf")}}.</p>

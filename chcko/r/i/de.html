@@ -1,0 +1,24 @@
+%path = "Mathematik/Funktionen/Funktionsgraphen"
+%kind = kinda["Übungen"]
+%level = 10
+
+<!-- harbors the diagram -->
+<div id="cs_div{{nr}}">
+</div>
+
+<div>
+<table>
+    Gib die Zahl ein, die zur Funktionsgleichung passt.
+    %for i in range(len(g.order)):
+    <tr>
+        <td>\(y={{g.funcs[g.order[i]][0]}}\)</td>
+        <td>
+            %include('getorshow',idx=i)
+        </td>
+    </tr>
+    %end
+</table>
+</div>
+
+%include('r/i/coord')
+

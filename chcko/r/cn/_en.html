@@ -1,0 +1,86 @@
+%path = "maths/numbers/representation"
+%kind = kinda["texts"]
+%level = 9
+<!-- html --><p>The numbers are their own concepts independent from their representations.</p>
+<p>The <a class="reference external" href="http://en.wikipedia.org/wiki/Numeral_system">wikipedia article</a>
+gives a great overview beyond the
+<a class="reference external" href="http://en.wikipedia.org/wiki/Positional_notation">positional system</a>
+described here.</p>
+<div class="section" id="id1">
+<h1>Positional System<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<p>It is not possible to give every number its own sign.  Instead we use signs
+up to a certain count and then one makes heaps (groups) of that count and
+starts counting these heaps.</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>One can compare the numeral system with letters or phonetic systems.
+In a language one combines phonemes to produce a multitude, i.e. the words.
+These are associated/mapped to concepts.
+With Numbers digit signs are combined and then mapped to a count and beyond.</p>
+</div>
+<div class="section" id="the-decimal-system">
+<h2>The Decimal System<a class="headerlink" href="#the-decimal-system" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>For a count below ten there are signs: 1, 2, 3, 4, 5, 6, 7, 8, 9.</p></li>
+<li><p>For “none” there is <strong>0</strong>. Together these are 10 signs.</p></li>
+<li><p>For a count ten and above one makes heaps of ten and counts these separately.</p></li>
+</ul>
+<p>Position coding:</p>
+<blockquote>
+<div><p>Instead of writing 3 tens and 4 ones we write 3 at a position for the tens
+and 4 for the position for the ones: 34.
+This can be called position coding: Via the position we identify what we mean.</p>
+<p>302 means 3 heaps of tens of tens (hundred), 0 (no) tens and 2 ones.</p>
+</div></blockquote>
+<dl>
+<dt>Position value:</dt><dd><p>The value of the position increases from right to left</p>
+<p>…  10³=1000 10²=100 10¹=10 10⁰=1</p>
+<p>These are powers of 10.
+10 is the <strong>base</strong> of the decimal system.</p>
+<p>Fractions:</p>
+<p>As heaps of 10 get a position also fractions in 10th get a position to the right
+of the dot (.)</p>
+<p>,1/10¹=1/10  1/10²=1/100  1/10³=1/1000 …</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="the-binary-system">
+<h2>The Binary System<a class="headerlink" href="#the-binary-system" title="Permalink to this headline">¶</a></h2>
+<p>In the dual system two things make their own heap.</p>
+<p>Together with the 0 the binary system has 2 signs, which mean: <strong>there or not there</strong></p>
+<p>The position values of the positions are these</p>
+<blockquote>
+<div><p>…  2⁴=16 2³=8 2²=4 2¹=2 2⁰=1 . <span class="math notranslate nohighlight">\(2^{-1}\)</span> <span class="math notranslate nohighlight">\(2^{-2}\)</span> …</p>
+</div></blockquote>
+<p>Example</p>
+<blockquote>
+<div><p>1011₂ = 11₁₀</p>
+</div></blockquote>
+<p>The binary system is important, because computers use it and because 2 is the
+smallest quantity one can still choose from.</p>
+</div>
+<div class="section" id="the-hexadecimal-system">
+<h2>The Hexadecimal System<a class="headerlink" href="#the-hexadecimal-system" title="Permalink to this headline">¶</a></h2>
+<p>Here we make heaps of 16.</p>
+<p>Together with the 0 we have 16 signs:</p>
+<blockquote>
+<div><p>0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F.</p>
+</div></blockquote>
+<p>The new ones are A=10, B=11, C=12, D=13, E=14, F=15.</p>
+<p>The position values are:</p>
+<blockquote>
+<div><p>… 16⁴=65536 16³=4096 16²=256 16¹=16 16⁰=1 .  <span class="math notranslate nohighlight">\(16^{-1}\)</span> <span class="math notranslate nohighlight">\(16^{-2}\)</span> …</p>
+</div></blockquote>
+<p>Because of 2⁴=16, one needs 4 binary digits for one hexadecimal digit.
+Since the binary system is important, the hexadecimal is important, too,
+and so are other systems with base power of 2,
+like. Base 8 (octal), 64 (base64), 128(ASCII) and 256 (ANSI).</p>
+</div>
+<div class="section" id="duodecimal-system">
+<h2>Duodecimal System<a class="headerlink" href="#duodecimal-system" title="Permalink to this headline">¶</a></h2>
+<p>Twelve has many divisors: 2, 3, 4, 6
+This allows an easy representation of fractions with these denominators.</p>
+<p>But as with the decimal system (1/3 = 0.333…)
+the duodecimal system has easy fractions that are periodic (1/5 = 0.2497 2497…).</p>
+</div>
+</div>

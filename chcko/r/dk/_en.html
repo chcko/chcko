@@ -1,0 +1,106 @@
+%path = "maths/functions/exponential"
+%kind = kinda["texts"]
+%level = 11
+<!-- html --><div class="section" id="basics">
+<h1>Basics<a class="headerlink" href="#basics" title="Permalink to this headline">¶</a></h1>
+<p>In the <strong>exponential function</strong></p>
+<div class="math notranslate nohighlight">
+\[y = a^x\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(x\)</span> is the <strong>exponent</strong></p></li>
+<li><p><span class="math notranslate nohighlight">\(a\)</span> is the <strong>basis</strong></p></li>
+<li><p><span class="math notranslate nohighlight">\(y\)</span> is the <strong>exponential function</strong> of <span class="math notranslate nohighlight">\(x\)</span> on the basis <span class="math notranslate nohighlight">\(a\)</span></p></li>
+</ul>
+<p>The <strong>exponent</strong> tells how often <em>multiplication</em> with <span class="math notranslate nohighlight">\(a\)</span> is repeated.
+<span class="math notranslate nohighlight">\(a\)</span> must be a positive real number: <span class="math notranslate nohighlight">\(a\in\mathbb{R}\)</span>.</p>
+<div class="admonition-multiplication admonition">
+<p class="admonition-title">Multiplication</p>
+<p>Multiplication is an operation happening in the real world and we
+encode it with a number.  In the number set <span class="math notranslate nohighlight">\(\mathbb{Q}\)</span> the operation is
+part of the number: <span class="math notranslate nohighlight">\(2\)</span> means <span class="math notranslate nohighlight">\(\cdot 2\)</span>, and <span class="math notranslate nohighlight">\(1/2\)</span> mean <span class="math notranslate nohighlight">\(/2\)</span>.  <span class="math notranslate nohighlight">\(\cdot\)</span>
+stands for the multiplication operation and <span class="math notranslate nohighlight">\(/\)</span> stands for the
+<em>inverse operation</em>, the division. But the inverse operation is made part
+of the number by the inclusion of the fractions in <span class="math notranslate nohighlight">\(\mathbb{Q}\)</span>.
+So we only speak of <em>multiplication</em> and mean the application
+of the operation of <span class="math notranslate nohighlight">\(\mathbb{Q}\subset\mathbb{R}\)</span>.</p>
+</div>
+<p>If <span class="math notranslate nohighlight">\(a\)</span> is bigger than <span class="math notranslate nohighlight">\(1\)</span>, then <span class="math notranslate nohighlight">\(y\)</span> will increase (grow) with <span class="math notranslate nohighlight">\(x\)</span> <em>strictly monotonically</em>: <span class="math notranslate nohighlight">\(x_1&lt;x_2 \Rightarrow y_1&lt;y_2\)</span>.</p>
+<div class="figure">
+<p><img src="_images/tikz-e9e6f1a445ab137a9fc7bf342a63780e0f23ea18.png" alt="\begin{axis}[grid=both,axis lines=middle,xmin=-3,xmax=3,ymin=0,ymax=8, samples=50]
+ \addplot[green]  {pow(2,x)} node[above]{$y=2^x$};
+\end{axis}" /></p>
+</div><p>If <span class="math notranslate nohighlight">\(a\)</span> is smaller than <span class="math notranslate nohighlight">\(1\)</span>, then <span class="math notranslate nohighlight">\(y\)</span> will decrease (diminish) with <span class="math notranslate nohighlight">\(x\)</span> <em>strictly monotonically</em>: <span class="math notranslate nohighlight">\(x_1&lt;x_2 \Rightarrow y_1&gt;y_2\)</span>.</p>
+<div class="figure">
+<p><img src="_images/tikz-d6c3eac40ee7e510d72da06f1d3706f6be24d115.png" alt="\begin{axis}[grid=both,axis lines=middle,xmin=-3,xmax=3,ymin=0,ymax=8, samples=50]
+ \addplot[green]  {pow(1/2,x)} node[above]{$y=(\frac{1}{2})^x$};
+\end{axis}" /></p>
+</div></div>
+<div class="section" id="discussion">
+<h1>Discussion<a class="headerlink" href="#discussion" title="Permalink to this headline">¶</a></h1>
+<p>Let’s compare the number of combinations of n bits:</p>
+<div class="math notranslate nohighlight">
+\[2^n\]</div>
+<p>with the growing processes, like with accruing of capital with annual compounding</p>
+<div class="math notranslate nohighlight">
+\[(1+\frac{i}{100})^n\]</div>
+<p>or the especially interesting natural growing</p>
+<div class="math notranslate nohighlight">
+\[e^x = \lim_{n-&gt;\infty}(1+\frac{1}{n})^{nx}
+  = \lim_{m-&gt;\infty}(1+\frac{x}{m})^m = (1+\frac{x}{\infty})^\infty\]</div>
+<p><span class="math notranslate nohighlight">\(e\)</span> is <a class="reference external" href="https://en.wikipedia.org/wiki/E_(mathematical_constant)">Euler’s Number</a>
+whose importance is founded on the given relation.</p>
+<p>The key to compare them is to understand <strong>information</strong> in the shape of bits as a growing process.
+Every bit increases the size by <span class="math notranslate nohighlight">\(1\)</span> times what is there already.
+Let’s denote this aspect of the bit by <span class="math notranslate nohighlight">\((1+1)\)</span> to emphasize that an additional <span class="math notranslate nohighlight">\(1\)</span>
+is added to the one there already. The parentheses make this an operator, an element of the number set <span class="math notranslate nohighlight">\(\mathbb Q\)</span>.
+<span class="math notranslate nohighlight">\(n\)</span> repeated applications of <span class="math notranslate nohighlight">\((1+1)\)</span> produces a multitude of size</p>
+<div class="math notranslate nohighlight">
+\[(1+1)^n = 2^n\]</div>
+<p>Every new bit is <em>compounded</em> to the existing combinations.</p>
+<p>The information measure for a real variable of size <span class="math notranslate nohighlight">\(C\)</span> is the
+number of bits <span class="math notranslate nohighlight">\(n=\log_2 C\)</span> needed to grow <span class="math notranslate nohighlight">\(C\)</span> combinations.</p>
+<div class="admonition-which-other-variable-to-compare-to admonition">
+<p class="admonition-title">Which other variable to compare to?</p>
+<p>Instead of bits we could as well use the considered variable itself because
+that is there physically. But combinations are also physically there and the
+selection of values, which ultimately gives birth to variables, is physical,
+and the number of involved variables plays a role.  First this means that
+information is physical and secondly, considering quantum mechanics, the
+physical number of involved variables is huge and their individual
+contributions are tiny.</p>
+</div>
+<p>If we start from a <em>number of variables</em>, the <em>exponential function</em>
+gives the <em>number of value combinations</em>.  If we start from a <em>number of
+values</em>, the <em>logarithm</em> gives the <em>number of variables</em> needed to represent
+it.</p>
+<p>For <strong>interest calculation</strong> we look at an amount of money (the <span class="math notranslate nohighlight">\(1\)</span>), which is
+deposited in the bank with interest <span class="math notranslate nohighlight">\(i\)</span>.  After <span class="math notranslate nohighlight">\(n\)</span> years the <span class="math notranslate nohighlight">\(1\)</span> has grown to</p>
+<div class="math notranslate nohighlight">
+\[(1+i/100)^n = q^n\]</div>
+<p>The <em>growth factor</em> <span class="math notranslate nohighlight">\(q\)</span> is not <span class="math notranslate nohighlight">\(2\)</span>, normally just a little above <span class="math notranslate nohighlight">\(1\)</span>.  The corresponding
+“information” measure in this financial context would be the
+number of years.</p>
+<p>The essential difference with respect to bit information is that, what is added,
+is a <em>fraction</em> of what is there. But then, fraction is actually just a matter
+of units.</p>
+<p>The units of living organisms are cells and the ultimate units in the real
+world are the quantum particles.  Both of them are small compared to the things
+around us. And with such small units one can also <em>compound</em> arbitrarily
+(infinitely) often:</p>
+<div class="math notranslate nohighlight">
+\[\lim_{m-&gt;\infty}(1+\frac{x}{m})^m = \lim_{n-&gt;\infty}(1+\frac{1}{n})^{nx} = e^x\]</div>
+<p>In the first equality we see that, given a certain growth, varying the
+<em>compounding steps</em> amounts to varying the <em>growth factor</em>. Due to the
+importance of <span class="math notranslate nohighlight">\(e^x\)</span> one often moves the <em>growth factor</em> <span class="math notranslate nohighlight">\(q\)</span> in <span class="math notranslate nohighlight">\(y=q^x\)</span>
+to the exponent of <span class="math notranslate nohighlight">\(e\)</span> (<span class="math notranslate nohighlight">\(y=e^{kx}\)</span>). <span class="math notranslate nohighlight">\(k=\ln q\)</span> is called the <em>gowth constant</em>.</p>
+<div class="admonition-natural-compounding-in-the-finantial-world admonition">
+<p class="admonition-title">Natural compounding in the finantial world</p>
+<p>Actually in the financial world the real compounding takes place in very
+small steps, just that the bank forwards them to the customer in larger units
+of time.</p>
+</div>
+<p><span class="math notranslate nohighlight">\(x\)</span> is the information in the <strong>natural information</strong> unit
+<a class="reference external" href="https://en.wikipedia.org/wiki/Nat_(unit)">nat</a>.  Basically we split up the size
+of the variable to infinitely many infinitely small variables, such that
+the growth factor per step is almost <span class="math notranslate nohighlight">\(1\)</span>.</p>
+</div>

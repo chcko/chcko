@@ -1,0 +1,19 @@
+%path = "Mathematik/Finanz/Rentenrechnung/unterjährig"
+%kind = kinda["Übungen"]
+%level = 11
+
+Es werden monatlich €{{g.r}} auf die Seite gelegt 
+und man erhält dafür auch monatlich {{g.i}}% Zinsen. 
+Wieviel hat man nach {{g.n}} Monaten angespart?<br> 
+a) bei nachschüssiger Verzinsung? 
+%include('getorshow',idx = 0)
+<br>
+b) bei vorschüssiger Verzinsung? 
+%include('getorshow',idx = 1)
+<br>
+c) Nach wie vielen Monaten hat man nachschüssig das {{g.m}}-fache der Rate angespart? 
+%include('getorshow',idx = 2)
+<br>
+d) Welcher konformen Jahresverzinsung entspricht dieser Zinsatz von {{g.i}}%? 
+%include('getorshow',idx = 3, example='(1.0-100.0)')
+

@@ -1,0 +1,63 @@
+%path = "ideas"
+%kind = kinda["meta"]
+%level = 0
+<!-- html --><ul>
+<li><p>Every content has a unique ID = ID_author.ID_content.
+This way no ID coordination is necessary once the author has an ID.</p></li>
+<li><p>Every ID is also a folder</p>
+<ul>
+<li><p>ID_author</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>ID_content1</p></li>
+<li><p>ID_content2</p></li>
+<li><p>…</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</li>
+<li><p>IDs shall be as short as possible. They are best numbered through using a-z</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>numbers would not make it a Python identifier</p></li>
+<li><p>capital letters would collide with windows case insensitivity for file names</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Every content folder contains Python code and language files</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>A Python part (<code class="docutils literal notranslate"><span class="pre">__init__.py</span></code>) to randomly generate for exercises (not
+needed for content)</p></li>
+<li><p>Language template files (<code class="docutils literal notranslate"><span class="pre">en.html</span></code>, <code class="docutils literal notranslate"><span class="pre">de.html</span></code>, <code class="docutils literal notranslate"><span class="pre">it.html</span></code>, <code class="docutils literal notranslate"><span class="pre">fr.html</span></code>,…)
+that will produce html.
+en.html should always be there as starting points for translations.</p></li>
+<li><p>A static off-line step is possible to create content from other formats,
+currently from restructured text files (.rst) using Sphinx.
+This allows to use Sphinx contributions like tikz and texfigure (<code class="docutils literal notranslate"><span class="pre">tex</span></code>,
+<code class="docutils literal notranslate"><span class="pre">tikz</span></code>, <code class="docutils literal notranslate"><span class="pre">chemfig</span></code>, …) to create graphics.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Human language context paths to exercises and keywords are language dependent and are
+therefore in the language files.</p></li>
+<li><p>More exercises can be combined in one URL / http request (Content query)
+e.g. to make a larger assignment.</p></li>
+<li><p>Exercises/Content pages can reference other content or inline it
+via the template engine.</p></li>
+<li><p>Answers to exercises are stored in a db and combined with the
+language texts during loading.</p></li>
+<li><p>A user context/role is identified by an ID path/hierarchy:</p>
+<p>school 1-n period 1-n teacher 1-n class 1-n student</p>
+</li>
+<li><p>Via this hierarchy a teacher has fast access to the done exercises
+of his classes and students via an URL query.</p></li>
+<li><p>Teachers can assign exercises to their classes/students, which they access via a Todo query</p></li>
+<li><p>Teachers see what their classes/students have done so far (Done query)</p></li>
+<li><p>Users initially get a generated context/role (generated random strings for each),
+which they can change, though (Edits query).
+There users can choose a color to help then see in which context/role they are.</p></li>
+<li><p>Registered users can have more contexts/roles (Contexts query).
+Registration can also be done via Google, Twitter, Facebook or LinkedIn.</p></li>
+</ul>

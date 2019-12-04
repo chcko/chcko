@@ -1,0 +1,78 @@
+%path = "Mathematik/Funktionen"
+%kind = kinda["Texte"]
+%level = 9
+<!-- html --><p>Eine <strong>Funktion (= Abbildung)</strong> kann als Menge von Wertepaaren <span class="math notranslate nohighlight">\((x,y)\)</span> mit
+<span class="math notranslate nohighlight">\(x\in X\)</span> (<strong>Definitionsmenge</strong>) und <span class="math notranslate nohighlight">\(y\in Y\)</span> (<strong>Wertemenge</strong>) identifiziert
+werden.  Wichtig ist die <strong>Eindeutigkeit</strong>: für ein <span class="math notranslate nohighlight">\(x\)</span> gibt es genau ein <span class="math notranslate nohighlight">\(y\)</span>.
+<span class="math notranslate nohighlight">\(x\)</span> kann man aus einer Menge frei wählen.
+Man nennt <span class="math notranslate nohighlight">\(x\)</span> <strong>unabhängiger Wert, Urbild, Veränderliche, Argument oder Stelle</strong>.
+<span class="math notranslate nohighlight">\(y\)</span> ist durch <span class="math notranslate nohighlight">\(x\)</span> bestimmt. Es ist keine zusätzliche Information notwendig.
+Das macht letztendlich den Begriff Funktion wichtig.
+Man nennt <span class="math notranslate nohighlight">\(y\)</span> <strong>abhängige Variable, Bild oder Funktionswert</strong>.</p>
+<p>Ist diese Eindeutigkeit nicht gegeben, dann spricht man von einer <strong>Relation</strong>.</p>
+<p>Ein Funktion <span class="math notranslate nohighlight">\(f\)</span> hat ein Richtung von der Menge aller <span class="math notranslate nohighlight">\(x\)</span> (<span class="math notranslate nohighlight">\(X\)</span>) auf die Menge
+aller <span class="math notranslate nohighlight">\(y\)</span> (<span class="math notranslate nohighlight">\(Y\)</span>). Man schreibt <span class="math notranslate nohighlight">\(f:X\rightarrow Y\)</span>.</p>
+<p>Die Wertepaare können normalerweise nicht alle angegeben werden,
+deshalb beschreibt man eine Funktion mit einer Rechenvorschrift,
+d.h. einem <strong>analytischen Ausdruck</strong>, z.B. <span class="math notranslate nohighlight">\(y=x^2+1\)</span>.
+Das ist im Grunde ein Algorithmus, ein kleines Programm.</p>
+<div class="admonition-grundkonzepte admonition">
+<p class="admonition-title">Grundkonzepte:</p>
+<ul class="simple">
+<li><p>Definitionsmenge</p></li>
+<li><p>Wertemenge</p></li>
+<li><p>Abbildung</p></li>
+</ul>
+</div>
+<p>Wenn man keinen eigenen Buchstabe <span class="math notranslate nohighlight">\(f\)</span> für die Funktionen haben will,
+kann man auch schreiben: <span class="math notranslate nohighlight">\(y(x)\)</span>, d.h. die Klammern sagen aus,
+dass <span class="math notranslate nohighlight">\(y\)</span> sich aus <span class="math notranslate nohighlight">\(x\)</span> eindeutig ergibt, d.h. Funktion von <span class="math notranslate nohighlight">\(x\)</span> ist.
+Manchmal kann <span class="math notranslate nohighlight">\(f\)</span> die Funktion meinen oder den Funktionswert.</p>
+<p>Konzentriert man sich nur auf die Abbildung, so schreibt man statt <span class="math notranslate nohighlight">\(g(f(x))\)</span>
+auch <span class="math notranslate nohighlight">\(g\circ f\)</span> und das heißt: bilde zuerst mittels <span class="math notranslate nohighlight">\(f\)</span>, dann mittels <span class="math notranslate nohighlight">\(g\)</span> ab,
+d.h. von rechts nach links in beiden Schreibweisen.</p>
+<p>Es kann mehrere <span class="math notranslate nohighlight">\(x\)</span> mit gleichem <span class="math notranslate nohighlight">\(y\)</span> geben und es ist immer noch eine Funktion.
+Gibt es nur ein Urbild <span class="math notranslate nohighlight">\(x\)</span> für ein Bild <span class="math notranslate nohighlight">\(y\)</span>, dann ist die Funktion
+linkseindeutig (<strong>injektive</strong>), d.h. sie bewart Unterscheidbarkeit oder
+verliert nicht an Information.
+Wird darüber hinaus noch jedes element der
+Bildmenge erreicht (<strong>surjektiv</strong>), dann ist die Funktion unkehrbar eindeutig,
+eineindeutig oder <strong>bijektiv</strong>.  Dann kann man auch <span class="math notranslate nohighlight">\(y\)</span> beliebig wählen und <span class="math notranslate nohighlight">\(x\)</span>
+ist dadurch bestimmt (<span class="math notranslate nohighlight">\(x(y)\)</span>, <strong>Umkehrfunktion</strong>).</p>
+<p>Wenn die Bilder von Elementen, die sich nahe sind, auch nahe beisammen sind,
+dann ist die Funktion <strong>stetig</strong>. Nahe ist intuitiv, muss aber mathematisch
+erst definiert werden.  Das geschieht über eine <strong>Metrik</strong> <span class="math notranslate nohighlight">\(d\)</span> (<span class="math notranslate nohighlight">\(d(x,y)\ge 0\)</span>,
+<span class="math notranslate nohighlight">\(d(x,y)=d(y,x)\)</span> und <span class="math notranslate nohighlight">\(d(x,z)\le d(x,y)+d(y,z)\)</span>, z.B. <span class="math notranslate nohighlight">\(d(x,y)=|y-x|\)</span>)
+(oder auch abstrakter in der Topologie über eine Menge von (offenen) ineinander
+verschachtelten Mengen.)</p>
+<div class="admonition-stetigkeit-bei-x admonition">
+<p class="admonition-title">Stetigkeit bei <span class="math notranslate nohighlight">\(x\)</span></p>
+<p>Für jedes <span class="math notranslate nohighlight">\(\varepsilon &gt; 0\)</span> gibt es eine <span class="math notranslate nohighlight">\(\delta\)</span>, so dass
+für alle y mit <span class="math notranslate nohighlight">\(d(x,y)&lt;\delta\)</span> gilt: <span class="math notranslate nohighlight">\(d(f(x),f(y))&lt;\varepsilon\)</span>.</p>
+<p>Für jede <span class="math notranslate nohighlight">\(\varepsilon\)</span>-Umgebung gibt es eine <span class="math notranslate nohighlight">\(\delta\)</span>-Umgebung.</p>
+</div>
+<p>Eine Funktion setzt keine Ordnung voraus. Ist sie aber gegeben,
+dann sagt man eine Funktion ist <strong>(streng) monoton</strong> steigend,
+wenn aus <span class="math notranslate nohighlight">\(x\le y\)</span> (<span class="math notranslate nohighlight">\(x&lt;y\)</span>) folgt: <span class="math notranslate nohighlight">\(f(x)\le f(y)\)</span> (<span class="math notranslate nohighlight">\(f(x)&lt;f(y)\)</span>).
+(Streng) monoton fallend wird analog definiert.</p>
+<p>Verwandt mit Funktion ist Morphismus ({{!util.a("r.cs")}}).</p>
+<p>Zur graphischen Darstellung einer Funktion in einem <strong>Koordinatensystem</strong>:</p>
+<ul class="simple">
+<li><p>Werden die Werte der beteiligten Variablen <span class="math notranslate nohighlight">\(X\)</span> und <span class="math notranslate nohighlight">\(Y\)</span> mittels einer Einheit
+auf Zahlen abgebildet</p></li>
+<li><p>Es wird eine Längeneinheit für die Darstellung gewählt (z.B. cm).
+Das Verhältnis dieser Längeneinheit zur realen Einheit (kg, km, m/s,…) ist
+der <strong>Maßstab</strong>.</p></li>
+<li><p>Für einen Wert der unabhängigen Variablen <span class="math notranslate nohighlight">\(X\)</span> geht man den Zahlenwert
+in dieser Längeneinheit nach links (<span class="math notranslate nohighlight">\(x\)</span>-Koordinate, Abszisse).</p></li>
+<li><p>für einen Wert der abhängige Variable <span class="math notranslate nohighlight">\(Y\)</span> geht man den Zahlenwert
+in dieser Längeneinheit nach oben (<span class="math notranslate nohighlight">\(y\)</span>-Koordinate, Ordinate).</p></li>
+<li><p>Das wiederholt man für einige Werte und man erhält Punkte
+Die <span class="math notranslate nohighlight">\((x,y)\)</span>-Paare dieser Punkte kann man als Zwischenschritt auch
+in eine Tabelle eintragen (<strong>Wertetabelle</strong>).</p></li>
+<li><p>Weil es sich meistens um stetige Funktionen handelt,
+kann man eine Kurve durch diese Punkte legen.
+Ist die Kurve eine Gerade, dann spricht man von einer <strong>linearen Funktion</strong>.</p></li>
+</ul>
+<p>Beispiele für Graphen von bestimmten grundlegenden Funktionstypen mit
+einer unabhängigen Variablen gibt es hier: {{!util.a("r.cf")}}.</p>

@@ -1,0 +1,123 @@
+%path = "maths/numbers/C"
+%kind = kinda["texts"]
+%level = 10
+<!-- html --><div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#the-complex-numbers-mathbb-c" id="id1">The complex numbers <span class="math notranslate nohighlight">\(\mathbb{C}\)</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#application-of-mathbb-c" id="id2">Application of <span class="math notranslate nohighlight">\(\mathbb{C}\)</span></a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="the-complex-numbers-mathbb-c">
+<h1><a class="toc-backref" href="#id1">The complex numbers <span class="math notranslate nohighlight">\(\mathbb{C}\)</span></a><a class="headerlink" href="#the-complex-numbers-mathbb-c" title="Permalink to this headline">¶</a></h1>
+<p>The real numbers ({{!util.a("r.ci")}}) are more than just a count.</p>
+<ul class="simple">
+<li><p>There is also direction (<span class="math notranslate nohighlight">\(+\)</span> or <span class="math notranslate nohighlight">\(-\)</span>). Now we will extend this to all directions in a plane.</p></li>
+<li><p>In <span class="math notranslate nohighlight">\(\mathbb{R}\)</span> we invert the direction with multiplication by <span class="math notranslate nohighlight">\(-1\)</span>. We extend this to rotation to any direction.</p></li>
+</ul>
+<p>In <span class="math notranslate nohighlight">\(\mathbb{R}\)</span> <span class="math notranslate nohighlight">\(x^2\)</span> only assumes positive values. The equation <span class="math notranslate nohighlight">\(x^2+1=0\)</span> does not have a solution.</p>
+<p>So we invent a “number” <span class="math notranslate nohighlight">\(i\)</span> that satisfies <span class="math notranslate nohighlight">\(i^2=-1\)</span>.</p>
+<p><span class="math notranslate nohighlight">\(i\)</span> is called <strong>imaginary unit</strong> and its multiples are called imaginary
+numbers. <span class="math notranslate nohighlight">\(i\)</span> is like apple or orange. It has nothing to do with
+the unit <span class="math notranslate nohighlight">\(1\)</span>. The imaginary numbers are orthogonal to <span class="math notranslate nohighlight">\(\mathbb{R}\)</span>,
+which means you can choose from these two sets independently.
+All combinations form a 2-dimensional space,
+i.e. a plane, the <strong>complex plane</strong>.</p>
+<blockquote>
+<div><p><span class="math notranslate nohighlight">\(z = a + ib \in \mathbb{C}\)</span></p>
+</div></blockquote>
+<p>is also a two-dimensional vector: 2 orthogonal directions that can be added independently.</p>
+<p>There are two representations</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(z = a+ib\)</span>, i.e. via the components or</p></li>
+<li><p><span class="math notranslate nohighlight">\(z = r(\cos\varphi + i\sin\varphi)\)</span> via modulus <span class="math notranslate nohighlight">\(r\)</span> and artument <span class="math notranslate nohighlight">\(\varphi\)</span> (angle, phase) in radiants.</p></li>
+</ul>
+<p>Now consider the following:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(i\cdot 1 = i\)</span>, i.e. multiplication with <span class="math notranslate nohighlight">\(i\)</span> make 1 to <span class="math notranslate nohighlight">\(i\)</span>, which is orthogonal to 1,
+the <strong>real unit</strong>. This is a rotation by a right angle.</p></li>
+<li><p><span class="math notranslate nohighlight">\(i\cdot i = -1\)</span>. Again a rotation by a right angle.</p></li>
+</ul>
+<p>Generally: Multiplication with <span class="math notranslate nohighlight">\(i\)</span> produces a rotation by the right angle.</p>
+<p>Since two multiplications (<span class="math notranslate nohighlight">\(x^2\)</span>) are supposed to invert (rotate by <span class="math notranslate nohighlight">\(\pi\)</span>)
+one multiplication should rotate by half of it (<span class="math notranslate nohighlight">\(\pi/2\)</span>).</p>
+<p>When multiplying exponentials, the exponent gets added.
+This gives a hint that there could be a representation that has the angle in the exponent.</p>
+<p>In trigonometric addition formulas (e.g. <span class="math notranslate nohighlight">\(\cos(\alpha+\beta)=\cos\alpha\cos\beta-sin\alpha\sin\beta\)</span>),
+multiplication adds the angles.</p>
+<p>Finally developing <span class="math notranslate nohighlight">\(\sin\)</span> and <span class="math notranslate nohighlight">\(\cos\)</span> into a Taylor series and comparing with the <span class="math notranslate nohighlight">\(e^x\)</span> series
+leads to the <strong>Euler Formula</strong>:</p>
+<ul class="simple">
+<li><p><span class="inlined">
+% include('r.cy')
+</span></p></li>
+</ul>
+<p><span class="math notranslate nohighlight">\(z=re^{i\varphi}\)</span> is a usual way to represent complex numbers.</p>
+<p>About <span class="math notranslate nohighlight">\(\sin\)</span> and <span class="math notranslate nohighlight">\(\cos\)</span> we know that the period is <span class="math notranslate nohighlight">\(2\pi\)</span>, therefore this is
+true for <span class="math notranslate nohighlight">\(e^{i\varphi}\)</span>.  The nth root divides the period up to <span class="math notranslate nohighlight">\(2n\pi\)</span> to
+below <span class="math notranslate nohighlight">\(2\pi\)</span> and so we have <span class="math notranslate nohighlight">\(n\)</span> different roots.</p>
+<div class="math notranslate nohighlight">
+\[z^{1/n}=r^{1/n}e^{i(\varphi/n+2k\pi/n)}\]</div>
+<p>More generally:</p>
+<blockquote>
+<div><p>In <span class="math notranslate nohighlight">\(\mathbb{C}\)</span> every polynomial of degree n has exactly n roots
+(<strong>fundamental theorem of algebra</strong>), if one counts the multiplicity
+of roots. <span class="math notranslate nohighlight">\(\mathbb{C}\)</span> therefore is called <strong>algebraically closed</strong>.</p>
+</div></blockquote>
+<p>This means that not only <span class="math notranslate nohighlight">\(x^2\)</span>, but every polynomial maps the whole
+<span class="math notranslate nohighlight">\(\mathbb{C}\)</span> to the whole of <span class="math notranslate nohighlight">\(\mathbb{C}\)</span>.</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">Note</p>
+<p>In function theory one learns that this can be extended to all functions
+that are infinitely often differentiable (analytic or holomorphic) in all of <span class="math notranslate nohighlight">\(\mathbb{C}\)</span>
+(entire functions), because they can be developed into a Taylor series.</p>
+</div>
+<p>Further properties:</p>
+<ul>
+<li><p>a = Re(z) is the real part</p></li>
+<li><p>b = Im(z) is the imaginary part</p></li>
+<li><p><span class="math notranslate nohighlight">\(\bar{z}=re^{-i\varphi}=a-ib\)</span> is the complex conjugate of z. <span class="math notranslate nohighlight">\(\bar{z^n}=\bar{z}^n\)</span>.</p>
+<p><span class="math notranslate nohighlight">\(z_1\bar{z_2}\)</span> combines in itself dot product (<span class="math notranslate nohighlight">\(Re(z_1\bar{z_2})=r_1r_2\cos\Delta\varphi\)</span>)
+and vector product (<span class="math notranslate nohighlight">\(Im(z_1\bar{z_2})=r_1r_2\sin\Delta\varphi\)</span>).</p>
+</li>
+<li><p><span class="math notranslate nohighlight">\(|z| = \sqrt{z\bar{z}} = \sqrt{a^2+b^2} = r\)</span> is the absolute value (modulus) of z.</p>
+<p>The square over the length of a complex number independent of direction
+is given by <span class="math notranslate nohighlight">\(z\bar{z}\)</span> and not by <span class="math notranslate nohighlight">\(z^2\)</span>.</p>
+</li>
+<li><p><span class="math notranslate nohighlight">\(φ = arg(z)\)</span> is the argument (phase) of z.</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(arg(z_1z_2)=arg(z_1)+arg(z_2)\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(arg(\frac{z_1}{z_2})=arg(z_1)-arg(z_2)\)</span></p></li>
+</ul>
+</li>
+</ul>
+<div class="section" id="application-of-mathbb-c">
+<h2><a class="toc-backref" href="#id2">Application of <span class="math notranslate nohighlight">\(\mathbb{C}\)</span></a><a class="headerlink" href="#application-of-mathbb-c" title="Permalink to this headline">¶</a></h2>
+<p>Since <span class="math notranslate nohighlight">\(\mathbb{C}\)</span> is a extension of <span class="math notranslate nohighlight">\(\mathbb{R}\)</span>,
+one can do everything with <span class="math notranslate nohighlight">\(\mathbb{C}\)</span> that you can do with <span class="math notranslate nohighlight">\(\mathbb{R}\)</span>.
+The essentially new is that <span class="math notranslate nohighlight">\(\mathbb{C}\)</span> includes all directions not just <span class="math notranslate nohighlight">\(+\)</span> and <span class="math notranslate nohighlight">\(-\)</span>.</p>
+<p>What is a direction?</p>
+<p><div class="subproblem1">
+% include('r.ct')
+</div></p>
+<p>The complex numbers are used in physics and technology in connection with vibrations and waves
+and there are many of them:</p>
+<ul class="simple">
+<li><p>mechanics/solid state physics: water waves, acoustic waves, elastic waves, …</p></li>
+<li><p>Electricity: alternate current, alternate current circuits (resistance, capacity and inductance),…</p></li>
+<li><p>Electrodynamics: Electromagnetic waves (light, radio), …</p></li>
+<li><p>Optics: Light, …</p></li>
+<li><p>Quantum dynamics: particle waves, ….</p></li>
+</ul>
+<p>Basically applications of complex numbers are due to</p>
+<ul class="simple">
+<li><p>the fact that unrestricted calculation is possible in <span class="math notranslate nohighlight">\(\mathbb{C}\)</span> and</p></li>
+<li><p>further results in function theory.</p></li>
+</ul>
+<p>Many physical systems are described with differential equations.
+These can be reduced to polynomial and then one gets complex numbers as roots.</p>
+</div>
+</div>

@@ -1,0 +1,37 @@
+%path = "Versuch in der Klasse"
+%kind = kinda["Meta"]
+%level = 0
+<!-- html --><p>Um es in der Klasse zu probieren, müssen der Lehrer und
+die Schüler sich nicht notwendigerweise registrieren.</p>
+<p>Schritt-für-Schritt für jeden in der Klasse:</p>
+<ul>
+<li><p>Der Lehrer denkt sich IDs für Schule, Periode, Lehrer (d.h. für sich),
+Klasse und jeden Student aus. Die IDs müssen zusammenpassen,
+d.h. alle Schüler der Klasse haben die gleiche ID für Klasse, Lehrer, …</p></li>
+<li><p>Der Lehrer zuerst, dann die Schüler:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="http://mamchecker.appspot.com/de">http://mamchecker.appspot.com/de</a> öffnen</p></li>
+<li><p>zu <code class="docutils literal notranslate"><span class="pre">Änderungen</span></code> (oben links) gehen</p></li>
+<li><p>seine IDs eingeben.  Der Lehrer ist auch ein
+Student, er kann aber das Feld Student auch leer lassen.</p></li>
+<li><p>Auf [OK] drücken.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Alle Studenten machen eine Übung (z.B. <code class="docutils literal notranslate"><span class="pre">/de/?r.bu</span></code> in der Adresszeile eingeben).</p></li>
+<li><p>Der Lehrer gibt in der Browseradresszeile die URL <code class="docutils literal notranslate"><span class="pre">/de/done?&lt;classId&gt;&amp;*&amp;*</span></code> ein.
+Von rechts nach links heißt die Abfrage:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>alle Übungen (<code class="docutils literal notranslate"><span class="pre">*</span></code>)</p></li>
+<li><p>von allen Studenten (<code class="docutils literal notranslate"><span class="pre">*</span></code>)</p></li>
+<li><p>von der Klasse <code class="docutils literal notranslate"><span class="pre">&lt;classID&gt;</span></code>. Die tatsächliche ID der Klasse verwenden.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>Der Unterschied zum registrierten Benutzer:
+Im nicht registrierten Fall kann jeder Schüler Lehrer spielen,
+und anderen Aufgaben geben oder die Ergebnisse abfragen
+(weiters dazu in {{!util.a("r.de")}}).</p>

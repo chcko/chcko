@@ -1,0 +1,71 @@
+%path = "maths/sequences and series"
+%kind = kinda["texts"]
+%level = 10
+<!-- html --><div class="section" id="sequences-and-series">
+<h1>Sequences and Series<a class="headerlink" href="#sequences-and-series" title="Permalink to this headline">¶</a></h1>
+<p>A <strong>Sequence</strong> is a function of natural numbers (positive integers).</p>
+<p>The natural number is used to refer to the position of an element (term) of the sequence.
+It is called index.</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(a_1\)</span> is the first element of the sequence</p></li>
+<li><p><span class="math notranslate nohighlight">\(a_2\)</span> is the second element</p></li>
+<li><p>…</p></li>
+<li><p><span class="math notranslate nohighlight">\(a_n\)</span> is the n-th element</p></li>
+</ul>
+<p>If we sum up the first n elements of a sequence,
+then we get the n-th element of the sum sequence or <strong>series</strong>.</p>
+<p>The use of <em>function</em> says:
+If I know which position, then I know the number at that position.</p>
+<p>Many sequences have a regularity that allows to descibe them in a much shorter way
+(short description = low complexity). Here are the most important ones</p>
+<div class="section" id="arithmetic-sequence">
+<h2>Arithmetic Sequence<a class="headerlink" href="#arithmetic-sequence" title="Permalink to this headline">¶</a></h2>
+<p>In the arithmetic sequence one element follows from the previous one by adding a contant</p>
+<p><span class="math notranslate nohighlight">\(a_{n+1} = a_n + d\)</span>.</p>
+<p>This is called <strong>recursive</strong> description of the arithmetic sequence.</p>
+<p>To get to the n-ten element from the first one, we repeat adding with d for n-1 times:</p>
+<p><span class="math notranslate nohighlight">\(a_n = a_1 + (n-1) d\)</span></p>
+<p>This is the <strong>term description</strong>:</p>
+<div class="admonition-note admonition">
+<p class="admonition-title">note</p>
+<p>In many programming languages one starts with 0, because then you can do
+<span class="math notranslate nohighlight">\(nd\)</span> instead of <span class="math notranslate nohighlight">\((n-1)d\)</span>.</p>
+</div>
+<p>To recognize a sequence to be arithmetic you check whether the differences
+between successive numbers stay the same.</p>
+</div>
+<div class="section" id="arithmetic-series">
+<h2>Arithmetic Series<a class="headerlink" href="#arithmetic-series" title="Permalink to this headline">¶</a></h2>
+<p>If you look at the sum of the first n elements, you can see a regularity,
+which is always used to make calculations simpler.</p>
+<p>In the above term description you can notice, that starting from the beginning
+each element is larger by d, and starting from the end (nth) backward each element
+is smaller by d. These operations cancel and therefore we can calculate Count/2 times
+sum of first plus nth element.</p>
+<p><span class="math notranslate nohighlight">\(\sum_{k=1}^{n} a_k = \frac{n(a_1+a_n)}{2}\)</span></p>
+<p>Specifically we have <span class="math notranslate nohighlight">\(1+2+...n=\frac{(n+1)n}{2}\)</span>.</p>
+</div>
+<div class="section" id="geometric-sequence">
+<h2>Geometric Sequence<a class="headerlink" href="#geometric-sequence" title="Permalink to this headline">¶</a></h2>
+<p>In the geometric sequence one element follows from the previous one by
+multiplying a constant</p>
+<p><span class="math notranslate nohighlight">\(a_{n+1} = a_n \cdot q\)</span>.</p>
+<p>This is the <strong>recursive</strong> description of the geometric sequence.</p>
+<p>To get to the nth element starting from the first one, we repeat multiplying by q for n-1 times:</p>
+<p><span class="math notranslate nohighlight">\(a_n = a_1 q^{n-1}\)</span></p>
+<p>This is the <strong>term description</strong> of the geometric Sequence.</p>
+<p>To recognize a given sequence as geometric, you check whether the quotient of successive elements
+stays the same.</p>
+</div>
+<div class="section" id="geometric-series">
+<h2>Geometric Series<a class="headerlink" href="#geometric-series" title="Permalink to this headline">¶</a></h2>
+<p>In</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{matrix}
+1+&amp;q+q^2+...+q^{n-1}&amp;=&amp;S_n\\
+  &amp;q+q^2+...+q^n&amp;=&amp;q S_n\\
+\end{matrix}\end{split}\]</div>
+<p>you see many equal terms. By subtraction you get</p>
+<p><span class="math notranslate nohighlight">\(\sum_{k=1}^{n} q^{k-1} = 1 + q + ... + q^{n-1} = \frac{q^n-1}{q-1}=\frac{1-q^n}{1-q}\)</span></p>
+</div>
+</div>

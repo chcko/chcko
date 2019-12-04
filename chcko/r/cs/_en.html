@@ -1,0 +1,30 @@
+%path = "maths/morphisms"
+%kind = kinda["texts"]
+%level = 10
+<!-- html --><p>The concept of a function from set theory that maps uniquely elements of one set
+(domain) to elements of another set (codomain),
+is tweaked/generalized with the concept of morphism in category theory
+in the sense that it puts the whole mapping in the center and combines
+all objects whether domain or codomain into a set of objects O.
+Domain and codomain in the set of objects are determined or part of a
+morphism (<span class="math notranslate nohighlight">\(D_f\)</span> is domain of f, <span class="math notranslate nohighlight">\(C_f\)</span> is codomain of f, both do not need to be sets).
+More morphisms in the set of morphisms M can share the
+same pair (domain, codomain). (O,M,id) is a category. id is the identity morphism.</p>
+<p>An important aspect of a morphism is that it maintains the structure in the objects
+(order structure, algebraic structure, topological structure) and
+depending on the structure the morphisms have special names (<span class="math notranslate nohighlight">\(f\circ g (D_g) = f(g(D_g))\)</span>):</p>
+<ul class="simple">
+<li><p>Monomorphism: <span class="math notranslate nohighlight">\(f\circ g=f\circ h \implies g=h\)</span> (left cancellation of <span class="math notranslate nohighlight">\(f\)</span>)
+or <span class="math notranslate nohighlight">\(f\)</span> injective for set objects
+(<a class="reference external" href="http://www.proofwiki.org/wiki/Injection_iff_Monomorphism_in_Category_of_Sets">proof</a>)</p></li>
+<li><p>Epimorphism: <span class="math notranslate nohighlight">\(g\circ f=h \circ f \implies g=h\)</span> (right cancellation)
+or <span class="math notranslate nohighlight">\(f\)</span> surjective for set objects
+(<a class="reference external" href="http://www.proofwiki.org/wiki/Surjection_iff_Epimorphism_in_Category_of_Sets">proof</a>)</p></li>
+<li><p>Isomorphism: <span class="math notranslate nohighlight">\(f\)</span> has <span class="math notranslate nohighlight">\(g\)</span> such that <span class="math notranslate nohighlight">\(f\circ g=id_{D_g}\)</span> and <span class="math notranslate nohighlight">\(g \circ f = id_{D_f}\)</span>
+(left inverse = right inverse) or <span class="math notranslate nohighlight">\(f\)</span> bijektive for set objects</p></li>
+<li><p>Endomorphism: <span class="math notranslate nohighlight">\(X\rightarrow X\)</span></p></li>
+<li><p>Automorphism: <span class="math notranslate nohighlight">\(X\rightarrow X\)</span> + isomorphism</p></li>
+<li><p>Homomorphism (Algebra): <span class="math notranslate nohighlight">\(f(a+b)=f(a)+f(b)\)</span> (different <span class="math notranslate nohighlight">\(+\)</span> possible)</p></li>
+<li><p>Homeomorphism (Topology): <span class="math notranslate nohighlight">\(f\)</span> and <span class="math notranslate nohighlight">\(f^{-1}\)</span> continuous</p></li>
+<li><p>Diffeomorphism (Differential geometry): bijektive, <span class="math notranslate nohighlight">\(f\)</span> and <span class="math notranslate nohighlight">\(f^{-1}\)</span> continuously differentiable</p></li>
+</ul>

@@ -1,0 +1,24 @@
+<script>
+    function validate() {
+        var username = document.forgot.username.value;
+        if (username == "") {
+            alert("{{tusername}}");
+            return false;
+        }
+        return true;
+    }
+</script>
+
+<p>{{tforgot}}</p>
+
+% if not_found:
+<strong>{{tnotfound}}</strong> 
+% end
+
+<form method="POST" name="forgot" onsubmit="return validate()">
+    <label for="username">{{tusername}}*</label>
+	<input type="text" value="{{ username }}" name="username"/>
+    <input type="submit" value="{{tsend}}"/>
+</form>
+
+% include('main')

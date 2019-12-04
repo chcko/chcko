@@ -1,0 +1,97 @@
+%path = "queries"
+%kind = kinda["meta"]
+%level = 0
+<!-- html --><div class="section" id="url">
+<h1>URL<a class="headerlink" href="#url" title="Permalink to this headline">¶</a></h1>
+<p>The URL format is <code class="docutils literal notranslate"><span class="pre">../&lt;lang&gt;/&lt;page&gt;?&lt;request&gt;</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;lang&gt;</span></code> is <code class="docutils literal notranslate"><span class="pre">en</span></code>, <code class="docutils literal notranslate"><span class="pre">de</span></code>, …  (see <code class="docutils literal notranslate"><span class="pre">languages.py</span></code>).
+It will remember your last language or use the browser setting, if dropped.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;page&gt;</span></code> is one of <code class="docutils literal notranslate"><span class="pre">content</span></code>, <code class="docutils literal notranslate"><span class="pre">done</span></code>, <code class="docutils literal notranslate"><span class="pre">todo</span></code>, <code class="docutils literal notranslate"><span class="pre">edits</span></code> and <code class="docutils literal notranslate"><span class="pre">contexts</span></code>.
+<code class="docutils literal notranslate"><span class="pre">contexts</span></code> requires a registered user, who can have more contexts/roles.
+<code class="docutils literal notranslate"><span class="pre">content</span></code> is default, if dropped.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;request&gt;</span></code> starts after the <code class="docutils literal notranslate"><span class="pre">?</span></code> and it is a <code class="docutils literal notranslate"><span class="pre">&amp;</span></code>-separated list, which can contain
+<code class="docutils literal notranslate"><span class="pre">School=&lt;LLL&gt;&amp;Period=&lt;DDD&gt;&amp;Teacher=&lt;RRR&gt;&amp;Class=&lt;SSS&gt;&amp;Student=&lt;TTT&gt;</span></code>
+for all pages.</p>
+</div>
+<div class="section" id="content">
+<h1>content<a class="headerlink" href="#content" title="Permalink to this headline">¶</a></h1>
+<p>With <code class="docutils literal notranslate"><span class="pre">../&lt;lang&gt;/content</span></code> all current contents are listed. One can select more entries here.</p>
+<p><code class="docutils literal notranslate"><span class="pre">../en/content?r.a&amp;r.by=2</span></code> (<code class="docutils literal notranslate"><span class="pre">r.a</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">r.a=1</span></code>) would create
+an English content page with one <code class="docutils literal notranslate"><span class="pre">r.a</span></code> and two <code class="docutils literal notranslate"><span class="pre">r.by</span></code> exercises.
+<code class="docutils literal notranslate"><span class="pre">../en/?r.a&amp;r.by=2</span></code> is the same, i.e. <code class="docutils literal notranslate"><span class="pre">content</span></code> is the default page.</p>
+<p>For registered users this page allows to make <strong>assignments</strong> to class/students with the same
+School-Period-Teacher prefix. You must have selected a context where the teacher role
+belongs to you, though, i.e. you created that teacher ID.</p>
+<p>Exercises have more questions and every question has points associated (default 1).
+After checking the entered values at the top there will be a summary of achieved
+points/total points twice, once not counting fields left empty.</p>
+</div>
+<div class="section" id="done">
+<h1>done<a class="headerlink" href="#done" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">../&lt;lang&gt;/done</span></code> lists the done exercises with date and time and whether they were correct.
+One can open every exercise or do it again. It is possible to delete the selected exercises.</p>
+<p>The query</p>
+<p><code class="docutils literal notranslate"><span class="pre">../&lt;lang&gt;/done?&lt;school&gt;&amp;&lt;period&gt;&amp;&lt;teacher&gt;&amp;&lt;class&gt;&amp;&lt;student&gt;&amp;&lt;exercise&gt;</span></code></p>
+<p>allows</p>
+<ul class="simple">
+<li><p>a student to filter his exercises</p></li>
+<li><p>a teacher to see the exercises of his classes or students</p></li>
+</ul>
+<p>From the left, dropped entries will be filled by the corresponding current context IDs.
+Therefore a student only needs <code class="docutils literal notranslate"><span class="pre">&lt;exercise&gt;</span></code>, if it should be filtered at all.
+<code class="docutils literal notranslate"><span class="pre">&lt;..&gt;</span></code> are placeholders for the actual strings.</p>
+<p>For ‘no restriction’ <code class="docutils literal notranslate"><span class="pre">*</span></code> can be used.</p>
+<p>An entry has this format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">name</span><span class="o">|</span><span class="n">field</span> <span class="n">op</span> <span class="n">value</span><span class="p">[,</span><span class="n">field</span> <span class="n">op</span> <span class="n">value</span><span class="p">[,</span><span class="o">...</span><span class="p">]]</span>
+</pre></div>
+</div>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code> is the name of the record</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">field</span></code> is a field of the record</p>
+<blockquote>
+<div><p>All records have a name, <code class="docutils literal notranslate"><span class="pre">userkey</span></code> and <code class="docutils literal notranslate"><span class="pre">created</span></code>. School, Period,
+Teacher and Class have no other fields.  In addition Student has <code class="docutils literal notranslate"><span class="pre">color</span></code>
+and Problem has <code class="docutils literal notranslate"><span class="pre">query_string</span></code>, <code class="docutils literal notranslate"><span class="pre">lang</span></code>, <code class="docutils literal notranslate"><span class="pre">given</span></code>, <code class="docutils literal notranslate"><span class="pre">created</span></code>,
+<code class="docutils literal notranslate"><span class="pre">answered</span></code>, <code class="docutils literal notranslate"><span class="pre">collection</span></code>, <code class="docutils literal notranslate"><span class="pre">inputids</span></code>, <code class="docutils literal notranslate"><span class="pre">results</span></code>, <code class="docutils literal notranslate"><span class="pre">oks</span></code>,
+<code class="docutils literal notranslate"><span class="pre">points</span></code>, <code class="docutils literal notranslate"><span class="pre">answers</span></code>, <code class="docutils literal notranslate"><span class="pre">nr</span></code>.</p>
+</div></blockquote>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">op</span></code> consists of <code class="docutils literal notranslate"><span class="pre">~=!&lt;&gt;</span></code>, where <code class="docutils literal notranslate"><span class="pre">~</span></code> means <code class="docutils literal notranslate"><span class="pre">=</span></code>.
+For the age (<code class="docutils literal notranslate"><span class="pre">answered</span></code>) of the exercise these abbreviations can be used:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">=</span><span class="n">days</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="n">hours</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">minutes</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="n">seconds</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">1DK&amp;*&amp;d&gt;3,d&lt;1</span></code> would show all exercises younger than 3 days (<code class="docutils literal notranslate"><span class="pre">d</span></code>) and
+older than one day of students from class <code class="docutils literal notranslate"><span class="pre">1DK</span></code></p>
+<div class="admonition-suggestion admonition">
+<p class="admonition-title">suggestion</p>
+<p>Bookmark often used requests.</p>
+</div>
+<p>Registered user’s data is protected against queries from anonymous users or other registered users.</p>
+</div>
+<div class="section" id="todo">
+<h1>todo<a class="headerlink" href="#todo" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">../&lt;lang&gt;/todo</span></code> lists the assignments with date/time given and date/time due.</p>
+</div>
+<div class="section" id="edits">
+<h1>edits<a class="headerlink" href="#edits" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">../&lt;lang&gt;/edits</span></code> allows to add, change or delete IDs for
+School, Period, Teacher, Class and Student.
+For fields left empty the IDs <code class="docutils literal notranslate"><span class="pre">myschool</span></code>, <code class="docutils literal notranslate"><span class="pre">myperiod</span></code>, <code class="docutils literal notranslate"><span class="pre">myteacher</span></code>,
+<code class="docutils literal notranslate"><span class="pre">myclass</span></code> and <code class="docutils literal notranslate"><span class="pre">myself</span></code> are used.</p>
+<p>If the set of IDs for a full context path is used already, then it will be told.
+If context path prefixes of others are used, it will be recognizable by their italic format.
+These other users can query your done exercises.</p>
+<p><code class="docutils literal notranslate"><span class="pre">new</span></code> will create a new context/role.</p>
+<p><code class="docutils literal notranslate"><span class="pre">change</span></code> will change the identification of the current context/role, i.e. all the exercise done will be copied over.</p>
+<p><code class="docutils literal notranslate"><span class="pre">delete</span></code> will delete the context/role and all its done exercises.</p>
+<p>A <strong>color</strong> can be chosen to more easily see in which context/role one is.</p>
+</div>
+<div class="section" id="contexts">
+<h1>contexts<a class="headerlink" href="#contexts" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">../&lt;lang&gt;/contexts</span></code> lists all contexts/roles of the currently registered user.</p>
+<p>These contexts/roles can also be accessed via a drop down menu when hovering over the student ID.
+Then the currently open page will be reopened with the new context/role.</p>
+</div>

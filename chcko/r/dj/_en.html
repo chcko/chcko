@@ -1,0 +1,67 @@
+%path = "maths/trigonometry"
+%kind = kinda["texts"]
+%level = 11
+<!-- html --><p>In the following drawing we have a circle with radius 1.
+The length of the arc on such a circle is a measure for the <strong>angle</strong>.
+It is called <strong>radian</strong> and the unit is <code class="docutils literal notranslate"><span class="pre">rad</span></code>. The right angle (90°) is <span class="math notranslate nohighlight">\(\pi/2\)</span>.
+In general</p>
+<div class="math notranslate nohighlight">
+\[\frac{\pi}{180}\alpha[°] = \alpha[rad]\]</div>
+<p>By changing this angle one also changes the lengths labeled with <span class="math notranslate nohighlight">\(\sin\alpha\)</span>,
+<span class="math notranslate nohighlight">\(\cos\alpha\)</span> and <span class="math notranslate nohighlight">\(\tan\alpha\)</span>. These lengths are determined by the angle,
+which is equivalent to say that the lengths are <strong>functions of the angle</strong>.</p>
+<div class="figure">
+<p><img src="_images/tikz-1400ee56889bde311c23a2283ccad7393c769b55.png" alt="\coordinate (O) at (0,0);
+\coordinate (C) at ({2*cos(60)},{2*sin(60)});
+\coordinate (P) at ({2*cos(60)},0);
+\coordinate (D) at (2,{2*tan(60)});
+\draw[black, very thin] (O) circle [radius=2];
+\draw[red,thick] (2,0) arc [radius=2, start angle=0, end angle=60] node[midway,above]{\tiny $\alpha$};
+\draw[blue,thick] (O) -- (C) node[midway,above]{\tiny $1$};
+\draw[blue,thick] (P) -- (C) node[midway,right]{\tiny $\sin\alpha$};
+\draw[blue,thick] (O) -- (P) node[midway,below]{\tiny $\cos\alpha$};
+\draw[green,thick] (P) -- (2,0);
+\draw[green,thick] (2,0) -- (D) node[midway,right]{\tiny $\tan\alpha$};
+\draw[green,thick] (C) -- (D);
+\draw[xshift=-1.1cm,yshift=-1cm] node[right,text width=2.2cm]
+{ \tiny $\tan\alpha=\frac{\sin\alpha}{\cos\alpha}$\\$\sin^2\alpha+\cos^2\alpha=1$ };" /></p>
+</div><div class="admonition-similarity-affine-mapping admonition">
+<p class="admonition-title">Similarity = affine mapping</p>
+<p>One can scale this diagram to an actual rectangular triangle and completely
+determine it by knowing one sharp angle and one side.</p>
+</div>
+<p>The graphs of the above <strong>trigonometric functions</strong> are as follows</p>
+<div class="figure">
+<p><img src="_images/tikz-01804021412cb95dcb40e40d8f0f30a907574188.png" alt="\begin{axis}
+    [
+    ymin=-1,ymax=1,
+    xmin=0,xmax=2*pi,
+    xtick=\empty,
+    ytick={-1,0,1},
+    extra x ticks={1.5708,3.1416,4.712,6.2832},
+    extra x tick labels={$\frac{\pi}{2}$, $\pi$, $\frac{3\pi}{2}$, $2\pi$},
+    every extra x tick/.style={
+            xticklabel style={anchor=north west},
+            grid=major,
+            major grid style={thick,dashed,red}
+    },
+    axis lines = center,
+    xlabel=$x$,ylabel=$y$,
+    enlargelimits=0.2,
+    domain=0:2*pi,
+    samples=100,
+    axis equal,
+    ]
+    \addplot [green,thick] {tan(deg(x))} node [midway,left]{tan};
+    \addplot [red,thick] {sin(deg(x))} node [above]{sin};
+    \addplot [blue,thick] {cos(deg(x))} node [above]{cos};
+\end{axis}" /></p>
+</div><p>Some values of the functions can be found via calculations on the equal sided triangle
+(<span class="math notranslate nohighlight">\(\pi/3\)</span>, <span class="math notranslate nohighlight">\(\pi/6\)</span>) or on a square with side length 1 (<span class="math notranslate nohighlight">\(\pi/4\)</span>).</p>
+<p><span class="math notranslate nohighlight">\(\cos\)</span> is symmetric: <span class="math notranslate nohighlight">\(\cos(-\alpha)=\cos\alpha\)</span></p>
+<p><span class="math notranslate nohighlight">\(\sin\)</span> is antisymmetric: <span class="math notranslate nohighlight">\(\sin(-\alpha)=-\sin\alpha\)</span>.</p>
+<p>All trigonometric functions have a period of <span class="math notranslate nohighlight">\(2\pi\)</span>: <span class="math notranslate nohighlight">\(sin|cos|tan(\alpha+2\pi)=sin|cos|tan(\alpha)\)</span>.</p>
+<p>Because the sharp angles of the rectangular triangle add to <span class="math notranslate nohighlight">\(\pi/2\)</span>, we have</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\sin(\pi/2 - \alpha)=\cos\alpha\\
+\cos(\pi/2 - \alpha)=\sin\alpha\end{split}\]</div>

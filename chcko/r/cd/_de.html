@@ -1,0 +1,86 @@
+%path = "Mathematik/Finanz/Zinsen"
+%kind = kinda["Texte"]
+%level = 10
+<!-- html --><p><span class="math notranslate nohighlight">\(K\)</span> Kapital</p>
+<blockquote>
+<div><p>Ein Geldbetrag.</p>
+</div></blockquote>
+<p><span class="math notranslate nohighlight">\(i\)</span> Zinssatz</p>
+<blockquote>
+<div><p>Die Zu- oder Abnahme von <span class="math notranslate nohighlight">\(K\)</span> wird in %=1/100 angegeben.</p>
+<ul class="simple">
+<li><p>Zinswert: <span class="math notranslate nohighlight">\(3\% K = 0.03 K\)</span>.</p></li>
+<li><p>Zunahme: <span class="math notranslate nohighlight">\(K + 3\% K = (1+3\%) K = 1.03 K\)</span>.</p></li>
+<li><p>Abnahme: <span class="math notranslate nohighlight">\(K - 3\% K = (1-3\%) K = 0.97 K\)</span>.</p></li>
+</ul>
+</div></blockquote>
+<p><span class="math notranslate nohighlight">\(n\)</span> Perioden (Jahre/Quartale/Monate/Tage)</p>
+<blockquote>
+<div><p>Zum Zinsatz <span class="math notranslate nohighlight">\(i\)</span> gehört immer auch ein Zeitraum, in dem die Zunahme oder Abnahme stattfindet.</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(i\)</span> meint ein Jahr (Jahreszinssatz, Effektivzinssatz)</p></li>
+<li><p><span class="math notranslate nohighlight">\(i_{12}\)</span> meint ein Monat</p></li>
+<li><p><span class="math notranslate nohighlight">\(i_4\)</span> meint ein Quartal</p></li>
+</ul>
+<p>Nach diesem Zeitraum ist K um den <span class="math notranslate nohighlight">\(iK\)</span> größer, also <span class="math notranslate nohighlight">\(K_{n=1} = K_0 (1+i) = K_0 q\)</span> (q = 1+i).</p>
+</div></blockquote>
+<p>Zinseszinsen</p>
+<blockquote>
+<div><p>Am Anfang eingelegtes Kapital ist nach einer Periode
+(n=1) <span class="math notranslate nohighlight">\(K_{n=1} = K_0 (1+i) = K_0 q\)</span> wert, nach n=2 Perioden <span class="math notranslate nohighlight">\(K_0 q^2\)</span>, nach n=3 Perioden <span class="math notranslate nohighlight">\(K_0 q^3\)</span>…</p>
+<p>Nach n Perioden:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(K_n = K_0 q^n\)</span></p></li>
+<li><p>Aufzinsen: Ein Kapital wird mit <span class="math notranslate nohighlight">\(q^n\)</span> multipliziert, um den Wert <span class="math notranslate nohighlight">\(n\)</span> Perioden später zu erhalten.</p></li>
+<li><p>Abzinsen: Ein Kapital wird mit <span class="math notranslate nohighlight">\(q^{-n}\)</span> multipliziert, um den Wert <span class="math notranslate nohighlight">\(n\)</span> Perioden früher zu erhalten.</p></li>
+</ul>
+</div></blockquote>
+<p>Rente</p>
+<blockquote>
+<div><p>Eine Rente ist eine Zahlung (Rate <span class="math notranslate nohighlight">\(r\)</span>) in regelmäßigen Zeitabständen (Perioden).
+Die Periodenzahl für jede Rate ist anders.
+Die Endwerte aller Raten aufsummiert ergibt die Rentenformel:</p>
+<p><span class="math notranslate nohighlight">\(R_n = \sum_{m=0}^{n-1} r_m = \sum_{m=0}^{n-1} r q^m = r \frac{q^n - 1}{q-1}\)</span></p>
+<p>Diese Formel kann man anwenden, um den Endwert <span class="math notranslate nohighlight">\(R_n\)</span> der Rente zu berechnen,
+wenn die Rente am Ende jeder Periode gezahlt wurde (nachschüssig).</p>
+<ul class="simple">
+<li><p>Nachschüssige Rente: <span class="math notranslate nohighlight">\(R_n = r \frac{q^n - 1}{q-1}\)</span></p></li>
+<li><p>Vorschüssige Rente: <span class="math notranslate nohighlight">\(R_n^v = q R_n\)</span></p></li>
+</ul>
+<p><strong>Barwert</strong> der Rente ergibt sich durch Abzinsen des <strong>Endwertes</strong> <span class="math notranslate nohighlight">\(B_n = R_n q^{-n}\)</span>.</p>
+</div></blockquote>
+<p>Unterjährige Rente</p>
+<blockquote>
+<div><p>Um den unterjährigen Zinsatz mit dem Jahreszinssatz vergleichen zu können, muss man umrechnen.</p>
+<p>Lineare Umrechnung, wenn in den Monaten oder Quartalen keine Verzinsung stattfindet:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(i_{12} = i/12\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(i_4 = i/4\)</span></p></li>
+</ul>
+<p>Konforme (äquivalente) Umrechnung bei unterjähriger Verzinsung:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(i = (i_{12} + 1)^{12} - 1\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(i = (i_4 + 1)^4 - 1\)</span></p></li>
+</ul>
+<p>Wenn ein Jahreszinssatz gegeben ist und eine monatliche Rente zu berechnen ist,
+dann muss zuerst <strong>auf den monatlichen Zinssatz umgerechnet</strong> werden.</p>
+</div></blockquote>
+<p>Rentenrest</p>
+<blockquote>
+<div><p>Um zu beantworten, wieviel Kapital zu einem Zeitpunkt
+während der Rentenlaufzeit noch übrig ist, zählt man den Rentenwert
+bis zu diesem Zeitpunkt vom Kapitalwert an diesem Zeitpunkt ab.</p>
+</div></blockquote>
+<p>Umrechnung einer Rente in eine andere</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Man ermittelt zuerst den Endwert der einen Rente <span class="math notranslate nohighlight">\(R_n\)</span>.</p></li>
+<li><p>Dieses <span class="math notranslate nohighlight">\(R_n\)</span> muss man dann zum Endwert der anderen Rente auf- oder abzinsen.</p></li>
+<li><p>Durch Verwendung der Rentenformel kann man dann die gesuchte Größe (<span class="math notranslate nohighlight">\(n\)</span>, <span class="math notranslate nohighlight">\(q\)</span>, <span class="math notranslate nohighlight">\(r\)</span>) der neuen Rente ausrechnen.</p></li>
+</ul>
+</div></blockquote>
+<p>Kapitalvergleich, Angebotsvergleich</p>
+<blockquote>
+<div><p>Um Gelder vergleichen zu können muss man sie auf den gleichen Zeitpunkt (etwa jetzt, also Barwert)
+umrechnen. Umrechnen geht über Auf- oder Abzinsen oder unter Verwendung der Rentenformel.</p>
+</div></blockquote>

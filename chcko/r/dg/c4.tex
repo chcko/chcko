@@ -1,0 +1,28 @@
+\documentclass{article}
+\usepackage{siunitx}
+\usepackage{circuitikz}
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{circuitikz} \draw[color=violet]
+    (1,-2) to[sV=$V_i$,-*,i=$I_1$](1,0);
+    \draw[color=red] (1,0) -- (1,1)
+    to[R=R,i=$I_2$] (7,1)
+    -- (7,0);\draw (7,0) to[short,*-o](8,0)
+    node[anchor=west]{$V_{th}$}
+    -- (7,0);\draw[color=red] (7,0)
+    to[C=C,*-*,i=$I_2$](4,0);
+    \draw[color=violet] (4,0)
+    to[R=R,*-*,i=$I_1$](4,-2);
+    \draw (4,-2) -- (7,-2)
+    node[ground]{} -- (7,-2)
+    to[short,*-o](8,-2)
+    node[anchor=west]{$0$};
+    \draw[color=blue] (1,0)
+    to[C=C,*-*,i=$I_1-I_2$](4,0);
+    \draw[color=violet] (1,-2)--(4,-2);
+\end{circuitikz}
+
+
+\end{document}
