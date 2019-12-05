@@ -5,4 +5,5 @@ matplotlib
 lxml
 sympy
 google-cloud-ndb
+urlfetch
 

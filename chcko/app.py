@@ -12,12 +12,17 @@ import os.path
 import logging
 #bottle has an app object
 from bottle import *
-from firebase_admin import credentials, firestore, initialize_app
 
-# Initialize Firestore DB (TODO key.json)
-cred = credentials.Certificate('key.json')
-fire = initialize_app(cred)
-db = firestore.client()
+
+# TODO check outdated
+# execute the following in vim py to use google appengine in vim
+#>> from chcko.conftest import gaetestbed
+#>> class requestdummy:
+#>>     def addfinalizer(self,fin):
+#>>         self.fin=fin
+#>> finrequest = requestdummy()
+#>> finalize = gaetestbed(finrequest)
+# finalize()
 
 def python_path():
     this_file = os.path.abspath(__file__)
@@ -33,15 +38,11 @@ python_path()
 #    return template('<b>Hello {{name}}</b>!', name=name)
 
 
-# TODO check outdated
-# execute the following in vim py to use google appengine in vim
-#>> from chcko.conftest import gaetestbed
-#>> class requestdummy:
-#>>     def addfinalizer(self,fin):
-#>>         self.fin=fin
-#>> finrequest = requestdummy()
-#>> finalize = gaetestbed(finrequest)
-# finalize()
+
+#auth
+#https://raw.githubusercontent.com/Refinitiv/bottle-oauthlib/master/tests/examples/quickstart.py
+#auth
+
 
 import webapp2
 from webapp2_extras import sessions

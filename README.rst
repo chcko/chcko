@@ -22,6 +22,26 @@ CHANGELOG.rst
   Flask, on the other hand, would pull in Jinja2, Werkzeug, click and itsdangerous,
   which are not needed.
 
+Reading List:
+
+https://github.com/GoogleCloudPlatform/appengine-bottle-skeleton
+https://github.com/GoogleCloudPlatform/appengine-photoalbum-example
+
+https://cloud.google.com/community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run
+https://github.com/newpro/firebase-alchemy
+https://github.com/googleapis/python-ndb/blob/master/docs/migrating.rst
+https://realpython.com/testing-third-party-apis-with-mocks/
+
+
+User Authentication: Is user really necessary?
+https://cloud.google.com/appengine/docs/standard/python3/building-app/authenticating-users
+https://github.com/Refinitiv/bottle-oauthlib/blob/master/tests/examples/quickstart_resourceserver.py
+https://github.com/Refinitiv/bottle-oauthlib/blob/master/tests/examples/quickstart_resourceserver.py
+https://googleapis.dev/python/google-api-core/latest/auth.html
+https://hackersandslackers.com/flask-login-user-authentication/
+https://github.com/devries/bottle-session
+https://github.com/GoogleCloudPlatform/flask-talisman
+
 
 Current Implementation
 ======================
@@ -129,7 +149,6 @@ Test ``chcko``::
   doit test
   doit cov
   doit serve
-
 
 Upload::
 
