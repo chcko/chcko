@@ -7,7 +7,7 @@ from chcko.hlp import Struct, norm_frac as norm
 
 
 def given():
-    a, b, c, d, e, f = random.sample(range(-9, -1) + range(1, 9), 6)
+    a, b, c, d, e, f = random.sample(list(range(-9, -1)) + list(range(1, 9)), 6)
     #x = a/b
     rs = a - c
     ls = b * x - c

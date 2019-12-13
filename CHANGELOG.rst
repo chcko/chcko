@@ -2,16 +2,18 @@
 CHANGELOG
 =========
 
-The Changelog works as project log.
 Top entry is `[TODO]`.
-Entries have a short description and a link to documents with further detail.
+Entries have a short description and
+possibly a link to documents with further detail.
 
 TODO
 ====
 
+- Allow more DB backends
 - Use GCP Python 3 libraries
 - Adapt to changes in used 3rd party packages
-- replace webapp2 with flask
+
+- replace webapp2 with bottle
 - reach 100% test coverage
 - support ``.rst`` without Sphinx, i.e. only using docutils
 - additionally support ``.md`` for content

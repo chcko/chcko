@@ -6,7 +6,7 @@ from chcko.hlp import Struct, norm_frac as norm
 
 
 def given():
-    r = sorted(random.sample(range(-9, -1) + range(1, 9), 2))
+    r = sorted(random.sample(list(range(-9, -1)) + list(range(1, 9)), 2))
     c = [-1, r[0] + r[1], -r[0] * r[1]]
     g = Struct(r=r, c=c)
     return g

@@ -9,7 +9,7 @@ def given():
     g.i = random.sample(range(2, 12), 1)[0]
     g.K1 = random.sample(range(30, 50), 1)[0] * 1000
     g.n1, g.n2 = random.sample(range(1, 20), 2)
-    dK = random.sample(range(-50, -1) + range(1, 50), 1)[0] * 10
+    dK = random.sample(list(range(-50, -1)) + list(range(1, 50)), 1)[0] * 10
     g.K2 = int(g.K1 * (1.0 + g.i / 100.0) ** (g.n2 - g.n1) + dK)
     return g
 

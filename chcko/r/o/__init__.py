@@ -16,9 +16,9 @@ def tex_lin(a, b):
 
 def given():
     # ax+b=cx
-    a, c = random.sample(range(2, 10) + range(-9, -2), 2)
-    da, dc = random.sample(range(2, 4) + range(-3, -1), 2)
-    xx = random.sample(range(1, 6) + range(-5, 0), 1)[0]
+    a, c = random.sample(list(range(2, 10)) + list(range(-9, -2)), 2)
+    da, dc = random.sample(list(range(2, 4)) + list(range(-3, -1)), 2)
+    xx = random.sample(list(range(1, 6)) + list(range(-5, 0)), 1)[0]
     b = (Rational(c, dc) - Rational(a, da)) * xx
     g = Struct(a=Rational(a, da), b=b, c=Rational(c, dc))
     return g

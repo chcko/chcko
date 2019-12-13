@@ -9,8 +9,8 @@ __all__ = ['given', 'calc']
 
 def given():
     g = Struct()
-    g.x = random.sample(range(-9, -1) + range(1, 9), 2)
-    g.b = random.sample(range(-9, -1) + range(1, 9), 1)[0]
+    g.x = random.sample(list(range(-9, -1)) + list(range(1, 9)), 2)
+    g.b = random.sample(list(range(-9, -1)) + list(range(1, 9)), 1)[0]
     return g
 
 

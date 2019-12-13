@@ -1,9 +1,12 @@
 bottle
+
+fireo
+
 bottle-oauthlib
+urlfetch
+
 numpy
 matplotlib
 lxml
 sympy
-google-cloud-ndb
-urlfetch
 

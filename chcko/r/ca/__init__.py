@@ -12,7 +12,7 @@ def given():
     g = Struct()
     g.x = random.sample(range(-9, 9), 2)
     g.y = random.sample(range(-9, 9), 2)
-    g.dx = random.sample(range(-4, -1) + range(1, 4), 1)[0]
+    g.dx = random.sample(list(range(-4, -1)) + list(range(1, 4)), 1)[0]
     return g
 
 angle = lambda a, b: 180 * \

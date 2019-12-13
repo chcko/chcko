@@ -27,9 +27,6 @@ Reading List:
 https://github.com/GoogleCloudPlatform/appengine-bottle-skeleton
 https://github.com/GoogleCloudPlatform/appengine-photoalbum-example
 
-https://cloud.google.com/community/tutorials/building-flask-api-with-cloud-firestore-and-deploying-to-cloud-run
-https://github.com/newpro/firebase-alchemy
-https://github.com/googleapis/python-ndb/blob/master/docs/migrating.rst
 https://realpython.com/testing-third-party-apis-with-mocks/
 
 

@@ -6,11 +6,9 @@ import os
 import os.path
 import webapp2
 import datetime
-from chcko.app import app
 
 from chcko.model import (Assignment, Index, Problem, Student, Class,
-                              Teacher, Period, School, set_student, delete_all)
-from chcko.content import Page
+                              Teacher, Period, School, set_student, delete_all, db)
 from chcko.hlp import Struct, import_module, from_py, resolver
 
 
@@ -50,22 +48,24 @@ def check_test_answers(m=None, test_format=None):
 
 
 def problems_for(
-    student,
-    skip=2,
-    startdir=os.path.dirname(
-        os.path.dirname(__file__))):
+        student,
+        skip=2,
+        startdir=os.path.dirname(
+        os.path.dirname(__file__))
+    ):
     skipc = 0
-    for f in os.listdir(os.path.join(startdir, 'r')):
-        if not f.startswith('_'):
-            skipc = skipc + 1
-            if skipc % skip != 0:
-                continue
-            rsv = resolver('r.' + f, 'de')
-            problem, pkwargs = Problem.from_resolver(rsv, 1, student.key)
-            problem.answers = problem.results
-            problem.answered = datetime.datetime.now()
-            problem.oks = [True] * len(problem.results)
-            problem.put()
+    with db.context() as context:
+        for f in os.listdir(os.path.join(startdir, 'r')):
+            if not f.startswith('_'):
+                skipc = skipc + 1
+                if skipc % skip != 0:
+                    continue
+                rsv = resolver('r.' + f, 'de')
+                problem, pkwargs = Problem.from_resolver(rsv, 1, student.key)
+                problem.answers = problem.results
+                problem.answered = datetime.datetime.now()
+                problem.oks = [True] * len(problem.results)
+                problem.put()
 
 
 def clear_all_data():
@@ -81,6 +81,8 @@ def clear_all_data():
 
 
 def newuserpage(query_string, lang):
+    from chcko.app import app
+    from chcko.content import Page
     delete_all(Student.query())
     not_answered = Problem.gql("WHERE answered = NULL")
     delete_all(not_answered)

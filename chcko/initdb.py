@@ -3,360 +3,360 @@
 from chcko.model import Index, index_add, delete_all
 delete_all(Index.query())
 
-index_add(u"r.bw", u"en", "0", "11",
-        u"maths/finance/interest/combined and theoretical")
-index_add(u"r.bw", u"de", "0", "11",
-        u"Mathematik/Finanz/Zinsen/gemischt u. theoretisch")
-index_add(u"r.cm", u"de", "1", "10",
-        u"Mathematik/Stukturen/Ring")
-index_add(u"r.cm", u"en", "1", "10",
-        u"maths/stuctures/ring")
-index_add(u"r.h", u"en", "0", "11",
-        u"maths/vectors/matrix/stepwise production")
-index_add(u"r.h", u"de", "0", "11",
-        u"Mathematik/Vektoren/Matrix/Stufenweise Produktion")
-index_add(u"r.bp", u"en", "0", "12",
-        u"maths/integral/defined/volume/cylinder or rotation")
-index_add(u"r.bp", u"de", "0", "12",
-        u"Mathematik/Integral/bestimmtes/Volumen/Zylinder oder Rotation")
-index_add(u"r.bc", u"en", "0", "11",
-        u"maths/finance/annuity/annual->monthly")
-index_add(u"r.bc", u"de", "0", "11",
-        u"Mathematik/Finanz/Rentenrechnung/ganzjährig->unterjährig")
-index_add(u"r.cr", u"de", "1", "9",
-        u"Mathematik/Funktionen")
-index_add(u"r.cr", u"en", "1", "9",
-        u"maths/functions")
-index_add(u"r.cl", u"de", "1", "10",
-        u"Mathematik/Stukturen/Gruppe")
-index_add(u"r.cl", u"en", "1", "10",
-        u"maths/stuctures/group")
-index_add(u"r.ce", u"de", "1", "10",
-        u"Mathematik/Funktionen/Log")
-index_add(u"r.ce", u"en", "1", "10",
-        u"maths/functions/log")
-index_add(u"r.di", u"de", "1", "9",
-        u"Mathematik/Zahlen/C")
-index_add(u"r.di", u"en", "1", "10",
-        u"maths/numbers/C")
-index_add(u"r.u", u"en", "0", "10",
-        u"maths/vectors/matrix/2x2 inversion")
-index_add(u"r.u", u"de", "0", "10",
-        u"Mathematik/Vektoren/Matrix/2x2 invertieren")
-index_add(u"r.y", u"en", "0", "9",
-        u"maths/power/compound fraction")
-index_add(u"r.y", u"de", "0", "9",
-        u"Mathematik/Potenzen/Doppelbrüche")
-index_add(u"r.cy", u"en", "6", "10",
-        u"maths/euler identity")
-index_add(u"r.cy", u"de", "6", "10",
-        u"Mathematik/Euler's Identität")
-index_add(u"r.w", u"en", "0", "9",
-        u"maths/power/with numbers")
-index_add(u"r.w", u"de", "0", "9",
-        u"Mathematik/Potenzen/mit Zahlen")
-index_add(u"r.bj", u"en", "0", "10",
-        u"maths/functions/exponential")
-index_add(u"r.bj", u"de", "0", "11",
-        u"Mathematik/Funktionen/exponentiell")
-index_add(u"r.da", u"de", "19", "0",
-        u"Ideen")
-index_add(u"r.da", u"en", "19", "0",
-        u"ideas")
-index_add(u"r.cp", u"de", "1", "9",
-        u"Mathematik/Mathematik+Information")
-index_add(u"r.cp", u"en", "1", "9",
-        u"maths/maths+information")
-index_add(u"r.ca", u"en", "0", "11",
-        u"maths/vectors/2d")
-index_add(u"r.ca", u"de", "0", "11",
-        u"Mathematik/Vektoren/2D")
-index_add(u"r.e", u"en", "6", "12",
-        u"physics/electricity/capacitor")
-index_add(u"r.e", u"de", "6", "12",
-        u"Physik/Elektrizität/Kondensator")
-index_add(u"r.bf", u"en", "0", "9",
-        u"maths/number system/binary/add")
-index_add(u"r.bf", u"de", "0", "9",
-        u"Mathematik/Zahlensysteme/Binärsystem/Addieren")
-index_add(u"r.bs", u"en", "0", "12",
-        u"maths/integral/undefined/substitution rule")
-index_add(u"r.bs", u"de", "0", "12",
-        u"Mathematik/Integral/unbestimmtes/Substitutionsregel")
-index_add(u"r.cq", u"de", "1", "9",
-        u"Mathematik/Operationen")
-index_add(u"r.cq", u"en", "1", "9",
-        u"maths/operations")
-index_add(u"r.by", u"en", "0", "11",
-        u"maths/trigonometry/asa")
-index_add(u"r.by", u"de", "0", "11",
-        u"Mathematik/Trigonometrie/WSW")
-index_add(u"r.bo", u"en", "0", "12",
-        u"maths/finance/cost and price theory/profit model")
-index_add(u"r.bo", u"de", "0", "12",
-        u"Mathematik/Finanz/Kosten- u. Preistheorie/Gewinnmodell")
-index_add(u"r.cg", u"de", "1", "11",
-        u"Mathematik/Vektoren/Transformation und Inverse")
-index_add(u"r.cg", u"en", "1", "11",
-        u"maths/vectors/transformation and inverse")
-index_add(u"r.co", u"de", "1", "9",
-        u"Mathematik/abstrakt-konkret")
-index_add(u"r.co", u"en", "1", "9",
-        u"maths/abstract-concrete")
-index_add(u"r.bh", u"en", "0", "9",
-        u"maths/number system/binary/multiply")
-index_add(u"r.bh", u"de", "0", "9",
-        u"Mathematik/Zahlensysteme/Binärsystem/Multiplizieren")
-index_add(u"r.bi", u"en", "0", "9",
-        u"maths/number system/binary/subtract")
-index_add(u"r.bi", u"de", "0", "9",
-        u"Mathematik/Zahlensysteme/Binärsystem/Subtrahieren")
-index_add(u"r.c", u"en", "0", "11",
-        u"maths/finance/annuity/monthly")
-index_add(u"r.c", u"de", "0", "11",
-        u"Mathematik/Finanz/Rentenrechnung/unterjährig")
-index_add(u"r.t", u"en", "0", "10",
-        u"maths/linear system/quadratic cost function")
-index_add(u"r.t", u"de", "0", "10",
-        u"Mathematik/LGS/quadratische Kostenfunktion")
-index_add(u"r.bx", u"en", "0", "11",
-        u"maths/trigonometry/area")
-index_add(u"r.bx", u"de", "0", "11",
-        u"Mathematik/Trigonometrie/Fläche")
-index_add(u"r.bk", u"en", "0", "11",
-        u"maths/vectors/matrix/cakes")
-index_add(u"r.bk", u"de", "0", "11",
-        u"Mathematik/Vektoren/Matrix/Torten")
-index_add(u"r.p", u"en", "0", "10",
-        u"maths/log/with numbers")
-index_add(u"r.p", u"de", "0", "10",
-        u"Mathematik/Log/mit Zahlen")
-index_add(u"r.bm", u"en", "0", "12",
-        u"maths/finance/cost and price theory/cournot")
-index_add(u"r.bm", u"de", "0", "12",
-        u"Mathematik/Finanz/Kosten- u. Preistheorie/Cournot")
-index_add(u"r.g", u"en", "0", "9",
-        u"maths/linear equation/x in denominator")
-index_add(u"r.g", u"de", "0", "9",
-        u"Mathematik/Lineare Gleichung/x im Nenner")
-index_add(u"r.a", u"en", "0", "11",
-        u"maths/trigonometry/sss")
-index_add(u"r.a", u"de", "0", "11",
-        u"Mathematik/Trigonometrie/SSS")
-index_add(u"r.bq", u"en", "0", "12",
-        u"maths/integral/defined/area/2 polynomials")
-index_add(u"r.bq", u"de", "0", "12",
-        u"Mathematik/Integral/bestimmtes/Fläche/2 Polynome")
-index_add(u"r.dk", u"de", "0", "11",
-        u"Mathematik/Funktionen/exponentiell")
-index_add(u"r.dk", u"en", "1", "11",
-        u"maths/functions/exponential")
-index_add(u"r.d", u"en", "0", "12",
-        u"physics/electricity/capacity")
-index_add(u"r.d", u"de", "0", "12",
-        u"Physik/Elektrizität/Kondensator")
-index_add(u"r.l", u"en", "0", "12",
-        u"maths/integral/defined/quadratic function")
-index_add(u"r.l", u"de", "0", "12",
-        u"Mathematik/Integral/bestimmtes/quadratische Funktion")
-index_add(u"r.r", u"en", "0", "10",
-        u"maths/linear system/costs")
-index_add(u"r.r", u"de", "0", "10",
-        u"Mathematik/LGS/Kosten")
-index_add(u"r.dh", u"en", "3", "10",
-        u"physics/mechanics/forces")
-index_add(u"r.bv", u"en", "0", "11",
-        u"maths/vectors/parallelogram")
-index_add(u"r.bv", u"de", "0", "11",
-        u"Mathematik/Vektoren/Parallelogramm")
-index_add(u"r.cu", u"de", "1", "12",
-        u"Mathematik/Funktionen/Integral von 1÷z")
-index_add(u"r.cu", u"en", "1", "12",
-        u"maths/functions/integral of 1÷z")
-index_add(u"r.cn", u"de", "1", "9",
-        u"Mathematik/Zahlen/Darstellung")
-index_add(u"r.cn", u"en", "1", "9",
-        u"maths/numbers/representation")
-index_add(u"r.cd", u"de", "1", "10",
-        u"Mathematik/Finanz/Zinsen")
-index_add(u"r.cd", u"en", "1", "10",
-        u"maths/finance/interest")
-index_add(u"r.f", u"en", "1", "12",
-        u"maths/differential equation/separable")
-index_add(u"r.f", u"de", "1", "12",
-        u"Mathematik/Differentialgleichung/trennbar")
-index_add(u"r.cf", u"en", "1", "10",
-        u"maths/functions/graph")
-index_add(u"r.cf", u"de", "1", "10",
-        u"Mathematik/Funktionen/Funktionsgraph")
-index_add(u"r.j", u"en", "0", "12",
-        u"maths/integral/defined/sin,cos,exp,x^(-1)")
-index_add(u"r.j", u"de", "0", "12",
-        u"Mathematik/Integral/bestimmtes/sin,cos,exp,x^(-1)")
-index_add(u"r.cw", u"de", "1", "9",
-        u"Mathematik/Informatik/Komplexität")
-index_add(u"r.cw", u"en", "1", "9",
-        u"maths/informatics/komplexity")
-index_add(u"r.ck", u"en", "0", "13",
-        u"maths/probability/reviser")
-index_add(u"r.ck", u"de", "0", "13",
-        u"Mathematik/Wahrscheinlichkeit/Lektor")
-index_add(u"r.bu", u"en", "0", "9",
-        u"maths/linear equation/with integers")
-index_add(u"r.bu", u"de", "0", "9",
-        u"Mathematik/Lineare Gleichung/mit ganzen Zahlen")
-index_add(u"r.cb", u"en", "0", "11",
-        u"maths/vectors/straight line")
-index_add(u"r.cb", u"de", "0", "11",
-        u"Mathematik/Vektoren/Gerade")
-index_add(u"r.dd", u"de", "19", "0",
-        u"Versuch in der Klasse")
-index_add(u"r.dd", u"en", "19", "0",
-        u"try in class")
-index_add(u"r.bz", u"en", "0", "11",
-        u"maths/trigonometry/slope")
-index_add(u"r.bz", u"de", "0", "11",
-        u"Mathematik/Trigonometrie/Steigung")
-index_add(u"r.cs", u"de", "1", "10",
-        u"Mathematik/Morphismen")
-index_add(u"r.cs", u"en", "1", "10",
-        u"maths/morphisms")
-index_add(u"r.n", u"en", "0", "11",
-        u"maths/finance/investment")
-index_add(u"r.n", u"de", "0", "11",
-        u"Mathematik/Finanz/Investition")
-index_add(u"r.ch", u"de", "1", "10",
-        u"Mathemtik/Folgen und Reihen")
-index_add(u"r.ch", u"en", "1", "10",
-        u"maths/sequences and series")
-index_add(u"r.bb", u"en", "0", "10",
-        u"maths/triangle/rectangular")
-index_add(u"r.bb", u"de", "0", "10",
-        u"Mathematik/Dreieck/rechtwinkliges")
-index_add(u"r.b", u"de", "1", "11",
-        u"Mathematik/Vektoren")
-index_add(u"r.b", u"en", "1", "11",
-        u"maths/vectors")
-index_add(u"r.m", u"en", "0", "11",
-        u"maths/finance/interest/compound and discount")
-index_add(u"r.m", u"de", "0", "11",
-        u"Mathematik/Finanz/Zinsen/Auf-, Abzinsen")
-index_add(u"r.de", u"de", "19", "0",
-        u"Abfrageberechtigungen")
-index_add(u"r.de", u"en", "19", "0",
-        u"query rights")
-index_add(u"r.cc", u"en", "0", "11",
-        u"maths/vectors/transformation")
-index_add(u"r.cc", u"de", "0", "11",
-        u"Mathematik/Vektoren/Transformation")
-index_add(u"r.bg", u"en", "0", "9",
-        u"maths/number system/binary/divide")
-index_add(u"r.bg", u"de", "0", "9",
-        u"Mathematik/Zahlensysteme/Binärsystem/Dividieren")
-index_add(u"r.bn", u"en", "0", "10",
-        u"maths/log/interest time")
-index_add(u"r.bn", u"de", "0", "10",
-        u"Mathematik/Log/Verzinsungszeit")
-index_add(u"r.z", u"en", "0", "10",
-        u"maths/quadratic/equation")
-index_add(u"r.z", u"de", "0", "10",
-        u"Mathematik/Quadratisch/Gleichung")
-index_add(u"r.q", u"en", "0", "10",
-        u"maths/linear system/2x2")
-index_add(u"r.q", u"de", "0", "10",
-        u"Mathematik/LGS/2x2")
-index_add(u"r.x", u"en", "0", "9",
-        u"maths/power/cancel")
-index_add(u"r.x", u"de", "0", "9",
-        u"Mathematik/Potenzen/kürzen")
-index_add(u"r.i", u"en", "0", "10",
-        u"maths/functions/function graphs")
-index_add(u"r.i", u"de", "0", "10",
-        u"Mathematik/Funktionen/Funktionsgraphen")
-index_add(u"r.cz", u"de", "19", "0",
-        u"Ziele")
-index_add(u"r.cz", u"en", "19", "0",
-        u"purpose")
-index_add(u"r.v", u"en", "0", "9",
-        u"maths/finance/percent")
-index_add(u"r.v", u"de", "0", "9",
-        u"Mathematik/Finanz/Prozentrechnung")
-index_add(u"r.bt", u"en", "0", "12",
-        u"maths/integral/defined/volume/rotation")
-index_add(u"r.bt", u"de", "0", "12",
-        u"Mathematik/Integral/bestimmtes/Volumen/Rotation")
-index_add(u"r.bd", u"en", "0", "11",
-        u"maths/log/annuity runtime")
-index_add(u"r.bd", u"de", "0", "11",
-        u"Mathematik/Log/Rentenlaufzeit")
-index_add(u"r.df", u"de", "19", "0",
-        u"Historisches")
-index_add(u"r.df", u"en", "19", "0",
-        u"history")
-index_add(u"r.cv", u"de", "1", "12",
-        u"Mathematik/Entropie")
-index_add(u"r.cv", u"en", "1", "12",
-        u"maths/entropy")
-index_add(u"r.cj", u"de", "1", "9",
-        u"Mathematik/Zahlen/Kombination mit Operationen")
-index_add(u"r.cj", u"en", "1", "9",
-        u"maths/numbers/combination with operations")
-index_add(u"r.dc", u"de", "19", "0",
-        u"mitmachen")
-index_add(u"r.dc", u"en", "19", "0",
-        u"participate")
-index_add(u"r.o", u"en", "0", "10",
-        u"maths/linear equation/with fractions")
-index_add(u"r.o", u"de", "0", "10",
-        u"Mathematik/Lineare Gleichung/mit Brüchen")
-index_add(u"r.bl", u"en", "0", "11",
-        u"maths/finance/interest/comparison")
-index_add(u"r.bl", u"de", "0", "11",
-        u"Mathematik/Finanz/Zinsen/Vergleich Zinssatz")
-index_add(u"r.dg", u"de", "3", "13",
-        u"Physik/Schaltkreise/Thevenin")
-index_add(u"r.dg", u"en", "3", "13",
-        u"physics/circuits/thevenin")
-index_add(u"r.dj", u"de", "1", "11",
-        u"Mathematik/Trogonometrie")
-index_add(u"r.dj", u"en", "1", "11",
-        u"maths/trigonometry")
-index_add(u"r.cx", u"de", "1", "0",
-        u"Mathematik/Externe Links")
-index_add(u"r.cx", u"en", "1", "0",
-        u"maths/external links")
-index_add(u"r.ct", u"de", "1", "11",
-        u"Mathematik/Richtung")
-index_add(u"r.ct", u"en", "1", "11",
-        u"maths/direction")
-index_add(u"r.ci", u"de", "1", "9",
-        u"Mathematik/Zahlen/NZQR lang")
-index_add(u"r.ci", u"en", "1", "9",
-        u"maths/numbers/NZQR long")
-index_add(u"r.s", u"en", "0", "10",
-        u"maths/linear system/blending")
-index_add(u"r.s", u"de", "0", "10",
-        u"Mathematik/LGS/Mischen")
-index_add(u"r.k", u"en", "0", "12",
-        u"maths/integral/defined/polynomial")
-index_add(u"r.k", u"de", "0", "12",
-        u"Mathematik/Integral/bestimmtes/Polynom")
-index_add(u"r.db", u"de", "19", "0",
-        u"URL-Abfragen")
-index_add(u"r.db", u"en", "19", "0",
-        u"queries")
-index_add(u"r.be", u"en", "0", "9",
-        u"maths/number system/binary/convert")
-index_add(u"r.be", u"de", "0", "9",
-        u"Mathematik/Zahlensysteme/Binärsystem/Umwandeln")
-index_add(u"r.br", u"en", "0", "12",
-        u"maths/integral/undefined/x^n and substitution rule")
-index_add(u"r.br", u"de", "0", "12",
-        u"Mathematik/Integral/unbestimmtes/x^n+Substitutionsregel")
-index_add(u"r.ba", u"en", "0", "10",
-        u"maths/sequences and series/arithmetic and geometric")
-index_add(u"r.ba", u"de", "0", "10",
-        u"Mathematik/Folgen und Reihen/arithmetische u. geometrische")
+index_add("r.bw", "en", "0", "11",
+        "maths/finance/interest/combined and theoretical")
+index_add("r.bw", "de", "0", "11",
+        "Mathematik/Finanz/Zinsen/gemischt u. theoretisch")
+index_add("r.cm", "de", "1", "10",
+        "Mathematik/Stukturen/Ring")
+index_add("r.cm", "en", "1", "10",
+        "maths/stuctures/ring")
+index_add("r.h", "en", "0", "11",
+        "maths/vectors/matrix/stepwise production")
+index_add("r.h", "de", "0", "11",
+        "Mathematik/Vektoren/Matrix/Stufenweise Produktion")
+index_add("r.bp", "en", "0", "12",
+        "maths/integral/defined/volume/cylinder or rotation")
+index_add("r.bp", "de", "0", "12",
+        "Mathematik/Integral/bestimmtes/Volumen/Zylinder oder Rotation")
+index_add("r.bc", "en", "0", "11",
+        "maths/finance/annuity/annual->monthly")
+index_add("r.bc", "de", "0", "11",
+        "Mathematik/Finanz/Rentenrechnung/ganzjährig->unterjährig")
+index_add("r.cr", "de", "1", "9",
+        "Mathematik/Funktionen")
+index_add("r.cr", "en", "1", "9",
+        "maths/functions")
+index_add("r.cl", "de", "1", "10",
+        "Mathematik/Stukturen/Gruppe")
+index_add("r.cl", "en", "1", "10",
+        "maths/stuctures/group")
+index_add("r.ce", "de", "1", "10",
+        "Mathematik/Funktionen/Log")
+index_add("r.ce", "en", "1", "10",
+        "maths/functions/log")
+index_add("r.di", "de", "1", "9",
+        "Mathematik/Zahlen/C")
+index_add("r.di", "en", "1", "10",
+        "maths/numbers/C")
+index_add("r.", "en", "0", "10",
+        "maths/vectors/matrix/2x2 inversion")
+index_add("r.", "de", "0", "10",
+        "Mathematik/Vektoren/Matrix/2x2 invertieren")
+index_add("r.y", "en", "0", "9",
+        "maths/power/compound fraction")
+index_add("r.y", "de", "0", "9",
+        "Mathematik/Potenzen/Doppelbrüche")
+index_add("r.cy", "en", "6", "10",
+        "maths/euler identity")
+index_add("r.cy", "de", "6", "10",
+        "Mathematik/Euler's Identität")
+index_add("r.w", "en", "0", "9",
+        "maths/power/with numbers")
+index_add("r.w", "de", "0", "9",
+        "Mathematik/Potenzen/mit Zahlen")
+index_add("r.bj", "en", "0", "10",
+        "maths/functions/exponential")
+index_add("r.bj", "de", "0", "11",
+        "Mathematik/Funktionen/exponentiell")
+index_add("r.da", "de", "19", "0",
+        "Ideen")
+index_add("r.da", "en", "19", "0",
+        "ideas")
+index_add("r.cp", "de", "1", "9",
+        "Mathematik/Mathematik+Information")
+index_add("r.cp", "en", "1", "9",
+        "maths/maths+information")
+index_add("r.ca", "en", "0", "11",
+        "maths/vectors/2d")
+index_add("r.ca", "de", "0", "11",
+        "Mathematik/Vektoren/2D")
+index_add("r.e", "en", "6", "12",
+        "physics/electricity/capacitor")
+index_add("r.e", "de", "6", "12",
+        "Physik/Elektrizität/Kondensator")
+index_add("r.bf", "en", "0", "9",
+        "maths/number system/binary/add")
+index_add("r.bf", "de", "0", "9",
+        "Mathematik/Zahlensysteme/Binärsystem/Addieren")
+index_add("r.bs", "en", "0", "12",
+        "maths/integral/undefined/substitution rule")
+index_add("r.bs", "de", "0", "12",
+        "Mathematik/Integral/unbestimmtes/Substitutionsregel")
+index_add("r.cq", "de", "1", "9",
+        "Mathematik/Operationen")
+index_add("r.cq", "en", "1", "9",
+        "maths/operations")
+index_add("r.by", "en", "0", "11",
+        "maths/trigonometry/asa")
+index_add("r.by", "de", "0", "11",
+        "Mathematik/Trigonometrie/WSW")
+index_add("r.bo", "en", "0", "12",
+        "maths/finance/cost and price theory/profit model")
+index_add("r.bo", "de", "0", "12",
+        "Mathematik/Finanz/Kosten- u. Preistheorie/Gewinnmodell")
+index_add("r.cg", "de", "1", "11",
+        "Mathematik/Vektoren/Transformation und Inverse")
+index_add("r.cg", "en", "1", "11",
+        "maths/vectors/transformation and inverse")
+index_add("r.co", "de", "1", "9",
+        "Mathematik/abstrakt-konkret")
+index_add("r.co", "en", "1", "9",
+        "maths/abstract-concrete")
+index_add("r.bh", "en", "0", "9",
+        "maths/number system/binary/multiply")
+index_add("r.bh", "de", "0", "9",
+        "Mathematik/Zahlensysteme/Binärsystem/Multiplizieren")
+index_add("r.bi", "en", "0", "9",
+        "maths/number system/binary/subtract")
+index_add("r.bi", "de", "0", "9",
+        "Mathematik/Zahlensysteme/Binärsystem/Subtrahieren")
+index_add("r.c", "en", "0", "11",
+        "maths/finance/annuity/monthly")
+index_add("r.c", "de", "0", "11",
+        "Mathematik/Finanz/Rentenrechnung/unterjährig")
+index_add("r.t", "en", "0", "10",
+        "maths/linear system/quadratic cost function")
+index_add("r.t", "de", "0", "10",
+        "Mathematik/LGS/quadratische Kostenfunktion")
+index_add("r.bx", "en", "0", "11",
+        "maths/trigonometry/area")
+index_add("r.bx", "de", "0", "11",
+        "Mathematik/Trigonometrie/Fläche")
+index_add("r.bk", "en", "0", "11",
+        "maths/vectors/matrix/cakes")
+index_add("r.bk", "de", "0", "11",
+        "Mathematik/Vektoren/Matrix/Torten")
+index_add("r.p", "en", "0", "10",
+        "maths/log/with numbers")
+index_add("r.p", "de", "0", "10",
+        "Mathematik/Log/mit Zahlen")
+index_add("r.bm", "en", "0", "12",
+        "maths/finance/cost and price theory/cournot")
+index_add("r.bm", "de", "0", "12",
+        "Mathematik/Finanz/Kosten- u. Preistheorie/Cournot")
+index_add("r.g", "en", "0", "9",
+        "maths/linear equation/x in denominator")
+index_add("r.g", "de", "0", "9",
+        "Mathematik/Lineare Gleichung/x im Nenner")
+index_add("r.a", "en", "0", "11",
+        "maths/trigonometry/sss")
+index_add("r.a", "de", "0", "11",
+        "Mathematik/Trigonometrie/SSS")
+index_add("r.bq", "en", "0", "12",
+        "maths/integral/defined/area/2 polynomials")
+index_add("r.bq", "de", "0", "12",
+        "Mathematik/Integral/bestimmtes/Fläche/2 Polynome")
+index_add("r.dk", "de", "0", "11",
+        "Mathematik/Funktionen/exponentiell")
+index_add("r.dk", "en", "1", "11",
+        "maths/functions/exponential")
+index_add("r.d", "en", "0", "12",
+        "physics/electricity/capacity")
+index_add("r.d", "de", "0", "12",
+        "Physik/Elektrizität/Kondensator")
+index_add("r.l", "en", "0", "12",
+        "maths/integral/defined/quadratic function")
+index_add("r.l", "de", "0", "12",
+        "Mathematik/Integral/bestimmtes/quadratische Funktion")
+index_add("r.r", "en", "0", "10",
+        "maths/linear system/costs")
+index_add("r.r", "de", "0", "10",
+        "Mathematik/LGS/Kosten")
+index_add("r.dh", "en", "3", "10",
+        "physics/mechanics/forces")
+index_add("r.bv", "en", "0", "11",
+        "maths/vectors/parallelogram")
+index_add("r.bv", "de", "0", "11",
+        "Mathematik/Vektoren/Parallelogramm")
+index_add("r.cu", "de", "1", "12",
+        "Mathematik/Funktionen/Integral von 1÷z")
+index_add("r.cu", "en", "1", "12",
+        "maths/functions/integral of 1÷z")
+index_add("r.cn", "de", "1", "9",
+        "Mathematik/Zahlen/Darstellung")
+index_add("r.cn", "en", "1", "9",
+        "maths/numbers/representation")
+index_add("r.cd", "de", "1", "10",
+        "Mathematik/Finanz/Zinsen")
+index_add("r.cd", "en", "1", "10",
+        "maths/finance/interest")
+index_add("r.f", "en", "1", "12",
+        "maths/differential equation/separable")
+index_add("r.f", "de", "1", "12",
+        "Mathematik/Differentialgleichung/trennbar")
+index_add("r.cf", "en", "1", "10",
+        "maths/functions/graph")
+index_add("r.cf", "de", "1", "10",
+        "Mathematik/Funktionen/Funktionsgraph")
+index_add("r.j", "en", "0", "12",
+        "maths/integral/defined/sin,cos,exp,x^(-1)")
+index_add("r.j", "de", "0", "12",
+        "Mathematik/Integral/bestimmtes/sin,cos,exp,x^(-1)")
+index_add("r.cw", "de", "1", "9",
+        "Mathematik/Informatik/Komplexität")
+index_add("r.cw", "en", "1", "9",
+        "maths/informatics/komplexity")
+index_add("r.ck", "en", "0", "13",
+        "maths/probability/reviser")
+index_add("r.ck", "de", "0", "13",
+        "Mathematik/Wahrscheinlichkeit/Lektor")
+index_add("r.bu", "en", "0", "9",
+        "maths/linear equation/with integers")
+index_add("r.bu", "de", "0", "9",
+        "Mathematik/Lineare Gleichung/mit ganzen Zahlen")
+index_add("r.cb", "en", "0", "11",
+        "maths/vectors/straight line")
+index_add("r.cb", "de", "0", "11",
+        "Mathematik/Vektoren/Gerade")
+index_add("r.dd", "de", "19", "0",
+        "Versuch in der Klasse")
+index_add("r.dd", "en", "19", "0",
+        "try in class")
+index_add("r.bz", "en", "0", "11",
+        "maths/trigonometry/slope")
+index_add("r.bz", "de", "0", "11",
+        "Mathematik/Trigonometrie/Steigung")
+index_add("r.cs", "de", "1", "10",
+        "Mathematik/Morphismen")
+index_add("r.cs", "en", "1", "10",
+        "maths/morphisms")
+index_add("r.n", "en", "0", "11",
+        "maths/finance/investment")
+index_add("r.n", "de", "0", "11",
+        "Mathematik/Finanz/Investition")
+index_add("r.ch", "de", "1", "10",
+        "Mathemtik/Folgen und Reihen")
+index_add("r.ch", "en", "1", "10",
+        "maths/sequences and series")
+index_add("r.bb", "en", "0", "10",
+        "maths/triangle/rectangular")
+index_add("r.bb", "de", "0", "10",
+        "Mathematik/Dreieck/rechtwinkliges")
+index_add("r.b", "de", "1", "11",
+        "Mathematik/Vektoren")
+index_add("r.b", "en", "1", "11",
+        "maths/vectors")
+index_add("r.m", "en", "0", "11",
+        "maths/finance/interest/compound and discount")
+index_add("r.m", "de", "0", "11",
+        "Mathematik/Finanz/Zinsen/Auf-, Abzinsen")
+index_add("r.de", "de", "19", "0",
+        "Abfrageberechtigungen")
+index_add("r.de", "en", "19", "0",
+        "query rights")
+index_add("r.cc", "en", "0", "11",
+        "maths/vectors/transformation")
+index_add("r.cc", "de", "0", "11",
+        "Mathematik/Vektoren/Transformation")
+index_add("r.bg", "en", "0", "9",
+        "maths/number system/binary/divide")
+index_add("r.bg", "de", "0", "9",
+        "Mathematik/Zahlensysteme/Binärsystem/Dividieren")
+index_add("r.bn", "en", "0", "10",
+        "maths/log/interest time")
+index_add("r.bn", "de", "0", "10",
+        "Mathematik/Log/Verzinsungszeit")
+index_add("r.z", "en", "0", "10",
+        "maths/quadratic/equation")
+index_add("r.z", "de", "0", "10",
+        "Mathematik/Quadratisch/Gleichung")
+index_add("r.q", "en", "0", "10",
+        "maths/linear system/2x2")
+index_add("r.q", "de", "0", "10",
+        "Mathematik/LGS/2x2")
+index_add("r.x", "en", "0", "9",
+        "maths/power/cancel")
+index_add("r.x", "de", "0", "9",
+        "Mathematik/Potenzen/kürzen")
+index_add("r.i", "en", "0", "10",
+        "maths/functions/function graphs")
+index_add("r.i", "de", "0", "10",
+        "Mathematik/Funktionen/Funktionsgraphen")
+index_add("r.cz", "de", "19", "0",
+        "Ziele")
+index_add("r.cz", "en", "19", "0",
+        "purpose")
+index_add("r.v", "en", "0", "9",
+        "maths/finance/percent")
+index_add("r.v", "de", "0", "9",
+        "Mathematik/Finanz/Prozentrechnung")
+index_add("r.bt", "en", "0", "12",
+        "maths/integral/defined/volume/rotation")
+index_add("r.bt", "de", "0", "12",
+        "Mathematik/Integral/bestimmtes/Volumen/Rotation")
+index_add("r.bd", "en", "0", "11",
+        "maths/log/annuity runtime")
+index_add("r.bd", "de", "0", "11",
+        "Mathematik/Log/Rentenlaufzeit")
+index_add("r.df", "de", "19", "0",
+        "Historisches")
+index_add("r.df", "en", "19", "0",
+        "history")
+index_add("r.cv", "de", "1", "12",
+        "Mathematik/Entropie")
+index_add("r.cv", "en", "1", "12",
+        "maths/entropy")
+index_add("r.cj", "de", "1", "9",
+        "Mathematik/Zahlen/Kombination mit Operationen")
+index_add("r.cj", "en", "1", "9",
+        "maths/numbers/combination with operations")
+index_add("r.dc", "de", "19", "0",
+        "mitmachen")
+index_add("r.dc", "en", "19", "0",
+        "participate")
+index_add("r.o", "en", "0", "10",
+        "maths/linear equation/with fractions")
+index_add("r.o", "de", "0", "10",
+        "Mathematik/Lineare Gleichung/mit Brüchen")
+index_add("r.bl", "en", "0", "11",
+        "maths/finance/interest/comparison")
+index_add("r.bl", "de", "0", "11",
+        "Mathematik/Finanz/Zinsen/Vergleich Zinssatz")
+index_add("r.dg", "de", "3", "13",
+        "Physik/Schaltkreise/Thevenin")
+index_add("r.dg", "en", "3", "13",
+        "physics/circuits/thevenin")
+index_add("r.dj", "de", "1", "11",
+        "Mathematik/Trogonometrie")
+index_add("r.dj", "en", "1", "11",
+        "maths/trigonometry")
+index_add("r.cx", "de", "1", "0",
+        "Mathematik/Externe Links")
+index_add("r.cx", "en", "1", "0",
+        "maths/external links")
+index_add("r.ct", "de", "1", "11",
+        "Mathematik/Richtung")
+index_add("r.ct", "en", "1", "11",
+        "maths/direction")
+index_add("r.ci", "de", "1", "9",
+        "Mathematik/Zahlen/NZQR lang")
+index_add("r.ci", "en", "1", "9",
+        "maths/numbers/NZQR long")
+index_add("r.s", "en", "0", "10",
+        "maths/linear system/blending")
+index_add("r.s", "de", "0", "10",
+        "Mathematik/LGS/Mischen")
+index_add("r.k", "en", "0", "12",
+        "maths/integral/defined/polynomial")
+index_add("r.k", "de", "0", "12",
+        "Mathematik/Integral/bestimmtes/Polynom")
+index_add("r.db", "de", "19", "0",
+        "URL-Abfragen")
+index_add("r.db", "en", "19", "0",
+        "queries")
+index_add("r.be", "en", "0", "9",
+        "maths/number system/binary/convert")
+index_add("r.be", "de", "0", "9",
+        "Mathematik/Zahlensysteme/Binärsystem/Umwandeln")
+index_add("r.br", "en", "0", "12",
+        "maths/integral/undefined/x^n and substitution rule")
+index_add("r.br", "de", "0", "12",
+        "Mathematik/Integral/unbestimmtes/x^n+Substitutionsregel")
+index_add("r.ba", "en", "0", "10",
+        "maths/sequences and series/arithmetic and geometric")
+index_add("r.ba", "de", "0", "10",
+        "Mathematik/Folgen und Reihen/arithmetische u. geometrische")
 
 available_langs = {'de',
  'en'}

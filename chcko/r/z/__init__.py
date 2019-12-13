@@ -10,10 +10,10 @@ def given():
     p = 0
     x1 = x2 = 0
     while p == 0 and x1 == x2:  # p could become 0
-        x1, x2 = random.sample(range(2, 9) + range(-9, -2), 2)
+        x1, x2 = random.sample(list(range(2, 9)) + list(range(-9, -2)), 2)
         p = -(x1 + x2)
         q = x1 * x2
-    a = random.sample(range(2, 6) + range(-5, -1), 1)[0]
+    a = random.sample(list(range(2, 6)) + list(range(-5, -1)), 1)[0]
     b = p * a
     c = q * a
     g = Struct(coef=[a, b, c])

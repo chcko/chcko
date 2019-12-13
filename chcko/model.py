@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 '''
-This file contains functions and classes doing DB access,
+This file contains functions and classes doing datastore access,
 especially the models.
 
 '''
@@ -19,7 +19,8 @@ from google.cloud import ndb
 
 def delete_all(query):
     'delete_all(entity.query(entity.field==value))'
-    ndb.delete_multi(query.iter(keys_only=True))
+    with db.context() as context:
+        ndb.delete_multi(query.iter(keys_only=True))
 
 def copy_all(model, oldkey, newkey):
     '''copy all instances of a model from an old parent to a new one'''
@@ -117,15 +118,25 @@ class Secret(ndb.Model):  # root
     secret = ndb.StringProperty()
 
 def make_secret():
-    return str(uuid.uuid5(
-    uuid.UUID(bytes=datetime.datetime.now().isoformat()[:16]),
+    '''
+    >>> make_secret()
+    '''
+    asecret = str(uuid.uuid5(
+    uuid.UUID(bytes=datetime.datetime.now().isoformat()[:16].encode()),
     datetime.datetime.now().isoformat()))
+    return asecret
 
 def stored_secret(name):
-    return str(
-        Secret.get_or_insert(
-        name,
-        secret=make_secret()).secret)
+    '''
+    >>> name = 'xyz'
+    >>> stored_secret(name)
+    '''
+    with db.context() as context:
+        ass = str(
+            Secret.get_or_insert(
+            name,
+            secret=make_secret()).secret)
+    return ass
 
 def gen_student_path(seed=None):
     ''' used if no federated user id
@@ -177,38 +188,42 @@ class Student(Base):
     'parent: Class'
     color = ndb.StringProperty()
 
-myschool = School.get_or_insert('myschool')
-myperiod = Period.get_or_insert('myperiod', parent=myschool.key)
-myteacher = Teacher.get_or_insert('myteacher', parent=myperiod.key)
-myclass = Class.get_or_insert('myclass', parent=myteacher.key)
-myself = Student.get_or_insert('myself', parent=myclass.key)
+#os.environ['DATASTORE_EMULATOR_HOST']='localhost:8081'
+db = ndb.Client('chcko')
+with db.context() as context:
+    myschool = School.get_or_insert('myschool')
+    myperiod = Period.get_or_insert('myperiod', parent=myschool.key)
+    myteacher = Teacher.get_or_insert('myteacher', parent=myperiod.key)
+    myclass = Class.get_or_insert('myclass', parent=myteacher.key)
+    myself = Student.get_or_insert('myself', parent=myclass.key)
 
 def add_student(studentpath, color=None, user=None):
     'defaults to myxxx for empty roles'
     school_, period_, teacher_, class_, student_ = studentpath
-    school = School.get_or_insert(
-        school_ or 'myschool',
-        userkey=user and user.key)
-    period = Period.get_or_insert(
-        period_ or 'myperiod',
-        parent=school.key,
-        userkey=user and user.key)
-    teacher = Teacher.get_or_insert(
-        teacher_ or 'myteacher',
-        parent=period.key,
-        userkey=user and user.key)
-    clss = Class.get_or_insert(
-        class_ or 'myclass',
-        parent=teacher.key,
-        userkey=user and user.key)
-    self = Student.get_or_insert(
-        student_ or 'myself',
-        parent=clss.key,
-        userkey=user and user.key,
-        color=color or '#EEE')
-    if self.userkey == (user and user.key) and (color and self.color != color):
-        self.color = color
-        self.put()
+    with db.context() as context:
+        school = School.get_or_insert(
+            school_ or 'myschool',
+            userkey=user and user.key)
+        period = Period.get_or_insert(
+            period_ or 'myperiod',
+            parent=school.key,
+            userkey=user and user.key)
+        teacher = Teacher.get_or_insert(
+            teacher_ or 'myteacher',
+            parent=period.key,
+            userkey=user and user.key)
+        clss = Class.get_or_insert(
+            class_ or 'myclass',
+            parent=teacher.key,
+            userkey=user and user.key)
+        self = Student.get_or_insert(
+            student_ or 'myself',
+            parent=clss.key,
+            userkey=user and user.key,
+            color=color or '#EEE')
+        if self.userkey == (user and user.key) and (color and self.color != color):
+            self.color = color
+            self.put()
     return self
 
 #dict(filter(lambda x:isinstance(x[1],ndb.ComputedProperty),Problem._properties.iteritems()))
@@ -288,7 +303,6 @@ studentCtx = [k for k, v in myself.key.pairs()]
 problemCtx = studentCtx + ['Problem']
 problemCtxObjs = [School, Period, Teacher, Class, Student, Problem]
 
-
 def table_entry(e):
     'what of entity e is used to render html tables'
     if isinstance(e, Problem) and e.answered:
@@ -331,12 +345,14 @@ class Index(ndb.Model):
 
 def index_add(query, lang, kind, level, path):
     '''used in the generated initdb.py to fill the index (see dodo.py)
+    >>> index_add("r.bw", "en", "0", "11","maths/finance/interest/combined and theoretical")
     '''
-    Index.get_or_insert(
-        query + ':' + lang,
-        knd=int(kind),
-        level=int(level),
-        path=path)
+    with db.context() as context:
+        Index.get_or_insert(
+            query + ':' + lang,
+            knd=int(kind),
+            level=int(level),
+            path=path)
 
 def kvld(p_ll):  # key_value_leaf_depth
     '''
@@ -373,7 +389,7 @@ def filteredcontent(lang, opt):
         - path
         - link
 
-    >>> import initdb
+    >>> from chcko import initdb
     >>> lang = 'en'
     >>> opt1 = [] #[('level', '2'), ('kind', 'exercise')]
     >>> cnt1 = sum([len(list(gen[1])) for gen in filteredcontent(lang, opt1)])
@@ -392,19 +408,20 @@ def filteredcontent(lang, opt):
     numkind = langnumkind[lang]
     optd = dict(opt)
     knd_pathlnklvl = {}
-    itr = Index.query().iter()
-    for e in itr:
-        # e=itr.next()
-        # knd_pathlnklvl
-        link, lng = e.key.string_id().split(':')
-        if lng == lang:
-            if 'level' not in optd or safeint(optd['level']) == e.level:
-                if 'kind' not in optd or kindint(optd['kind'],kindnum) == e.knd:
-                    if 'path' not in optd or optd['path'] in e.path:
-                        if 'link' not in optd or optd['link'] in link:
-                            lpl = knd_pathlnklvl.setdefault(e.knd, [])
-                            lpl.append((e.path, (link, e.level)))
-                            lpl.sort()
+    with db.context() as context:
+        itr = Index.query().iter()
+        for e in itr:
+            # e=itr.next()
+            # knd_pathlnklvl
+            link, lng = e.key.string_id().split(':')
+            if lng == lang:
+                if 'level' not in optd or safeint(optd['level']) == e.level:
+                    if 'kind' not in optd or kindint(optd['kind'],kindnum) == e.knd:
+                        if 'path' not in optd or optd['path'] in e.path:
+                            if 'link' not in optd or optd['link'] in link:
+                                lpl = knd_pathlnklvl.setdefault(e.knd, [])
+                                lpl.append((e.path, (link, e.level)))
+                                lpl.sort()
     s_pl = sorted(knd_pathlnklvl.items())
     knd_pl = [(numkind[k], kvld(v)) for k, v in s_pl]
     #[('Problems', <generator>), ('Content', <generator>),... ]
@@ -457,38 +474,39 @@ def depth_1st(path=None, keys=None  # start keys, keysOmit(path) to skip initial
         keys = []
     i = len(keys)
     parentkey = keys and keys[-1] or None
-    permission = permission or parentkey and parentkey.get().userkey == userkey
-    if isinstance(path[i], str):
-        k = ndb.Key(models[i]._get_kind(), path[i], parent=parentkey)
-        if k:
-            yield k
-            if i < N - 1:
-                keys.append(k)
-                for e in depth_1st(path, keys, models, permission, userkey):
-                    yield e
-                del keys[-1]
-    elif permission:
-        q = models[i].query(ancestor=parentkey)
-        #q = Assignment.query(ancestor=studentkey)
-        if models[i] == Problem:
-            q = q.order(Problem.answered)
-        elif 'created' in models[i]._properties:
-            q = q.order(models[i].created)
-        for ap, op, av in path[i]:
-            if ap in models[i]._properties:
-                fn = ndb.FilterNode(ap, op, av)
-                q = q.filter(fn)
-        #qiter = q.iter(keys_only=True)
-        for k in q.iter(keys_only=True):
-            # k=next(qiter)
-            yield k
-            if i < N - 1:
-                keys.append(k)
-                for e in depth_1st(path, keys, models, permission):
-                    yield e
-                del keys[-1]
-    # else:
-    # yield None #no permission or no such object
+    with db.context() as context:
+        permission = permission or parentkey and parentkey.get().userkey == userkey
+        if isinstance(path[i], str):
+            k = ndb.Key(models[i]._get_kind(), path[i], parent=parentkey)
+            if k:
+                yield k
+                if i < N - 1:
+                    keys.append(k)
+                    for e in depth_1st(path, keys, models, permission, userkey):
+                        yield e
+                    del keys[-1]
+        elif permission:
+            q = models[i].query(ancestor=parentkey)
+            #q = Assignment.query(ancestor=studentkey)
+            if models[i] == Problem:
+                q = q.order(Problem.answered)
+            elif 'created' in models[i]._properties:
+                q = q.order(models[i].created)
+            for ap, op, av in path[i]:
+                if ap in models[i]._properties:
+                    fn = ndb.FilterNode(ap, op, av)
+                    q = q.filter(fn)
+            #qiter = q.iter(keys_only=True)
+            for k in q.iter(keys_only=True):
+                # k=next(qiter)
+                yield k
+                if i < N - 1:
+                    keys.append(k)
+                    for e in depth_1st(path, keys, models, permission):
+                        yield e
+                    del keys[-1]
+        # else:
+        # yield None #no permission or no such object
 
 
 def filter_student(qs):
