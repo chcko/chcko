@@ -3,7 +3,8 @@
 import logging
 import os
 from chcko.util import PageBase
-from chcko.hlp import import_module, is_standard_server, send_mail
+from chcko.hlp import import_module, is_standard_server
+from chcko.model import send_mail
 
 class Page(PageBase):
 

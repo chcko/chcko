@@ -221,7 +221,7 @@ def add_student(studentpath, color=None, user=None):
     if self.userkey == (user and user.key) and (color and self.color != color):
         self.color = color
         self.put()
-return self
+    return self
 
 #dict(filter(lambda x:isinstance(x[1],ndb.ComputedProperty),Problem._properties.iteritems()))
 
@@ -645,3 +645,51 @@ def remove_done_assignments(studentkey, userkey):
     for s in assigntable(studentkey, userkey):
         if done_assignment(s):
             s.delete()
+
+
+#email
+import base64
+import pickle
+from googleapiclient.discovery import build
+from google.auth.transport.requests import Request
+from google_auth_oauthlib.flow import InstalledAppFlow
+from email.mime.text import MIMEText
+mail_id='chcko.mail@gmail.com'
+pth = lambda x: os.path.join(os.path.dirname(__file__),x)
+credential_file = pth('credentials.json')
+token_file = pth('token.pickle')
+def get_credential():
+    creds = None
+    if os.path.exists(token_file):
+        with open(token_file, 'rb') as tokenf:
+            creds = pickle.load(tokenf)
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+              pth(credential_file)
+              ,['https://www.googleapis.com/auth/gmail.send'])
+            creds = flow.run_local_server(port=0)
+        with open(token_file, 'wb') as tokenf:
+            pickle.dump(creds, tokenf)
+    return creds
+def send_mail(sender, to, subject, message_text):
+    '''
+    >>> (sender, to, subject, message_text) = (mail_id,'roland.puntaier@gmail.com','test 2','test second message text')
+    >>> send_mail(sender, to, subject, message_text)
+    '''
+    creds = None
+    if not is_standard_server:
+        creds = get_credential()
+    else:
+        # token placed there manually via console.google.cloud
+        creds = base64.urlsafe_b64decode(stored_secret('chcko.mail').encode())
+    service = build('gmail', 'v1', credentials=creds)
+    message = MIMEText(message_text)
+    message['to'] = to
+    message['from'] = sender
+    message['subject'] = subject
+    mbody = {'raw':base64.urlsafe_b64encode(message.as_bytes()).decode()}
+    message = (service.users().messages().send(userId=mail_id, body=mbody).execute())
+    return message
