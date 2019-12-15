@@ -13,12 +13,19 @@ TODO
 - Use GCP Python 3 libraries
 - Adapt to changes in used 3rd party packages
 
+- content: move meta content to doc and/or readme.rst
+
 - replace webapp2 with bottle
+
 - reach 100% test coverage
+
 - support ``.rst`` without Sphinx, i.e. only using docutils
 - additionally support ``.md`` for content
+
 - ``pip freeze`` and make chcko Python Package
+
 - Allow using content as chcko_author plugins listed in ``requirements.txt``
+
 - Make client apps
 
 1.0.0

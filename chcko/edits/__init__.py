@@ -9,9 +9,10 @@ from chcko.model import (
     delete_all,
     copy_all,
     ctxkey,
-    keyparams)
+    keyparams,
+    db)
 import logging
-from google.appengine.ext import ndb
+from google.cloud import ndb
 
 
 class Page(PageBase):

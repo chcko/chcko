@@ -3,19 +3,18 @@
 import logging
 import os
 from chcko.util import PageBase
-from chcko.hlp import import_module, email_enabled, py_test
-from google.appengine.api import mail
+from chcko.hlp import import_module, is_standard_server, send_mail
 
 class Page(PageBase):
 
     def post_response(self):
         user_name = self.request.get('username')
-        email = self.request.get('email')
+        email = self.request.get('email').strip()
         password = self.request.get('password')
         name = self.request.get('name')
         last_name = self.request.get('lastname')
 
-        if not (user_name and email and password) or not mail.is_email_valid(email):
+        if not user_name or not email or not password:
             self.redirect('message?msg=f')
             return
 
@@ -48,12 +47,12 @@ class Page(PageBase):
             user_id,
             token)
 
-        if not py_test and email_enabled:
+        if is_standard_server:
             confirmation_url = self.request.application_url + \
                 '/' + self.request.lang + '/' + relative_url
             logging.info(confirmation_url)
             m = import_module('signup.' + self.request.lang)
-            mail.send_mail(
+            send_mail(
                 m.sender_address,
                 email,
                 m.subject,

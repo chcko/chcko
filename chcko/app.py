@@ -10,8 +10,11 @@ import sys
 import os
 import os.path
 import logging
-#bottle has an app object
-from bottle import *
+
+# TODO
+# from bottle import *
+# #bottle has an app object
+# bottle_app = app
 
 
 # TODO check outdated
@@ -47,20 +50,16 @@ python_path()
 import webapp2
 from webapp2_extras import sessions
 
-from chcko.hlp import import_module, PAGES
+from chcko.hlp import import_module, PAGES, is_standard_server
 from chcko.util import AuthUser
-from chcko.model import stored_secret, set_student
+from chcko.model import stored_secret, set_student, db
 
 # this will fill Index
 # initdb is generate via `doit -k initdb`
 from chcko.initdb import available_langs
 from chcko.languages import langnumkind
 
-# conftest.py will set this to False for py.test2 run
-debug = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
-
 from simpleauth import SimpleAuthHandler
-
 
 class PageHandler(webapp2.RequestHandler, SimpleAuthHandler, AuthUser):
 
@@ -246,7 +245,7 @@ class PageHandler(webapp2.RequestHandler, SimpleAuthHandler, AuthUser):
                 page = m.Page(self.request)
                 self.response.write(toforward(page))
             except (ImportError, AttributeError, IOError, NameError) as e:
-                if debug:
+                if not is_standard_server:
                     raise
                 self.redirect(
                     self.uri_for(
@@ -284,7 +283,7 @@ def _error(request, response, exception, status):
     response.set_status(status)
 
 
-def make_app(debug_=debug):
+def make_app(debug_=not is_standard_server):
     app_ = webapp2.WSGIApplication([
         webapp2.Route('', handler=PageHandler, name='entry'),
         webapp2.Route('/', handler=PageHandler, name='entry_'),
@@ -304,7 +303,18 @@ def make_app(debug_=debug):
     app_.error_handlers[500] = lambda q, a, e: _error(q, a, e, 500)
     return app_
 
+webapp = make_app()
 
-if __name__ == "__main__":
-    run(host='localhost', port=8080)
+def ndb_wsgi_middleware(wsgi_app):
+    def middleware(environ, start_response):
+        with db.context():
+            return wsgi_app(environ, start_response)
+    return middleware
 
+app = ndb_wsgi_middleware(webapp)
+
+# TODO, when using bottle
+# app = ndb_wsgi_middleware(bottle_app)
+# if __name__ == "__main__":
+#     run(host='localhost', port=8080)
+# 

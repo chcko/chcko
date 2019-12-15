@@ -11,7 +11,7 @@ import re
 
 if 'google' in sys.modules:
     del sys.modules['google']
-#not debug in app.py
+
 os.environ.update({'SERVER_SOFTWARE': 'py.test'})
 
 from chcko.languages import languages
@@ -22,15 +22,9 @@ if not os.path.exists(gaepath):
     gaepath = os.path.expanduser('~/.local/opt/google-cloud-sdk/platform/google_appengine')
 
 sys.path += [gaepath]
-sys.path += [gaepath+'/lib/webapp2-2.5.2']
-sys.path += [gaepath+'/lib/webob-1.2.3']
-#sys.path += [gaepath+'/lib/yaml-3.10']
-
-from google.appengine.ext import testbed
 
 # mark step-wise tests with: @pytest.mark.incremental
 # http://stackoverflow.com/questions/12411431/pytest-how-to-skip-the-rest-of-tests-in-the-class-if-one-has-failed/12579625#12579625
-
 
 def pytest_runtest_makereport(item, call):
     if "incremental" in item.keywords:

@@ -3,8 +3,7 @@
 import os
 import logging
 from chcko.util import PageBase
-from chcko.hlp import import_module, email_enabled, py_test
-from google.appengine.api import mail
+from chcko.hlp import import_module, is_standard_server, send_mail
 
 class Page(PageBase):
 
@@ -37,12 +36,12 @@ class Page(PageBase):
         except:
             logging.warning('!! no email for password change !!')
 
-        if not py_test and email_enabled and email:
+        if is_standard_server and email:
             confirmation_url = self.request.application_url + \
                 '/' + self.request.lang + '/' + relative_url
             logging.info(confirmation_url)
             m = import_module('forgot.' + self.request.lang)
-            mail.send_mail(
+            send_mail(
                 m.sender_address,
                 email,
                 m.subject,

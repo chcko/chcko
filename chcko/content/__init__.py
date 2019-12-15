@@ -25,7 +25,7 @@ import re
 import datetime
 import logging
 
-from urlparse import parse_qsl
+from urllib.parse import parse_qsl
 from google.cloud import ndb
 
 from bottle import SimpleTemplate, get_tpl, StplParser

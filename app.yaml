@@ -10,18 +10,18 @@ automatic_scaling:
 handlers:
 
     - url: /favicon\.ico
-      static_files: mamchecker/static/favicon.ico
-      upload: mamchecker/static/favicon\.ico
+      static_files: chcko/static/favicon.ico
+      upload: chcko/static/favicon\.ico
       mime_type: image/x-icon
 
     - url: /static
-      static_dir: mamchecker/static
+      static_dir: chcko/static
 
     - url: /[^/]*/_images
-      static_dir: mamchecker/_images
+      static_dir: chcko/_images
 
     - url: .*
-      script: mamchecker.app.app
+      script: chcko.app.app
       secure: optional
 
 skip_files:

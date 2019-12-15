@@ -303,8 +303,8 @@ def task_initdb():
 
         inits = ['# -*- coding: utf-8 -*-',
                  '# generated file',
-                 'from chcko.model import Index, index_add, delete_all',
-                 'delete_all(Index.query())','']
+                 'from chcko.model import Index, index_add, delete_all, db',
+                 'delete_all(Index.query())','','with db.context():']
 
         available_langs = set([])
         for author in authors:
@@ -350,7 +350,7 @@ def task_initdb():
                     except KeyError:
                         print(full)
                         raise
-                    inits.append('index_add("{0}", "{1}", "{2}", "{3}",\n        "{4}")'.format(
+                    inits.append('    index_add("{0}", "{1}", "{2}", "{3}",\n        "{4}")'.format(
                         adir+'.'+anid
                         ,lang
                         ,defs['kind']

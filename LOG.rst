@@ -2,6 +2,59 @@
 LOG
 ===
 
+TODO
+====
+
+https://cloud.google.com/appengine/docs/standard/python3/testing-and-deploying-your-app
+
+chcko/conftest.py: ``from google.appengine.ext import testbed`` does not support Python3
+
+
+20191215
+========
+
+https://cloud.google.com/appengine/docs/admin-api/access-control#permissions_and_roles
+
+In principle mail can be done by Gmail API.
+The token from quickstart can be used, because it is only me who consents.
+How to upload a token into datastore?
+Manually via console.cloud.google.com, then left pane: datastore.
+
+20191214
+========
+
+https://github.com/GoogleCloudPlatform/python-docs-samples/tree/master/appengine/standard/ndb
+
+Try to make *chcko* run with Python3 with minimal change,
+before actually endeavor into replacing dependencies
+
+- drop webapp2 3.0.0b1 for bottle
+- drop simpleauth (for bottle-oauthlib?)
+- drop ndb for own db abstraction supporting fireo and sqlalchemy
+
+chcko/signup/__init__.py: ``from google.appengine.api import mail`` does not support Python3
+``~/.local/opt/google-cloud-sdk/platform/google_appengine/google/appengine/api/mail.py``
+Problem lies in ProtocolBuffer.py containing ProtocolMessage.
+Solution is in **hlp.py**.
+https://gaedevs.com/blog/things-to-understand-before-migrating-your-python-2-gae-app-to-python-3
+No alternative in google.cloud for Python3.
+But:
+https://developers.google.com/gmail/api/quickstart/python
+, https://github.com/gsuitedevs/python-samples/blob/master/gmail/quickstart/quickstart.py
+, https://blog.mailtrap.io/send-emails-with-gmail-api/#Step_8_Send_an_email
+, https://gist.github.com/WJDigby/e36203102a195797c712c6cfe5020b21
+, https://developers.google.com/gmail/api/guides/sending
+, https://stackabuse.com/how-to-send-emails-with-gmail-using-python/
+, https://medium.com/@erdoganyesil/read-file-from-google-cloud-storage-with-python-cf1b913bd134
+Created ``chcko.mail@gmail.com`` and enabled Gmail API:
+chcko/credentials.json
+https://cloud.google.com/appengine/docs/standard/python3/sending-messages
+, https://pypi.org/project/mailgun3-python/
+, https://cloud.google.com/kms/docs/secret-management#choosing_a_secret_management_solution
+, https://usefulangle.com/post/51/google-refresh-token-common-questions
+, https://cloud.google.com/appengine/docs/standard/python3/using-cloud-storage
+, https://cloud.google.com/appengine/docs/standard/python3/migrating-to-cloud-ndb
+
 20191213
 ========
 
@@ -61,7 +114,7 @@ Checking the current model::
   export CLOUDSDK_CORE_PROJECT=chcko
   gcloud beta emulators datastore start
 
-Adding ``with db.context() as context:`` according
+Adding ``with db.context():`` according
 https://github.com/googleapis/python-ndb/blob/master/docs/migrating.rst
 
 

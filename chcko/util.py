@@ -8,7 +8,7 @@ Utility
 from sympy.parsing.sympy_parser import parse_expr
 from sympy import Poly, latex
 from sympy.abc import x
-from urlparse import parse_qsl
+from urllib.parse import parse_qsl
 import logging
 
 import webapp2
@@ -16,7 +16,7 @@ from webapp2_extras import auth
 
 from bottle import SimpleTemplate, template
 
-from chcko.hlp import listable, mklookup, counter, Struct, email_enabled
+from chcko.hlp import listable, mklookup, counter, Struct
 from chcko.languages import langkindnum, langnumkind, CtxStrings
 from chcko.model import studentCtx, Student
 
@@ -186,8 +186,7 @@ class PageBase(AuthUser):
             'util': self.util,
             'kinda': langkindnum[self.request.lang],
             'numkind': langnumkind[self.request.lang],
-            'langs': list(CtxStrings.keys()),
-            'email_enabled': email_enabled
+            'langs': list(CtxStrings.keys())
         })
         self.params = self.request.params
 

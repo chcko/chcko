@@ -4,18 +4,18 @@ import re
 import datetime
 import logging
 
-from urlparse import parse_qsl
-from chcko.model import depth_1st, problemCtxObjs, keysOmit, table_entry, ctxkey
+from urllib.parse import parse_qsl
+from chcko.model import depth_1st, problemCtxObjs, keysOmit, table_entry, ctxkey, db
 from chcko.hlp import datefmt, last
 from chcko.util import PageBase
-from google.appengine.ext import ndb
+from google.cloud import ndb
 
 
 def prepare(
         qs  # url query_string (after ?)
         , skey  # start key, filter is filled up with it.
-    # student key normally, but can be other, e.g. school, too.
-        # if a parent belongs to user then all children can be queried
+                # student key normally, but can be other, e.g. school, too.
+                # if a parent belongs to user then all children can be queried
         , userkey
 ):
     '''prepares the perameters for depth_1st
@@ -94,8 +94,7 @@ class Page(PageBase):
     def __init__(self, _request):
         super(self.__class__, self).__init__(_request)
         self.table = lambda: depth_1st(
-            *
-            prepare(
+            *prepare(
                 self.request.query_string,
                 self.request.student.key,
                 self.user and self.user.key))

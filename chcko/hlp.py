@@ -386,7 +386,8 @@ PAGES = [
     'signup',
     'static',
     'todo',
-    'verification']
+    'verification',
+    'forgot']
 
 def author_folder(fn, withtest=False):
     ''' checks whether fn is an author's content folder
@@ -401,3 +402,52 @@ def author_folder(fn, withtest=False):
     '''
     return (fn not in PAGES + (['test'] if withtest else [])
             and not fn.startswith('_') and '.' not in fn)
+
+
+is_standard_server = False
+if os.getenv('GAE_ENV', '').startswith('standard'):
+  is_standard_server = True
+
+#email
+import base64
+import pickle
+from googleapiclient.discovery import build
+from google.auth.transport.requests import Request
+from google_auth_oauthlib.flow import InstalledAppFlow
+from email.mime.text import MIMEText
+mail_id='chcko.mail@gmail.com'
+pth = lambda x: os.path.join(os.path.dirname(__file__),x)
+credential_file = pth('credentials.json')
+token_file = pth('token.pickle')
+def get_credential():
+    creds = None
+    if os.path.exists(token_file):
+        with open(token_file, 'rb') as tokenf:
+            creds = pickle.load(tokenf)
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+              pth(credential_file)
+              ,['https://www.googleapis.com/auth/gmail.send'])
+            creds = flow.run_local_server(port=0)
+        with open(token_file, 'wb') as tokenf:
+            pickle.dump(creds, tokenf)
+    return creds
+def send_mail(sender, to, subject, message_text):
+    '''
+    >>> (sender, to, subject, message_text) = (mail_id,'roland.puntaier@gmail.com','test 2','test second message text')
+    >>> send_mail(sender, to, subject, message_text)
+    '''
+    creds = None
+    if is_standard_server:
+        creds = get_credential()
+    service = build('gmail', 'v1', credentials=creds)
+    message = MIMEText(message_text)
+    message['to'] = to
+    message['from'] = sender
+    message['subject'] = subject
+    mbody = {'raw':base64.urlsafe_b64encode(message.as_bytes()).decode()}
+    message = (service.users().messages().send(userId=mail_id, body=mbody).execute())
+    return message

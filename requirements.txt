@@ -1,9 +1,20 @@
-bottle
+#integration not yet functional
+#bottle
+#bottle-oauthlib
 
-fireo
+#for mail: https://github.com/gsuitedevs/python-samples/blob/master/gmail/quickstart/requirements.txt
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
 
-bottle-oauthlib
+google-cloud-storage
+
+webapp2==3.0.0b1
+
 urlfetch
+
+#fireo #planned
+google-cloud-ndb
 
 numpy
 matplotlib

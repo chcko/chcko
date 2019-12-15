@@ -54,18 +54,17 @@ def problems_for(
         os.path.dirname(__file__))
     ):
     skipc = 0
-    with db.context() as context:
-        for f in os.listdir(os.path.join(startdir, 'r')):
-            if not f.startswith('_'):
-                skipc = skipc + 1
-                if skipc % skip != 0:
-                    continue
-                rsv = resolver('r.' + f, 'de')
-                problem, pkwargs = Problem.from_resolver(rsv, 1, student.key)
-                problem.answers = problem.results
-                problem.answered = datetime.datetime.now()
-                problem.oks = [True] * len(problem.results)
-                problem.put()
+    for f in os.listdir(os.path.join(startdir, 'r')):
+        if not f.startswith('_'):
+            skipc = skipc + 1
+            if skipc % skip != 0:
+                continue
+            rsv = resolver('r.' + f, 'de')
+            problem, pkwargs = Problem.from_resolver(rsv, 1, student.key)
+            problem.answers = problem.results
+            problem.answered = datetime.datetime.now()
+            problem.oks = [True] * len(problem.results)
+            problem.put()
 
 
 def clear_all_data():

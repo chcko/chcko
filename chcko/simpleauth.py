@@ -10,7 +10,7 @@ import logging
 import json
 
 from urllib import urlencode
-import urlparse
+import urllib.parse as urlparse
 
 # for CSRF state tokens
 import time
@@ -567,7 +567,7 @@ class SimpleAuthHandler(object):
 
     Facebook, LinkedIn and Twitter respond with a query string, not JSON.
     """
-    return dict(urlparse.parse_qsl(body))
+    return dict(urllib.parse.parse_qsl(body))
 
   def _json_parser(self, body):
     """Parses body string into JSON dict"""
