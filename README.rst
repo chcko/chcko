@@ -1,8 +1,23 @@
 chcko
 =====
 
-- Python + HTML to create and check exercises programmatically with random values using python over the internet.
-- URI API (RESTful API) to serve these exercises
+Small content items, identified with short names:
+
+- Explanations
+- Exercises with randomly generated values.
+
+Pages:
+
+- ``content`` page: items composed via URL
+- ``contexts`` of one user
+- ``done``: done exercises filtered by context
+- ``todo``: assigned exercises
+- some additional helper pages
+
+Architecture:
+
+- Server: Python 3 on GCP
+- Client: HTML, Javascript (jquery, ...)
 
 Status
 ------

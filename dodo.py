@@ -304,7 +304,7 @@ def task_initdb():
         inits = ['# -*- coding: utf-8 -*-',
                  '# generated file',
                  'from chcko.model import Index, index_add, delete_all, db',
-                 'delete_all(Index.query())','','with db.context():']
+                 '','with db.context():','    delete_all(Index.query())']
 
         available_langs = set([])
         for author in authors:
@@ -395,5 +395,5 @@ def task_cov():
                  ],
             'verbosity': 2}
 def task_serve():
-    return {'actions': ["cd %s && dev_appserver.py chcko --host=0.0.0.0"%os.path.dirname(basedir)]
+    return {'actions': ["cd %s && dev_appserver.py chcko --host=0.0.0.0"%os.path.dirname(basedir)],
             'verbosity': 2}

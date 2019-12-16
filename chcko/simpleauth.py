@@ -9,7 +9,7 @@ import sys
 import logging
 import json
 
-from urllib import urlencode
+from urllib.parse import urlencode
 import urllib.parse as urlparse
 
 # for CSRF state tokens

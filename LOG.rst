@@ -9,16 +9,31 @@ https://cloud.google.com/appengine/docs/standard/python3/testing-and-deploying-y
 
 chcko/conftest.py: ``from google.appengine.ext import testbed`` does not support Python3
 
-
-20191215
+20191216
 ========
 
-https://cloud.google.com/appengine/docs/admin-api/access-control#permissions_and_roles
+Setup testing::
 
-In principle mail can be done by Gmail API.
-The token from quickstart can be used, because it is only me who consents.
-How to upload a token into datastore?
-Manually via console.cloud.google.com, then left pane: datastore.
+  gcloud config set project chcko-262117
+  gcloud beta emulators firestore start
+  DATASTORE_EMULATOR_HOST=localhost:8081 python main.py
+
+In python: ``os.environ['DATASTORE_EMULATOR_HOST']='localhost:8081'`` or whatever other port.
+
+  ``dev_appserver.py`` is python 2, but should also run a python 3 app::
+
+    cd ~
+    python2 `which dev_appserver.py` chcko
+
+  I get::
+
+    google.auth.exceptions.DefaultCredentialsError: Could not automatically determine credentials. Please set GOOGLE_APPLICATION_CREDENTIALS
+
+  Which means, it is connecting the actual server.
+  https://stackoverflow.com/questions/46432589/how-to-use-python-3-with-google-app-engines-local-development-server
+  means that only v1 is supported by dev_appserver.py.
+  Therefore: stick to ``gcloud beta emulators``.
+
 
 20191214
 ========
@@ -31,6 +46,9 @@ before actually endeavor into replacing dependencies
 - drop webapp2 3.0.0b1 for bottle
 - drop simpleauth (for bottle-oauthlib?)
 - drop ndb for own db abstraction supporting fireo and sqlalchemy
+
+mail problem
+------------
 
 chcko/signup/__init__.py: ``from google.appengine.api import mail`` does not support Python3
 ``~/.local/opt/google-cloud-sdk/platform/google_appengine/google/appengine/api/mail.py``
@@ -54,6 +72,14 @@ https://cloud.google.com/appengine/docs/standard/python3/sending-messages
 , https://usefulangle.com/post/51/google-refresh-token-common-questions
 , https://cloud.google.com/appengine/docs/standard/python3/using-cloud-storage
 , https://cloud.google.com/appengine/docs/standard/python3/migrating-to-cloud-ndb
+
+https://cloud.google.com/appengine/docs/admin-api/access-control#permissions_and_roles
+
+In principle mail can be done by Gmail API.
+The token from quickstart can be used, because it is only me who consents.
+How to upload a token into datastore?
+Manually via console.cloud.google.com, then left pane: datastore.
+
 
 20191213
 ========
@@ -138,4 +164,5 @@ Luckily Goople continues to support Python2 apps.
 So mamchecker stays online.
 Content can be added to mamchecker.
 I can be moved to chcko when chcko is completed.
+
 

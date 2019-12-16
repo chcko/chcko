@@ -9,10 +9,13 @@ import os.path
 import pytest
 import re
 
-if 'google' in sys.modules:
-    del sys.modules['google']
+#if 'google' in sys.modules: del sys.modules['google']
 
 os.environ.update({'SERVER_SOFTWARE': 'py.test'})
+os.environ.update({'CLOUDSDK_CORE_PROJECT': 'chcko'})
+os.environ.update({'DATASTORE_EMULATOR_HOST': 'localhost:8318'})
+
+sys.path += [os.path.dirname(os.path.dirname(__file__))]
 
 from chcko.languages import languages
 from chcko.hlp import author_folder
@@ -39,21 +42,19 @@ def pytest_runtest_setup(item):
         pytest.xfail("previous test failed (%s)" % previousfailed.name)
 
 
-tstbed = testbed.Testbed()
-tstbed.activate()
-tstbed.init_memcache_stub()
-tstbed.init_datastore_v3_stub()
-tstbed.init_mail_stub()
-
-# init session
-
+from subprocess import Popen
+#prerequisite: gcloud config set project chcko-262117
+datastore = Popen(['gcloud','beta','emulators','datastore','start'],env=os.environ)
 @pytest.fixture(scope='session')
 def gaetestbed(request):
-    def deactivate():
-        tstbed.deactivate()
-    request.addfinalizer(deactivate)
-    return deactivate
-
+    global datastore
+    from chcko.model import db
+    with datastore:
+        #datastore.communicate(None, timeout=None)
+        with db.context():
+            yield
+    datastore.terminate()
+    del datastore
 
 def pytest_generate_tests(metafunc):
     if 'allcontent' in metafunc.fixturenames:
@@ -71,4 +72,4 @@ def pytest_generate_tests(metafunc):
         # list(gen())
         metafunc.parametrize("allcontent", gen())
 
-import chcko.app
+#import chcko.app

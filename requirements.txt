@@ -1,6 +1,8 @@
 #integration not yet functional
-#bottle
+bottle
 #bottle-oauthlib
+
+oauth2 #for simpleauth.py
 
 #for mail: https://github.com/gsuitedevs/python-samples/blob/master/gmail/quickstart/requirements.txt
 google-api-python-client
@@ -14,6 +16,7 @@ webapp2==3.0.0b1
 urlfetch
 
 #fireo #planned
+grpcio
 google-cloud-ndb
 
 numpy

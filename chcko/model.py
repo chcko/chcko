@@ -8,6 +8,7 @@ especially the models.
 import datetime
 import uuid
 import time
+import os
 from itertools import chain
 from bottle import SimpleTemplate
 from urllib.parse import parse_qsl
@@ -186,7 +187,8 @@ class Student(Base):
     'parent: Class'
     color = ndb.StringProperty()
 
-#os.environ['DATASTORE_EMULATOR_HOST']='localhost:8081'
+#check port given by output of "gcloud beta emulators start"
+#os.environ['DATASTORE_EMULATOR_HOST']='localhost:8318'
 db = ndb.Client('chcko')
 with db.context():
     myschool = School.get_or_insert('myschool')
@@ -224,7 +226,6 @@ def add_student(studentpath, color=None, user=None):
     return self
 
 #dict(filter(lambda x:isinstance(x[1],ndb.ComputedProperty),Problem._properties.iteritems()))
-
 
 class Problem(Base):
     'parent: Student'

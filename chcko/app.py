@@ -51,17 +51,17 @@ import webapp2
 from webapp2_extras import sessions
 
 from chcko.hlp import import_module, PAGES, is_standard_server
-from chcko.util import AuthUser
-from chcko.model import stored_secret, set_student, db
+from chcko.model import stored_secret, set_student
 
 # this will fill Index
 # initdb is generate via `doit -k initdb`
 from chcko.initdb import available_langs
 from chcko.languages import langnumkind
 
-from simpleauth import SimpleAuthHandler
+#A: from chcko.util import AuthUser
+#A: from chcko.simpleauth import SimpleAuthHandler
 
-class PageHandler(webapp2.RequestHandler, SimpleAuthHandler, AuthUser):
+class PageHandler(webapp2.RequestHandler):#A:, SimpleAuthHandler, AuthUser):
 
     '''http://chcko.appspot.com/<lang>/[<pagename>]?<query_string>
 
@@ -128,78 +128,78 @@ class PageHandler(webapp2.RequestHandler, SimpleAuthHandler, AuthUser):
                 '/img/missing-avatar.png'),
             'nickname': 'name',
             'email': 'link'}}
-    #
-    # secrets need to be uploaded manually
-    # http://stackoverflow.com/questions/1782906/how-do-i-activate-the-interactive-console-on-app-engine
-    # https://developers.google.com/appengine/docs/adminconsole/
-    # https://developers.google.com/appengine/articles/remote_api
-    # remote_api_shell.py #http://chcko.appspot.com/admin/interactive is off
-    #$remote_api_shell.py -s chcko.appspot.com
-    #>> import chcko.model as mdl
-    #>> mdl.Secret.query().fetch()
-    #>> mdl.Secret.get_or_insert("test", secret = "test secret")
-    #
-    # client ids need to be registed:
-    # http://code.google.com/apis/console
-    # https://developers.facebook.com/apps
-    # https://www.linkedin.com/secure/developer
-    # https://dev.twitter.com/apps
-    # openid no registration needed, but Authentication Type = Federated Login at
-    #  https://appengine.google.com/settings?app_id=s~chcko
-    SECRETS = {p: (stored_secret(p + 'chckoid'), stored_secret(p))
-               for p in ATTRS.keys()}
-    SCOPES = {
-        # OAuth 2.0 providers
-        'google': 'https://www.googleapis.com/auth/userinfo.profile',
-        'linkedin2': 'r_basicprofile',
-        'facebook': 'user_about_me',
-        'foursquare': 'authorization_code',
-        # OAuth 1.0 providers don't have scopes
-        'twitter': '',
-        'linkedin': '',
-        # openid doesn't need any key/secret
-    }
+    #A: #
+    #A: # secrets need to be uploaded manually
+    #A: # http://stackoverflow.com/questions/1782906/how-do-i-activate-the-interactive-console-on-app-engine
+    #A: # https://developers.google.com/appengine/docs/adminconsole/
+    #A: # https://developers.google.com/appengine/articles/remote_api
+    #A: # remote_api_shell.py #http://chcko.appspot.com/admin/interactive is off
+    #A: #$remote_api_shell.py -s chcko.appspot.com
+    #A: #>> import chcko.model as mdl
+    #A: #>> mdl.Secret.query().fetch()
+    #A: #>> mdl.Secret.get_or_insert("test", secret = "test secret")
+    #A: #
+    #A: # client ids need to be registed:
+    #A: # http://code.google.com/apis/console
+    #A: # https://developers.facebook.com/apps
+    #A: # https://www.linkedin.com/secure/developer
+    #A: # https://dev.twitter.com/apps
+    #A: # openid no registration needed, but Authentication Type = Federated Login at
+    #A: #  https://appengine.google.com/settings?app_id=s~chcko
+    #A: SECRETS = {p: (stored_secret(p + 'chckoid'), stored_secret(p))
+    #A:            for p in ATTRS.keys()}
+    #A: SCOPES = {
+    #A:     # OAuth 2.0 providers
+    #A:     'google': 'https://www.googleapis.com/auth/userinfo.profile',
+    #A:     'linkedin2': 'r_basicprofile',
+    #A:     'facebook': 'user_about_me',
+    #A:     'foursquare': 'authorization_code',
+    #A:     # OAuth 1.0 providers don't have scopes
+    #A:     'twitter': '',
+    #A:     'linkedin': '',
+    #A:     # openid doesn't need any key/secret
+    #A:}
 
-    def _callback_uri_for(self, provider):
-        return self.uri_for('callback', provider=provider, _full=True)
+    #A:def _callback_uri_for(self, provider):
+    #A:    return self.uri_for('callback', provider=provider, _full=True)
 
-    def _get_consumer_info_for(self, provider):
-        return tuple(
-            filter(None, list(self.SECRETS[provider]) + [self.SCOPES[provider]]))
+    #A:def _get_consumer_info_for(self, provider):
+    #A:    return tuple(
+    #A:        filter(None, list(self.SECRETS[provider]) + [self.SCOPES[provider]]))
 
-    def _on_signin(self, data, auth_info, provider):
-        auth_id = '%s:%s' % (provider, data['id'])
-        user = self.user_model.get_by_auth_id(auth_id)
-        _attrs = {}
-        for k, v in self.ATTRS[provider].iteritems():
-            attr = (v, data.get(k)) if isinstance(v, str) else v(data.get(k))
-            _attrs.setdefault(*attr)
-        if user:
-            user.populate(**_attrs)
-            user.put()
-            self.auth.set_session(
-                self.auth.store.user_to_dict(user))
-        else:
-            if self.logged_in:
-                u = self.user
-                u.populate(**_attrs)
-                success, info = u.add_auth_id(auth_id)  # this will put()
-                if not success:
-                    logging.warning('Update existing user failed')
-            else:
-                ok, user = self.auth.store.user_model.create_user(
-                    auth_id, **_attrs)
-                if ok:
-                    self.auth.set_session(self.auth.store.user_to_dict(user))
-        try:
-            lang = self.session['lang']
-        except KeyError:
-            lang = 'en'
-        self.redirect(self.uri_for('entry_lang', lang=lang))
-
-    def logout(self, lang):
-        self.auth.unset_session()
-        self.redirect(self.uri_for('entry_lang', lang=lang))
+    #A: def _on_signin(self, data, auth_info, provider):
+    #A:     auth_id = '%s:%s' % (provider, data['id'])
+    #A:     user = self.user_model.get_by_auth_id(auth_id)
+    #A:     _attrs = {}
+    #A:     for k, v in self.ATTRS[provider].iteritems():
+    #A:         attr = (v, data.get(k)) if isinstance(v, str) else v(data.get(k))
+    #A:         _attrs.setdefault(*attr)
+    #A:     if user:
+    #A:         user.populate(**_attrs)
+    #A:         user.put()
+    #A:         self.auth.set_session(
+    #A:             self.auth.store.user_to_dict(user))
+    #A:     else:
+    #A:         if self.logged_in:
+    #A:             u = self.user
+    #A:             u.populate(**_attrs)
+    #A:             success, info = u.add_auth_id(auth_id)  # this will put()
+    #A:             if not success:
+    #A:                 logging.warning('Update existing user failed')
+    #A:         else:
+    #A:             ok, user = self.auth.store.user_model.create_user(
+    #A:                 auth_id, **_attrs)
+    #A:             if ok:
+    #A:                 self.auth.set_session(self.auth.store.user_to_dict(user))
+    #A:     try:
+    #A:         lang = self.session['lang']
+    #A:     except KeyError:
+    #A:         lang = 'en'
+    #A:     self.redirect(self.uri_for('entry_lang', lang=lang))
+    #A:
+    #A: def logout(self, lang):
+    #A:     self.auth.unset_session()
+    #A:     self.redirect(self.uri_for('entry_lang', lang=lang))
 
     def arguments_ok(self, kwargs):
         #kwargs = {}
@@ -259,17 +259,18 @@ class PageHandler(webapp2.RequestHandler, SimpleAuthHandler, AuthUser):
         self.forward(kwargs, lambda page: page.post_response())
 
 # access via self.app.config.get('foo')
-app_config = {
-    'webapp2_extras.sessions': {
-        'cookie_name': 'chckosessionkey',
-        'secret_key': stored_secret('session_secret')
-    },
-    'webapp2_extras.auth': {
-        'cookie_name': None,  # use the one from session config and not 'auth'
-        'user_model': 'chcko.model.User',
-        'user_attributes': ['name']
-    }
-}
+app_config = {}
+#A: app_config = {
+#A:     'webapp2_extras.sessions': {
+#A:         'cookie_name': 'chckosessionkey',
+#A:         'secret_key': stored_secret('session_secret')
+#A:     },
+#A:     'webapp2_extras.auth': {
+#A:         'cookie_name': None,  # use the one from session config and not 'auth'
+#A:         'user_model': 'chcko.model.User',
+#A:         'user_attributes': ['name']
+#A:     }
+#A: }
 
 
 def _error(request, response, exception, status):
@@ -289,13 +290,10 @@ def make_app(debug_=not is_standard_server):
         webapp2.Route('/', handler=PageHandler, name='entry_'),
         webapp2.Route('/<lang:[^/]+>', handler=PageHandler, name='entry_lang'),
         webapp2.Route('/<lang:[^/]+>/', handler=PageHandler, name='entry_lang_'),
-        webapp2.Route('/<lang:[^/]+>/logout',
-            handler='chcko.app.PageHandler:logout', name='logout'),
-        webapp2.Route('/auth/<provider>',
-            handler='chcko.app.PageHandler:_simple_auth', name='authlogin'),
+        #A:webapp2.Route('/<lang:[^/]+>/logout', handler='chcko.app.PageHandler:logout', name='logout'),
+        #A:webapp2.Route('/auth/<provider>',handler='chcko.app.PageHandler:_simple_auth', name='authlogin'),
         #no lang for auth callback, therefore lang is also in the session
-        webapp2.Route('/auth/<provider>/callback',
-            handler='chcko.app.PageHandler:_auth_callback', name='callback'),
+        #A:webapp2.Route('/auth/<provider>/callback',handler='chcko.app.PageHandler:_auth_callback', name='callback'),
         webapp2.Route('/<lang:[^/]+>/<pagename:[^?]+>', handler=PageHandler, name='page'),
     ], config=app_config, debug=debug_)
     app_.error_handlers[400] = lambda q, a, e: _error(q, a, e, 400)
@@ -303,18 +301,8 @@ def make_app(debug_=not is_standard_server):
     app_.error_handlers[500] = lambda q, a, e: _error(q, a, e, 500)
     return app_
 
-webapp = make_app()
-
-def ndb_wsgi_middleware(wsgi_app):
-    def middleware(environ, start_response):
-        with db.context():
-            return wsgi_app(environ, start_response)
-    return middleware
-
-app = ndb_wsgi_middleware(webapp)
+app = make_app()
 
 # TODO, when using bottle
-# app = ndb_wsgi_middleware(bottle_app)
 # if __name__ == "__main__":
 #     run(host='localhost', port=8080)
-# 
