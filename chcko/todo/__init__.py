@@ -10,7 +10,7 @@ from chcko.util import PageBase
 class Page(PageBase):
 
     def __init__(self, _request):
-        super(self.__class__, self).__init__(_request)
+        super().__init__(_request)
         self.table = lambda: assigntable(
             self.request.student.key,
             self.user and self.user.key)
@@ -22,7 +22,7 @@ class Page(PageBase):
         remove_done_assignments(
             self.request.student.key,
             self.user and self.user.key)
-        return super(self.__class__, self).get_response()
+        return super().get_response()
 
     def post_response(self):
         for urlsafe in self.request.get_all('assignee'):

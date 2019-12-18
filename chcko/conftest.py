@@ -13,7 +13,7 @@ import re
 
 os.environ.update({'SERVER_SOFTWARE': 'py.test'})
 os.environ.update({'CLOUDSDK_CORE_PROJECT': 'chcko'})
-os.environ.update({'DATASTORE_EMULATOR_HOST': 'localhost:8318'})
+os.environ.update({'DATASTORE_EMULATOR_HOST': 'localhost:8081'})
 
 sys.path += [os.path.dirname(os.path.dirname(__file__))]
 

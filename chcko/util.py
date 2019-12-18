@@ -11,9 +11,6 @@ from sympy.abc import x
 from urllib.parse import parse_qsl
 import logging
 
-import webapp2
-from webapp2_extras import auth
-
 from bottle import SimpleTemplate, template
 
 from chcko.hlp import listable, mklookup, counter, Struct
@@ -135,53 +132,16 @@ class Util:
         return f.format(*args[1:])
 
 
-class AuthUser(object):
-    #self = AuthUser()
-
-    @webapp2.cached_property
-    def auth(self):
-        return auth.get_auth()
-
-    @webapp2.cached_property
-    def session(self):
-        return self.auth.session
-
-    @webapp2.cached_property
-    def logged_in(self):
-        return self.auth.get_user_by_session() is not None
-
-    @webapp2.cached_property
-    def user_info(self):
-        return self.auth.get_user_by_session()
-
-    @webapp2.cached_property
-    def user_model(self):
-        return self.auth.store.user_model
-
-    @webapp2.cached_property
-    def user(self):
-        uinfo = self.user_info
-        return self.user_model.get_by_id(uinfo['user_id']) if uinfo else None
-
-
-class PageBase(AuthUser):
-
-    '''Make a page by providing a folder with
-
-    - an __init__.py having a `Page` class (derived from PageBase),
-    - a main template that is rebased to from language templates (en.html,...)
-
-    Subclasses must provide `self.params` and `self.request` via __init__.
-
-    '''
-
-    def __init__(self, _request):
-        self.request = _request
+class PageBase:
+    def __init__(self, request):
+        self.request = request
+        self.session = request.session
+        self.user = request.user
         self.util = Util(self.request)
         SimpleTemplate.defaults.update(self.request.params)
         SimpleTemplate.defaults.update({
             'session': self.session,
-            'request': _request,
+            'request': self.request,
             'user': self.user,
             'util': self.util,
             'kinda': langkindnum[self.request.lang],
@@ -189,20 +149,17 @@ class PageBase(AuthUser):
             'langs': list(CtxStrings.keys())
         })
         self.params = self.request.params
-
+    def set_user(email,password):
+        self.user = self.request.user = User.get_by_login(email,password)
+        set_student(self.request,self.user,self.session)
     def get_response(self):
         return template(
             self.request.pagename,
             self.params,
             template_lookup=mklookup(
                 self.request.lang))
-
     def redirect(self, afterlang):
-        return webapp2.redirect('/{}/{}'.format(self.request.lang,
-                                                afterlang),
-                                request=self.request,
-                                response=self.request.response)
-
+        return bottle.redirect('/{}/{}'.format(self.request.lang,afterlang))
 
 def user_required(handler):
     """
@@ -234,12 +191,12 @@ def user_required(handler):
 #     [u'<msup>', u'<mi>x</mi>', u'<mn>2</mn>', u'</msup>']
 #
 #     '''
-# trx = c2p(mathml(expr))#<?xml version=...>\n<math...
-# trx = '\n'.join(trx.splitlines()[1:])#<math...
+# trx = c2p(mathml(expr)) #<?xml version=...>\n<math...
+# trx = '\n'.join(trx.splitlines()[1:]) #<math...
 #     trx = trx.replace('xmlns=','x=')
 #     trx = '<root>\n'+trx+'\n</root>'
 #     rx = etree.XML(trx)
-# etree.strip_tags(rx,'math')#<math with all attributes
+# etree.strip_tags(rx,'math') #<math with all attributes
 #     uc=etree.tounicode(rx)
 #     uc=u'\n'.join(uc.splitlines()[1:-1])
 #     return uc

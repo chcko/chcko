@@ -8,27 +8,24 @@ from chcko.model import send_mail
 
 class Page(PageBase):
 
-    def __init__(self, _request):
-        super(self.__class__, self).__init__(_request)
-        username = self.request.get('username')
-        self.params = {'username': username, 'not_found': False}
+    def __init__(self, request):
+        super().__init__(request)
+        self.email = self.request.get('email','')
+        self.params = {'email': email, 'not_found': False}
 
     def post_response(self):
-        username = self.request.get('username')
-
-        user = self.user_model.get_by_auth_id(username)
-        if not user:
+        if not self.user:
             self.params = {
-                'username': username,
+                'email': self.email,
                 'not_found': True
             }
             return self.get_response()
 
-        user_id = user.get_id()
-        token = self.user_model.create_signup_token(user_id)
+        email = self.user.email
+        token = self.user_model.create_signup_token(email)
 
-        relative_url = 'verification?type=p&user_id={}&signup_token={}'.format(
-            user_id,
+        relative_url = 'verification?type=p&email={}&signup_token={}'.format(
+            email,
             token)
 
         email = ''
@@ -43,7 +40,6 @@ class Page(PageBase):
             logging.info(confirmation_url)
             m = import_module('forgot.' + self.request.lang)
             send_mail(
-                m.sender_address,
                 email,
                 m.subject,
                 m.body %

@@ -6,10 +6,10 @@ class Page(PageBase):
 
     @user_required
     def post_response(self):
-        password = self.request.get('password')
+        password = self.request.forms.get('password')
         old_token = self.request.get('t')
 
-        if not password or password != self.request.get('confirmp'):
+        if not password or password != self.request.forms.get('confirmp'):
             self.redirect('message?msg=c')
             return
 

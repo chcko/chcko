@@ -2,7 +2,7 @@
 
 import os
 import re
-import webapp2
+import bottle
 from urllib import pathname2url
 
 from webtest import TestApp as TA
@@ -16,30 +16,30 @@ from chcko.model import problemCtx
 
 def test_routing():
     match = app.router.match(
-        webapp2.Request.blank('http://chcko.appspot.com'))
+        bottle.request.blank('http://chcko.appspot.com'))
     assert match[0].name == 'entry'
     assert match[1:][1] == {}
     match = app.router.match(
-        webapp2.Request.blank('http://chcko.appspot.com/'))
+        bottle.request.blank('http://chcko.appspot.com/'))
     assert match[0].name == 'entry_'
     assert match[1:][1] == {}
-    bl = webapp2.Request.blank('http://chcko.appspot.com/en')
+    bl = bottle.request.blank('http://chcko.appspot.com/en')
     assert bl.query_string == ''
     match = app.router.match(bl)
     assert match[0].name == 'entry_lang'
     assert match[1:][1] == {'lang': 'en'}
-    bl = webapp2.Request.blank('http://chcko.appspot.com/en/?b')
+    bl = bottle.request.blank('http://chcko.appspot.com/en/?b')
     match = app.router.match(bl)
     assert match[0].name == 'entry_lang_'
     assert match[1:][1] == {'lang': 'en'}
-    bl = webapp2.Request.blank(
+    bl = bottle.request.blank(
         'http://chcko.appspot.com/en/content?r.a=2&r.b=3')
     match = app.router.match(bl)
     assert match[0].name == 'page'
     assert match[1:][1] == {'lang': 'en', 'pagename': 'content'}
     assert bl.query_string == 'r.a=2&r.b=3'
     assert int(bl.params['r.a']) == 2 and int(bl.params['r.b']) == 3
-    bl = webapp2.Request.blank(
+    bl = bottle.request.blank(
         'http://chcko.appspot.com/en/test/sub?r.a=2&r.b=3')
     match = app.router.match(bl)
     assert match[0].name == 'page'
@@ -75,8 +75,6 @@ class TestRunthrough(object):
         self._store('resp', mamapp.get('/en/signup'))
         assert 'POST' == self.resp.form.method
         # self.resp.showbrowser()
-        self.resp.form[u'username'] = u'tusername'
-        # self.resp.form[u'username'].value
         self.resp.form[u'email'] = u'temail@email.com'
         self.resp.form[u'password'] = u'tpassword'
         self.resp.form[u'confirmp'] = u'tpassword'
@@ -137,7 +135,7 @@ class TestRunthrough(object):
     def test_forgot(self,mamapp):
         self._store('resp', mamapp.get('/en/forgot'))
         assert 'POST' == self.resp.form.method
-        self.resp.form[u'username'] = u'tusername'
+        self.resp.form[u'email'] = u'temail'
         r = self.resp.form.submit()
         assert '302' in r.status
         r = r.follow()
@@ -156,7 +154,7 @@ class TestRunthrough(object):
         self._store('resp', mamapp.get('/en/login'))
         assert 'POST' == self.resp.form.method
         # self.resp.showbrowser()
-        self.resp.form[u'username'] = u'tusername'
+        self.resp.form[u'email'] = u'temail'
         # self.resp.form[u'username'].value
         self.resp.form[u'password'] = u'tpassword'
         r = self.resp.form.submit()

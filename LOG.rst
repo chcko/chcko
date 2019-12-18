@@ -9,6 +9,21 @@ https://cloud.google.com/appengine/docs/standard/python3/testing-and-deploying-y
 
 chcko/conftest.py: ``from google.appengine.ext import testbed`` does not support Python3
 
+20191218
+========
+
+Fixing the conversion to bottle: Currently stuck with a db problem.
+Since I want to support more DB backends, I will
+
+- define a DB interface
+- moving current google-cloud-ndb code to it
+
+20191217
+========
+
+webapp2 to bottle conversion
+check out bottle_session
+
 20191216
 ========
 
@@ -16,7 +31,7 @@ Setup testing::
 
   gcloud config set project chcko-262117
   gcloud beta emulators firestore start
-  DATASTORE_EMULATOR_HOST=localhost:8081 python main.py
+  DATASTORE_EMULATOR_HOST=localhost:8081 gunicorn main:app
 
 In python: ``os.environ['DATASTORE_EMULATOR_HOST']='localhost:8081'`` or whatever other port.
 

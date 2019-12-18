@@ -71,44 +71,68 @@ def check_password_hash(pwhash, password):
     return equal
 
 class UserToken(ndb.Model):
+    subject = ndb.StringProperty(required=True) #signup or auth
+    token = ndb.StringProperty(required=True)
+    email = ndb.StringProperty(required=False)
     created = ndb.DateTimeProperty(auto_now_add=True)
     updated = ndb.DateTimeProperty(auto_now=True)
-    user = ndb.StringProperty(required=True)
-    subject = ndb.StringProperty(required=True)
-    token = ndb.StringProperty(required=True)
     @classmethod
-    def get_key(cls, user, subject, token):
-        return model.Key(cls, '%s.%s.%s' % (str(user), subject, token))
+    def get_key(cls, subject, token):
+        return model.Key(cls, '%s.%s' % (subject, token))
     @classmethod
-    def create(cls, user, subject, token=None):
-        user = str(user)
+    def create(cls, email, subject, token=None):
+        email = email
         token = token or gen_salt()
-        key = cls.get_key(user, subject, token)
-        entity = cls(key=key, user=user, subject=subject, token=token)
+        key = cls.get_key(subject, token)
+        entity = cls(key=key, email=email, subject=subject, token=token)
         entity.put()
         return entity
-    @classmethod
-    def get(cls, user=None, subject=None, token=None):
-        if user and subject and token:
-            return cls.get_key(user, subject, token).get()
-        assert subject and token, \
-            'subject and token must be provided to UserToken.get().'
-        return cls.query(cls.subject == subject, cls.token == token).get()
 
-class User(ndb.User):
-    current_student = ndb.KeyProperty(kind='Student')
+class User(ndb.Model):
+    email = ndb.StringProperty(required=True)
+    pwhash = ndb.StringProperty(required=False)
     token_model = ndb.StructuredProperty(UserToken)
+    current_student = ndb.KeyProperty(kind='Student')
     def set_password(self, password):
-        self.password = generate_password_hash(password)
+        self.pwhash = generate_password_hash(password)
     @classmethod
-    def get_by_auth_token(cls, user_id, token, subject='auth'):
-        token_key = cls.token_model.get_key(user_id, subject, token)
-        user_key = ndb.Key(cls, user_id)
-        valid_token, user = ndb.get_multi([token_key, user_key])
-        if valid_token and user:
-            timestamp = int(time.mktime(valid_token.created.timetuple()))
-            return user, timestamp
+    def create_user(cls, email, password):
+        user = ndb.Key(cls,email).get()
+        if user:
+            if not check_password_hash(user.pwhash,password):
+                return None
+        else:
+            user = cls.get_or_insert(email=email, pwhash=generate_password_hash(password))
+        return user
+    @classmethod
+    def get_by_oauth_token(cls, token, subject='auth'):
+        token = cls.token_model.get_key(subject, token).get()
+        if token:
+            user = ndb.Key(cls, token.email).get()
+            if user:
+                timestamp = int(time.mktime(token.created.timetuple()))
+                return user, timestamp
         return None, None
+    @classmethod
+    def get_by_login(cls,email,password):
+        user = ndb.Key(cls,email).get()
+        if user:
+            if not check_password_hash(user.pwhash,password):
+                return None
+        return user
+    @classmethod
+    def create_signup_token(cls, email):
+        return cls.token_model.create(email, 'signup').token
+    @classmethod
+    def validate_token(cls, subject, token):
+        return cls.token_model.get_key(subject=subject,
+                                   token=token).get() is not None
+    @classmethod
+    def validate_signup_token(cls, token):
+        return cls.validate_token('signup', token)
+    @classmethod
+    def delete_signup_token(cls, token):
+        cls.token_model.get_key('signup', token).delete()
 
 class Secret(ndb.Model):  # root
     '''this is filled manually with (TODO check)::
@@ -149,7 +173,7 @@ def gen_student_path(seed=None):
         uuid.uuid5(
             uuid.UUID(
                 bytes=seed[
-                    :16]),
+                    :16].encode()),
             datetime.datetime.now().isoformat()))
     return student_path
 
@@ -181,7 +205,6 @@ class Teacher(Base):
 class Class(Base):
     'parent: Teacher'
     pass
-
 
 class Student(Base):
     'parent: Class'
@@ -517,32 +540,28 @@ def filter_student(qs):
     qsfiltered = '&'.join([k + '=' + v if v else k for k, v in qfiltered])
     return qsfiltered
 
+def set_user(request):
+    session = request.session
+    userkey = session and session['userkey']
+    request.user = None
+    if userkey:
+        request.user = ndb.Key(urlsafe=userkey).get()
 
-def set_student(request, user=None, session=None):
-    '''logic for student role
+def set_student(request):
+    '''There is always a student role
 
-    There is always a student role
-
-    - there is a student role per client without user
-    - there are more student roles for a user with one being current
+    - There is a student role per client without user
+    - There are more student roles for a user with one being current
 
     Else a redirect string for a message is returned.
 
-    >>> import webapp2
-    >>> request = webapp2.Request.blank('/')
-    >>> request.response = request.get_response()
-    >>> request.GET.update(dict(zip(studentCtx,[str(x) for x in range(len(studentCtx))])))
-    >>> st=set_student(request)
-    >>> request.student.key is not None
-    True
-    >>> #request.student.key.flat()
-
     '''
+    user = request.user
+    session = request.session
     request.student = None
-    studentpath = [request.get(x) for x in studentCtx]
-    color = request.get('color')
+    studentpath = [request.get(x,'') for x in studentCtx]
+    color = request.get('color','')
     request.query_string = filter_student(request.query_string)
-    studentwithoutuser = 'studentwithoutuser'
     if ''.join(studentpath) != '':
         student = add_student(studentpath, color, user)
         if student.userkey == (user and user.key):
@@ -552,12 +571,14 @@ def set_student(request, user=None, session=None):
             return 'message?msg=e'
     elif user:
         request.student = user.current_student and user.current_student.get()
-    elif session is not None and studentwithoutuser in session:
-        try:
-            request.student = ndb.Key(
-                urlsafe=session[studentwithoutuser]).get()
-        except (TypeError, BadKeyError, AttributeError):
-            pass  # no valid cookie available
+    else:
+        studentkey_nouser = session and Session['studentkey_nouser']
+        if studentkey_nouser:
+            try:
+                request.student = ndb.Key(
+                    urlsafe=studentkey_nouser).get()
+            except (TypeError, BadKeyError, AttributeError):
+                pass
     if not request.student and user:
         request.student = Student.query(Student.userkey == user.key).get()
     if not request.student:  # generate
@@ -567,13 +588,12 @@ def set_student(request, user=None, session=None):
         if user.current_student != request.student.key:
             user.current_student = request.student.key
             user.put()
-    elif session is not None:
-        session[studentwithoutuser] = request.student.key.urlsafe()
+    elif session:
+        session['studentkey_nouser'] = request.student.key.urlsafe()
     SimpleTemplate.defaults.update(dict(zip(problemCtx, problemCtxObjs)))
     SimpleTemplate.defaults["contextcolor"] = request.student.color or '#EEE'
     SimpleTemplate.defaults["keyparams"] = keyparams
     SimpleTemplate.defaults["ctxkey"] = ctxkey
-    return request.student
 
 
 class Assignment(Base):
@@ -655,11 +675,20 @@ from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from email.mime.text import MIMEText
-mail_id='chcko.mail@gmail.com'
 pth = lambda x: os.path.join(os.path.dirname(__file__),x)
-credential_file = pth('credentials.json')
-token_file = pth('token.pickle')
-def get_credential():
+chcko_mail = 'chcko.mail@gmail.com'
+def get_credential(
+        scopes=['https://www.googleapis.com/auth/gmail.send']
+        ,credential_file = pth('credentials.json')
+        ,token_file = pth('token.pickle')
+    ):
+    '''
+    Tested with credentials.json of chcko.mail@gmail.com for the quickstart app from
+        https://developers.google.com/gmail/api/quickstart/python
+    chcko.mail@gmail.com authorized these credentials manually,
+    knowing that actually they are for the chcko app.
+    The resulting token allows the chcko app to send emails.
+    '''
     creds = None
     if os.path.exists(token_file):
         with open(token_file, 'rb') as tokenf:
@@ -669,16 +698,15 @@ def get_credential():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-              pth(credential_file)
-              ,['https://www.googleapis.com/auth/gmail.send'])
+              pth(credential_file),scopes)
             creds = flow.run_local_server(port=0)
         with open(token_file, 'wb') as tokenf:
             pickle.dump(creds, tokenf)
     return creds
-def send_mail(sender, to, subject, message_text):
+def send_mail(to, subject, message_text, sender=chcko_mail):
     '''
-    >>> (sender, to, subject, message_text) = (mail_id,'roland.puntaier@gmail.com','test 2','test second message text')
-    >>> send_mail(sender, to, subject, message_text)
+    >>> ( to, subject, message_text) = ('roland.puntaier@gmail.com','test 2','test second message text')
+    >>> send_mail(to, subject, message_text)
     '''
     creds = None
     if not is_standard_server:
@@ -692,5 +720,5 @@ def send_mail(sender, to, subject, message_text):
     message['from'] = sender
     message['subject'] = subject
     mbody = {'raw':base64.urlsafe_b64encode(message.as_bytes()).decode()}
-    message = (service.users().messages().send(userId=mail_id, body=mbody).execute())
+    message = (service.users().messages().send(userId=sender, body=mbody).execute())
     return message

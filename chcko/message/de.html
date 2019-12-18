@@ -1,8 +1,7 @@
 <p>
 % if defined('msg'):
 % if msg == 'a':
-    Der Benutzer mit ({{username}}, {{email}})
-    kann nicht angelegt werden, da es ihn schon gibt.
+    Den Benutzer {{email}} gibt es schon.
 % elif msg == 'b':
     Die Registrierung war erfolgreich.
 % elif msg == 'c':
@@ -22,7 +21,7 @@
 % elif msg == 'j':
     Eine Email wurde an dich gesendet. Klicke auf den Link in der Email, um den Vorgang abzuschließen.
 % elif msg == 'k':
-    Es gibt keinen Benutzer mit ID {{user_id}} und Anmeldecode {{signup_token}}.
+    Es gibt keinen Benutzer mit Anmeldecode {{signup_token}}.
 % elif msg == 'l':
     Es gibt diese Verifikation nicht.
 % end

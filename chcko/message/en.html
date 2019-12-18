@@ -1,7 +1,7 @@
 <p>
 % if defined('msg'):
 % if msg == 'a':
-    Unable to create user for email {{email}} because of duplicate keys {{username}}
+    User with email {{email}} exists already.
 % elif msg == 'b':
     The registration was successful.
 % elif msg == 'c':
@@ -21,7 +21,7 @@
 % elif msg == 'j':
     A email has been sent to you. Click at the link in the email to complete the process.
 % elif msg == 'k':
-    Could not find any user with id {{user_id}} and signup token {{signup_token}}.
+    Could not find any user with signup token {{signup_token}}.
 % elif msg == 'l':
     Verification type not supported.
 % end

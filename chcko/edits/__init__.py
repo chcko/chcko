@@ -18,9 +18,9 @@ from google.cloud import ndb
 class Page(PageBase):
 
     def post_response(self):
-        choice = self.request.get('choice')
-        oldpath = [self.request.get('old' + x) for x in studentCtx]
-        newpath = [self.request.get(x) for x in studentCtx]
+        choice = self.request.forms.get('choice','')
+        oldpath = [self.request.forms.get('old' + x,'') for x in studentCtx]
+        newpath = [self.request.forms.get(x,'') for x in studentCtx]
         pathchanged = not all([x[0] == x[1] for x in zip(oldpath, newpath)])
         if choice != '0':  # not new
             oldstudent = ctxkey(oldpath).get()

@@ -91,8 +91,8 @@ def prepare(
 
 class Page(PageBase):
 
-    def __init__(self, _request):
-        super(self.__class__, self).__init__(_request)
+    def __init__(self, request):
+        super().__init__(request)
         self.table = lambda: depth_1st(
             *prepare(
                 self.request.query_string,
@@ -103,7 +103,7 @@ class Page(PageBase):
             'table_entry': table_entry}
 
     def post_response(self):
-        for urlsafe in self.request.get_all('deletee'):
+        for urlsafe in self.request.forms.getall('deletee'):
             k = ndb.Key(urlsafe=urlsafe)
             k.delete()
         return self.get_response()

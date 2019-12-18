@@ -1,8 +1,8 @@
 <script>
     function validate() {
-        var username = document.forgot.username.value;
-        if (username == "") {
-            alert("{{tusername}}");
+        var email = document.forgot.email.value;
+        if (email == "") {
+            alert("{{temail}}");
             return false;
         }
         return true;
@@ -16,8 +16,8 @@
 % end
 
 <form method="POST" name="forgot" onsubmit="return validate()">
-    <label for="username">{{tusername}}*</label>
-	<input type="text" value="{{ username }}" name="username"/>
+    <label for="email">{{temail}}*</label>
+	<input type="email" value="{{ email }}" name="Email"/>
     <input type="submit" value="{{tsend}}"/>
 </form>
 

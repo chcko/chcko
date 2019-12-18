@@ -47,7 +47,7 @@ for f1 in funs1:
                 cnt = cnt + 1 #found a root
             except ValueError:
                 continue
-print(cnt)#=> 0 => no root
+print(cnt) #=> 0 => no root
 """
 
 

@@ -6,9 +6,9 @@
 
 <script>
     function validate() {
-        var username = document.login.username.value;
-        if (username == "") {
-            alert("{{tusername}}");
+        var email = document.login.email.value;
+        if (email == "") {
+            alert("{{temail}}");
             return false;
         }
         var password = document.login.password.value;
@@ -21,8 +21,8 @@
 </script>
 
 <form method="POST" name=login onsubmit='return validate()'>
-<label for="username">{{tusername}}</label>
-<input type="text" value="{{ username }}" name="username"/><br>
+<label for="email">{{temail}}</label>
+<input type="text" value="{{ email }}" name="email"/><br>
 <label for="password">{{tpassword}}</label>
 <input type="password" name="password"/><br>
 <input type="submit" value="{{tlogin}}"/>

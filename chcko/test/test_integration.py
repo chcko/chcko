@@ -20,12 +20,27 @@ from chcko.model import (
     ctxkey,
     assign_to_student,
     assigntable)
-from chcko.test.hlp import newuserpage, clear_all_data, problems_for
+from chcko.test.hlp import clear_all_data, problems_for
 
 import pytest
 
 bottle.DEBUG = True
 bottle.TEMPLATES.clear()
+
+def newuserpage(query_string, lang):
+    from chcko.app import app
+    from chcko.content import Page
+    delete_all(Student.query())
+    not_answered = Problem.gql("WHERE answered = NULL")
+    delete_all(not_answered)
+    request = bottle.request
+    request.environ['PATH_INFO'] = '/' + lang + '/?' + query_string
+    request.pagename = 'content'
+    request.query_string = query_string
+    request.lang = lang
+    set_student(request)
+    page = Page(request)
+    return page
 
 def test_recursive_includes():
     self = newuserpage('test.t_1', 'en')

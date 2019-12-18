@@ -4,11 +4,10 @@
 
 import os
 import os.path
-import webapp2
 import datetime
 
 from chcko.model import (Assignment, Index, Problem, Student, Class,
-                              Teacher, Period, School, set_student, delete_all, db)
+                              Teacher, Period, School, delete_all, db)
 from chcko.hlp import Struct, import_module, from_py, resolver
 
 
@@ -79,18 +78,3 @@ def clear_all_data():
     delete_all(School.query())
 
 
-def newuserpage(query_string, lang):
-    from chcko.app import app
-    from chcko.content import Page
-    delete_all(Student.query())
-    not_answered = Problem.gql("WHERE answered = NULL")
-    delete_all(not_answered)
-    # query_string,lang='r.a=3','de'
-    blank = webapp2.Request.blank('/' + lang + '/?' + query_string)
-    request, response = webapp2.RequestContext(app, blank.environ).__enter__()
-    request.pagename = 'content'
-    request.query_string = query_string
-    request.lang = lang
-    set_student(request)
-    page = Page(request)
-    return page

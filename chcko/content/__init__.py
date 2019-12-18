@@ -28,7 +28,7 @@ import logging
 from urllib.parse import parse_qsl
 from google.cloud import ndb
 
-from bottle import SimpleTemplate, get_tpl, StplParser
+from bottle import SimpleTemplate, StplParser
 
 from chcko.hlp import (Struct,
         resolver,
@@ -49,12 +49,31 @@ from webob.exc import HTTPNotFound, HTTPBadRequest
 
 re_id = re.compile(r"^[^\d\W]\w*\.[^\d\W]\w*$", re.UNICODE)
 
+def get_tpl(*args, **kwargs):
+    tpl = args[0] if args else None
+    adapter = kwargs.pop('template_adapter', SimpleTemplate)
+    lookup = kwargs.pop('template_lookup', TEMPLATE_PATH)
+    tplid = (id(lookup), tpl)
+    TEMPLATES = bottle.TEMPLATES
+    if tplid not in TEMPLATES or DEBUG:
+        settings = kwargs.pop('template_settings', {})
+        if isinstance(tpl, adapter):
+            TEMPLATES[tplid] = res = tpl
+            if settings: res.prepare(**settings)
+        elif "\n" in tpl or "{" in tpl or "%" in tpl or '$' in tpl:
+            TEMPLATES[tplid] = res = adapter(source=tpl, lookup=lookup, **settings)
+        else:
+            TEMPLATES[tplid] = res = adapter(name=tpl, lookup=lookup, **settings)
+    else:
+        res = TEMPLATES[tplid]
+    return res
+
 
 class Page(PageBase):
     'Entry points are ``get_response`` and ``post_response``.'
 
-    def __init__(self, _request):
-        super(self.__class__, self).__init__(_request)
+    def __init__(self, request):
+        super().__init__(request)
         self.problem = None
         self.problem_set = None
 
@@ -93,7 +112,7 @@ class Page(PageBase):
                 Problem.collection == self.problem.key).order(
                 Problem.nr)
         elif problemkey is None:  # XXX: Make deleting empty a cron job
-            # remove unanswered problems for this username
+            # remove unanswered problems for this user
             # timedelta to have the same problem after returning from a
             # followed link
             age = datetime.datetime.now() - datetime.timedelta(days=1)
@@ -360,14 +379,14 @@ class Page(PageBase):
         d = rsv.load()
         problem.answered = datetime.datetime.now()
         if problem.results:
-            problem.answers = [self.request.get(q) for q in problem.inputids]
+            problem.answers = [self.request.forms.get(q,'') for q in problem.inputids]
             na = d.norm(problem.answers)
             problem.oks = d.equal(na, problem.results)
         problem.put()
 
     def post_response(self):
         'answers a POST request'
-        problemkey = self.request.get('problemkey') or (
+        problemkey = self.request.forms.get('problemkey','') or (
             self.problem and self.problem.key.urlsafe())
         self._get_problem(problemkey)
         if self.problem and not self.problem.answered:
