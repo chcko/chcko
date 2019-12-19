@@ -6,8 +6,7 @@ import os
 import os.path
 import datetime
 
-from chcko.model import (Assignment, Index, Problem, Student, Class,
-                              Teacher, Period, School, delete_all, db)
+from chcko.db import *
 from chcko.hlp import Struct, import_module, from_py, resolver
 
 
@@ -59,7 +58,7 @@ def problems_for(
             if skipc % skip != 0:
                 continue
             rsv = resolver('r.' + f, 'de')
-            problem, pkwargs = Problem.from_resolver(rsv, 1, student.key)
+            problem, pkwargs = db.problem_from_resolver(rsv, 1, student)
             problem.answers = problem.results
             problem.answered = datetime.datetime.now()
             problem.oks = [True] * len(problem.results)
@@ -68,13 +67,9 @@ def problems_for(
 
 def clear_all_data():
     # clear_all_data()
-    delete_all(Assignment.query())
-    delete_all(Index.query())
-    delete_all(Problem.query())
-    delete_all(Student.query())
-    delete_all(Class.query())
-    delete_all(Teacher.query())
-    delete_all(Period.query())
-    delete_all(School.query())
+    db.clear_index()
+    db.clear_assignments()
+    db.clear_problems()
+    db.clear_students()
 
 

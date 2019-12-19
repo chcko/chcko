@@ -1,35 +1,22 @@
 # -*- coding: utf-8 -*-
 
 from chcko.util import PageBase
-from chcko.model import (
-    Student,
-    Problem,
-    Assignment,
-    studentCtx,
-    delete_all,
-    copy_all,
-    ctxkey,
-    keyparams,
-    db)
-import logging
-from google.cloud import ndb
-
+from chcko.db import *
 
 class Page(PageBase):
 
     def post_response(self):
         choice = self.request.forms.get('choice','')
-        oldpath = [self.request.forms.get('old' + x,'') for x in studentCtx]
-        newpath = [self.request.forms.get(x,'') for x in studentCtx]
+        oldpath = [self.request.forms.get('old' + x,'') for x in db.student_contexts]
+        newpath = [self.request.forms.get(x,'') for x in db.student_contexts]
         pathchanged = not all([x[0] == x[1] for x in zip(oldpath, newpath)])
         if choice != '0':  # not new
-            oldstudent = ctxkey(oldpath).get()
+            oldstudent = db.key_from_path(oldpath).get()
             if choice == '1' and pathchanged:  # change
-                copy_all(Problem, oldstudent.key, self.request.student.key)
-                copy_all(Assignment, oldstudent.key, self.request.student.key)
+                db.copy_to_new_student(oldstudent,self.request.student)
             if choice == '1' and pathchanged or choice == '2':  # delete
-                delete_all(Problem.query(ancestor=oldstudent.key))
-                delete_all(Assignment.query(ancestor=oldstudent.key))
+                db.clear_student_problems(oldstudent)
+                db.clear_student_assignments(oldstudent)
                 oldname = '/'.join([v for k, v in oldstudent.key.pairs()])
                 newname = '/'.join([v for k,
                                     v in self.request.student.key.pairs()])

@@ -48,10 +48,10 @@ datastore = Popen(['gcloud','beta','emulators','datastore','start'],env=os.envir
 @pytest.fixture(scope='session')
 def gaetestbed(request):
     global datastore
-    from chcko.model import db
+    from chcko.db import *
     with datastore:
         #datastore.communicate(None, timeout=None)
-        with db.context():
+        with db.ctx.context():
             yield
     datastore.terminate()
     del datastore

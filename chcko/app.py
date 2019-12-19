@@ -21,9 +21,7 @@ def python_path():
 python_path()
 
 from chcko.hlp import import_module, PAGES, is_standard_server, mklookup
-from chcko.model import set_user, set_student, User
-# initdb is generate via `doit -k initdb`
-from chcko.initdb import available_langs
+from chcko.db import *
 from chcko.languages import langnumkind
 
 from oauthlib import oauth2
@@ -32,7 +30,7 @@ class OAuth2_ResourceValidator(oauth2.RequestValidator):
         if not token:
             return False
         try:
-            request.user,_ = User.get_by_oauth_token(token, subject)
+            request.user, _ = db.user_timestamp_by_token(token, subject)
         except:
             return False
         return True
@@ -62,7 +60,7 @@ def find_lang(session):
         #langs = ['en-US', 'en;q=0.8']
         accepted = set([x.split(';q=')[0].split('-')[0] for x in langs])
         #accepted = set(['en'])
-        candidates = accepted & available_langs
+        candidates = accepted & db.available_langs
         if candidates:
             lang = list(candidates)[0]
         else:
@@ -104,8 +102,8 @@ def pagename(session,lang,pagename):
     bottle.request.session = session
     bottle.request.lang = lang
     bottle.request.pagename = pagename
-    set_user(bottle.request)
-    errormsg = set_student(bottle.request)
+    db.set_user(bottle.request)
+    errormsg = db.set_student(bottle.request)
     if errormsg is not None:
         bottle.redirect('/'+lang+'/'+errormsg)
     try:

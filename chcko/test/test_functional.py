@@ -3,16 +3,10 @@
 import os
 import re
 import bottle
-from urllib import pathname2url
-
 from webtest import TestApp as TA
-
-import pytest  # conftest.py will have been parsed
-
+import pytest
 from chcko.languages import languages
-from chcko.app import make_app, app
-from chcko.model import problemCtx
-
+from chcko.app import app
 
 def test_routing():
     match = app.router.match(
@@ -47,11 +41,9 @@ def test_routing():
     assert bl.query_string == 'r.a=2&r.b=3'
     assert int(bl.params['r.a']) == 2 and int(bl.params['r.b']) == 3
 
-
 @pytest.fixture(scope='module')
-def mamapp(request):#,gaetestbed): #produces PYTEST_CURRENT_TEST KeyError 
-                    # TODO remove also in conftest.py
-    return TA(make_app())
+def mamapp(request):
+    return TA(app)
 
 # see
 # http://stackoverflow.com/questions/12538808/pytest-2-3-adding-teardowns-within-the-class
@@ -121,7 +113,7 @@ class TestRunthrough(object):
 
     def test_anonymous(self):
         self._store('resp', self.resp.goto('/en/edits'))
-        for p in problemCtx[:-1]:
+        for p in db.problem_contexts[:-1]:
             self.resp.form[p] = 'tst'
         # later we will check access permission
         self._store('resp', self.resp.form.submit())
@@ -155,7 +147,6 @@ class TestRunthrough(object):
         assert 'POST' == self.resp.form.method
         # self.resp.showbrowser()
         self.resp.form[u'email'] = u'temail'
-        # self.resp.form[u'username'].value
         self.resp.form[u'password'] = u'tpassword'
         r = self.resp.form.submit()
         self._store('resp', r.follow())
@@ -176,9 +167,9 @@ class TestRunthrough(object):
         curx = cur.xpath('//div[contains(text(),"School")]/text()')
         self._store('curs', curx[1].strip())
         self._store('resp', self.resp.goto('/en/edits'))
-        for p in problemCtx[:-1]:
+        for p in db.problem_contexts[:-1]:
             self.resp.form[p] = 'tst'
-        self.resp.form[problemCtx[-2]] = 'U'
+        self.resp.form[db.problem_contexts[-2]] = 'U'
         self.resp.form['color'] = '#BBB'
         self._store('resp', self.resp.form.submit())
         assert 'edits' in self.resp.request.url

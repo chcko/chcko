@@ -3,7 +3,7 @@
 import datetime
 import logging
 
-from chcko.model import assigntable, table_entry, remove_done_assignments, assign_to_student
+from chcko.db import *
 from chcko.util import PageBase
 
 
@@ -11,22 +11,16 @@ class Page(PageBase):
 
     def __init__(self, _request):
         super().__init__(_request)
-        self.table = lambda: assigntable(
-            self.request.student.key,
-            self.user and self.user.key)
-        self.params = {
-            'table': self.table,
-            'table_entry': table_entry}
+        self.assign_table = lambda: db.assign_table(
+            self.request.student, self.user)
 
     def get_response(self):
-        remove_done_assignments(
-            self.request.student.key,
-            self.user and self.user.key)
+        db.clear_done_assignments(self.request.student, self.user)
         return super().get_response()
 
     def post_response(self):
-        for urlsafe in self.request.get_all('assignee'):
-            assign_to_student(urlsafe,
+        for studentID in self.request.get_all('assignee'):
+            db.assign_to_student(studentID,
                               self.request.get('query_string'),
                               self.request.get('duedays'))
         return self.get_response()

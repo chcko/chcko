@@ -302,9 +302,8 @@ def task_initdb():
             authors = yaml.load(f)
 
         inits = ['# -*- coding: utf-8 -*-',
-                 '# generated file',
-                 'from chcko.model import Index, index_add, delete_all, db',
-                 '','with db.context():','    delete_all(Index.query())']
+                 '# generate via `doit -k initdb`'
+                 'def populate_index(index_add):']
 
         available_langs = set([])
         for author in authors:

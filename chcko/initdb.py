@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-# generated file
-from chcko.model import Index, index_add, delete_all, db
-
-with db.context():
-    delete_all(Index.query())
+# generate via `doit -k initdb`
+def populate_index(index_add):
     index_add("r.bw", "en", "0", "11",
         "maths/finance/interest/combined and theoretical")
     index_add("r.bw", "de", "0", "11",

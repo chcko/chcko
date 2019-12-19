@@ -3,12 +3,10 @@
 import re
 import datetime
 import logging
-
 from urllib.parse import parse_qsl
-from chcko.model import depth_1st, problemCtxObjs, keysOmit, table_entry, ctxkey, db
-from chcko.hlp import datefmt, last
+from chcko.db import *
+from chcko.hlp import last
 from chcko.util import PageBase
-from google.cloud import ndb
 
 
 def prepare(
@@ -18,10 +16,10 @@ def prepare(
                 # if a parent belongs to user then all children can be queried
         , userkey
 ):
-    '''prepares the perameters for depth_1st
+    '''prepares the perameters for db.depth_1st
 
-    >>> #see depth_1st
-    >>> skey = ctxkey(['Sc1', 'Pe1', 'Te1','Cl1','St1'])
+    >>> from chchko.db import db
+    >>> skey = db.key_from_path(['Sc1', 'Pe1', 'Te1','Cl1','St1'])
     >>> #qs= "Sc0&*&*&*&*&*"
     >>> qs= "q~r.be"
     >>> prepare(qs,skey,None)[0]
@@ -69,7 +67,7 @@ def prepare(
                 filters.append((name, op, value))
         return filters
     #qs = ''
-    O = problemCtxObjs
+    O = db.problem_contexts
     # q=query, qq=*->[], qqf=filter->gae filter (name,op,value)
     q = filter(None, [k.strip() for k, v in parse_qsl(qs, True)])
     qq = [[] if x == '*' else x for x in q]
@@ -81,7 +79,7 @@ def prepare(
         extpart = min(len(ext), delta)
         rest = delta - extpart
         qqf = ext[:extpart] + [[]] * rest + qqf
-    keys = keysOmit(qqf)
+    keys = db.keys_to_omit(qqf)
     obj = keys and keys[-1].get()  # parent to start from
     if obj and obj.userkey == userkey:
         return qqf, keys, O, True
@@ -93,17 +91,14 @@ class Page(PageBase):
 
     def __init__(self, request):
         super().__init__(request)
-        self.table = lambda: depth_1st(
+        self.done_table = lambda: db.depth_1st(
             *prepare(
                 self.request.query_string,
                 self.request.student.key,
                 self.user and self.user.key))
-        self.params = {
-            'table': self.table,
-            'table_entry': table_entry}
 
     def post_response(self):
         for urlsafe in self.request.forms.getall('deletee'):
-            k = ndb.Key(urlsafe=urlsafe)
+            k = db.from_urlsafe(urlsafe)
             k.delete()
         return self.get_response()

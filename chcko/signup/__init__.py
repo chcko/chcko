@@ -4,7 +4,7 @@ import logging
 import os
 from chcko.util import PageBase
 from chcko.hlp import import_module, is_standard_server
-from chcko.model import send_mail
+from chcko.db import *
 
 class Page(PageBase):
 
@@ -22,15 +22,13 @@ class Page(PageBase):
             self.redirect('message?msg=c')
             return
 
-        unique_properties = ['email_address']
-
-        user = self.user_model.create_user(email,password)
+        user = db.create_user(email,password)
         if not user:
             self.redirect(
                 'message?msg=a&email={}'.format(email))
             return
 
-        token = self.user_model.create_signup_token(email)
+        token = db.create_signup_token(email)
         relative_url = 'verification?type=v&email={}&signup_token={}'.format(
             email,
             token)
@@ -40,7 +38,7 @@ class Page(PageBase):
                 '/' + self.request.lang + '/' + relative_url
             logging.info(confirmation_url)
             m = import_module('signup.' + self.request.lang)
-            send_mail(
+            db.send_mail(
                 email,
                 m.subject,
                 m.body %

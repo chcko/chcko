@@ -4,6 +4,7 @@ import sys
 import os.path
 import importlib
 import string
+from urllib.parse import parse_qsl
 
 try:
     from itertools import izip_longest as zip_longest
@@ -279,7 +280,7 @@ def from_py(m):
                norm=getattr(m, 'norm', norm_rounded),
                equal=getattr(m, 'equal', equal_eq),
                points=getattr(m, 'points', None))
-    try:  # get other static data not stored in db, like names of variables
+    try:  # get other static data not stored, like names of variables
         dd = {e: getattr(m, e) for e in m.__all__ if e not in d.keys()}
         d.update(dd)
     except:
@@ -407,4 +408,38 @@ def author_folder(fn, withtest=False):
 is_standard_server = False
 if os.getenv('GAE_ENV', '').startswith('standard'):
   is_standard_server = True
+
+def normqs(qs):
+    '''take away =1 from a content query
+
+    >>> qs = 'r.bm=1'
+    >>> normqs(qs)
+    'r.bm'
+    >>> qs = 'r.bm=2'
+    >>> normqs(qs)
+    'r.bm=2'
+    >>> qs = 'r.bm'
+    >>> normqs(qs)
+    'r.bm'
+    >>> qs = 'r.bm&r.x=1'
+    >>> normqs(qs)
+    'r.bm&r.x=1'
+
+    '''
+    qparsed = parse_qsl(qs, True)
+    if len(qparsed) == 1 and qparsed[0][1] == '1':
+        return qparsed[0][0]
+    return qs
+def filter_student(self,querystring):
+    '''filter out student_contexts and color
+    >>> querystring = 'School=b&Period=3&Teacher=5e&Class=9&Student=0&color=#E&bm&ws>0,d~1&b.v=3'
+    >>> filter_student(querystring)
+    'bm&ws>0,d~1&b.v=3'
+
+    '''
+    qfiltered = [x  for x in
+            parse_qsl(querystring, True)
+            if x[0] not in self.student_contexts + ['color']]
+    qsfiltered = '&'.join([k + '=' + v if v else k for k, v in qfiltered])
+    return qsfiltered
 

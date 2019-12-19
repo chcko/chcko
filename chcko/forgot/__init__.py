@@ -4,7 +4,7 @@ import os
 import logging
 from chcko.util import PageBase
 from chcko.hlp import import_module, is_standard_server
-from chcko.model import send_mail
+from chcko.db import *
 
 class Page(PageBase):
 
@@ -22,7 +22,7 @@ class Page(PageBase):
             return self.get_response()
 
         email = self.user.email
-        token = self.user_model.create_signup_token(email)
+        token = db.create_signup_token(email)
 
         relative_url = 'verification?type=p&email={}&signup_token={}'.format(
             email,
@@ -39,7 +39,7 @@ class Page(PageBase):
                 '/' + self.request.lang + '/' + relative_url
             logging.info(confirmation_url)
             m = import_module('forgot.' + self.request.lang)
-            send_mail(
+            db.send_mail(
                 email,
                 m.subject,
                 m.body %

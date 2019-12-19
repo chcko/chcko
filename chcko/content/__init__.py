@@ -14,7 +14,7 @@ one can also filter the index of all content::
 
     /en/content?level=10&kind=1&path=maths&link=r
 
-See ``filteredcontent`` for that.
+See ``filtered_content`` for that.
 
 """
 
@@ -26,26 +26,18 @@ import datetime
 import logging
 
 from urllib.parse import parse_qsl
-from google.cloud import ndb
-
 from bottle import SimpleTemplate, StplParser
-
-from chcko.hlp import (Struct,
+from chcko.hlp import (
+        Struct,
         resolver,
         mklookup,
         counter,
-        author_folder)
+        author_folder
+)
 
 from chcko.util import PageBase, Util
 
-from chcko.model import (Problem,
-        filteredcontent,
-        delete_all,
-        assignable,
-        studentCtx,
-        keyparams)
-
-from webob.exc import HTTPNotFound, HTTPBadRequest
+from chcko.db import *
 
 re_id = re.compile(r"^[^\d\W]\w*\.[^\d\W]\w*$", re.UNICODE)
 
@@ -78,25 +70,22 @@ class Page(PageBase):
         self.problem_set = None
 
     def _get_problem(self, problemkey=None):
-        '''init the problem from DB if it exists
+        '''init the problem from database if it exists
         '''
-        key = problemkey or self.request.query_string.startswith(
+        urlsafe = problemkey or self.request.query_string.startswith(
             'key=') and self.request.query_string[4:]
 
-        if key:
-            self.problem = ndb.Key(urlsafe=key).get()
-            if self.problem:  # else it was deleted from db
-                if self.problem._get_kind() != 'Problem':
-                    raise HTTPNotFound('No such problem')
+        if urlsafe:
+            self.problem = db.from_urlsafe(urlsafe)
+            if self.problem:  # else it was deleted
+                if not isinstance(self.problem,Problem):
+                    raise HTTPError(404, "No such problem")
                 self.request.query_string = self.problem.query_string
         else:  # get existing unanswered if query_string is same
-            q = Problem.gql(
-                "WHERE query_string = :1 AND lang = :2 AND answered = NULL AND ANCESTOR IS :3",
+            self.problem = db.problem_by_query_string(
                 self.request.query_string,
                 self.request.lang,
                 self.request.student.key)
-            fch = q.fetch(1)  # first of query, None possible
-            self.problem = fch[0] if fch else None
 
         if self.problem:
             keyOK = self.problem.key.parent()
@@ -104,30 +93,18 @@ class Page(PageBase):
                 keyOK = keyOK.parent()
             if not keyOK:
                 logging.warning(
-                    "%s not for %s", keyparams(
-                        self.problem.key), keyparams(
-                        self.request.student.key))
-                raise HTTPBadRequest('no permission')
-            self.problem_set = Problem.query(
-                Problem.collection == self.problem.key).order(
-                Problem.nr)
+                    "%s not for %s", self.problem.key.urlstring(), self.request.student.key.urlstring())
+                raise HTTPError(400,'no permission')
+            self.problem_set = db.problem_set(self.problem)
         elif problemkey is None:  # XXX: Make deleting empty a cron job
             # remove unanswered problems for this user
             # timedelta to have the same problem after returning from a
             # followed link
             age = datetime.datetime.now() - datetime.timedelta(days=1)
-            q = Problem.gql(
-                "WHERE answered = NULL AND created < :1 AND ANCESTOR IS :2",
-                age,
-                self.request.student.key)
-            delete_all(q)
-            q = Problem.gql(
-                "WHERE allempty = True AND answered != NULL AND ANCESTOR IS :1",
-                self.request.student.key)
-            delete_all(q)
+            db.del_stale_open_problems(student,age)
 
     def load_content(self, layout='content', rebase=True):
-        ''' evaluates the templates with includes therein and zips them to db entries
+        ''' evaluates the templates with includes therein and zips them to database entries
 
         examples:
             chcko/test/test_content.py
@@ -144,8 +121,8 @@ class Page(PageBase):
 
         def _new(rsv):
             nr = nrs.next()
-            problem, pkwargs = Problem.from_resolver(
-                rsv, nr, self.request.student.key)
+            problem, pkwargs = db.problem_from_resolver(
+                rsv, nr, self.request.student)
             if not self.problem:
                 self.problem = problem
                 self.current = self.problem
@@ -167,13 +144,10 @@ class Page(PageBase):
                 if self.current:
                     ms += self.current.query_string
                 logging.info(ms)
-                raise HTTPBadRequest(ms)
-            d = rsv.load()  # for the things not stored in db, like 'names'
+                raise HTTPError(400,ms)
+            d = rsv.load()  # for the things not stored, like 'names'
             pkwargs = d.__dict__.copy()
-            pkwargs.update(  # from db
-                {s: v.__get__(self.current, self.current._get_kind())
-                 for s, v in self.current._properties.items()}
-            )
+            pkwargs.update(db.fieldsof(self.current))
             pkwargs.update({
                 'lang': self.request.lang,
                 'g': self.current.given,
@@ -202,7 +176,7 @@ class Page(PageBase):
                 return
             rsv = resolver(query_string, self.request.lang)
             if not rsv.templatename and re_id.match(query_string):
-                raise HTTPNotFound('✘ ' + query_string)
+                raise HTTPError(404,'✘ '+query_string)
             _chain.append(query_string)
             if to_do and '.' in query_string:#. -> not for scripts
                 to_do(rsv)
@@ -236,7 +210,7 @@ class Page(PageBase):
                 except AttributeError:
                     c = self.current or self.problem
                     logging.info(
-                        'DB given does not fit to template ' + str(c.given)if c else '')
+                        'data does not fit to template ' + str(c.given)if c else '')
                     if c:
                         c.key.delete()
                     raise
@@ -248,24 +222,19 @@ class Page(PageBase):
                 prebase(_new)
             else:
                 if not self.problem_set:
-                    self.problem_set = Problem.query(
-                        Problem.collection == self.problem.key).order(
-                        Problem.nr)
+                    self.problem_set = db.problem_set(self.problem)
                 problem_set_iter = self.problem_set.iter()
                 self.current = self.problem
                 try:
                     prebase(_zip)
-                except HTTPBadRequest:
+                except HTTPError:
                     # database entry is out-dated
-                    delete_all(
-                        Problem.query(
-                            Problem.collection == self.problem.key))
-                    self.problem.key.delete()
+                    db.del_collection(self.problem)
                     self.problem = None
                     prebase(_new)
             content = ''.join(stdout)
         else:
-            content = filteredcontent(self.request.lang, tplid)
+            content = db.filtered_content(self.request.lang, tplid)
 
         nrs.close()
 
@@ -282,7 +251,6 @@ class Page(PageBase):
                     problem=self.problem,
                     problemkey=self.problem and self.problem.key.urlsafe(),
                     with_problems=problems_cntr.next() > 0,
-                    assignable=assignable,
                     request=self.request))
             tpl.execute(stdout, env)
             problems_cntr.close()
@@ -316,7 +284,7 @@ class Page(PageBase):
         >>> Page.check_query(qs)
         Traceback (most recent call last):
             ...
-        HTTPNotFound: There is no top level content.
+        HTTPError: ...
         >>> qs = 'level=2&kind=1&path=Maths&link=r'
         >>> Page.check_query(qs)
         [('level', '2'), ('kind', '1'), ('path', 'Maths'), ('link', 'r')]
@@ -324,18 +292,18 @@ class Page(PageBase):
         >>> Page.check_query(qs)
         Traceback (most recent call last):
             ...
-        HTTPNotFound: No content.
+        HTTPError: ...
         >>> qs = '%r.a'
         >>> Page.check_query(qs)
         Traceback (most recent call last):
             ...
-        HTTPBadRequest: Wrong characters in query.
+        HTTPError: ...
 
         '''
 
         codemarkers = set(StplParser.default_syntax) - set([' '])
         if set(qs) & codemarkers:
-            raise HTTPBadRequest('Wrong characters in query.')
+            raise HTTPError(400,'Wrong characters in query.')
 
         qparsed = parse_qsl(qs, True)
 
@@ -348,9 +316,9 @@ class Page(PageBase):
             return indexquery
 
         if any(['.' not in qa for qa, qb in qparsed]):
-            raise HTTPNotFound('There is no top level content.')
+            raise HTTPError(404,'There is no top level content.')
         if any([not author_folder(qa.split('.')[0]) for qa, qb in qparsed]):
-            raise HTTPNotFound('No content.')
+            raise HTTPError(404, "No content")
 
         cnt = len(qparsed)
         if (cnt > 1 or

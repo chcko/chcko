@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from chcko.util import PageBase
+from chcko.db import *
 import logging
 
 class Page(PageBase):
@@ -11,8 +12,7 @@ class Page(PageBase):
 
         user = None
         try:
-            user, _ = self.user_model.get_by_oauth_token(
-                signup_token, 'signup')
+            user, _ = db.user_timestamp_by_token(signup_token, 'signup')
         except:
             pass
 
@@ -26,7 +26,7 @@ class Page(PageBase):
 
         if verification_type == 'v':
             # remove signup token to prevent users to come back with an old link
-            self.user_model.delete_signup_token(user.get_id(), signup_token)
+            db.delete_signup_token(signup_token)
             if not user.verified:
                 user.verified = True
                 user.put()

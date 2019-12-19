@@ -4,22 +4,8 @@ import os.path
 import re
 import bottle
 import datetime
-from google.appengine.ext import ndb
 
-from chcko.model import (
-    problemCtxObjs,
-    problemCtx,
-    School,
-    Teacher,
-    Class,
-    Student,
-    Problem,
-    Assignment,
-    depth_1st,
-    delete_all,
-    ctxkey,
-    assign_to_student,
-    assigntable)
+from chcko.db import *
 from chcko.test.hlp import clear_all_data, problems_for
 
 import pytest
@@ -30,9 +16,8 @@ bottle.TEMPLATES.clear()
 def newuserpage(query_string, lang):
     from chcko.app import app
     from chcko.content import Page
-    delete_all(Student.query())
-    not_answered = Problem.gql("WHERE answered = NULL")
-    delete_all(not_answered)
+    db.clear_problems()
+    db.clear_students()
     request = bottle.request
     request.environ['PATH_INFO'] = '/' + lang + '/?' + query_string
     request.pagename = 'content'
@@ -112,10 +97,11 @@ def school(request):
 
     def recursecreate(ient, thisent):
         res = {}
-        if ient < len(problemCtxObjs) - 1:
-            ent = problemCtxObjs[ient]
+        models = db.models.values()
+        if ient < len(.models) - 1:
+            ent = models[ient]
             for i in range(2):
-                name = ent._get_kind()[:2] + str(i)
+                name = db.nameof(ent)[:2] + str(i) #Sc0,Pe0,...
                 tent = ent.get_or_insert(name, parent=thisent and thisent.key)
                 res.setdefault(name, (tent, recursecreate(ient + 1, tent)))
         else:
@@ -131,12 +117,9 @@ def school(request):
     request.addfinalizer(recurserem)
     return school
 
-#indices in problemCtx
 kinddepth = lambda tbl: filter(
-    lambda x: x != 5, [
-        problemCtx.index(
-            tbl[i].kind()) for i in range(
-            len(tbl))])
+    lambda x: x != 5, [db.problem_contexts.index(tbl[i].kind())
+           for i in range(len(tbl))])
 
 
 def filterstudents(tbl):
@@ -144,10 +127,9 @@ def filterstudents(tbl):
 
 # school
 
-
 def test_school_setup(school):
     #school = school(finrequest)
-    tbl = list(ndb.Query(ancestor=school['Sc0'][0].key).iter(keys_only=True))
+    tbl = list(db.tree_keys(school['Sc0'][0]))
     kinds = kinddepth(tbl)
     assert kinds == [
         0, 1, 2, 3, 4, 4, 3, 4, 4, 2, 3, 4, 4, 3, 4,
@@ -156,18 +138,18 @@ def test_school_setup(school):
 
 def test_descendants(school):
     #school = school(finrequest)
-    cla = ctxkey(['Sc1', 'Pe1', 'Te1', 'Cl1']).get()
-    tbl = list(ndb.Query(ancestor=cla.key).iter(keys_only=True))
+    cla = db.key_from_path(['Sc1', 'Pe1', 'Te1', 'Cl1']).get()
+    tbl = list(db.tree_keys(cla))
     assert kinddepth(tbl) == [3, 4, 4]
     # compare latter to this
-    tbl = list(depth_1st(path=['Sc1', 'Pe1', 'Te1', 'Cl1']))
+    tbl = list(db.depth_1st(path=['Sc1', 'Pe1', 'Te1', 'Cl1']))
     assert kinddepth(tbl) == [0, 1, 2, 3, 4, 4]
 
 
 def test_find_identities(school):
     '''find all students with name St1'''
     #school = school(finrequest)
-    tbl = list(depth_1st(path=['Sc1', 'Pe1', [], [], 'St1']))
+    tbl = list(db.depth_1st(path=['Sc1', 'Pe1', [], [], 'St1']))
     assert kinddepth(tbl) == [0, 1, 2, 3, 4, 3, 4, 2, 3, 4, 3, 4]
     stset = set([':'.join(e.flat()) for e in filterstudents(tbl)])
     goodstset = set(['School:Sc1:Period:Pe1:Teacher:Te1:Class:Cl1:Student:St1',
@@ -178,9 +160,9 @@ def test_find_identities(school):
 
 
 def test_assign_student(school):
-    stu = ctxkey(['Sc1', 'Pe1', 'Te1', 'Cl1', 'St1'])
-    assign_to_student(stu.urlsafe(), 'r.i&r.u', 1)
-    asses = list(assigntable(stu, None))
+    stu = db.key_from_path(['Sc1', 'Pe1', 'Te1', 'Cl1', 'St1'])
+    db.assign_to_student(stu.urlsafe(), 'r.i&r.u', 1)
+    asses = list(db.assigntable(stu, None))
     assert asses
     ass = asses[0].get()
     assert ass.query_string == 'r.i&r.u'
@@ -188,10 +170,9 @@ def test_assign_student(school):
 
 def test_assign_to_class(school):
     #school = school(finrequest)
-    classkey = ctxkey(['Sc0', 'Pe0', 'Te0', 'Cl0'])
+    classkey = db.key_from_path(['Sc0', 'Pe0', 'Te0', 'Cl0'])
     query_string = 'r.a&r.b'
     duedays = '2'
-    #list(depth_1st(keys = [classkey], models = [Class,Student]))
-    for st in depth_1st(keys=[classkey], models=[Class, Student]):
-        assign_to_student(st.urlsafe(), query_string, duedays)
-        assert Assignment.query(ancestor=st).count() == 1
+    for st in db.depth_1st(keys=[classkey], models='Class Student'.split()):
+        db.assign_to_student(st.urlsafe(), query_string, duedays)
+        assert db.student_assignments(st).count() == 1

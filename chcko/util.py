@@ -15,8 +15,7 @@ from bottle import SimpleTemplate, template
 
 from chcko.hlp import listable, mklookup, counter, Struct
 from chcko.languages import langkindnum, langnumkind, CtxStrings
-from chcko.model import studentCtx, Student
-
+from chcko.db import *
 
 class Util:
     ''' A Util instance named ``util`` is available in html files.
@@ -57,28 +56,11 @@ class Util:
 
     def translate(self, word):
         try:
-            idx = studentCtx.index(word)
+            idx = db.student_contexts.index(word)
             res = CtxStrings[self.request.lang][idx]
             return res
         except:
             return word
-
-    @staticmethod
-    def user_path(skey, user):
-        anc = [(skey, skey.get().userkey == (user and user.key))]
-        parent = skey.parent()
-        while parent:
-            anc = [(parent, parent.get().userkey == (user and user.key))] + anc
-            parent = parent.parent()
-        return anc
-
-    @staticmethod
-    def all_of(user):
-        students = Student.query(
-            Student.userkey == user.key).iter(
-            keys_only=True)
-        for skey in students:
-            yield Util.user_path(skey, user)
 
     @staticmethod
     def summary(withempty, noempty):
@@ -140,6 +122,7 @@ class PageBase:
         self.util = Util(self.request)
         SimpleTemplate.defaults.update(self.request.params)
         SimpleTemplate.defaults.update({
+            'self': self,
             'session': self.session,
             'request': self.request,
             'user': self.user,
@@ -147,10 +130,11 @@ class PageBase:
             'kinda': langkindnum[self.request.lang],
             'numkind': langnumkind[self.request.lang],
             'langs': list(CtxStrings.keys())
+            'db': db
         })
         self.params = self.request.params
     def set_user(email,password):
-        self.user = self.request.user = User.get_by_login(email,password)
+        self.user = self.request.user = db.user_by_login(email,password)
         set_student(self.request,self.user,self.session)
     def get_response(self):
         return template(

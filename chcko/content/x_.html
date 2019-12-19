@@ -12,8 +12,8 @@
              <small>({{depth}})</small><a href="/{{request.lang}}/?{{lnk}}">{{linktext}}</a>
              <input type="checkbox" name="choice" value="{{lnk}}">
              % try:
-             % authid = lnk.split('.')[0]
-             (<a href="/{{request.lang}}/?link={{authid}}">{{authid}}</a>)
+             % authorid = lnk.split('.')[0]
+             (<a href="/{{request.lang}}/?link={{authorid}}">{{authorid}}</a>)
              % except: pass
              %end
              <a href="/{{request.lang}}/?level={{lvl}}">{{lvl}}</a>
@@ -83,7 +83,7 @@
         % if teacher.userkey == user.key:
             <form action="/{{request.lang}}/todo" method="post">
                 % fieldset = False
-                % for e in assignable(teacher.key,user.key):
+                % for e in db.assignable(teacher,user):
                     % kind = e.kind()
                     % if kind =='Class':
                         % if fieldset:

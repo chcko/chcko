@@ -3,9 +3,9 @@
 
 <form action="" method="post">
 <input type="checkbox" class="checkall" autocomplete="off">{{tall+' '+str(util.query())}}</input>
-%for e in table():
+%for e in self.done_table():
     %ee = e.get()
-    %te = table_entry(ee)
+    %te = db.table_entry(ee)
     %if te:
         %newgroup = not lastee or (len(lastee.key.pairs()) > len(e.pairs()))
         %newgroup = newgroup or isinstance(lastee,Problem) and lastee.collection and lastee.collection != ee.collection

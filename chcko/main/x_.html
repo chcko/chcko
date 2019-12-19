@@ -21,19 +21,20 @@
 
     %skey = request.student.key
     %if user:
-        %for prnt,is_users in util.user_path(skey,user):
+        %for key2prnt,is_users in db.key_ownd_path(skey,user):
         <div class="grid_2">
-            %if prnt.kind()=='Student':
+            %if key2prnt.kind()=='Student':
             <ul id="nav">
-                {{util.translate(prnt.kind())}}<br>
+                {{util.translate(key2prnt.kind())}}<br>
                 <li>
                 %qs = lambda x: request.query_string+'&'+x if request.query_string else x
-                <a href="/{{request.lang}}/{{request.pagename}}?{{! qs(keyparams(prnt)) }}">
-                    {{prnt.id()}} </a>
+                <a href="/{{request.lang}}/{{request.pagename}}?{{! qs(key2prnt.urlstring()) }}">
+                    {{key2prnt.id()}} </a>
                 <ul style="text-align:right">
-                    %for anc in util.all_of(user):
-                    <li><a href="/{{request.lang}}/{{request.pagename}}?{{! qs(keyparams(anc[-1][0])) }}">
-                        %cntxt = [not users and '<em>'+an.string_id()+'</em>' or an.string_id() for an,users in anc]
+                    %for key_ownd_list in db.student_roles(user):
+                    %studentkey = key_ownd_list[-1][0]
+                    <li><a href="/{{request.lang}}/{{request.pagename}}?{{! qs(studentkey.urlstring()) }}">
+                        %cntxt = [not ownd and '<em>'+an.string_id()+'</em>' or an.string_id() for an,ownd in key_ownd_list]
                         {{!' &nbsp;&nbsp; '.join(cntxt)}}
                     </a><li>
                     %end
@@ -41,27 +42,27 @@
                 </li>
             </ul>
             %else:
-                {{util.translate(prnt.kind())}}<br>
+                {{util.translate(key2prnt.kind())}}<br>
                 %if not is_users:
-                    <em>{{prnt.id()}}</em>
+                    <em>{{key2prnt.id()}}</em>
                 %else:
-                    {{prnt.id()}}
+                    {{key2prnt.id()}}
                 %end
             %end
         </div>
         %end
     %else:
-        %for prnt,is_users in util.user_path(skey,None):
-            %if prnt.kind()=='Student':
+        %for key2prnt,is_users in db.key_ownd_path(skey,None):
+            %if key2prnt.kind()=='Student':
             <div class="grid_2" style="text-align:right">
             %else:
             <div class="grid_2">
             %end
-            {{util.translate(prnt.kind())}}<br>
+            {{util.translate(key2prnt.kind())}}<br>
             %if not is_users:
-                <em>{{prnt.id()}}</em>
+                <em>{{key2prnt.id()}}</em>
             %else:
-                {{prnt.id()}}
+                {{key2prnt.id()}}
             %end
         </div>
         %end

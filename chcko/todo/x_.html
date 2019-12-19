@@ -1,8 +1,8 @@
 % first = True
 
 <table style="margin:0px auto">
-% for e in table():
-    % te = table_entry(e.get())
+% for e in self.assign_table():
+    % te = db.table_entry(e.get())
     % if te:
         % if first:
             % first = False
