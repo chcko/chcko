@@ -443,3 +443,30 @@ def filter_student(self,querystring):
     qsfiltered = '&'.join([k + '=' + v if v else k for k, v in qfiltered])
     return qsfiltered
 
+
+
+def key_value_leaf_id(p_ll):  # key_value_leaf_depth
+    '''
+    >>> p_ll = [('a/b','ab'),('n/b','nb'),('A/c','ac')]
+    >>> [(a,b,c,d) for a, b, c, d in list(key_value_leaf_id(p_ll))]
+    [('a', '1a'), ('b', '2a'), ('c', '2b'), ('n', '1b'), ('b', '2a')]
+
+    '''
+    previous = []
+    depths = []
+    for p, ll in sorted(p_ll, key=lambda v:v[0].lower()):
+        keypath = p.split('/')
+        this = []
+        nkeys = len(keypath)
+        for depth, kk in enumerate(keypath):
+            if depth >= len(depths):
+                depths.append(0)
+            this.append(kk)
+            if [x.lower() for x in this] < [x.lower() for x in previous]:
+                continue
+            else:
+                del depths[depth+1:]
+                lvl_id = str(depth + 1) + int_to_base26(depths[depth])
+                depths[depth] = depths[depth] + 1
+                yield (kk, ll, depth == nkeys - 1, lvl_id)
+                previous = this[:]

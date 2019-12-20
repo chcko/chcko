@@ -1,4 +1,4 @@
-% if isinstance(content, list):
+% if isinstance(content, list): #no specific content: therefore index
 
 
     <form action="" method="get">
@@ -52,7 +52,7 @@
     </script>
 
 
-% else:
+% else: # specific content wanted
 
     % if with_problems and not problem.answered:
     <form action="" method="post">
@@ -68,7 +68,7 @@
 
     % if with_problems and problem.answered:
         <p>
-        <a href="{{ problem.link() }}">{{tagain}}</a>
+        <a href="{{ problem.link }}">{{tagain}}</a>
         </p>
     % end
 

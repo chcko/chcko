@@ -9,6 +9,12 @@ https://cloud.google.com/appengine/docs/standard/python3/testing-and-deploying-y
 
 chcko/conftest.py: ``from google.appengine.ext import testbed`` does not support Python3
 
+20191220
+========
+
+Experimenting with sqlalchemy backend implementation.
+How to do the Key?
+
 20191219
 ========
 
@@ -16,7 +22,8 @@ Created ndb.py and sql.py.
 Separated all google.cloud.ndb interaction into ndb.py.
 ndb.Ndb is plugged in in main.py.
 sql.Sql should be plugged in the same way.
-Next: 
+Next:
+
 - fix and test changes
 - implement sql.Sql
 

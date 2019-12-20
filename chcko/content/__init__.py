@@ -2,19 +2,19 @@
 """
 The content page is the default, if no page specified.
 
-Apart from content ids::
+With content IDs::
 
     /<lang>/[content][?(<author>.<id>[=<cnt>])&...]
 
     /en/?r.a=2&r.bu
 
-one can also filter the index of all content::
+Without content IDs it is an index page, which can be filter::
 
     /<lang>/content[?<filter>=<value>&...]
 
     /en/content?level=10&kind=1&path=maths&link=r
 
-See ``filtered_content`` for that.
+See ``filtered_index`` for that.
 
 """
 
@@ -234,7 +234,7 @@ class Page(PageBase):
                     prebase(_new)
             content = ''.join(stdout)
         else:
-            content = db.filtered_content(self.request.lang, tplid)
+            content = db.filtered_index(self.request.lang, tplid)
 
         nrs.close()
 

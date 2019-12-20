@@ -4,7 +4,7 @@ import time
 from itertools import chain
 from bottle import SimpleTemplate
 
-from chcko.hlp import int_to_base26, datefmt, normqs, filter_student
+from chcko.hlp import key_value_leaf_id, datefmt, normqs, filter_student
 from chcko.languages import langkindnum, langnumkind, kindint
 import chcko.auth as auth
 
@@ -32,7 +32,7 @@ class Problem(Base):
     lang = ndb.StringProperty()
     # the numbers randomly chosen, in python dict format
     given = ndb.PickleProperty()
-    created = ndb.DateTimeProperty(auto_now_add=True)
+    #created already in Base
     answered = ndb.DateTimeProperty()
     # links to a collection: 1-n, p.problem_set.get()!
     collection = ndb.KeyProperty(kind='Problem')
@@ -46,10 +46,7 @@ class Problem(Base):
     answers = ndb.StringProperty(repeated=True)
     nr = ndb.IntegerProperty()  # needed to restore order
     answersempty = ndb.ComputedProperty(lambda self: ''.join(self.answers) == '')
-
-    def link(self):
-        'creates url to this problem'
-        return '/' + self.lang + '/?' + self.query_string
+    link = ndb.ComputedProperty(lambda self: '/'+self.lang+'/content?'+self.query_string)
 
 
 class Assignment(Base):
@@ -64,33 +61,6 @@ class Index(ndb.Model):
     level = ndb.IntegerProperty()
 
 
-def _kvld(p_ll):  # key_value_leaf_depth
-    '''
-    >>> p_ll = [('a/b','ab'),('n/b','nb'),('A/c','ac')]
-    >>> [(a,d) for a, b, c, d in list(_kvld(p_ll))]
-    [('a', '1a'), ('b', '2a'), ('c', '2b'), ('n', '1b'), ('b', '2a')]
-
-    '''
-    previous = []
-    depths = []
-    for p, ll in sorted(p_ll, key=lambda v:v[0].lower()):
-        keypath = p.split('/')
-        this = []
-        nkeys = len(keypath)
-        for depth, kk in enumerate(keypath):
-            if depth >= len(depths):
-                depths.append(0)
-            this.append(kk)
-            if [x.lower() for x in this] < [x.lower() for x in previous]:
-                continue
-            else:
-                del depths[depth+1:]
-                lvl_idx = str(depth + 1) + int_to_base26(depths[depth])
-                depths[depth] = depths[depth] + 1
-                yield (kk, ll, depth == nkeys - 1, lvl_idx)
-                previous = this[:]
-
-
 class UserToken(ndb.Model):
     subject = ndb.StringProperty(required=True) #signup or auth
     token = ndb.StringProperty(required=True)
@@ -98,13 +68,13 @@ class UserToken(ndb.Model):
     created = ndb.DateTimeProperty(auto_now_add=True)
     updated = ndb.DateTimeProperty(auto_now=True)
     @classmethod
-    def get_key(cls, subject, token):
+    def selfmadekey(cls, subject, token):
         return Key(cls, '%s.%s' % (subject, token))
     @classmethod
     def create(cls, email, subject, token=None):
         email = email
         token = token or gen_salt()
-        key = cls.get_key(subject, token)
+        key = cls.selfmadekey(subject, token)
         entity = cls(key=key, email=email, subject=subject, token=token)
         entity.put()
         return entity
@@ -131,7 +101,37 @@ class User(ndb.Model):
 class Secret(ndb.Model):  # filled manually
     secret = ndb.StringProperty()
 
+#os.environ.update({'DATASTORE_EMULATOR_HOST': 'localhost:8081'})
+#ctx=ndb.Client('chcko')
+#c = ctx.context
+#
+#ut=UserToken()
+#ut.subject="signup"
+#ut.email="email1"
+#ut.token="tokn"
+#with c():
+#  ut.put()
+#with c(): print(UserToken.query().count()) #1
+#with c(): print(dir(UserToken.query().fetch(1)[0].key))
+#with c(): print(UserToken.query().fetch(1)[0].key.integer_id())
+#with c(): print(UserToken.query().fetch(1)[0].key.string_id())
+#with c(): print(UserToken.query().fetch(1)[0].key.id())
+#with c(): k=UserToken.query(UserToken.email=='email1')
+#with c(): k=ndb.Key('UserToken','email==email1')
+#with c(): k=ndb.Key('UserToken',81)
+#with c(): nv=k.get()
+#with c(): print(nv.subject,nv.email)
+#with c(): print(k.pairs())
 
+#ut2=UserToken()
+#ut2.ID="2"
+#ut2.subject="auth"
+#ut2.email="email2"
+#ut2.token="tokn2"
+#session.add(ut2)
+#session.commit()
+#session.query(UserToken).filter((UserToken.subject=='auth').and_ User.email=='email2').one().email
+##session.rollback()
 class Key(ndb.Key):
     '''A key is like a word in the sense that it is an address to the entity.
     It has more views, though
@@ -140,6 +140,7 @@ class Key(ndb.Key):
     __init__(Model1,ID1, Model2,ID2,...) #Model can be class or class name
     pairs()
     id()
+    integer_id()
     string_id()
     urlsafe()
     kind()
@@ -160,9 +161,7 @@ class Key(ndb.Key):
 class Ndb:
     models = {'School':School, 'Period':Period, 'Teacher':Teacher, 'Class':Class, 'Student':Student, 'Problem':Problem}
     def __init__(self):
-        import chcko.ndb
-        self.ndb = chcko.ndb
-        self.ctx = self.ndb.Client('chcko')
+        self.ctx = ndb.Client('chcko')
         import initdb
         self.available_langs = initdb.available_langs
         with self.ctx.context():
@@ -179,13 +178,13 @@ class Ndb:
             )
 
     def _have_one_non_random_student(self):
-        self.myschool = self.ndb.School.get_or_insert('myschool')
-        self.myperiod = self.ndb.Period.get_or_insert('myperiod', parent=myschool.key)
-        self.myteacher = self.ndb.Teacher.get_or_insert('myteacher', parent=myperiod.key)
-        self.myclass = self.ndb.Class.get_or_insert('myclass', parent=myteacher.key)
-        self.myself = self.ndb.Student.get_or_insert('myself', parent=myclass.key)
+        self.myschool = School.get_or_insert('myschool')
+        self.myperiod = Period.get_or_insert('myperiod', parent=myschool.key)
+        self.myteacher = Teacher.get_or_insert('myteacher', parent=myperiod.key)
+        self.myclass = Class.get_or_insert('myclass', parent=myteacher.key)
+        self.myself = Student.get_or_insert('myself', parent=myclass.key)
     def _delete(self,query):
-        self.ndb.delete_multi(query.iter(keys_only=True))
+        ndb.delete_multi(query.iter(keys_only=True))
 
     def key_from_path(self,x):
         return Key(*list(chain(*zip(self.problem_contexts[:len(x)], x))))
@@ -253,12 +252,12 @@ class Ndb:
     def del_collection(self,problem):
         self._delete(Problem.query(Problem.collection==problem.key))
         problem.key.delete()
-    def _copy_to_new_parent(self, model, oldparent, newparent):
-        '''copy all instances of a model from an old parent to a new one'''
-        computed = [k for k, v in model._properties.iteritems()
-                    if isinstance(v, self.ndb.ComputedProperty)]
-        for entry in model.query(ancestor=oldparent.key).iter():
-            cpy = model(id=entry.key.string_id(), parent=newparent.key)
+    def _copy_to_new_parent(self, anentity, oldparent, newparent):
+        '''copy all instances of an entity from an old parent to a new one'''
+        computed = [k for k, v in anentity._properties.iteritems()
+                    if isinstance(v, ndb.ComputedProperty)]
+        for entry in anentity.query(ancestor=oldparent.key).iter():
+            cpy = anentity(id=entry.key.string_id(), parent=newparent.key)
             cpy.populate(**{k: v for k, v in entry.to_dict().items()
                             if k not in computed})
             cpy.put()
@@ -385,7 +384,7 @@ class Ndb:
                 q = q.order(modelclasses[i].created)
             for ap, op, av in path[i]:
                 if ap in modelclasses[i]._properties:
-                    fn = self.ndb.FilterNode(ap, op, av)
+                    fn = ndb.FilterNode(ap, op, av)
                     q = q.filter(fn)
             #qiter = q.iter(keys_only=True)
             for k in q.iter(keys_only=True):
@@ -408,7 +407,7 @@ class Ndb:
     def stored_email_credential(self):
         return base64.urlsafe_b64decode(_stored_secret('chcko.mail').encode())
     def user_timestamp_by_token(self, token, subject='auth'):
-        usertoken = User.token_model.get_key(subject, token).get()
+        usertoken = User.token_model.selfmadekey(subject, token).get()
         if usertoken:
             user = Key(User, usertoken.email).get()
             if user:
@@ -418,18 +417,17 @@ class Ndb:
     def create_signup_token(self, email):
         return UserToken.create(email, 'signup').token
     def delete_signup_token(self, token):
-        UserToken.get_key('signup', token).delete()
+        UserToken.selfmadekey('signup', token).delete()
     def create_user(self,email,password):
         return User.create(email,password)
     def user_by_login(self,email,password):
         return User.by_login(email,password)
-    def validate_token(self,subject, token):
-        return UserToken.get_key(subject=subject,
-                   token=token).get() is not None
+    def validate_token(self,subject,token):
+        return UserToken.selfmadekey(subject,token).get() is not None
     def validate_signup_token(self, token):
         return self.validate_token('signup', token)
 
-    def filtered_content(self, lang, opt):
+    def filtered_index(self, lang, opt):
         ''' filters the index by lang and optional by
 
             - level
@@ -440,9 +438,9 @@ class Ndb:
         >>> from chcko.db import *
         >>> lang = 'en'
         >>> opt1 = [] #[('level', '2'), ('kind', 'exercise')]
-        >>> cnt1 = sum([len(list(gen[1])) for gen in db.filtered_content(lang, opt1)])
+        >>> cnt1 = sum([len(list(gen[1])) for gen in db.filtered_index(lang, opt1)])
         >>> opt2 = [('level', '10'),('kind','1'),('path','maths'),('link','r')]
-        >>> cnt2 = sum([len(list(gen[1])) for gen in db.filtered_content(lang, opt2)])
+        >>> cnt2 = sum([len(list(gen[1])) for gen in db.filtered_index(lang, opt2)])
         >>> cnt1 != 0 and cnt2 != 0 and cnt1 > cnt2
         True
 
@@ -470,7 +468,7 @@ class Ndb:
                                 lpl.append((e.path, (link, e.level)))
                                 lpl.sort()
         s_pl = sorted(knd_pathlnklvl.items())
-        knd_pl = [(numkind[k], _kvld(v)) for k, v in s_pl]
+        knd_pl = [(numkind[k], key_value_leaf_id(v)) for k, v in s_pl]
         #[('Problems', <generator>), ('Content', <generator>),... ]
         return knd_pl
 
