@@ -28,12 +28,12 @@
                 {{util.translate(key2prnt.kind())}}<br>
                 <li>
                 %qs = lambda x: request.query_string+'&'+x if request.query_string else x
-                <a href="/{{request.lang}}/{{request.pagename}}?{{! qs(key2prnt.urlstring()) }}">
-                    {{key2prnt.id()}} </a>
+                <a href="/{{request.lang}}/{{request.pagename}}?{{! qs(urlstring(key2prnt)) }}">
+                    {{key2prnt.string_id()}} </a>
                 <ul style="text-align:right">
                     %for key_ownd_list in db.student_roles(user):
                     %studentkey = key_ownd_list[-1][0]
-                    <li><a href="/{{request.lang}}/{{request.pagename}}?{{! qs(studentkey.urlstring()) }}">
+                    <li><a href="/{{request.lang}}/{{request.pagename}}?{{! qs(urlstring(studentkey)) }}">
                         %cntxt = [not ownd and '<em>'+an.string_id()+'</em>' or an.string_id() for an,ownd in key_ownd_list]
                         {{!' &nbsp;&nbsp; '.join(cntxt)}}
                     </a><li>
@@ -44,9 +44,9 @@
             %else:
                 {{util.translate(key2prnt.kind())}}<br>
                 %if not is_users:
-                    <em>{{key2prnt.id()}}</em>
+                    <em>{{key2prnt.string_id()}}</em>
                 %else:
-                    {{key2prnt.id()}}
+                    {{key2prnt.string_id()}}
                 %end
             %end
         </div>
@@ -60,9 +60,9 @@
             %end
             {{util.translate(key2prnt.kind())}}<br>
             %if not is_users:
-                <em>{{key2prnt.id()}}</em>
+                <em>{{key2prnt.string_id()}}</em>
             %else:
-                {{key2prnt.id()}}
+                {{key2prnt.string_id()}}
             %end
         </div>
         %end

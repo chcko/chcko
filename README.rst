@@ -125,23 +125,22 @@ It is Python 2 but also Python 3 apps can be run locally with it.
 Install Google Cloud SDK::
 
   cd ~/.local/opt/
-  curl -OLs https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-272.0.0-linux-x86_64.tar.gz
-  tar -xf google-cloud-sdk-272.0.0-linux-x86_64.tar.gz
-  rm google-cloud-sdk-272.0.0-linux-x86_64.tar.gz
+  curl -OLs https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-274.0.0-linux-x86_64.tar.gz
+  tar -xf google-cloud-sdk-274.0.0-linux-x86_64.tar.gz
+  rm google-cloud-sdk-274.0.0-linux-x86_64.tar.gz
   cd google-cloud-sdk
   ./install.sh
 
   #new terminal
-  gcloud components install app-engine-python app-engine-python-extras
+  gcloud components install app-engine-python app-engine-python-extras cloud-datastore-emulator cloud-firestore-emulator beta
   #link with google account
   gcloud init --console-only
+  #gcloud projects delete <sample-project-id>
 
 Clone and initialize ``chcko``::
 
   cd ~
   git clone https://github.com/chcko/chcko
-  cd ~/chcko
-  git submodule update --init --recursive
   cd ~/chcko/chcko
   pip install --user doit
   doit -kd. html
@@ -155,6 +154,13 @@ Create a virtual environment::
   cd ~/chcko
   pip install -r requirements.txt
   deactivate
+
+Only run datastore emulator::
+
+  #gcloud config set project chcko-262117
+  pip install --user -r requirements.txt
+  gcloud beta emulators datastore start
+  DATASTORE_EMULATOR_HOST=localhost:8081 gunicorn main:app
 
 Test ``chcko``::
 

@@ -16,7 +16,7 @@ def prepare(
                 # if a parent belongs to user then all children can be queried
         , userkey
 ):
-    '''prepares the perameters for db.depth_1st
+    '''prepares the parameters for db.depth_1st
 
     >>> from chchko.db import db
     >>> skey = db.key_from_path(['Sc1', 'Pe1', 'Te1','Cl1','St1'])
@@ -67,13 +67,13 @@ def prepare(
                 filters.append((name, op, value))
         return filters
     #qs = ''
-    O = db.problem_contexts
+    PC = db.problem_contexts
     # q=query, qq=*->[], qqf=filter->gae filter (name,op,value)
     q = filter(None, [k.strip() for k, v in parse_qsl(qs, True)])
     qq = [[] if x == '*' else x for x in q]
     qqf = [filters() if filters(x) else x for x in qq]
-    # fill up to len(O)
-    delta = len(O) - len(qqf)
+    # fill up to len(PC)
+    delta = len(PC) - len(qqf)
     if delta > 0:
         ext = [str(v) for k, v in skey.pairs()]
         extpart = min(len(ext), delta)
@@ -82,9 +82,9 @@ def prepare(
     keys = db.keys_to_omit(qqf)
     obj = keys and keys[-1].get()  # parent to start from
     if obj and obj.userkey == userkey:
-        return qqf, keys, O, True
+        return qqf, keys, PC, True
     else:
-        return qqf, [], O, False, userkey
+        return qqf, [], PC, False, userkey
 
 
 class Page(PageBase):

@@ -160,7 +160,6 @@ def user_required(handler):
     return check_login
 
 
-
 # mathml not used currently
 #
 # from sympy.printing import mathml

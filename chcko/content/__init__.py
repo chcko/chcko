@@ -93,7 +93,7 @@ class Page(PageBase):
                 keyOK = keyOK.parent()
             if not keyOK:
                 logging.warning(
-                    "%s not for %s", self.problem.key.urlstring(), self.request.student.key.urlstring())
+                    "%s not for %s", urlstring(self.problem.key), urlstring(self.request.student.key))
                 raise HTTPError(400,'no permission')
             self.problem_set = db.problem_set(self.problem)
         elif problemkey is None:  # XXX: Make deleting empty a cron job

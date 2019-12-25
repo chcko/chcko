@@ -83,7 +83,8 @@
         % if teacher.userkey == user.key:
             <form action="/{{request.lang}}/todo" method="post">
                 % fieldset = False
-                % for e in db.assignable(teacher,user):
+                % for ee in db.assignable(teacher,user):
+                    % e = e.key
                     % kind = e.kind()
                     % if kind =='Class':
                         % if fieldset:

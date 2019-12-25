@@ -51,7 +51,7 @@ def gaetestbed(request):
     from chcko.db import *
     with datastore:
         #datastore.communicate(None, timeout=None)
-        with db.ctx.context():
+        with db.dbclient.context():
             yield
     datastore.terminate()
     del datastore

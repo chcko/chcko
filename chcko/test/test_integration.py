@@ -118,14 +118,18 @@ def school(request):
     return school
 
 kinddepth = lambda tbl: filter(
-    lambda x: x != 5, [db.problem_contexts.index(tbl[i].kind())
+    lambda x: x != 5, [db.problem_contexts.index(db.nameof(tbl[i]))
            for i in range(len(tbl))])
 
 
-def filterstudents(tbl):
-    return [t for t in tbl if t.kind() == 'Student']
 
-# school
+def tree_keys(parent): #only used in testing
+    return ndb.Query(ancestor=parent.key).iter(keys_only=True)
+
+#for sql:
+#def tree_keys(parent): #only used in testing
+#    for x in DBSession().query(parent.__class__.of == parent.ID).all():
+#        yield x.key
 
 def test_school_setup(school):
     #school = school(finrequest)
@@ -149,9 +153,10 @@ def test_descendants(school):
 def test_find_identities(school):
     '''find all students with name St1'''
     #school = school(finrequest)
+    _students tbl: [t for t in tbl if db.nameof(t) == 'Student']
     tbl = list(db.depth_1st(path=['Sc1', 'Pe1', [], [], 'St1']))
     assert kinddepth(tbl) == [0, 1, 2, 3, 4, 3, 4, 2, 3, 4, 3, 4]
-    stset = set([':'.join(e.flat()) for e in filterstudents(tbl)])
+    stset = set([':'.join(e.key.flat()) for e in _students(tbl)])
     goodstset = set(['School:Sc1:Period:Pe1:Teacher:Te1:Class:Cl1:Student:St1',
                      'School:Sc1:Period:Pe1:Teacher:Te0:Class:Cl1:Student:St1',
                      'School:Sc1:Period:Pe1:Teacher:Te0:Class:Cl0:Student:St1',
@@ -174,5 +179,6 @@ def test_assign_to_class(school):
     query_string = 'r.a&r.b'
     duedays = '2'
     for st in db.depth_1st(keys=[classkey], models='Class Student'.split()):
-        db.assign_to_student(st.urlsafe(), query_string, duedays)
-        assert db.student_assignments(st).count() == 1
+        stk = st.key
+        db.assign_to_student(stk.urlsafe(), query_string, duedays)
+        assert db.student_assignments(stk).count() == 1
