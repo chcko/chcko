@@ -9,6 +9,12 @@ https://cloud.google.com/appengine/docs/standard/python3/testing-and-deploying-y
 
 chcko/conftest.py: ``from google.appengine.ext import testbed`` does not support Python3
 
+20191226
+========
+
+chcko/test/test_sql.py
+chcko/test/test_ndb.py
+
 20191225
 ========
 

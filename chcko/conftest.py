@@ -20,41 +20,42 @@ sys.path += [os.path.dirname(os.path.dirname(__file__))]
 from chcko.languages import languages
 from chcko.hlp import author_folder
 
-gaepath = '/opt/google-cloud-sdk/platform/google_appengine'
-if not os.path.exists(gaepath):
-    gaepath = os.path.expanduser('~/.local/opt/google-cloud-sdk/platform/google_appengine')
-
-sys.path += [gaepath]
+#gaepath = '/opt/google-cloud-sdk/platform/google_appengine'
+#if not os.path.exists(gaepath):
+#    gaepath = os.path.expanduser('~/.local/opt/google-cloud-sdk/platform/google_appengine')
+#
+#sys.path += [gaepath]
 
 # mark step-wise tests with: @pytest.mark.incremental
 # http://stackoverflow.com/questions/12411431/pytest-how-to-skip-the-rest-of-tests-in-the-class-if-one-has-failed/12579625#12579625
-
 def pytest_runtest_makereport(item, call):
     if "incremental" in item.keywords:
         if call.excinfo is not None:
             parent = item.parent
             parent._previousfailed = item
-
-
 def pytest_runtest_setup(item):
     previousfailed = getattr(item.parent, "_previousfailed", None)
     if previousfailed is not None:
         pytest.xfail("previous test failed (%s)" % previousfailed.name)
 
 
-from subprocess import Popen
-#prerequisite: gcloud config set project chcko-262117
-datastore = Popen(['gcloud','beta','emulators','datastore','start'],env=os.environ)
+#from subprocess import Popen
+##prerequisite: gcloud config set project chcko-262117
+#datastore = Popen(['gcloud','beta','emulators','datastore','start'],env=os.environ)
+#@pytest.fixture(scope='session')
+#def gaetestbed(request):
+#    global datastore
+#    from chcko.db import *
+#    with datastore:
+#        #datastore.communicate(None, timeout=None)
+#        with db.dbclient.context():
+#            yield
+#    datastore.terminate()
+#    del datastore
 @pytest.fixture(scope='session')
-def gaetestbed(request):
-    global datastore
-    from chcko.db import *
-    with datastore:
-        #datastore.communicate(None, timeout=None)
-        with db.dbclient.context():
-            yield
-    datastore.terminate()
-    del datastore
+def datastore(request):
+    return True #TODO: assert that data store emulator is running
+
 
 def pytest_generate_tests(metafunc):
     if 'allcontent' in metafunc.fixturenames:
@@ -73,3 +74,4 @@ def pytest_generate_tests(metafunc):
         metafunc.parametrize("allcontent", gen())
 
 #import chcko.app
+

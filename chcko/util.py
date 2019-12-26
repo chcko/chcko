@@ -129,7 +129,7 @@ class PageBase:
             'util': self.util,
             'kinda': langkindnum[self.request.lang],
             'numkind': langnumkind[self.request.lang],
-            'langs': list(CtxStrings.keys())
+            'langs': list(CtxStrings.keys()),
             'db': db
         })
         self.params = self.request.params

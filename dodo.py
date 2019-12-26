@@ -384,8 +384,12 @@ PY_FILES = CODE_FILES + TEST_FILES
 def run_test(test):
     return not bool(pytest.main(test))
 def task_test():
-    return {'actions':['py.test','chcko'],
-            'verbosity':2}
+    return {
+        'actions':[
+            ['py.test','chcko/test/test_sql.py', 'chcko/test/test_ndb.py'],
+        ],
+        'verbosity':2
+    }
 def task_cov():
     return {'actions':
                 ["coverage2 run --parallel-mode `which py.test2` ",

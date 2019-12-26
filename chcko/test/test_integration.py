@@ -5,15 +5,22 @@ import re
 import bottle
 import datetime
 
-from chcko.db import *
-from chcko.test.hlp import clear_all_data, problems_for
-
 import pytest
+
+@pytest.fixture(scope="module")
+def db():
+    import chcko.db as chckodb
+    from chcko.ndb import Ndb
+    adb = chckodb.use(Ndb())
+    with adb.dbclient.context():
+        yield adb
+
+from chcko.test.hlp import clear_all_data, problems_for
 
 bottle.DEBUG = True
 bottle.TEMPLATES.clear()
 
-def newuserpage(query_string, lang):
+def newuserpage(db,query_string, lang):
     from chcko.app import app
     from chcko.content import Page
     db.clear_problems()
@@ -23,12 +30,14 @@ def newuserpage(query_string, lang):
     request.pagename = 'content'
     request.query_string = query_string
     request.lang = lang
-    set_student(request)
+    request.user = db.User.create('email@email.com','password1')
+    request.session = None
+    db.set_student(request)
     page = Page(request)
     return page
 
-def test_recursive_includes():
-    self = newuserpage('test.t_1', 'en')
+def test_recursive_includes(db):
+    self = newuserpage(db,'test.t_1', 'en')
     self.problem = None
     rr1 = self.load_content(rebase=False)  # via _new
     content = u'Here t_1.\nt_1 gets t_2:\nHere t_2.\nt_2 gets t_1:\nAfter.\nt_1 gets t_3:\nHere t_3.\nt_3 gets none.\n\n'
@@ -38,8 +47,8 @@ def test_recursive_includes():
     assert rr1 in rr
 
 
-def test_more():
-    self = newuserpage('test.t_3=3', 'en')
+def test_more(db):
+    self = newuserpage(db,'test.t_3=3', 'en')
     self.problem = None
     rr1 = self.load_content(rebase=False)
     assert len(rr1.split('Here t_3.\nt_3 gets none.')) == 4
@@ -48,9 +57,9 @@ def test_more():
     assert rr1 in rr
 
 
-def _test_content(q, lang):
+def _test_content(db, q, lang):
     # q,lang='r.a&r.b','en'
-    self = newuserpage(q, lang)
+    self = newuserpage(db,q, lang)
     self.problem = None
     rr1 = self.load_content(rebase=False)  # via _new
     assert self.problem is not None
@@ -74,22 +83,22 @@ def _test_content(q, lang):
             assert not re.search('problemkey', ''.join(rr))
 
 
-def test_r_ab():  # mix problem and non-problem
-    _test_content('r.a&r.b', 'en')
+def test_r_ab(db):  # mix problem and non-problem
+    _test_content(db,'r.a&r.b', 'en')
 
 
-def test_r_bb():  # more non-problems
-    _test_content('r.b=2', 'en')
+def test_r_bb(db):  # more non-problems
+    _test_content(db,'r.b=2', 'en')
 
 # see allcontent in ../conftest.py
 
 
-def test_all_single(allcontent):
-    _test_content(*allcontent)
+def test_all_single(db,allcontent):
+    _test_content(db,*allcontent)
 
 
 @pytest.fixture(scope="module")
-def school(request):
+def school(db,request):
     '''returns
     {'Sc0':(Sc0,{'Pe0':(...)}}
     '''
@@ -98,7 +107,7 @@ def school(request):
     def recursecreate(ient, thisent):
         res = {}
         models = db.models.values()
-        if ient < len(.models) - 1:
+        if ient < len(db.models) - 1:
             ent = models[ient]
             for i in range(2):
                 name = db.nameof(ent)[:2] + str(i) #Sc0,Pe0,...
@@ -131,7 +140,7 @@ def tree_keys(parent): #only used in testing
 #    for x in DBSession().query(parent.__class__.of == parent.ID).all():
 #        yield x.key
 
-def test_school_setup(school):
+def test_school_setup(db,school):
     #school = school(finrequest)
     tbl = list(db.tree_keys(school['Sc0'][0]))
     kinds = kinddepth(tbl)
@@ -140,7 +149,7 @@ def test_school_setup(school):
         4, 1, 2, 3, 4, 4, 3, 4, 4, 2, 3, 4, 4, 3, 4, 4]
 
 
-def test_descendants(school):
+def test_descendants(db,school):
     #school = school(finrequest)
     cla = db.key_from_path(['Sc1', 'Pe1', 'Te1', 'Cl1']).get()
     tbl = list(db.tree_keys(cla))
@@ -150,10 +159,10 @@ def test_descendants(school):
     assert kinddepth(tbl) == [0, 1, 2, 3, 4, 4]
 
 
-def test_find_identities(school):
+def test_find_identities(db,school):
     '''find all students with name St1'''
     #school = school(finrequest)
-    _students tbl: [t for t in tbl if db.nameof(t) == 'Student']
+    _students = lambda tbl: [t for t in tbl if db.nameof(t) == 'Student']
     tbl = list(db.depth_1st(path=['Sc1', 'Pe1', [], [], 'St1']))
     assert kinddepth(tbl) == [0, 1, 2, 3, 4, 3, 4, 2, 3, 4, 3, 4]
     stset = set([':'.join(e.key.flat()) for e in _students(tbl)])
@@ -164,7 +173,7 @@ def test_find_identities(school):
     assert stset == goodstset
 
 
-def test_assign_student(school):
+def test_assign_student(db,school):
     stu = db.key_from_path(['Sc1', 'Pe1', 'Te1', 'Cl1', 'St1'])
     db.assign_to_student(stu.urlsafe(), 'r.i&r.u', 1)
     asses = list(db.assigntable(stu, None))
@@ -173,7 +182,7 @@ def test_assign_student(school):
     assert ass.query_string == 'r.i&r.u'
 
 
-def test_assign_to_class(school):
+def test_assign_to_class(db,school):
     #school = school(finrequest)
     classkey = db.key_from_path(['Sc0', 'Pe0', 'Te0', 'Cl0'])
     query_string = 'r.a&r.b'

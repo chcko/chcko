@@ -2,12 +2,8 @@
 ##python_path()
 #os.environ.update({'DATASTORE_EMULATOR_HOST': 'localhost:8081'})
 import datetime
-import time
-from itertools import chain
-from bottle import SimpleTemplate
 
-from chcko.hlp import key_value_leaf_id, datefmt, normqs, filter_student
-from chcko.languages import langkindnum, langnumkind, kindint
+from chcko.hlp import normqs, db_mixin
 import chcko.auth as auth
 
 from google.cloud import ndb
@@ -75,29 +71,28 @@ class UserToken(ndb.Model):
     @classmethod
     def create(cls, email, subject, token=None):
         email = email
-        token = token or gen_salt()
+        token = token or auth.gen_salt()
         key = cls.selfmadekey(subject, token)
         entity = cls(key=key, email=email, subject=subject, token=token)
         entity.put()
         return entity
 class User(ndb.Model):
-    email = ndb.StringProperty(required=True)
     pwhash = ndb.StringProperty(required=False)
     token_model = ndb.StructuredProperty(UserToken)
     current_student = ndb.KeyProperty(kind='Student')
     def set_password(self, password):
-        self.pwhash = generate_password_hash(password)
+        self.pwhash = auth.generate_password_hash(password)
     @classmethod
     def create(cls, email, password):
         user = cls.by_login(email,password)
         if not user:
-            user = cls.get_or_insert(email=email, pwhash=generate_password_hash(password))
+            user = cls.get_or_insert(email, pwhash=auth.generate_password_hash(password))
         return user
     @classmethod
     def by_login(cls,email,password):
         user = ndb.Key(cls,email).get()
         if user:
-            if not check_password_hash(user.pwhash,password):
+            if not auth.check_password_hash(user.pwhash,password):
                 return None
         return user
 class Secret(ndb.Model):  # filled manually
@@ -133,14 +128,16 @@ _probcols = [k for k, v in Problem._properties.items() if isinstance(v, ndb.Comp
 #with c(): print(nv.key.kind())                                      #UserToken
 
 
-class Ndb:
+class Ndb(db_mixin):
     def __init__(self):
         self.dbclient = ndb.Client('chcko')
         self.Key = ndb.Key
         for k,v in _cls.items():
-            set_attr(self,k,v)
+            setattr(self,k,v)
         self.init_db()
 
+    def is_sql(self):
+        return False
     def query(self,entity,filt=None,ordr=None):
         _filt = filt or []
         q = entity.query(*_filt)
@@ -186,9 +183,9 @@ class Ndb:
     def first(self,query):
         return query.get()
     def of(self,entity):
-        return entity.key
+        return entity and entity.key or entity
     def idof(self,obj):
-        return obj and obj.key or None
+        return obj and obj.key or obj
     def nameof(entity):
         entity._get_kind()
     def columnsof(self,obj):
@@ -196,34 +193,27 @@ class Ndb:
     def fieldsof(entity):
         return {s: v.__get__(entity) for s,v in entity._properties.items()}
 
-    def _stored_secret(self,name):
-        ass = str(
-            Secret.get_or_insert(
-            name,
-            secret=auth.make_secret()).secret)
-        return ass
-
     def _add_student(self, studentpath=[None]*5, color=None, user=None):
         'defaults to myxxx for empty roles'
         userkey = self.of(user)
         school_, period_, teacher_, class_, student_ = studentpath
         school = self.School.get_or_insert(
-            ID=school_ or 'myschool',
+            school_ or 'myschool',
             userkey=userkey)
         period = self.Period.get_or_insert(
-            ID=period_ or 'myperiod',
+            period_ or 'myperiod',
             parent=school.key,
             userkey=userkey)
         teacher = self.Teacher.get_or_insert(
-            ID=teacher_ or 'myteacher',
+            teacher_ or 'myteacher',
             parent=period.key,
             userkey=userkey)
         clss = self.Class.get_or_insert(
-            ID=class_ or 'myclass',
+            class_ or 'myclass',
             parent=teacher.key,
             userkey=userkey)
         stdnt = self.Student.get_or_insert(
-            ID=student_ or 'myself',
+            student_ or 'myself',
             parent=clss.key,
             userkey=userkey,
             color=color or '#EEE')

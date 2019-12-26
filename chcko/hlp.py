@@ -5,13 +5,16 @@ import os.path
 import importlib
 import string
 from urllib.parse import parse_qsl
+from bottle import SimpleTemplate
+from chcko.languages import langkindnum, langnumkind, kindint
 
 try:
     from itertools import izip_longest as zip_longest
 except:
     from itertools import zip_longest
-from collections import Iterable
+from collections.abc import Iterable
 from functools import wraps
+from chcko import auth
 
 from sympy import sstr, Rational as R, S, E
 
@@ -430,7 +433,7 @@ def normqs(qs):
     if len(qparsed) == 1 and qparsed[0][1] == '1':
         return qparsed[0][0]
     return qs
-def filter_student(self,querystring):
+def filter_student(querystring):
     '''filter out student_contexts and color
     >>> querystring = 'School=b&Period=3&Teacher=5e&Class=9&Student=0&color=#E&bm&ws>0,d~1&b.v=3'
     >>> filter_student(querystring)
@@ -439,7 +442,7 @@ def filter_student(self,querystring):
     '''
     qfiltered = [x  for x in
             parse_qsl(querystring, True)
-            if x[0] not in self.student_contexts + ['color']]
+            if x[0] not in student_contexts + ['color']]
     qsfiltered = '&'.join([k + '=' + v if v else k for k, v in qfiltered])
     return qsfiltered
 
@@ -471,20 +474,21 @@ def key_value_leaf_id(p_ll):  # key_value_leaf_depth
                 yield (kk, ll, depth == nkeys - 1, lvl_id)
                 previous = this[:]
 
-_student_contexts = ['School', 'Period', 'Teacher', 'Class', 'Student']
-_problem_contexts = ['School', 'Period', 'Teacher', 'Class', 'Student', 'Problem']
+student_contexts = ['School', 'Period', 'Teacher', 'Class', 'Student']
+problem_contexts = ['School', 'Period', 'Teacher', 'Class', 'Student', 'Problem']
 
 class db_mixin:
     def urlstring(self,key):
         #'School=myschool&Period=myperiod&Teacher=myteacher&Class=myclass&Student=myself'
         return '&'.join([r + '=' + str(v) for r, v in key.pairs()])
+
     def init_db(self):
         from chcko import initdb
         self.available_langs = initdb.available_langs
         with self.dbclient.context():
             self.clear_students()
             initdb.populate_index(
-                lambda problemid, lang, kind, level, path: Index.get_or_insert(
+                lambda problemid, lang, kind, level, path: self.Index.get_or_insert(
                         problemid + ':' + lang,
                         knd=int(kind),
                         level=int(level),
@@ -519,7 +523,7 @@ class db_mixin:
         self._copy_to_new_parent(self.Assignment, oldstudent, self.request.student)
 
     def key_from_path(self,x):
-        return self.Key(*list(chain(*zip(_problem_contexts[:len(x)], x))))
+        return self.Key(*list(chain(*zip(problem_contexts[:len(x)], x))))
     def from_urlsafe(urlsafe):
         return self.Key(urlsafe=urlsafe).get()
     def clear_index(self):
@@ -547,13 +551,13 @@ class db_mixin:
         problem = self.problem_create(student,**pkwargs)
         return problem, pkwargs
     def clear_assignments(self):
-        self.delete(self.Assignment.query())
+        self.delete(self.query(self.Assignment))
     def clear_students(self):
-        self.delete(self.Student.query())
-        self.delete(self.Class.query())
-        self.delete(self.Teacher.query())
-        self.delete(self.Period.query())
-        self.delete(self.School.query())
+        self.delete(self.query(self.Student))
+        self.delete(self.query(self.Class))
+        self.delete(self.query(self.Teacher))
+        self.delete(self.query(self.Period))
+        self.delete(self.query(self.School))
         self._add_student()
     def clear_student_assignments(self,student):
         self.delete(self.student_assignments(student))
@@ -600,7 +604,7 @@ class db_mixin:
     def depth_1st(self
                   , path=None
                   , keys=None  # start keys, keys_to_omit(path) to skip initial hierarchy
-                  , kinds=_problem_contexts
+                  , kinds=problem_contexts
                   , permission=False
                   , userkey=None
                   ):
@@ -699,7 +703,7 @@ class db_mixin:
         numkind = langnumkind[lang]
         optd = dict(opt)
         knd_pathlnklvl = {}
-        idx = self.allof(self.query(Index))
+        idx = self.allof(self.query(self.Index))
         for e in idx:
             # e=itr.next()
             # knd_pathlnklvl
@@ -752,7 +756,7 @@ class db_mixin:
         user = request.user
         session = request.session
         request.student = None
-        studentpath = [request.get(x,'') for x in _student_contexts]
+        studentpath = [request.get(x,'') for x in student_contexts]
         color = request.get('color','')
         request.query_string = filter_student(request.query_string)
         if ''.join(studentpath) != '':
@@ -778,7 +782,7 @@ class db_mixin:
             studentpath = auth.random_student_path(seed=request.remote_addr).split('-')
             request.student = self._add_student(studentpath, color, user)
         if user:
-            if user.current_student.string_id() != self.idof(request.student):
+            if user.current_student and (user.current_student.string_id() != self.idof(request.student)):
                 user.current_student = request.student.key
                 user.put()
         elif session:
@@ -792,6 +796,12 @@ class db_mixin:
         request.user = None
         if userID:
             request.user = self.Key(urlsafe=userID).get()
+    def _stored_secret(self,name):
+        ass = str(
+            self.Secret.get_or_insert(
+            name,
+            secret=auth.make_secret()).secret)
+        return ass
     def stored_email_credential(self):
         return base64.urlsafe_b64decode(self._stored_secret('chcko.mail').encode())
     def send_mail(self, to, subject, message_text, creds, sender=auth.chcko_mail):

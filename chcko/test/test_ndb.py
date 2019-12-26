@@ -2,8 +2,8 @@ import pytest
 
 @pytest.fixture(scope="module")
 def db():
-    from chcko import sql
-    adb = sql.Sql()
+    from chcko import ndb
+    adb = ndb.Ndb()
     with adb.dbclient.context():
         yield adb
 
@@ -11,7 +11,7 @@ def db():
 def Student12345(db):
     s=db.School(id="1")
     s.put()
-    mkent = lambda t,i,o: t(id=i,of=o.id)
+    mkent = lambda t,i,o: t(id=i,parent=o.key)
     p=mkent(db.Period,"2",s)
     p.put()
     t=mkent(db.Teacher,"3",p)
@@ -32,20 +32,20 @@ def test_key(db):
 def test_skey(db,Student12345):
     kk=Student12345.key
     assert kk.pairs()==(('School', '1'), ('Period', '2'), ('Teacher', '3'), ('Class', '4'), ('Student', '5'))
-    assert kk.get().id=="5"
+    assert kk.get().key.string_id()=="5"
     assert kk.kind()=="Student"
     assert kk.parent().pairs()==(('School', '1'), ('Period', '2'), ('Teacher', '3'), ('Class', '4'))
-    assert kk.parent().get().id=="4"
+    assert kk.parent().get().key.string_id()=="4"
 
 def test_ut(db):
     ut1=db.UserToken.get_or_insert(
-        id="1"
+        "1"
         ,subject="signup"
         ,email="email1"
         ,token="tokn"
     )
     ut2=db.UserToken.get_or_insert(
-        id="1"
+        "1"
         ,subject="signup"
         ,email="email1"
         ,token="tokn"
