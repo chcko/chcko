@@ -38,24 +38,34 @@ def pytest_runtest_setup(item):
     if previousfailed is not None:
         pytest.xfail("previous test failed (%s)" % previousfailed.name)
 
-
 #from subprocess import Popen
 ##prerequisite: gcloud config set project chcko-262117
 #datastore = Popen(['gcloud','beta','emulators','datastore','start'],env=os.environ)
 #@pytest.fixture(scope='session')
 #def gaetestbed(request):
 #    global datastore
-#    from chcko.db import *
+#    from chcko.db import db
 #    with datastore:
 #        #datastore.communicate(None, timeout=None)
 #        with db.dbclient.context():
 #            yield
 #    datastore.terminate()
 #    del datastore
-@pytest.fixture(scope='session')
-def datastore(request):
-    return True #TODO: assert that data store emulator is running
-
+@pytest.fixture(scope='session',params=["sql","ndb"])
+def db(request):
+    backnd = request.param
+    #backnd = "ndb"
+    import chcko.db as chckodb
+    if backnd == "ndb":
+        from chcko.ndb import Ndb as _db
+        #TODO: assert that data store emulator is running
+    elif backnd == "sql":
+        from chcko.sql import Sql as _db
+    db = chckodb.use(_db())
+    cntx=db.dbclient.context()
+    #cntx.__enter__()
+    with cntx:
+        yield db
 
 def pytest_generate_tests(metafunc):
     if 'allcontent' in metafunc.fixturenames:
@@ -74,4 +84,3 @@ def pytest_generate_tests(metafunc):
         metafunc.parametrize("allcontent", gen())
 
 #import chcko.app
-

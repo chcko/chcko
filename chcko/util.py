@@ -9,13 +9,12 @@ from sympy.parsing.sympy_parser import parse_expr
 from sympy import Poly, latex
 from sympy.abc import x
 from urllib.parse import parse_qsl
-import logging
 
-from bottle import SimpleTemplate, template
+from chcko.bottle import SimpleTemplate, template
 
-from chcko.hlp import listable, mklookup, counter, Struct
+from chcko.hlp import listable, mklookup, counter
 from chcko.languages import langkindnum, langnumkind, CtxStrings
-from chcko.db import *
+from chcko.db import db
 
 class Util:
     ''' A Util instance named ``util`` is available in html files.

@@ -10,7 +10,7 @@ def given():
 
 
 def calc(g):
-    return ['1']
+    return []
 
 
 def norm(answers):

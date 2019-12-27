@@ -5,7 +5,7 @@ import os
 import os.path
 import logging
 
-import bottle
+from chcko import bottle
 import bottle_session as bs
 app = bottle.app()
 try:
@@ -21,8 +21,8 @@ def python_path():
 python_path()
 
 from chcko.hlp import import_module, PAGES, is_standard_server, mklookup
-from chcko.db import *
 from chcko.languages import langnumkind
+from chcko.db import db
 
 from oauthlib import oauth2
 class OAuth2_ResourceValidator(oauth2.RequestValidator):

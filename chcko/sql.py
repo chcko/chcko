@@ -104,7 +104,6 @@ class Key:
         flat = self._flat()
         return Key(*flat[:-2])
 
-
 @as_declarative(metadata=meta)
 class Model(object):
     def put(self):
@@ -288,7 +287,7 @@ class Sql(db_mixin):
         query.delete()
     def filter_expression(self,ap,op,av):
         return ap+op+av
-    def problem_create(student,**pkwargs):
+    def problem_create(self,student,**pkwargs):
         return self.Problem(of=student.id, **{s: pkwargs[s] for s in _probcols if s in pkwargs})
     def _copy_to_new_parent(self, entity, oldparent, newparent):
         self.query(entity,[self.of(entity)==self.idof(oldparent)]).update(
@@ -315,7 +314,7 @@ class Sql(db_mixin):
     def fieldsof(self,obj):
         return {clmnm: getattr(obj,clmnm) for clmnm in self.columnsof(obj)}
 
-    def _add_student(self, studentpath=[None]*5, color=None, user=None):
+    def add_student(self, studentpath=[None]*5, color=None, user=None):
         'defaults to myxxx for empty roles'
         userkey = self.of(user)
         school_, period_, teacher_, class_, student_ = studentpath
@@ -343,4 +342,5 @@ class Sql(db_mixin):
             stdnt.color = color
             stdnt.put()
         return stdnt
+
 

@@ -18,15 +18,12 @@ See ``filtered_index`` for that.
 
 """
 
-
-import os
-import os.path
 import re
 import datetime
 import logging
 
 from urllib.parse import parse_qsl
-from bottle import SimpleTemplate, StplParser
+from chcko.bottle import SimpleTemplate, StplParser, get_tpl, HTTPError
 from chcko.hlp import (
         Struct,
         resolver,
@@ -37,29 +34,9 @@ from chcko.hlp import (
 
 from chcko.util import PageBase, Util
 
-from chcko.db import *
+from chcko.db import db
 
 re_id = re.compile(r"^[^\d\W]\w*\.[^\d\W]\w*$", re.UNICODE)
-
-def get_tpl(*args, **kwargs):
-    tpl = args[0] if args else None
-    adapter = kwargs.pop('template_adapter', SimpleTemplate)
-    lookup = kwargs.pop('template_lookup', TEMPLATE_PATH)
-    tplid = (id(lookup), tpl)
-    TEMPLATES = bottle.TEMPLATES
-    if tplid not in TEMPLATES or DEBUG:
-        settings = kwargs.pop('template_settings', {})
-        if isinstance(tpl, adapter):
-            TEMPLATES[tplid] = res = tpl
-            if settings: res.prepare(**settings)
-        elif "\n" in tpl or "{" in tpl or "%" in tpl or '$' in tpl:
-            TEMPLATES[tplid] = res = adapter(source=tpl, lookup=lookup, **settings)
-        else:
-            TEMPLATES[tplid] = res = adapter(name=tpl, lookup=lookup, **settings)
-    else:
-        res = TEMPLATES[tplid]
-    return res
-
 
 class Page(PageBase):
     'Entry points are ``get_response`` and ``post_response``.'
@@ -78,7 +55,7 @@ class Page(PageBase):
         if urlsafe:
             self.problem = db.from_urlsafe(urlsafe)
             if self.problem:  # else it was deleted
-                if not isinstance(self.problem,Problem):
+                if not isinstance(self.problem,db.Problem):
                     raise HTTPError(404, "No such problem")
                 self.request.query_string = self.problem.query_string
         else:  # get existing unanswered if query_string is same
@@ -103,7 +80,10 @@ class Page(PageBase):
             age = datetime.datetime.now() - datetime.timedelta(days=1)
             db.del_stale_open_problems(student,age)
 
-    def load_content(self, layout='content', rebase=True):
+    def load_content(self
+                     , layout='content'
+                     , rebase=True
+                     ):
         ''' evaluates the templates with includes therein and zips them to database entries
 
         examples:
@@ -120,7 +100,7 @@ class Page(PageBase):
         problem_set_iter = None
 
         def _new(rsv):
-            nr = nrs.next()
+            nr = next(nrs)
             problem, pkwargs = db.problem_from_resolver(
                 rsv, nr, self.request.student)
             if not self.problem:
@@ -129,7 +109,7 @@ class Page(PageBase):
             else:
                 problem.collection = self.problem.key
             if problem.points:
-                problems_cntr.next()
+                next(problems_cntr)
             # TODO: shouln't it be possible to define given() ... in the
             # template itself
             problem.put()
@@ -153,7 +133,7 @@ class Page(PageBase):
                 'g': self.current.given,
                 'request': self.request})
             if self.current.points:
-                problems_cntr.next()
+                next(problems_cntr)
             if self.current.answered:
                 sw, sn = self.make_summary(self.current)
                 pkwargs.update({'summary': (sw, sn)})
@@ -223,7 +203,7 @@ class Page(PageBase):
             else:
                 if not self.problem_set:
                     self.problem_set = db.problem_set(self.problem)
-                problem_set_iter = self.problem_set.iter()
+                problem_set_iter = self.problem_set
                 self.current = self.problem
                 try:
                     prebase(_zip)
@@ -250,7 +230,7 @@ class Page(PageBase):
                         noempty),
                     problem=self.problem,
                     problemkey=self.problem and self.problem.key.urlsafe(),
-                    with_problems=problems_cntr.next() > 0,
+                    with_problems=next(problems_cntr) > 0,
                     request=self.request))
             tpl.execute(stdout, env)
             problems_cntr.close()
@@ -359,7 +339,7 @@ class Page(PageBase):
         self._get_problem(problemkey)
         if self.problem and not self.problem.answered:
             withempty, noempty = Page.make_summary()
-            for p in self.problem_set.iter():
+            for p in self.problem_set:
                 self.check_answers(p)
                 sw, sn = self.make_summary(p)
                 withempty.__iadd__(sw)
@@ -373,7 +353,7 @@ class Page(PageBase):
     @staticmethod
     def make_summary(p=None):
         '''
-        >>> p = Problem(inputids=list('abc'),
+        >>> p = db.Problem(inputids=list('abc'),
         ...         oks=[True,False,True],points=[2]*3,answers=['1','','1'])
         >>> f = lambda c:c
         >>> withempty,noempty = Page.make_summary(p)

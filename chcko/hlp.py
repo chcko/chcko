@@ -5,7 +5,7 @@ import os.path
 import importlib
 import string
 from urllib.parse import parse_qsl
-from bottle import SimpleTemplate
+from chcko.bottle import SimpleTemplate
 from chcko.languages import langkindnum, langnumkind, kindint
 
 try:
@@ -558,7 +558,7 @@ class db_mixin:
         self.delete(self.query(self.Teacher))
         self.delete(self.query(self.Period))
         self.delete(self.query(self.School))
-        self._add_student()
+        self.add_student()
     def clear_student_assignments(self,student):
         self.delete(self.student_assignments(student))
     def clear_done_assignments(self, student, user):
@@ -611,17 +611,17 @@ class db_mixin:
         ''' path entries are names or filters ([] for all)
         translated into record objects along the levels given by **kinds** depth-1st-wise.
 
-        >>> from chcko.db import *
+        >>> from chcko.db import db
         >>> from chcko.test.hlp import problems_for
         >>> #del sys.modules['chcko.test.hlp']
         >>> path = ['a', 'b', 'c', 'd', 'e']
-        >>> student = _add_student(path, 'EEE')
+        >>> student = add_student(path, 'EEE')
         >>> problems_for(student)
         >>> lst = list(db.depth_1st(path+[[]]))
         >>> db.nameof(list(db.depth_1st(path+[[('query_string','=','r.u')]]))[0])
         'School'
         >>> path = ['a', 'b', 'c', 'x', 'e']
-        >>> student1 = _add_student(path, 'EEE')
+        >>> student1 = add_student(path, 'EEE')
         >>> problems_for(student1)
         >>> path = ['a','b','c',[],[],[('query_string','=','r.u')]]
         >>> db.nameof(list(db.depth_1st(path))[0])
@@ -684,7 +684,7 @@ class db_mixin:
             - path
             - link
 
-        >>> from chcko.db import *
+        >>> from chcko.db import db
         >>> lang = 'en'
         >>> opt1 = [] #[('level', '2'), ('kind', 'exercise')]
         >>> cnt1 = sum([len(list(gen[1])) for gen in db.filtered_index(lang, opt1)])
@@ -753,41 +753,51 @@ class db_mixin:
         Else a redirect string for a message is returned.
 
         '''
-        user = request.user
-        session = request.session
-        request.student = None
+        try:
+            user = request.user
+        except:
+            user = None
+        try:
+          session = request.session
+        except:
+            session = None
+        student = None
         studentpath = [request.get(x,'') for x in student_contexts]
         color = request.get('color','')
         request.query_string = filter_student(request.query_string)
         if ''.join(studentpath) != '':
-            student = self._add_student(studentpath, color, user)
-            if student.userkey == self.idof(user):
-                request.student = student
+            student = self.add_student(studentpath, color, user)
+            if student.userkey != self.idof(user):
+                student = None
             # student role does not belong to user, so don't change current student
             else:
                 return 'message?msg=e'
         elif user:
-            request.student = user.current_student and user.current_student.get()
+            student = user.current_student and user.current_student.get()
         else:
             studentkey_nouser = session and Session['studentkey_nouser']
             if studentkey_nouser:
                 try:
-                    request.student = Key(
+                    student = Key(
                         urlsafe=studentkey_nouser).get()
                 except (TypeError, BadKeyError, AttributeError):
                     pass
-        if not request.student and user:
-            request.student = self.first(self.query(self.Student,[self.Student.userkey==self.idof(user)]))
-        if not request.student:  # generate
+        if not student and user:
+            student = self.first(self.query(self.Student,[self.Student.userkey==self.idof(user)]))
+        if not student:  # generate
             studentpath = auth.random_student_path(seed=request.remote_addr).split('-')
-            request.student = self._add_student(studentpath, color, user)
+            student = self.add_student(studentpath, color, user)
         if user:
-            if user.current_student and (user.current_student.string_id() != self.idof(request.student)):
-                user.current_student = request.student.key
+            if user.current_student and (user.current_student.string_id() != self.idof(student)):
+                user.current_student = student.key
                 user.put()
         elif session:
-            session['studentkey_nouser'] = request.student.key.urlsafe()
-        SimpleTemplate.defaults["contextcolor"] = request.student.color or '#EEE'
+            session['studentkey_nouser'] = student.key.urlsafe()
+        SimpleTemplate.defaults["contextcolor"] = student.color or '#EEE'
+        try:
+            request.student = student
+        except:
+            pass
 
 
     def set_user(self,request):

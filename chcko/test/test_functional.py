@@ -2,7 +2,7 @@
 
 import os
 import re
-import bottle
+from chcko import bottle
 from webtest import TestApp as TA
 import pytest
 from chcko.languages import languages
@@ -42,7 +42,7 @@ def test_routing():
     assert int(bl.params['r.a']) == 2 and int(bl.params['r.b']) == 3
 
 @pytest.fixture(scope='module')
-def mamapp(request):
+def chapp(request):
     return TA(app)
 
 # see
@@ -55,7 +55,7 @@ def url_lang(url):
 @pytest.mark.incremental
 class TestRunthrough(object):
     #>> self = TestRunthrough()
-    #>> mamapp = mamapp(finrequest,None)
+    #>> chapp = chapp(finrequest,None)
 
     resp = None
 
@@ -63,8 +63,8 @@ class TestRunthrough(object):
     def _store(cls, name, value):
         setattr(cls, name, value)
 
-    def _signup(self,mamapp):
-        self._store('resp', mamapp.get('/en/signup'))
+    def _signup(self,chapp):
+        self._store('resp', chapp.get('/en/signup'))
         assert 'POST' == self.resp.form.method
         # self.resp.showbrowser()
         self.resp.form[u'email'] = u'temail@email.com'
@@ -75,28 +75,28 @@ class TestRunthrough(object):
         r = self.resp.form.submit()
         self._store('resp', r.follow())
 
-    def test_default_lang(self,mamapp):
-        r = mamapp.get('/')
+    def test_default_lang(self,chapp):
+        r = chapp.get('/')
         assert 'problems' in r #engish index page
 
-    def test_wrong_lang(self,mamapp):
-        r = mamapp.get('/wrong')
+    def test_wrong_lang(self,chapp):
+        r = chapp.get('/wrong')
         assert '302' in r.status
         self._store('resp', r.follow())
         assert url_lang(self.resp.request.url) in languages
 
-    def test_wrong_page(self,mamapp):
-        r = mamapp.get('/en/wrong')
+    def test_wrong_page(self,chapp):
+        r = chapp.get('/en/wrong')
         assert '302' in r.status
         self._store('resp', r.follow())
         assert url_lang(self.resp.request.url) in languages
 
-    def test_wrong_content(self,mamapp):
-        r = mamapp.get('/en/?wrong', status=404)
+    def test_wrong_content(self,chapp):
+        r = chapp.get('/en/?wrong', status=404)
         assert '404' in r.status
 
-    def test_register(self,mamapp):
-        self._signup(mamapp)
+    def test_register(self,chapp):
+        self._signup(chapp)
         #'message?msg=j' then email with link to verification
         # this is skipped via
         assert '/verification' in self.resp.request.url
@@ -107,8 +107,8 @@ class TestRunthrough(object):
         assert 'Twitter' in self.resp
         # self.resp.showbrowser()
 
-    def test_registersame(self,mamapp):
-        self._signup(mamapp)
+    def test_registersame(self,chapp):
+        self._signup(chapp)
         assert 'msg=a' in self.resp.request.url
 
     def test_anonymous(self):
@@ -124,8 +124,8 @@ class TestRunthrough(object):
         self._store('resp', self.resp.form.submit())
         assert '0P' in self.resp
 
-    def test_forgot(self,mamapp):
-        self._store('resp', mamapp.get('/en/forgot'))
+    def test_forgot(self,chapp):
+        self._store('resp', chapp.get('/en/forgot'))
         assert 'POST' == self.resp.form.method
         self.resp.form[u'email'] = u'temail'
         r = self.resp.form.submit()
@@ -142,8 +142,8 @@ class TestRunthrough(object):
         # self.resp.showbrowser()
         assert 'msg=d' in self.resp.request.url
 
-    def test_login(self,mamapp):
-        self._store('resp', mamapp.get('/en/login'))
+    def test_login(self,chapp):
+        self._store('resp', chapp.get('/en/login'))
         assert 'POST' == self.resp.form.method
         # self.resp.showbrowser()
         self.resp.form[u'email'] = u'temail'

@@ -4,7 +4,7 @@ import re
 import datetime
 import logging
 from urllib.parse import parse_qsl
-from chcko.db import *
+from chcko.db import db
 from chcko.hlp import last
 from chcko.util import PageBase
 

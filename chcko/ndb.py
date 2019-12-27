@@ -164,11 +164,11 @@ class Ndb(db_mixin):
     #    self.delete(Problem.gql(
     #        "WHERE answersempty = True AND answered != NULL AND ANCESTOR IS :1",
     #        self.request.student.key))
-    def problem_create(student,**pkwargs):
+    def problem_create(self,student,**pkwargs):
         return self.Problem(parent=student.key,
                   **{s: pkwargs[s] for s in self.Problem._properties if s in pkwargs})
     def _copy_to_new_parent(self, anentity, oldparent, newparent):
-        for entry in self.allof(anentity.query(ancestor=oldparent.key)):
+        for entry in self.allof(anentity.query(parent=oldparent.key)):
             cpy = anentity(id=entry.key.string_id(), parent=newparent.key)
             cpy.populate(**{k: v for k, v in entry.to_dict().items() if k in _probcols})
             cpy.put()
@@ -186,14 +186,14 @@ class Ndb(db_mixin):
         return entity and entity.key or entity
     def idof(self,obj):
         return obj and obj.key or obj
-    def nameof(entity):
+    def nameof(self,entity):
         entity._get_kind()
     def columnsof(self,obj):
         return entity._properties.keys()
-    def fieldsof(entity):
+    def fieldsof(self,entity):
         return {s: v.__get__(entity) for s,v in entity._properties.items()}
 
-    def _add_student(self, studentpath=[None]*5, color=None, user=None):
+    def add_student(self, studentpath=[None]*5, color=None, user=None):
         'defaults to myxxx for empty roles'
         userkey = self.of(user)
         school_, period_, teacher_, class_, student_ = studentpath

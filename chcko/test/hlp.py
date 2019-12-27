@@ -6,7 +6,7 @@ import os
 import os.path
 import datetime
 
-from chcko.db import *
+from chcko.db import db
 from chcko.hlp import Struct, import_module, from_py, resolver
 
 

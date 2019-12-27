@@ -4,7 +4,7 @@ import logging
 import os
 from chcko.util import PageBase
 from chcko.hlp import import_module, is_standard_server
-from chcko.db import *
+from chcko.db import db
 
 class Page(PageBase):
 
