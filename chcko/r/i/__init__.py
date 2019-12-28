@@ -45,7 +45,7 @@ def given():
             if nf not in funcs:
                 funcs.append(nf)
                 break
-    order = range(len(funcs))
+    order = list(range(len(funcs)))
     random.shuffle(order)
     g = Struct(funcs=funcs, order=order)
     return g

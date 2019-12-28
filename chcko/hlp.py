@@ -18,6 +18,18 @@ from chcko import auth
 
 from sympy import sstr, Rational as R, S, E
 
+import logging
+import os.path
+logger = logging.getLogger('chchko')
+logger.setLevel(logging.INFO)
+fh = logging.FileHandler(os.path.join(os.path.dirname(__file__),'chcko.log'))
+fh.setLevel(logging.INFO)
+logger.addHandler(fh)
+#logger.info("info")
+#logger.debug("debug")
+#logger.warn("warn")
+#logger.error("error")
+
 def ziplongest(*args):
     '''zip_longest with last element as filler
     >>> args=([9],[2,3],1)
@@ -475,7 +487,7 @@ def key_value_leaf_id(p_ll):  # key_value_leaf_depth
                 previous = this[:]
 
 student_contexts = ['School', 'Period', 'Teacher', 'Class', 'Student']
-problem_contexts = ['School', 'Period', 'Teacher', 'Class', 'Student', 'Problem']
+problem_contexts = student_contexts + ['Problem']
 
 class db_mixin:
     def urlstring(self,key):
@@ -537,6 +549,7 @@ class db_mixin:
         g = d.given()
         r = d.norm(d.calc(g))
         pkwargs = d.__dict__.copy()
+        points = d.points or [1] * len(r or [])
         pkwargs.update(dict(
             g=g,
             answered=None,
@@ -546,7 +559,7 @@ class db_mixin:
             results=r,
             given=g,
             inputids=["{:0=4x}".format(nr) + "_{:0=4x}".format(a) for a in range(len(r))],
-            points=d.points or [1] * len(r or [])
+            points=points
         ))
         problem = self.problem_create(student,**pkwargs)
         return problem, pkwargs
@@ -575,23 +588,24 @@ class db_mixin:
             return False
     def assignable(self, teacher, user):
         for akey in depth_1st(keys=[teacher.key], kinds='Teacher Class Student'.split(),
-                              userkey=user and user.key):
+                              userkey=user and self.idof(user)):
             yield akey
     def assign_table(student, user):
         for e in depth_1st(keys=[student.key], models='Student Assignment'.split(),
-                           userkey=user and user.key):
+                           userkey=user and self.idof(user)):
             yield e
     def student_roles(self, user):
         students = self.allof(self.query(self.Student,[self.Student.userkey==self.idof(user)]))
         for student in students:
             yield self.key_ownd_path(student, user)
     def key_ownd_path(self, student, user):
-        userkey = user and user.key
-        key_ownd_list = [(student.key, student.userkey == userkey)]
-        parent = student.parent()
-        while parent:
-            key_ownd_list = [(parent.key, parent.userkey == userkey)] + key_ownd_list
-            parent = parent.parent()
+        userkey = user and self.idof(user)
+        skey = student.key
+        key_ownd_list = [(skey, student.userkey == userkey)]
+        parentkey = skey.parent()
+        while parentkey and parentkey.pairs():
+            key_ownd_list = [(parentkey, parentkey.get().userkey == userkey)] + key_ownd_list
+            parentkey = parentkey.parent()
         return key_ownd_list
     def keys_to_omit(self,path):
         "[name1,name2,nonstr,...]->[key2,key2]"

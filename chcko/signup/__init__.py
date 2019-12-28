@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import logging
 import os
 from chcko.util import PageBase
-from chcko.hlp import import_module, is_standard_server
+from chcko.hlp import import_module, is_standard_server, logger
 from chcko.db import db
 
 class Page(PageBase):
@@ -36,7 +35,7 @@ class Page(PageBase):
         if is_standard_server:
             confirmation_url = self.request.application_url + \
                 '/' + self.request.lang + '/' + relative_url
-            logging.info(confirmation_url)
+            logger.info(confirmation_url)
             m = import_module('signup.' + self.request.lang)
             db.send_mail(
                 email,

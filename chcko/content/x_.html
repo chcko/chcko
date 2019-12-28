@@ -80,7 +80,7 @@
 
     % if not problem.answered and user:
         % teacher = request.student.key.parent().parent().get()
-        % if teacher.userkey == user.key:
+        % if teacher.userkey == db.idof(user):
             <form action="/{{request.lang}}/todo" method="post">
                 % fieldset = False
                 % for ee in db.assignable(teacher,user):

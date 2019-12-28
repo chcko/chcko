@@ -19,21 +19,20 @@
 
     <div class="header" style="background-color:{{contextcolor}}">
 
-    %skey = request.student.key
     %if user:
-        %for key2prnt,is_users in db.key_ownd_path(skey,user):
+        %for key2prnt,is_users in db.key_ownd_path(request.student,user):
         <div class="grid_2">
             %if key2prnt.kind()=='Student':
             <ul id="nav">
                 {{util.translate(key2prnt.kind())}}<br>
                 <li>
                 %qs = lambda x: request.query_string+'&'+x if request.query_string else x
-                <a href="/{{request.lang}}/{{request.pagename}}?{{! qs(urlstring(key2prnt)) }}">
+                <a href="/{{request.lang}}/{{request.pagename}}?{{! qs(db.urlstring(key2prnt)) }}">
                     {{key2prnt.string_id()}} </a>
                 <ul style="text-align:right">
                     %for key_ownd_list in db.student_roles(user):
                     %studentkey = key_ownd_list[-1][0]
-                    <li><a href="/{{request.lang}}/{{request.pagename}}?{{! qs(urlstring(studentkey)) }}">
+                    <li><a href="/{{request.lang}}/{{request.pagename}}?{{! qs(db.urlstring(studentkey)) }}">
                         %cntxt = [not ownd and '<em>'+an.string_id()+'</em>' or an.string_id() for an,ownd in key_ownd_list]
                         {{!' &nbsp;&nbsp; '.join(cntxt)}}
                     </a><li>
@@ -52,7 +51,7 @@
         </div>
         %end
     %else:
-        %for key2prnt,is_users in db.key_ownd_path(skey,None):
+        %for key2prnt,is_users in db.key_ownd_path(request.student,None):
             %if key2prnt.kind()=='Student':
             <div class="grid_2" style="text-align:right">
             %else:
@@ -85,7 +84,7 @@
         %if social:
         <a href="{{ user.link }}" target="_blank" rel="nofollow">
         %end
-        {{ user.name }}
+        {{ db.user_name(user) }}
         %if social:
         </a>
         %end
@@ -108,7 +107,7 @@
 
     <div class="footer" style="background-color:{{contextcolor}}">
     <div class="grid_2">
-    <a href="/{{request.lang}}/login">Mamchecker</a>
+    <a href="/{{request.lang}}/login">ChCkO</a>
     {{ torvia }}
     </div> 
     <div class="grid_2"> 
@@ -135,7 +134,7 @@
     <div class="footer" style="background-color:{{contextcolor}}"> &nbsp; </div>
 
     <div class="grid_10">
-        {{development}} <a href="https://github.com/mamchecker/mamchecker">Github</a>
+        {{development}} <a href="https://github.com/chcko/chcko">Github</a>
     </div>
 
     <div class="footer" style="background-color:{{contextcolor}}"> &nbsp; </div>
@@ -154,9 +153,10 @@
 % if not defined('title'):
 % def title():
     % if user:
-        {{user.name}}
+        {{db.user_name(user)}}
     % else:
-        mamchecker
+        ChCkO
+mamchecker
     % end
 % end
 % end

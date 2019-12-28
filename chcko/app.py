@@ -3,7 +3,6 @@
 import sys
 import os
 import os.path
-import logging
 
 from chcko import bottle
 import bottle_session as bs

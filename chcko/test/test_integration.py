@@ -20,6 +20,22 @@ from chcko.test.boddle import boddle
 #        yield db
 
 from chcko.test.hlp import clear_all_data, problems_for
+import os.path
+from chcko.languages import languages
+from chcko.hlp import author_folder
+
+def allcontent():
+    d = os.path.dirname
+    root = d(d(__file__))
+    for fn, full in ((fn, os.path.join(root, fn)) for fn in os.listdir(root) if author_folder(fn, True)):
+        for fs in os.listdir(full):
+            if re.match('[a-z]+', fs):
+                contentf = os.path.join(full, fs)
+                for ff in os.listdir(contentf):
+                    m = re.match('_*([a-z]+)\.html', ff)
+                    if m and m.group(1) in languages:
+                        yield ('.'.join([fn, fs]), m.group(1),lambda x:True)
+
 
 @pytest.fixture(params=[
     ('test.t_1','en',
@@ -27,9 +43,10 @@ from chcko.test.hlp import clear_all_data, problems_for
     ,('test.t_3=3', 'en', lambda x:len(x.split('Here t_3.\nt_3 gets none.'))==4)
     ,('r.a&r.b', 'en', lambda x:True) # mix problem and non-problem
     ,('r.b=2', 'en', lambda x:True)# more non-problems
-]) #from ../conftest.py
+]+list(allcontent()))
 def newuserpage(request,db):
     query_string,lang,tst = request.param
+    bottle.SimpleTemplate.defaults["contextcolor"] = '#EEE'
     from chcko.content import Page
     bddl=boddle(path=f'/{lang}/content'
                 ,user = db.User.create('email@email.com','password1')
@@ -55,19 +72,19 @@ def test_recursive_includes(newuserpage):
         )  # via _new ...
     assert tst(rr1)
     assert self.problem is not None
-    rr = self.load_content('test.layout')  # and reload via _zip
+    rr = self.load_content('test.layout' if 'test' in q else 'content')  # and reload via _zip
     assert rr1 in rr
+    rrr = ''.join(rr)
     subs = q.split('&')
     if len(subs)>1:
-        problem_set = db.problem_set(self.problem)
+        problem_set = list(db.problem_set(self.problem))
     else:
         problem_set = [self.problem]
-    assert len(list(problem_set)) == len(subs)
+    assert len(problem_set) == len(subs)
     if any([p.points for p in problem_set]):
-        assert re.search('problemkey', ''.join(rr))
+        assert re.search('problemkey', rrr)
     else:
-        assert not re.search('problemkey', ''.join(rr))
-
+        assert not re.search('problemkey', rrr)
 
 #@pytest.fixture(scope="module")
 #def school(db,request):

@@ -2,7 +2,6 @@
 
 import re
 import datetime
-import logging
 from urllib.parse import parse_qsl
 from chcko.db import db
 from chcko.hlp import last
@@ -95,7 +94,7 @@ class Page(PageBase):
             *prepare(
                 self.request.query_string,
                 self.request.student.key,
-                self.user and self.user.key))
+                self.user and db.idof(self.user)))
 
     def post_response(self):
         for urlsafe in self.request.forms.getall('deletee'):

@@ -12,9 +12,10 @@ from urllib.parse import parse_qsl
 
 from chcko.bottle import SimpleTemplate, template
 
-from chcko.hlp import listable, mklookup, counter
+from chcko.hlp import listable, mklookup, counter, logger
 from chcko.languages import langkindnum, langnumkind, CtxStrings
 from chcko.db import db
+
 
 class Util:
     ''' A Util instance named ``util`` is available in html files.
@@ -34,11 +35,9 @@ class Util:
             '/?' + lnk + '">' + lnk + '</a>'
 
     def newlang(self, lng):
-        np = self.request.path_qs.replace(
-            '/' +
-            self.request.lang,
-            '/' +
-            lng,
+        np = self.request.url.replace(
+            '/' + self.request.lang,
+            '/' + lng,
             1)
         return '<a href="' + np + '">' + lng + '</a>'
 
@@ -129,7 +128,8 @@ class PageBase:
             'kinda': langkindnum[self.request.lang],
             'numkind': langnumkind[self.request.lang],
             'langs': list(CtxStrings.keys()),
-            'db': db
+            'db': db,
+            'logger': logger
         })
         self.params = self.request.params
     def set_user(email,password):

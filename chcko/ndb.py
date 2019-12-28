@@ -77,6 +77,7 @@ class UserToken(ndb.Model):
         entity.put()
         return entity
 class User(ndb.Model):
+    fullname = ndb.StringProperty(required=False)
     pwhash = ndb.StringProperty(required=False)
     token_model = ndb.StructuredProperty(UserToken)
     current_student = ndb.KeyProperty(kind='Student')
@@ -183,19 +184,21 @@ class Ndb(db_mixin):
     def first(self,query):
         return query.get()
     def of(self,entity):
-        return entity and entity.key or entity
+        return entity.parent
     def idof(self,obj):
-        return obj and obj.key or obj
+        return obj.key
     def nameof(self,entity):
-        entity._get_kind()
+        return entity._get_kind()
     def columnsof(self,obj):
         return entity._properties.keys()
     def fieldsof(self,entity):
         return {s: v.__get__(entity) for s,v in entity._properties.items()}
+    def add_to_set(self,problem,other):
+        problem.collection = other.key
 
     def add_student(self, studentpath=[None]*5, color=None, user=None):
         'defaults to myxxx for empty roles'
-        userkey = self.of(user)
+        userkey = user and self.idof(user) or None
         school_, period_, teacher_, class_, student_ = studentpath
         school = self.School.get_or_insert(
             school_ or 'myschool',
@@ -222,3 +225,5 @@ class Ndb(db_mixin):
             stdnt.put()
         return stdnt
 
+    def user_name(self,user):
+        return user.fullname or user.key.string_id()

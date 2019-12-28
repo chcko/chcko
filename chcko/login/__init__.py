@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from chcko.util import PageBase
-import logging
 
 class Page(PageBase):
 

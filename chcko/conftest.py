@@ -17,9 +17,6 @@ os.environ.update({'DATASTORE_EMULATOR_HOST': 'localhost:8081'})
 
 sys.path += [os.path.dirname(os.path.dirname(__file__))]
 
-from chcko.languages import languages
-from chcko.hlp import author_folder
-
 #gaepath = '/opt/google-cloud-sdk/platform/google_appengine'
 #if not os.path.exists(gaepath):
 #    gaepath = os.path.expanduser('~/.local/opt/google-cloud-sdk/platform/google_appengine')
@@ -38,6 +35,12 @@ def pytest_runtest_setup(item):
     if previousfailed is not None:
         pytest.xfail("previous test failed (%s)" % previousfailed.name)
 
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--db", action="store", default="ndb", help="A session cannot have both [Ndb] and Sql DB"
+    )
+
 #from subprocess import Popen
 ##prerequisite: gcloud config set project chcko-262117
 #datastore = Popen(['gcloud','beta','emulators','datastore','start'],env=os.environ)
@@ -51,36 +54,22 @@ def pytest_runtest_setup(item):
 #            yield
 #    datastore.terminate()
 #    del datastore
-@pytest.fixture(scope='session',params=["sql","ndb"])
+@pytest.fixture(scope='session')
 def db(request):
-    backnd = request.param
+    backnd = request.config.getoption("--db")
     #backnd = "ndb"
     import chcko.db as chckodb
     if backnd == "ndb":
-        from chcko.ndb import Ndb as _db
+        from chcko.ndb import Ndb
+        db = chckodb.use(Ndb())
         #TODO: assert that data store emulator is running
     elif backnd == "sql":
-        from chcko.sql import Sql as _db
-    db = chckodb.use(_db())
+        from chcko.sql import Sql
+        db = chckodb.use(Sql())
     cntx=db.dbclient.context()
     #cntx.__enter__()
     with cntx:
         yield db
 
-def pytest_generate_tests(metafunc):
-    if 'allcontent' in metafunc.fixturenames:
-        root = os.path.dirname(__file__)
-
-        def gen():
-            for fn, full in ((fn, os.path.join(root, fn)) for fn in os.listdir(root) if author_folder(fn, True)):
-                for fs in os.listdir(full):
-                    if re.match('[a-z]+', fs):
-                        contentf = os.path.join(full, fs)
-                        for ff in os.listdir(contentf):
-                            m = re.match('_*([a-z]+)\.html', ff)
-                            if m and m.group(1) in languages:
-                                yield ('.'.join([fn, fs]), m.group(1))
-        # list(gen())
-        metafunc.parametrize("allcontent", gen())
 
 #import chcko.app

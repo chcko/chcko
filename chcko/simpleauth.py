@@ -6,11 +6,11 @@ adapted for bottle.
 
 import os
 import sys
-import logging
 import json
 
 from urllib.parse import urlencode
 import urllib.parse as urlparse
+from chcko.hlp import logger
 
 # for CSRF state tokens
 import time
@@ -226,7 +226,7 @@ class SimpleAuthHandler(object):
       params.update(state=json.dumps(state_params))
 
     target_url = auth_url.format(urlencode(params))
-    logging.debug('Redirecting user to %s', target_url)
+    logger.debug('Redirecting user to %s', target_url)
 
     self.redirect(target_url)
 
@@ -241,7 +241,7 @@ class SimpleAuthHandler(object):
     client_id, client_secret, scope = self._get_consumer_info_for(provider)
 
     json_state = self.request.get('state')
-    logging.debug(json_state)
+    logger.debug(json_state)
     state = json.loads(json_state)
 
     if self.OAUTH2_CSRF_STATE:
@@ -306,7 +306,7 @@ class SimpleAuthHandler(object):
       params.update(optional_params)
     target_url = auth_urls['auth'].format(urlencode(params))
 
-    logging.debug('Redirecting user to %s', target_url)
+    logger.debug('Redirecting user to %s', target_url)
 
     # save request token for later, the callback
     self.session['req_token'] = request_token
@@ -345,7 +345,7 @@ class SimpleAuthHandler(object):
 
     target_url = users.create_login_url(
         dest_url=callback_url, federated_identity=identity_url)
-    logging.debug('Redirecting user to %s', target_url)
+    logger.debug('Redirecting user to %s', target_url)
     self.redirect(target_url)
 
   def _openid_callback(self, provider='openid', _identity=None):
@@ -430,7 +430,7 @@ class SimpleAuthHandler(object):
     Google+ API endpoint:
     https://www.googleapis.com/plus/v1/people/me
     """
-    logging.warn('Google+ API endpoint is deprecated. '
+    logger.warn('Google+ API endpoint is deprecated. '
                  'Use Google API (google provider): '
                  'https://developers.google.com/+/api-shutdown')
     resp = self._oauth2_request(
@@ -470,7 +470,7 @@ class SimpleAuthHandler(object):
         auth_info['access_token'],'oauth_token')
     data = json.loads(resp)
     if data['meta']['code'] != 200:
-      logging.error(data['meta']['errorDetail'])
+      logger.error(data['meta']['errorDetail'])
     return data['response'].get('user')
 
   def _get_linkedin_user_info(self, auth_info, key=None, secret=None):
@@ -486,7 +486,7 @@ class SimpleAuthHandler(object):
     LinkedIn OAuth 1.0a is deprecated. Use LinkedIn with OAuth 2.0
     """
     # TODO: remove LinkedIn OAuth 1.0a in the next release.
-    logging.warn('LinkedIn OAuth 1.0a is deprecated. '
+    logger.warn('LinkedIn OAuth 1.0a is deprecated. '
                  'Use LinkedIn with OAuth 2.0: '
                  'https://developer.linkedin.com/documents/authentication')
     token = oauth1.Token(key=auth_info['oauth_token'],
@@ -607,6 +607,6 @@ class SimpleAuthHandler(object):
     timeout = now - token_time > self.OAUTH2_CSRF_TOKEN_TIMEOUT
 
     if timeout:
-      logging.error("CSRF token timeout (issued at %d)", token_time)
+      logger.error("CSRF token timeout (issued at %d)", token_time)
 
     return not timeout

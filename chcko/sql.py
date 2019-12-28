@@ -12,6 +12,8 @@ from itertools import chain
 from chcko.hlp import normqs, db_mixin
 import chcko.auth as auth
 
+import threading
+
 from sqlalchemy.ext.declarative import as_declarative
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.ext.declarative.api import declared_attr
@@ -96,7 +98,7 @@ class Key:
         return list(chain(*self.strpth))
     def urlsafe(self):
         flat = ','.join(self._flat())
-        res = base64.urlsafe_b64encode(flat.encode()).decode()
+        res = base64.urlsafe_b64encode(flat.encode())
         return res
     def kind(self):
         return self.pth[-1][0].__tablename__
@@ -123,18 +125,15 @@ class Model(object):
             dbsession.rollback()
             nfound = dbsession.query(cls).filter(cls.id==id).one()
         return nfound
-    def parent(self):
-        return self.key.parent().get()
     @property
     def key(self):
         name = self.__class__.__table__.key
-        print(name)
         mdls = list(_pthcls.keys())
         try:
             iname = mdls.index(name)
             rpth = []
             c = self
-            while iname>=0:  # XXX avoid a loop
+            while iname>=0:
                 rpth += [c.id,mdls[iname]]
                 iname = iname - 1
                 if iname>=0:
@@ -173,6 +172,7 @@ class UserToken(Model):
         entity.put()
         return entity
 class User(Model):
+    fullname = C(String)
     pwhash = C(String)
     token_model = C(ForeignKey('UserToken.id'))
     current_student = C(ForeignKey('Student.id',use_alter=True))
@@ -260,12 +260,26 @@ class Index(Model):
     knd = C(Integer)
     level = C(Integer)
 
+
 meta.create_all()
+
+class Counter(object):
+    def __init__(self, value=0):
+        self.val = value
+        self.lock = threading.Lock()
+    def __call__(self):
+        with self.lock:
+            self.val += 1
+            return str(self.val)
+cntproblem = Counter(0)
+cntassignment = Counter(0)
+
 
 _cls = {x.__tablename__:x for x in [School,Period,Teacher,Class,Student,Problem,Assignment,Index,UserToken,User,Secret]}
 _pthcls = {'School':School, 'Period':Period, 'Teacher':Teacher, 'Class':Class, 'Student':Student, 'Problem':Problem}
 _inspect = inspect(engine)
 _probcols = [x['name'] for x in _inspect.get_columns('Problem')]
+_probkey = set("of created lang query_string nr".split())
 
 class Sql(db_mixin):
     def __init__(self):
@@ -288,35 +302,42 @@ class Sql(db_mixin):
     def filter_expression(self,ap,op,av):
         return ap+op+av
     def problem_create(self,student,**pkwargs):
-        return self.Problem(of=student.id, **{s: pkwargs[s] for s in _probcols if s in pkwargs})
+        params = {s: pkwargs[s] for s in _probcols if s in pkwargs}
+        probid = cntproblem()
+        return self.Problem(id=probid, of=student.id, **params)
     def _copy_to_new_parent(self, entity, oldparent, newparent):
         self.query(entity,[self.of(entity)==self.idof(oldparent)]).update(
             {'of':newparent.id},synchronize_session=False)
     def assign_to_student(self, studentkeyurlsafe, query_string, duedays):
         now = datetime.datetime.now()
         studentkey = self.Key(urlsafe=studentkeyurlsafe)
-        Assignment(of=studentkey.string_id(), query_string=normqs(query_string),
-                   due=now + datetime.timedelta(days=int(duedays))).put()
+        params = dict(of=studentkey.string_id(), query_string=normqs(query_string),
+                   due=now + datetime.timedelta(days=int(duedays)))
+        assid = cntassignment()
+        asgn = Assignment(id=assid, **params)
+        asgn.put()
 
     def allof(self,query):
-        return query
+        return query.all()
     def first(self,query):
         return query.first()
-    def of(self,entity):
-        return entity and entity.key or entity
+    def of(self,oe):
+        return oe.of
     def idof(self,obj):
-        return obj and obj.id or obj
+        return obj.id
     def nameof(self,obj):
-        obj.__class__.__tablename__
+        return obj.__class__.__tablename__
     def columnsof(self,obj):
         for x in _inspect.get_columns(self.nameof(obj)):
             yield x['name']
     def fieldsof(self,obj):
         return {clmnm: getattr(obj,clmnm) for clmnm in self.columnsof(obj)}
+    def add_to_set(self,problem,other):
+        problem.collection = other.id
 
     def add_student(self, studentpath=[None]*5, color=None, user=None):
         'defaults to myxxx for empty roles'
-        userkey = self.of(user)
+        userkey = user and self.idof(user) or None
         school_, period_, teacher_, class_, student_ = studentpath
         school = self.School.get_or_insert(
             school_ or 'myschool',
@@ -343,4 +364,6 @@ class Sql(db_mixin):
             stdnt.put()
         return stdnt
 
+    def user_name(self,user):
+        return user.fullname or user.id
 

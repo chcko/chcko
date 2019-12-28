@@ -67,7 +67,7 @@ and more precisely we will do with these functions:
     from numpy import dot, cross, array, allclose, transpose, finfo, double;
     from scipy.linalg import norm, solve;
     unit = lambda v: v/norm(v)
-    R90 = array([[0, 1], [-1, 0]])#rotate 90 degrees
+    R90 = array([[0, 1], [-1, 0]]) # rotate 90 degrees
     V = array
     eps = finfo(double).eps
 

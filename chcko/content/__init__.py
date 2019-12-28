@@ -20,7 +20,6 @@ See ``filtered_index`` for that.
 
 import re
 import datetime
-import logging
 
 from urllib.parse import parse_qsl
 from chcko.bottle import SimpleTemplate, StplParser, get_tpl, HTTPError
@@ -29,7 +28,8 @@ from chcko.hlp import (
         resolver,
         mklookup,
         counter,
-        author_folder
+        author_folder,
+        logger
 )
 
 from chcko.util import PageBase, Util
@@ -69,8 +69,8 @@ class Page(PageBase):
             while keyOK and keyOK.get().userkey != self.request.student.userkey:
                 keyOK = keyOK.parent()
             if not keyOK:
-                logging.warning(
-                    "%s not for %s", urlstring(self.problem.key), urlstring(self.request.student.key))
+                logger.warning(
+                    "%s not for %s", db.urlstring(self.problem.key), db.urlstring(self.request.student.key))
                 raise HTTPError(400,'no permission')
             self.problem_set = db.problem_set(self.problem)
         elif problemkey is None:  # XXX: Make deleting empty a cron job
@@ -107,7 +107,7 @@ class Page(PageBase):
                 self.problem = problem
                 self.current = self.problem
             else:
-                problem.collection = self.problem.key
+                db.add_to_set(problem,self.problem)
             if problem.points:
                 next(problems_cntr)
             # TODO: shouln't it be possible to define given() ... in the
@@ -123,7 +123,7 @@ class Page(PageBase):
                 ms += ' not in sync with database '
                 if self.current:
                     ms += self.current.query_string
-                logging.info(ms)
+                logger.info(ms)
                 raise HTTPError(400,ms)
             d = rsv.load()  # for the things not stored, like 'names'
             pkwargs = d.__dict__.copy()
@@ -189,7 +189,7 @@ class Page(PageBase):
                     tpl.execute(stdout, env)
                 except AttributeError:
                     c = self.current or self.problem
-                    logging.info(
+                    logger.info(
                         'data does not fit to template ' + str(c.given)if c else '')
                     if c:
                         c.key.delete()
@@ -203,7 +203,7 @@ class Page(PageBase):
             else:
                 if not self.problem_set:
                     self.problem_set = db.problem_set(self.problem)
-                problem_set_iter = self.problem_set
+                problem_set_iter = iter(self.problem_set)
                 self.current = self.problem
                 try:
                     prebase(_zip)
@@ -222,6 +222,8 @@ class Page(PageBase):
             SimpleTemplate.overrides = {}
             del stdout[:]  # the script functions will write into this
             tpl = get_tpl(layout, template_lookup=mklookup(self.request.lang))
+            problemurlsafe = self.problem and self.problem.key.urlsafe()
+            with_problems = next(problems_cntr) > 0
             env.update(
                 dict(
                     content=content,
@@ -229,8 +231,8 @@ class Page(PageBase):
                         withempty,
                         noempty),
                     problem=self.problem,
-                    problemkey=self.problem and self.problem.key.urlsafe(),
-                    with_problems=next(problems_cntr) > 0,
+                    problemkey=problemurlsafe,
+                    with_problems=with_problems,
                     request=self.request))
             tpl.execute(stdout, env)
             problems_cntr.close()
@@ -353,7 +355,7 @@ class Page(PageBase):
     @staticmethod
     def make_summary(p=None):
         '''
-        >>> p = db.Problem(inputids=list('abc'),
+        >>> p = db.Problem(id='someid1',inputids=list('abc'),
         ...         oks=[True,False,True],points=[2]*3,answers=['1','','1'])
         >>> f = lambda c:c
         >>> withempty,noempty = Page.make_summary(p)

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-import logging
 
 from chcko.db import db
 from chcko.util import PageBase

@@ -2,7 +2,6 @@
 
 from chcko.util import PageBase
 from chcko.db import db
-import logging
 
 class Page(PageBase):
 
