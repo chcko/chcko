@@ -4,6 +4,7 @@ import sys
 import os.path
 import importlib
 import string
+import datetime
 from itertools import chain
 
 from urllib.parse import parse_qsl
@@ -518,15 +519,26 @@ class db_mixin:
         return self.first(self.query(
             self.Problem,[self.Problem.query_string==query_string,
                       self.Problem.lang==lang,
-                      self.Problem.answer==None,
-                      self.ofof(self.Problem)==self.idof(student)]
-            ))
+                      self.Problem.answer==None], parent=self.idof(student)))
     def clear_student_problems(self,student):
-        self.delete(self.query(self.Problem,[self.ofof(self.Problem)==self.idof(student)]))
+        self.delete(self.query(self.Problem,parent=self.idof(student)))
+    def student_assignments(self,student):
+        return self.query(self.Assignment,parent=self.idof(student))
+    def del_stale_open_problems(self,student,age):
+        self.delete(self.query(self.Problem,[self.Problem.answered==None,
+                                         self.Problem.created<age],parent=self.idof(student)))
+        self.delete(self.query(self.Problem,[self.Problem.answersempty==True,
+                                         self.Problem.answered!=None],parent=self.idof(student)))
+    def done_assignment(self,assignm):
+        q = self.query(self.Problem, [self.ofof(self.Problem)==self.ofof(assignm),
+                                 self.Problem.query_string == normqs(assignm.query_string),
+                                 self.Problem.answered > assignm.created])
+        if q.count() > 0:
+            return True
+        else:
+            return False
     def clear_unanswered_problems(self):
         self.delete(self.query(self.Problem,[self.Problem.answers==None]))
-    def student_assignments(self,student):
-        return self.query(self.Assignment,[self.ofof(self.Assignment)==self.idof(student)])
     def assign_to_student(self, studentkeyurlsafe, query_string, duedays):
         studentkey = self.Key(urlsafe=studentkeyurlsafe)
         query_string=normqs(query_string)
@@ -536,11 +548,6 @@ class db_mixin:
                    ,query_string=query_string
                    ,due=due)
         assgn.put()
-    def del_stale_open_problems(self,student,age):
-        self.delete(self.query(self.Problem,[self.Problem.answered==None,
-                                         self.Problem.created<age,self.ofof(self.Problem)==self.idof(student)]))
-        self.delete(self.query(self.Problem,[self.Problem.answersempty==True,
-                                         self.Problem.answered!=None,self.ofof(self.Problem)==self.idof(student)]))
     def del_collection(self,problem):
         self.delete(self.query(self.Problem,[self.Problem.collection==self.idof(problem)]))
         self.delete(self.query(self.Problem,[self.idof(self.Problem)==self.idof(problem)]))
@@ -548,8 +555,8 @@ class db_mixin:
         self.copy_to_new_parent(self.Problem, oldstudent, self.request.student)
         self.copy_to_new_parent(self.Assignment, oldstudent, self.request.student)
     def copy_to_new_parent(self, anentity, oldparent, newparent):
-        for entry in self.allof(self.query(anentity,parent=oldparent.key)):
-            cpy = anentity.create(name=entry.key.string_id(), parent=newparent.key,
+        for entry in self.allof(self.query(anentity,parent=self.idof(oldparent))):
+            cpy = anentity.create(name=entry.key.string_id(), parent=self.idof(newparent),
                          **{k: v for k, v in entry.to_dict().items() if k in self.columnsof(anentity)})
             cpy.put()
 
@@ -630,20 +637,12 @@ class db_mixin:
         self.clear_assignments()
         self.clear_problems()
         self.clear_students()
-    def done_assignment(self,assignm):
-        q = self.query(self.Problem, [self.ofof(self.Problem)==self.idof(assignm),
-                                 self.Problem.query_string == normqs(assignm.query_string),
-                                 self.Problem.answered > assignm.created])
-        if q.count() > 0:
-            return True
-        else:
-            return False
     def assignable(self, teacher, usr):
         for akey in self.depth_1st(keys=[teacher.key], kinds='Teacher Class Student'.split(),
                               userkey=usr and self.idof(usr)):
             yield akey
     def assign_table(self,student, usr):
-        for e in self.depth_1st(keys=[student.key], models='Student Assignment'.split(),
+        for e in self.depth_1st(keys=[student.key], kinds='Student Assignment'.split(),
                            userkey=usr and self.idof(usr)):
             yield e
     def student_roles(self, usr):
@@ -676,6 +675,8 @@ class db_mixin:
                   ):
         ''' path entries are names or filters ([] for all)
         translated into record objects along the levels given by **kinds** depth-1st-wise.
+
+        Yields objects, not keys.
 
         '''
         modl = [getattr(self,name) for name in kinds]
@@ -711,7 +712,7 @@ class db_mixin:
                 ordr = self.Problem.answered
             elif 'created' in modliprops:
                 ordr = modli.created
-            allrecs = self.allof(self.query(modli,filt,ordr,parentkey))
+            allrecs = self.allof(self.query(modli,filt,ordr,parent=self.idof(parentobj)))
             for obj in allrecs:
                 k = obj.key
                 yield obj
@@ -881,8 +882,10 @@ class db_mixin:
                 timestamp = int(time.mktime(usrtkn.created.timetuple()))
                 return usr, timestamp
         return None, None
+    def user_email(self,usr):
+        return usr.key.string_id()
     def user_name(self,usr):
-        return usr.fullname or usr.name()
+        return usr.fullname or self.user_email(usr)
     def user_set_password(self, usr, password):
         usr.pwhash = auth.generate_password_hash(password)
     def user_create(self, email, password):

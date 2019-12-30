@@ -93,17 +93,17 @@ class Key:
         return self.pth[-1][1]
     def pairs(self):
         return self.strpth
-    def _flat(self):
+    def flat(self):
         return list(chain(*self.strpth))
     def urlsafe(self):
-        flat = ','.join(self._flat())
-        res = base64.urlsafe_b64encode(flat.encode()).strip(b'=').decode()
+        flt = ','.join(self.flat())
+        res = base64.urlsafe_b64encode(flt.encode()).strip(b'=').decode()
         return res
     def kind(self):
         return self.pth[-1][0].__tablename__
     def parent(self):
-        flat = self._flat()
-        parentflat = flat[:-2]
+        flt = self.flat()
+        parentflat = flt[:-2]
         return parentflat and Key(*parentflat) or None
 
 class _Counter(object):
@@ -295,7 +295,7 @@ class Sql(db_mixin):
 
     def query(self,entity,filt=None,ordr=None,parent=None):
         _filt = filt or []
-        q = DBSession().query(entity).filter(*((_filt+[self.ofof(entity)==parent.urlsafe()]) if parent else _filt))
+        q = DBSession().query(entity).filter(*((_filt+[self.ofof(entity)==parent]) if parent else _filt))
         if ordr:
             q = q.order_by(ordr)
         return q

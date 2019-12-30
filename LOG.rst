@@ -11,7 +11,10 @@ hlp.logger
 
 https://cloud.google.com/appengine/docs/standard/python3/testing-and-deploying-your-app
 
-chcko/conftest.py: ``from google.appengine.ext import testbed`` does not support Python3
+20191230
+========
+
+chcko/test/test_integration.py
 
 20191229
 ========

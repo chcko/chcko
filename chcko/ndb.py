@@ -1,7 +1,6 @@
 
 ##python_path()
 #os.environ.update({'DATASTORE_EMULATOR_HOST': 'localhost:8081'})
-import datetime
 
 from chcko.hlp import normqs, db_mixin
 import chcko.auth as auth
@@ -136,4 +135,7 @@ class Ndb(db_mixin):
     #        "WHERE answersempty = True AND answered != NULL AND ANCESTOR IS :1",
     #        self.request.student.key))
 
+
+    def keys_below(self,parent): #only used in testing, not availabe for sql
+        return ndb.Query(ancestor=parent.key).iter(keys_only=True)
 
