@@ -4,6 +4,8 @@ import sys
 import os.path
 import importlib
 import string
+from itertools import chain
+
 from urllib.parse import parse_qsl
 from chcko.bottle import SimpleTemplate
 from chcko.languages import langkindnum, langnumkind, kindint
@@ -507,6 +509,9 @@ class db_mixin:
                         path=path)
                 )
 
+    def problem_create(self,student,**pkwargs):
+        return self.Problem.create(parent=student.key,
+                  **{s: pkwargs[s] for s in self.columnsof(self.Problem) if s in pkwargs})
     def problem_set(self,problem):
         return self.allof(self.query(self.Problem,[self.Problem.collection==self.idof(problem)],self.Problem.nr))
     def problem_by_query_string(self,query_string,lang,student):
@@ -514,34 +519,76 @@ class db_mixin:
             self.Problem,[self.Problem.query_string==query_string,
                       self.Problem.lang==lang,
                       self.Problem.answer==None,
-                      self.of(self.Problem)==self.idof(student)]
+                      self.ofof(self.Problem)==self.idof(student)]
             ))
     def clear_student_problems(self,student):
-        self.delete(self.query(self.Problem,[self.of(self.Problem)==self.idof(student)]))
+        self.delete(self.query(self.Problem,[self.ofof(self.Problem)==self.idof(student)]))
     def clear_unanswered_problems(self):
         self.delete(self.query(self.Problem,[self.Problem.answers==None]))
     def student_assignments(self,student):
-        return self.query(self.Assignment,[self.of(self.Assignment)==self.idof(student)])
+        return self.query(self.Assignment,[self.ofof(self.Assignment)==self.idof(student)])
+    def assign_to_student(self, studentkeyurlsafe, query_string, duedays):
+        studentkey = self.Key(urlsafe=studentkeyurlsafe)
+        query_string=normqs(query_string)
+        now = datetime.datetime.now()
+        due=now+datetime.timedelta(days=int(duedays))
+        assgn = self.Assignment.create(parent=studentkey
+                   ,query_string=query_string
+                   ,due=due)
+        assgn.put()
     def del_stale_open_problems(self,student,age):
         self.delete(self.query(self.Problem,[self.Problem.answered==None,
-                                         self.Problem.created<age,self.of(self.Problem)==self.idof(student)]))
+                                         self.Problem.created<age,self.ofof(self.Problem)==self.idof(student)]))
         self.delete(self.query(self.Problem,[self.Problem.answersempty==True,
-                                         self.Problem.answered!=None,self.of(self.Problem)==self.idof(student)]))
+                                         self.Problem.answered!=None,self.ofof(self.Problem)==self.idof(student)]))
     def del_collection(self,problem):
         self.delete(self.query(self.Problem,[self.Problem.collection==self.idof(problem)]))
         self.delete(self.query(self.Problem,[self.idof(self.Problem)==self.idof(problem)]))
     def copy_to_new_student(self,oldparent, newparent):
-        self._copy_to_new_parent(self.Problem, oldstudent, self.request.student)
-        self._copy_to_new_parent(self.Assignment, oldstudent, self.request.student)
+        self.copy_to_new_parent(self.Problem, oldstudent, self.request.student)
+        self.copy_to_new_parent(self.Assignment, oldstudent, self.request.student)
+    def copy_to_new_parent(self, anentity, oldparent, newparent):
+        for entry in self.allof(self.query(anentity,parent=oldparent.key)):
+            cpy = anentity.create(name=entry.key.string_id(), parent=newparent.key,
+                         **{k: v for k, v in entry.to_dict().items() if k in self.columnsof(anentity)})
+            cpy.put()
+
+    def add_student(self, studentpath=[None]*5, color=None, usr=None):
+        userkey = usr and self.idof(usr) or None
+        school_, period_, teacher_, class_, student_ = studentpath
+        school = self.School.get_or_insert(
+            school_ or 'myschool',
+            userkey=userkey)
+        period = self.Period.get_or_insert(
+            period_ or 'myperiod',
+            parent=school.key,
+            userkey=userkey)
+        teacher = self.Teacher.get_or_insert(
+            teacher_ or 'myteacher',
+            parent=period.key,
+            userkey=userkey)
+        clss = self.Class.get_or_insert(
+            class_ or 'myclass',
+            parent=teacher.key,
+            userkey=userkey)
+        stdnt = self.Student.get_or_insert(
+            student_ or 'myself',
+            parent=clss.key,
+            userkey=userkey,
+            color=color or '#EEE')
+        if stdnt.userkey == userkey and (color and stdnt.color != color):
+            stdnt.color = color
+            stdnt.put()
+        return stdnt
 
     def key_from_path(self,x):
         return self.Key(*list(chain(*zip(problem_contexts[:len(x)], x))))
-    def from_urlsafe(urlsafe):
+    def from_urlsafe(self,urlsafe):
         return self.Key(urlsafe=urlsafe).get()
     def clear_index(self):
-        self.delete(self.Index.query())
+        self.delete(self.query(self.Index))
     def clear_problems(self):
-        self.delete(self.Problem.query())
+        self.delete(self.query(self.Problem))
     def problem_from_resolver(self, rsv, nr, student):
         '''create a problem from a resolver (see hlp.py)
         '''
@@ -574,32 +621,37 @@ class db_mixin:
         self.add_student()
     def clear_student_assignments(self,student):
         self.delete(self.student_assignments(student))
-    def clear_done_assignments(self, student, user):
-        for anobj in self.assign_table(student, user):
+    def clear_done_assignments(self, student, usr):
+        for anobj in self.assign_table(student, usr):
             if done_assignment(anobj):
                 anobj.key.delete()
+    def clear_all_data(self):
+        self.clear_index()
+        self.clear_assignments()
+        self.clear_problems()
+        self.clear_students()
     def done_assignment(self,assignm):
-        q = self.query(self.Problem, [self.of(self.Problem)==self.idof(assignm),
+        q = self.query(self.Problem, [self.ofof(self.Problem)==self.idof(assignm),
                                  self.Problem.query_string == normqs(assignm.query_string),
                                  self.Problem.answered > assignm.created])
         if q.count() > 0:
             return True
         else:
             return False
-    def assignable(self, teacher, user):
-        for akey in depth_1st(keys=[teacher.key], kinds='Teacher Class Student'.split(),
-                              userkey=user and self.idof(user)):
+    def assignable(self, teacher, usr):
+        for akey in self.depth_1st(keys=[teacher.key], kinds='Teacher Class Student'.split(),
+                              userkey=usr and self.idof(usr)):
             yield akey
-    def assign_table(student, user):
-        for e in depth_1st(keys=[student.key], models='Student Assignment'.split(),
-                           userkey=user and self.idof(user)):
+    def assign_table(self,student, usr):
+        for e in self.depth_1st(keys=[student.key], models='Student Assignment'.split(),
+                           userkey=usr and self.idof(usr)):
             yield e
-    def student_roles(self, user):
-        students = self.allof(self.query(self.Student,[self.Student.userkey==self.idof(user)]))
+    def student_roles(self, usr):
+        students = self.allof(self.query(self.Student,[self.Student.userkey==self.idof(usr)]))
         for student in students:
-            yield self.key_ownd_path(student, user)
-    def key_ownd_path(self, student, user):
-        userkey = user and self.idof(user)
+            yield self.key_ownd_path(student, usr)
+    def key_ownd_path(self, student, usr):
+        userkey = usr and self.idof(usr)
         skey = student.key
         key_ownd_list = [(skey, student.userkey == userkey)]
         parentkey = skey.parent()
@@ -625,26 +677,6 @@ class db_mixin:
         ''' path entries are names or filters ([] for all)
         translated into record objects along the levels given by **kinds** depth-1st-wise.
 
-        >>> from chcko.db import db
-        >>> from chcko.test.hlp import problems_for
-        >>> #del sys.modules['chcko.test.hlp']
-        >>> path = ['a', 'b', 'c', 'd', 'e']
-        >>> student = add_student(path, 'EEE')
-        >>> problems_for(student)
-        >>> lst = list(db.depth_1st(path+[[]]))
-        >>> db.nameof(list(db.depth_1st(path+[[('query_string','=','r.u')]]))[0])
-        'School'
-        >>> path = ['a', 'b', 'c', 'x', 'e']
-        >>> student1 = add_student(path, 'EEE')
-        >>> problems_for(student1)
-        >>> path = ['a','b','c',[],[],[('query_string','=','r.u')]]
-        >>> db.nameof(list(db.depth_1st(path))[0])
-        'School'
-        >>> db.nameof(list(db.depth_1st(path,keys=db.keys_to_omit(path)))[0])
-        'Class'
-        >>> list(db.depth_1st())
-        []
-
         '''
         modl = [getattr(self,name) for name in kinds]
         N = len(modl)
@@ -660,7 +692,7 @@ class db_mixin:
         modliprops = set(self.columnsof(modli))
         modliname = self.nameof(modli)
         parentkey = keys and keys[-1] or None
-        parentobj = parentkey.get()
+        parentobj = parentkey and parentkey.get() or None
         permission = permission or parentobj and parentobj.userkey == userkey
         if isinstance(pathi,str):
             k = self.Key(modliname, pathi, parent=parentkey)
@@ -669,7 +701,7 @@ class db_mixin:
                 yield obj
                 if i < N - 1:
                     keys.append(k)
-                    for e in depth_1st(path, keys, kinds, permission, userkey):
+                    for e in self.depth_1st(path, keys, kinds, permission, userkey):
                         yield e
                     del keys[-1]
         elif permission:
@@ -679,13 +711,13 @@ class db_mixin:
                 ordr = self.Problem.answered
             elif 'created' in modliprops:
                 ordr = modli.created
-            allrecs = self.allof(self.query(modli,parentkey,filt,ordr))
+            allrecs = self.allof(self.query(modli,filt,ordr,parentkey))
             for obj in allrecs:
                 k = obj.key
                 yield obj
                 if i < N - 1:
                     keys.append(k)
-                    for e in depth_1st(path, keys, kinds, permission):
+                    for e in self.depth_1st(path, keys, kinds, permission):
                         yield e
                     del keys[-1]
         # else:
@@ -768,9 +800,9 @@ class db_mixin:
 
         '''
         try:
-            user = request.user
+            usr = request.user
         except:
-            user = None
+            usr = None
         try:
           session = request.session
         except:
@@ -780,14 +812,14 @@ class db_mixin:
         color = request.get('color','')
         request.query_string = filter_student(request.query_string)
         if ''.join(studentpath) != '':
-            student = self.add_student(studentpath, color, user)
-            if student.userkey != self.idof(user):
+            student = self.add_student(studentpath, color, usr)
+            if student.userkey != self.idof(usr):
                 student = None
             # student role does not belong to user, so don't change current student
             else:
                 return 'message?msg=e'
-        elif user:
-            student = user.current_student and user.current_student.get()
+        elif usr:
+            student = usr.current_student and usr.current_student.get()
         else:
             studentkey_nouser = session and Session['studentkey_nouser']
             if studentkey_nouser:
@@ -796,15 +828,15 @@ class db_mixin:
                         urlsafe=studentkey_nouser).get()
                 except (TypeError, BadKeyError, AttributeError):
                     pass
-        if not student and user:
-            student = self.first(self.query(self.Student,[self.Student.userkey==self.idof(user)]))
+        if not student and usr:
+            student = self.first(self.query(self.Student,[self.Student.userkey==self.idof(usr)]))
         if not student:  # generate
             studentpath = auth.random_student_path(seed=request.remote_addr).split('-')
-            student = self.add_student(studentpath, color, user)
-        if user:
-            if user.current_student and (user.current_student.string_id() != self.idof(student)):
-                user.current_student = student.key
-                user.put()
+            student = self.add_student(studentpath, color, usr)
+        if usr:
+            if usr.current_student and (usr.current_student.string_id() != self.idof(student)):
+                usr.current_student = student.key
+                usr.put()
         elif session:
             session['studentkey_nouser'] = student.key.urlsafe()
         SimpleTemplate.defaults["contextcolor"] = student.color or '#EEE'
@@ -817,9 +849,9 @@ class db_mixin:
     def set_user(self,request):
         session = request.session
         userID = session and session['userID']
-        request.user = None
+        request.usr = None
         if userID:
-            request.user = self.Key(urlsafe=userID).get()
+            request.usr = self.Key(urlsafe=userID).get()
     def _stored_secret(self,name):
         ass = str(
             self.Secret.get_or_insert(
@@ -830,25 +862,38 @@ class db_mixin:
         return base64.urlsafe_b64decode(self._stored_secret('chcko.mail').encode())
     def send_mail(self, to, subject, message_text, creds, sender=auth.chcko_mail):
         auth.send_mail(to, subject, message_text, creds=self.stored_email_credential())
-    def user_timestamp_by_token(self, token, subject='auth'):
-        usertoken = self.User.token_model.selfmadekey(subject, token).get()
-        if usertoken:
-            user = self.Key(self.nameof(self.User), usertoken.email).get()
-            if user:
-                timestamp = int(time.mktime(usertoken.created.timetuple()))
-                return user, timestamp
+    def token_create(self, email):
+        email = email
+        token = auth.gen_salt()
+        key = self.token_key(token)
+        usrtkn = self.UserToken.create(key=key, email=email)
+        usrtkn.put()
+        return usrtkn
+    def token_key(self, token):
+        return self.Key(self.UserToken, token)
+    def token_validate(self,token):
+        return self.token_key(token).get() is not None
+    def user_timestamp_by_token(self, token):
+        usrtkn = self.token_key(token).get()
+        if usrtkn:
+            usr = self.Key(self.nameof(self.User), usrtkn.email).get()
+            if usr:
+                timestamp = int(time.mktime(usrtkn.created.timetuple()))
+                return usr, timestamp
         return None, None
-    def create_signup_token(self, email):
-        return UserToken.create(email, 'signup').token
-    def delete_signup_token(self, token):
-        UserToken.selfmadekey('signup', token).delete()
-    def create_user(self,email,password):
-        return User.create(email,password)
+    def user_name(self,usr):
+        return usr.fullname or usr.name()
+    def user_set_password(self, usr, password):
+        usr.pwhash = auth.generate_password_hash(password)
+    def user_create(self, email, password):
+        usr = self.user_by_login(email,password)
+        if not usr:
+            usr = self.User.get_or_insert(email, pwhash=auth.generate_password_hash(password))
+        return usr
     def user_by_login(self,email,password):
-        return User.by_login(email,password)
-    def validate_token(self,subject, token):
-        return UserToken.selfmadekey(subject=subject,
-                   token=token).get() is not None
-    def validate_signup_token(self, token):
-        return self.validate_token('signup', token)
+        usr = self.Key(self.User,email).get()
+        if usr:
+            if not auth.check_password_hash(usr.pwhash,password):
+                return None
+        return usr
 

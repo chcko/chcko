@@ -25,7 +25,7 @@ class Page(PageBase):
 
         if verification_type == 'v':
             # remove signup token to prevent users to come back with an old link
-            db.delete_signup_token(signup_token)
+            db.token_delete(signup_token)
             if not user.verified:
                 user.verified = True
                 user.put()

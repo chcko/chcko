@@ -354,16 +354,6 @@ class Page(PageBase):
 
     @staticmethod
     def make_summary(p=None):
-        '''
-        >>> p = db.Problem(id='someid1',inputids=list('abc'),
-        ...         oks=[True,False,True],points=[2]*3,answers=['1','','1'])
-        >>> f = lambda c:c
-        >>> withempty,noempty = Page.make_summary(p)
-        >>> sfmt = u"{oks}/{of}->{points}/{allpoints}"
-        >>> sfmt.format(**withempty)+u"  no empty:" + sfmt.format(**noempty)
-        u'2/3->4/6  no empty:2/2->4/4'
-
-        '''
         def smry(f):
             'used to increment a summary'
             try:

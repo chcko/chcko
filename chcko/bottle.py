@@ -73,7 +73,7 @@ if __name__ == '__main__':
 ###############################################################################
 
 
-import base64, cgi, email.utils, functools, hmac, imp, itertools, mimetypes,\
+import base64, cgi, email.utils, functools, hmac, itertools, mimetypes,\
         os, re, tempfile, threading, time, warnings, weakref, hashlib
 
 from types import FunctionType
@@ -2054,7 +2054,7 @@ class _ImportRedirect(object):
         """ Create a virtual package that redirects imports (see PEP 302). """
         self.name = name
         self.impmask = impmask
-        self.module = sys.modules.setdefault(name, imp.new_module(name))
+        self.module = sys.modules.setdefault(name, types.ModuleType(name))
         self.module.__dict__.update({
             '__file__': __file__,
             '__path__': [],

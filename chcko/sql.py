@@ -6,6 +6,7 @@
 #python_path()
 
 import datetime
+from time import monotonic_ns
 import base64
 from itertools import chain
 
@@ -48,6 +49,8 @@ class Client:
     def context(self):
         return Context()
 
+#pad64=lambda x: x+b"="*((4-len(x)%4)%4)
+pad64=lambda x: x+b"="*3
 class Key:
     '''A key is like a word in the sense that it is an address to the entity.
     It has more views, though
@@ -65,7 +68,9 @@ class Key:
     def __init__(self,*args,**kwargs):#Class[name],id,...,[parent=key]
         urlsafe = kwargs.pop('urlsafe',None)
         if urlsafe is not None:
-            args = base64.urlsafe_b64decode(urlsafe.encode()).decode().split(',')
+            if isinstance(urlsafe,str):
+                urlsafe = urlsafe.encode()
+            args = base64.urlsafe_b64decode(pad64(urlsafe)).decode().split(',')
         tblname = lambda x: isinstance(x,str) and x or x.__tablename__
         self.strpth = tuple((tblname(args[2*i]),args[2*i+1]) for i in range(len(args)//2))
         parnt = kwargs.pop('parent',None)
@@ -75,16 +80,10 @@ class Key:
     def __eq__(self, other):
         return self.strpth == other.strpth
     def _query(self):
-        jn = DBSession().query(self.pth[-1][0]).filter(self.pth[-1][0].id==self.pth[-1][1])
-        for tp,qry in reversed(self.pth[:-1]):
-            jn = jn.join(tp).filter(tp.id==qry)
-        return jn
+        thscls = self.pth[-1][0]
+        return DBSession().query(thscls).filter(thscls.urlkey==self.urlsafe())
     def get(self):
-        try:
-            res = self._query().one()
-            return res
-        except:
-            return None
+        return self._query().first()
     def delete(self):
         try:
             self._query().delete()
@@ -98,129 +97,128 @@ class Key:
         return list(chain(*self.strpth))
     def urlsafe(self):
         flat = ','.join(self._flat())
-        res = base64.urlsafe_b64encode(flat.encode())
+        res = base64.urlsafe_b64encode(flat.encode()).strip(b'=').decode()
         return res
     def kind(self):
         return self.pth[-1][0].__tablename__
     def parent(self):
         flat = self._flat()
-        return Key(*flat[:-2])
+        parentflat = flat[:-2]
+        return parentflat and Key(*parentflat) or None
+
+class _Counter(object):
+    def __init__(self, value=0):
+        self.val = value
+        self.lock = threading.Lock()
+    def __call__(self):
+        with self.lock:
+            self.val += 1
+            return str(self.val)
 
 @as_declarative(metadata=meta)
 class Model(object):
     def put(self):
         DBSession().add(self)
-    @classmethod
-    def get_or_insert(cls,id,*args,**kwargs):
-        found = DBSession().query(cls).filter(cls.id==id).first()
-        if found:
-            return found
-        nfound = cls(id=id,*args,**kwargs)
-        dbsession = DBSession()
-        dbsession.begin_nested()
-        try:
-            dbsession.add(nfound)
-            dbsession.commit()
-        except IntegrityError as e:
-            dbsession.rollback()
-            nfound = dbsession.query(cls).filter(cls.id==id).one()
-        return nfound
     @property
     def key(self):
-        name = self.__class__.__table__.key
-        mdls = list(_pthcls.keys())
-        try:
-            iname = mdls.index(name)
-            rpth = []
-            c = self
-            while iname>=0:
-                rpth += [c.id,mdls[iname]]
-                iname = iname - 1
-                if iname>=0:
-                    _c = _cls[mdls[iname]]
-                    c = DBSession().query(_c).filter(_c.id==c.of).first()
-                    if not c:
-                        break
-            flat = list(reversed(rpth))
-            res = Key(*flat)
-        except:
-            res = Key(name,self.id)
-        return res
+        thiskey = Key(urlsafe=self.urlkey)
+        return thiskey
+    @property
+    def parent(self):
+        return Key(urlsafe=self.urlkey).parent()
     @declared_attr
     def __tablename__(cls):
         return cls.__name__
     @declared_attr
     def __table_args__(cls):
         return {'extend_existing':True}
-    id=C(String,primary_key=True,autoincrement=False)
+    _cols={}
+    @classmethod
+    def cols(cls):
+        clsname = cls.__name__
+        if clsname not in cls._cols:
+            cls._cols[clsname] = [x['name'] for x in _inspect.get_columns(clsname)]
+        return cls._cols[clsname]
+    _cntr={}
+    @classmethod
+    def cnt_next(cls):
+        if cls.__name__ not in cls._cntr:
+            cls._cntr[cls.__name__] = _Counter(monotonic_ns())
+        return cls._cntr[cls.__name__]()
+    urlkey=C(String,primary_key=True,autoincrement=False)
+    id=C(String)
+    @classmethod
+    def create(cls,*args,**kwargs):
+        clsname = cls.__name__
+        id = None
+        if len(args) > 0:
+            id = args[0]
+        else:
+            id = kwargs.pop('id',None)
+        if id is None:
+            id = str(cls.cnt_next())
+        parent=kwargs.pop('parent',None)
+        if parent:
+            kwargs['ofkey'] = parent.urlsafe()
+        thiskey = kwargs.pop('key',None)
+        if thiskey is None:
+            thiskey = Key(clsname,id,parent=parent)
+        urlkey = isinstance(thiskey,str) and thiskey or thiskey.urlsafe()
+        cols = cls.cols()
+        rec = {s: kwargs[s] for s in cols if s in kwargs}
+        rec.update(dict(id=thiskey.string_id(),urlkey=urlkey))
+        return cls(**rec)
+    @classmethod
+    def get_or_insert(cls,name,*args,**kwargs):
+        acls = cls.create(id=name,*args,**kwargs)
+        dbsession = DBSession()
+        found = dbsession.query(cls).filter(cls.urlkey==acls.urlkey).first()
+        if found:
+            return found
+        dbsession.begin_nested()
+        try:
+            dbsession.add(acls)
+            dbsession.commit()
+        except IntegrityError as e:
+            dbsession.rollback()
+            acls = dbsession.query(cls).filter(cls.urlkey==acls.urlkey).one()
+        return acls
 
 class UserToken(Model):
-    subject = C(String,nullable=False)
-    token = C(String,nullable=False)
     email = C(String)
     created = C(DateTime,default=datetime.datetime.now)
     updated = C(DateTime,default=datetime.datetime.now)
-    @classmethod
-    def selfmadekey(cls, subject, token):
-        return Key(cls, '%s.%s' % (subject, token))
-    @classmethod
-    def create(cls, email, subject, token=None):
-        email = email
-        token = token or auth.gen_salt()
-        key = cls.selfmadekey(subject, token)
-        entity = cls(id=key.string_id(), email=email, subject=subject, token=token)
-        entity.put()
-        return entity
 class User(Model):
     fullname = C(String)
     pwhash = C(String)
-    token_model = C(ForeignKey('UserToken.id'))
-    current_student = C(ForeignKey('Student.id',use_alter=True))
-    def set_password(self, password):
-        self.pwhash = auth.generate_password_hash(password)
-    @classmethod
-    def create(cls, email, password):
-        user = cls.by_login(email,password)
-        if not user:
-            user = cls.get_or_insert(email, pwhash=auth.generate_password_hash(password))
-        return user
-    @classmethod
-    def by_login(cls,email,password):
-        user = Key(cls,email).get()
-        if user:
-            if not auth.check_password_hash(user.pwhash,password):
-                return None
-        return user
-    @hybrid_property
-    def email(self):
-        return self.id
-class Secret(Model):  # filled manually
+    token_model = C(ForeignKey('UserToken.urlkey'))
+    current_student = C(ForeignKey('Student.urlkey',use_alter=True))
+class Secret(Model):
     secret = C(String)
 
-
 class School(Model):
-    userkey = C(ForeignKey('User.id'))
+    userkey = C(ForeignKey('User.urlkey'))
     created = C(DateTime,default=datetime.datetime.now)
 class Period(Model):
-    userkey = C(ForeignKey('User.id'))
+    userkey = C(ForeignKey('User.urlkey'))
     created = C(DateTime,default=datetime.datetime.now)
-    of = C(ForeignKey('School.id'))
+    ofkey = C(ForeignKey('School.urlkey'))
 class Teacher(Model):
-    userkey = C(ForeignKey('User.id'))
+    userkey = C(ForeignKey('User.urlkey'))
     created = C(DateTime,default=datetime.datetime.now)
-    of = C(ForeignKey('Period.id'))
+    ofkey = C(ForeignKey('Period.urlkey'))
 class Class(Model):
-    userkey = C(ForeignKey('User.id'))
+    userkey = C(ForeignKey('User.urlkey'))
     created = C(DateTime,default=datetime.datetime.now)
-    of = C(ForeignKey('Teacher.id'))
+    ofkey = C(ForeignKey('Teacher.urlkey'))
 class Student(Model):
-    userkey = C(ForeignKey('User.id'))
+    userkey = C(ForeignKey('User.urlkey'))
     created = C(DateTime,default=datetime.datetime.now)
-    of = C(ForeignKey('Class.id'))
+    ofkey = C(ForeignKey('Class.urlkey'))
     color = C(String)
 class Problem(Model):
-    userkey = C(ForeignKey('User.id'))
-    of = C(ForeignKey('Student.id'))
+    userkey = C(ForeignKey('User.urlkey'))
+    ofkey = C(ForeignKey('Student.urlkey'))
     query_string = C(String)
     lang = C(String)
     # the numbers randomly chosen, in python dict format
@@ -228,7 +226,7 @@ class Problem(Model):
     created = C(DateTime,default=datetime.datetime.now)
     answered = C(DateTime)
     # links to a collection: 1-n, p.problem_set.get()!
-    collection = C(ForeignKey('Problem.id'))
+    collection = C(ForeignKey('Problem.urlkey'))
 
 
     # a list of names given to the questions (e.g '1','2')
@@ -249,9 +247,9 @@ class Problem(Model):
         return '/' + self.lang + '/content?' + self.query_string
 
 class Assignment(Model):
-    userkey = C(ForeignKey('User.id'))
+    userkey = C(ForeignKey('User.urlkey'))
     created = C(DateTime,default=datetime.datetime.now)
-    of = C(ForeignKey('Student.id'))
+    ofkey = C(ForeignKey('Student.urlkey'))
     query_string = C(String)
     due = C(DateTime)
 
@@ -263,107 +261,47 @@ class Index(Model):
 
 meta.create_all()
 
-class Counter(object):
-    def __init__(self, value=0):
-        self.val = value
-        self.lock = threading.Lock()
-    def __call__(self):
-        with self.lock:
-            self.val += 1
-            return str(self.val)
-cntproblem = Counter(0)
-cntassignment = Counter(0)
-
-
 _cls = {x.__tablename__:x for x in [School,Period,Teacher,Class,Student,Problem,Assignment,Index,UserToken,User,Secret]}
-_pthcls = {'School':School, 'Period':Period, 'Teacher':Teacher, 'Class':Class, 'Student':Student, 'Problem':Problem}
 _inspect = inspect(engine)
-_probcols = [x['name'] for x in _inspect.get_columns('Problem')]
-_probkey = set("of created lang query_string nr".split())
 
 class Sql(db_mixin):
     def __init__(self):
         self.dbclient = Client()
         self.Key = Key
+        self.models = _cls
         for k,v in _cls.items():
             setattr(self,k,v)
         self.init_db()
 
     def is_sql(self):
         return True
-    def query(self,entity,filt=None,ordr=None):
-        _filt = filt or []
-        q = DBSession().query(entity).filter(*_filt)
-        if ordr:
-            q = q.order_by(ordr)
-        return q
-    def delete(self,query):
-        query.delete()
-    def filter_expression(self,ap,op,av):
-        return ap+op+av
-    def problem_create(self,student,**pkwargs):
-        params = {s: pkwargs[s] for s in _probcols if s in pkwargs}
-        probid = cntproblem()
-        return self.Problem(id=probid, of=student.id, **params)
-    def _copy_to_new_parent(self, entity, oldparent, newparent):
-        self.query(entity,[self.of(entity)==self.idof(oldparent)]).update(
-            {'of':newparent.id},synchronize_session=False)
-    def assign_to_student(self, studentkeyurlsafe, query_string, duedays):
-        now = datetime.datetime.now()
-        studentkey = self.Key(urlsafe=studentkeyurlsafe)
-        params = dict(of=studentkey.string_id(), query_string=normqs(query_string),
-                   due=now + datetime.timedelta(days=int(duedays)))
-        assid = cntassignment()
-        asgn = Assignment(id=assid, **params)
-        asgn.put()
-
     def allof(self,query):
         return query.all()
     def first(self,query):
         return query.first()
-    def of(self,oe):
-        return oe.of
+    def ofof(self,oe):
+        return oe.ofkey
     def idof(self,obj):
-        return obj.id
-    def nameof(self,obj):
-        return obj.__class__.__tablename__
-    def columnsof(self,obj):
-        for x in _inspect.get_columns(self.nameof(obj)):
+        return obj.urlkey
+    def nameof(self,entity):
+        return entity.__tablename__
+    def columnsof(self,entity):
+        for x in _inspect.get_columns(self.nameof(entity)):
             yield x['name']
     def fieldsof(self,obj):
         return {clmnm: getattr(obj,clmnm) for clmnm in self.columnsof(obj)}
     def add_to_set(self,problem,other):
-        problem.collection = other.id
+        problem.collection = other.urlkey
 
-    def add_student(self, studentpath=[None]*5, color=None, user=None):
-        'defaults to myxxx for empty roles'
-        userkey = user and self.idof(user) or None
-        school_, period_, teacher_, class_, student_ = studentpath
-        school = self.School.get_or_insert(
-            school_ or 'myschool',
-            userkey=userkey)
-        period = self.Period.get_or_insert(
-            period_ or 'myperiod',
-            of=school.id,
-            userkey=userkey)
-        teacher = self.Teacher.get_or_insert(
-            teacher_ or 'myteacher',
-            of=period.id,
-            userkey=userkey)
-        clss = self.Class.get_or_insert(
-            class_ or 'myclass',
-            of=teacher.id,
-            userkey=userkey)
-        stdnt = self.Student.get_or_insert(
-            student_ or 'myself',
-            of=clss.id,
-            userkey=userkey,
-            color=color or '#EEE')
-        if stdnt.userkey == userkey and (color and stdnt.color != color):
-            stdnt.color = color
-            stdnt.put()
-        return stdnt
+    def query(self,entity,filt=None,ordr=None,parent=None):
+        _filt = filt or []
+        q = DBSession().query(entity).filter(*((_filt+[self.ofof(entity)==parent.urlsafe()]) if parent else _filt))
+        if ordr:
+            q = q.order_by(ordr)
+        return q
 
-    def user_name(self,user):
-        return user.fullname or user.id
+    def delete(self,query):
+        query.delete()
+    def filter_expression(self,ap,op,av):
+        return text(f'{ap}{op}"{av}"')
 

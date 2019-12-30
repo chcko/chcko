@@ -3,7 +3,6 @@ import random
 import math
 
 from chcko.hlp import Struct
-from chcko.test.hlp import check_test_answers
 
 __all__ = ['given', 'calc', 'names']
 

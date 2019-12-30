@@ -15,9 +15,9 @@ class Page(PageBase):
             return
 
         user = self.user
-        user.set_password(password)
+        user_set_password(user,password)
         user.put()
 
-        db.delete_signup_token(old_token)
+        db.token_delete(old_token)
 
         self.redirect('message?msg=d')

@@ -68,7 +68,9 @@ def db(request):
         db = chckodb.use(Sql())
     cntx=db.dbclient.context()
     #cntx.__enter__()
+    #cntx.__exit__(*sys.exc_info())
     with cntx:
+        db.clear_all_data()
         yield db
 
 

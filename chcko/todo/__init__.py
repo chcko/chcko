@@ -18,8 +18,8 @@ class Page(PageBase):
         return super().get_response()
 
     def post_response(self):
-        for studentID in self.request.get_all('assignee'):
-            db.assign_to_student(studentID,
+        for studentkeyurlsafe in self.request.get_all('assignee'):
+            db.assign_to_student(studentkeyurlsafe,
                               self.request.get('query_string'),
                               self.request.get('duedays'))
         return self.get_response()

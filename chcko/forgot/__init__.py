@@ -21,7 +21,7 @@ class Page(PageBase):
             return self.get_response()
 
         email = self.user.email
-        token = db.create_signup_token(email)
+        token = db.token_create(email)
 
         relative_url = 'verification?type=p&email={}&signup_token={}'.format(
             email,

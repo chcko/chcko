@@ -21,13 +21,13 @@ class Page(PageBase):
             self.redirect('message?msg=c')
             return
 
-        user = db.create_user(email,password)
+        user = db.user_create(email,password)
         if not user:
             self.redirect(
                 'message?msg=a&email={}'.format(email))
             return
 
-        token = db.create_signup_token(email)
+        token = db.token_create(email)
         relative_url = 'verification?type=v&email={}&signup_token={}'.format(
             email,
             token)
