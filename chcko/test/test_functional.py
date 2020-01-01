@@ -2,48 +2,29 @@
 
 import os
 import re
-from chcko import bottle
-from webtest import TestApp as TA
 import pytest
+from webtest import TestApp as TA
+from chcko import bottle
 from chcko.languages import languages
-from chcko.app import app
-
-def test_routing():
-    match = app.router.match(
-        bottle.request.blank('http://chcko.appspot.com'))
-    assert match[0].name == 'entry'
-    assert match[1:][1] == {}
-    match = app.router.match(
-        bottle.request.blank('http://chcko.appspot.com/'))
-    assert match[0].name == 'entry_'
-    assert match[1:][1] == {}
-    bl = bottle.request.blank('http://chcko.appspot.com/en')
-    assert bl.query_string == ''
-    match = app.router.match(bl)
-    assert match[0].name == 'entry_lang'
-    assert match[1:][1] == {'lang': 'en'}
-    bl = bottle.request.blank('http://chcko.appspot.com/en/?b')
-    match = app.router.match(bl)
-    assert match[0].name == 'entry_lang_'
-    assert match[1:][1] == {'lang': 'en'}
-    bl = bottle.request.blank(
-        'http://chcko.appspot.com/en/content?r.a=2&r.b=3')
-    match = app.router.match(bl)
-    assert match[0].name == 'page'
-    assert match[1:][1] == {'lang': 'en', 'pagename': 'content'}
-    assert bl.query_string == 'r.a=2&r.b=3'
-    assert int(bl.params['r.a']) == 2 and int(bl.params['r.b']) == 3
-    bl = bottle.request.blank(
-        'http://chcko.appspot.com/en/test/sub?r.a=2&r.b=3')
-    match = app.router.match(bl)
-    assert match[0].name == 'page'
-    assert match[1:][1] == {'lang': 'en', 'pagename': 'test/sub'}
-    assert bl.query_string == 'r.a=2&r.b=3'
-    assert int(bl.params['r.a']) == 2 and int(bl.params['r.b']) == 3
+from chcko.hlp import problem_contexts
 
 @pytest.fixture(scope='module')
-def chapp(request):
+def chapp(request,db):
+    from chcko.app import app
     return TA(app)
+
+@pytest.mark.parametrize("path",[
+    ''
+    ,'/'
+    ,'/en'
+    ,'/de'
+    ,'/en/?r.b'
+    ,'/de?r.b'
+    ,'/de/content?r.b'
+    ,'/en/content/?r.a=2&r.b=3'
+])
+def test_paths(chapp,path):
+    chapp.get(path)
 
 # see
 # http://stackoverflow.com/questions/12538808/pytest-2-3-adding-teardowns-within-the-class
@@ -63,30 +44,31 @@ class TestRunthrough(object):
     def _store(cls, name, value):
         setattr(cls, name, value)
 
-    def _signup(self,chapp):
+    def _signup(self,chapp,pw=u'tpassword'):
         self._store('resp', chapp.get('/en/signup'))
         assert 'POST' == self.resp.form.method
         # self.resp.showbrowser()
         self.resp.form[u'email'] = u'temail@email.com'
-        self.resp.form[u'password'] = u'tpassword'
-        self.resp.form[u'confirmp'] = u'tpassword'
+        self.resp.form[u'password'] = pw
+        self.resp.form[u'confirmp'] = pw
         self.resp.form[u'name'] = u'tname'
         self.resp.form[u'lastname'] = u'tlastname'
-        r = self.resp.form.submit()
+        r = self.resp.form.submit(expect_errors=True)
         self._store('resp', r.follow())
 
     def test_default_lang(self,chapp):
         r = chapp.get('/')
+        assert r.status == '200 OK'
         assert 'problems' in r #engish index page
 
     def test_wrong_lang(self,chapp):
-        r = chapp.get('/wrong')
+        r = chapp.get('/wrong',expect_errors=True)
         assert '302' in r.status
         self._store('resp', r.follow())
         assert url_lang(self.resp.request.url) in languages
 
     def test_wrong_page(self,chapp):
-        r = chapp.get('/en/wrong')
+        r = chapp.get('/en/wrong',expect_errors=True)
         assert '302' in r.status
         self._store('resp', r.follow())
         assert url_lang(self.resp.request.url) in languages
@@ -108,12 +90,12 @@ class TestRunthrough(object):
         # self.resp.showbrowser()
 
     def test_registersame(self,chapp):
-        self._signup(chapp)
+        self._signup(chapp,pw='different')
         assert 'msg=a' in self.resp.request.url
 
     def test_anonymous(self):
         self._store('resp', self.resp.goto('/en/edits'))
-        for p in db.problem_contexts[:-1]:
+        for p in problem_contexts[:-1]:
             self.resp.form[p] = 'tst'
         # later we will check access permission
         self._store('resp', self.resp.form.submit())
@@ -127,7 +109,7 @@ class TestRunthrough(object):
     def test_forgot(self,chapp):
         self._store('resp', chapp.get('/en/forgot'))
         assert 'POST' == self.resp.form.method
-        self.resp.form[u'email'] = u'temail'
+        self.resp.form[u'Email'] = u'temail'
         r = self.resp.form.submit()
         assert '302' in r.status
         r = r.follow()
@@ -167,9 +149,9 @@ class TestRunthrough(object):
         curx = cur.xpath('//div[contains(text(),"School")]/text()')
         self._store('curs', curx[1].strip())
         self._store('resp', self.resp.goto('/en/edits'))
-        for p in db.problem_contexts[:-1]:
+        for p in problem_contexts[:-1]:
             self.resp.form[p] = 'tst'
-        self.resp.form[db.problem_contexts[-2]] = 'U'
+        self.resp.form[problem_contexts[-2]] = 'U'
         self.resp.form['color'] = '#BBB'
         self._store('resp', self.resp.form.submit())
         assert 'edits' in self.resp.request.url

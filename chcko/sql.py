@@ -239,10 +239,11 @@ class Problem(Model):
     answers = C(PickleType)#C(ARRAY(String))
     nr = C(Integer)  # needed to restore order
 
-    @hybrid_property
-    def answersempty(self):
-        return ''.join(self.answers)==''
-    @hybrid_property
+    concatanswers=C(String) #concat duplicate of answers
+    #a separate Answers table would be an alternative:
+    #https://stackoverflow.com/questions/23360666/sqlalchemy-filter-query-by-pickletype-contents
+
+    @property
     def link(self):
         return '/' + self.lang + '/content?' + self.query_string
 

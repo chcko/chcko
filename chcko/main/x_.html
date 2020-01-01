@@ -9,7 +9,7 @@
         style="text-align:center"
         %end
         >
-        %if user is None and page=='contexts':
+        %if request.user is None and page=='contexts':
             <p> &nbsp;</p>
         %else:
             <p><a href="/{{request.lang}}/{{page}}">{{txt}}</a></p>
@@ -19,8 +19,8 @@
 
     <div class="header" style="background-color:{{contextcolor}}">
 
-    %if user:
-        %for key2prnt,is_users in db.key_ownd_path(request.student,user):
+    %if request.user:
+        %for key2prnt,is_users in db.key_ownd_path(request.student,request.user):
         <div class="grid_2">
             %if key2prnt.kind()=='Student':
             <ul id="nav">
@@ -30,7 +30,7 @@
                 <a href="/{{request.lang}}/{{request.pagename}}?{{! qs(db.urlstring(key2prnt)) }}">
                     {{key2prnt.string_id()}} </a>
                 <ul style="text-align:right">
-                    %for key_ownd_list in db.student_roles(user):
+                    %for key_ownd_list in db.student_roles(request.user):
                     %studentkey = key_ownd_list[-1][0]
                     <li><a href="/{{request.lang}}/{{request.pagename}}?{{! qs(db.urlstring(studentkey)) }}">
                         %cntxt = [not ownd and '<em>'+an.string_id()+'</em>' or an.string_id() for an,ownd in key_ownd_list]
@@ -76,15 +76,15 @@
 % if not defined('footer'):
 % def footer():
     
-    % if user:
-    % social = hasattr(user,'link')
+    % if request.user:
+    % social = hasattr(request.user,'link')
 
     <div class="footer" style="border-top:double;background-color:{{contextcolor}}">
     <div class="grid_10">
         %if social:
-        <a href="{{ user.link }}" target="_blank" rel="nofollow">
+        <a href="{{ request.user.link }}" target="_blank" rel="nofollow">
         %end
-        {{ db.user_name(user) }}
+        {{ db.user_name(request.user) }}
         %if social:
         </a>
         %end
@@ -152,8 +152,8 @@
 
 % if not defined('title'):
 % def title():
-    % if user:
-        {{db.user_name(user)}}
+    % if request.user:
+        {{db.user_name(request.user)}}
     % else:
         ChCkO
 mamchecker
@@ -185,7 +185,7 @@ mamchecker
     end
     %>
 
-    % if user:
+    % if request.user:
     <style>
     ul#nav {
         display: inline;

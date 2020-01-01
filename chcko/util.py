@@ -10,6 +10,7 @@ from sympy import Poly, latex
 from sympy.abc import x
 from urllib.parse import parse_qsl
 
+from chcko import bottle
 from chcko.bottle import SimpleTemplate, template
 
 from chcko.hlp import listable, mklookup, counter, logger
@@ -115,15 +116,11 @@ class Util:
 class PageBase:
     def __init__(self, request):
         self.request = request
-        self.session = request.session
-        self.user = request.user
         self.util = Util(self.request)
         SimpleTemplate.defaults.update(self.request.params)
         SimpleTemplate.defaults.update({
             'self': self,
-            'session': self.session,
             'request': self.request,
-            'user': self.user,
             'util': self.util,
             'kinda': langkindnum[self.request.lang],
             'numkind': langnumkind[self.request.lang],
@@ -132,17 +129,12 @@ class PageBase:
             'logger': logger
         })
         self.params = self.request.params
-    def set_user(email,password):
-        self.user = self.request.user = db.user_by_login(email,password)
-        set_student(self.request,self.user,self.session)
     def get_response(self):
-        return template(
-            self.request.pagename,
-            self.params,
-            template_lookup=mklookup(
-                self.request.lang))
+        res = template(self.request.pagename, self.params,
+                template_lookup=mklookup(self.request.lang))
+        return res
     def redirect(self, afterlang):
-        return bottle.redirect('/{}/{}'.format(self.request.lang,afterlang))
+        bottle.redirect('/{}/{}'.format(self.request.lang,afterlang))
 
 def user_required(handler):
     """

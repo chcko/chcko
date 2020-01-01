@@ -57,12 +57,11 @@ class Page(PageBase):
             if self.problem:  # else it was deleted
                 if not isinstance(self.problem,db.Problem):
                     raise HTTPError(404, "No such problem")
-                self.request.query_string = self.problem.query_string
         else:  # get existing unanswered if query_string is same
             self.problem = db.problem_by_query_string(
                 self.request.query_string,
                 self.request.lang,
-                self.request.student.key)
+                self.request.student)
 
         if self.problem:
             keyOK = self.problem.key.parent()
@@ -78,7 +77,7 @@ class Page(PageBase):
             # timedelta to have the same problem after returning from a
             # followed link
             age = datetime.datetime.now() - datetime.timedelta(days=1)
-            db.del_stale_open_problems(student,age)
+            db.del_stale_open_problems(self.request.student,age)
 
     def load_content(self
                      , layout='content'
@@ -321,7 +320,8 @@ class Page(PageBase):
 
     def get_response(self):
         self._get_problem()
-        return self.load_content()
+        res = self.load_content()
+        return res
 
     def check_answers(self, problem):
         'compare answer to result'
@@ -329,7 +329,7 @@ class Page(PageBase):
         d = rsv.load()
         problem.answered = datetime.datetime.now()
         if problem.results:
-            problem.answers = [self.request.forms.get(q,'') for q in problem.inputids]
+            db.set_answer(problem,[self.request.forms.get(q,'') for q in problem.inputids])
             na = d.norm(problem.answers)
             problem.oks = d.equal(na, problem.results)
         problem.put()
@@ -347,7 +347,7 @@ class Page(PageBase):
                 withempty.__iadd__(sw)
                 noempty.__iadd__(sn)
             if withempty.counted > 0:
-                self.problem.answers = [Util.summary(withempty, noempty)]
+                db.set_answer(self.problem.answers,[Util.summary(withempty, noempty)])
                 # else cleaning empty answers would remove this
             self.check_answers(self.problem)
         return self.load_content()

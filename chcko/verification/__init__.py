@@ -6,12 +6,12 @@ from chcko.db import db
 class Page(PageBase):
 
     def get_response(self):
-        signup_token = self.request.get('signup_token')
-        verification_type = self.request.get('type')
+        signup_token = self.request.forms.get('signup_token')
+        verification_type = self.request.forms.get('type')
 
         user = None
         try:
-            user, _ = db.user_timestamp_by_token(signup_token, 'signup')
+            user = db.user_by_token(signup_token)
         except:
             pass
 

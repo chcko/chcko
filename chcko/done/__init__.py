@@ -90,11 +90,10 @@ class Page(PageBase):
 
     def __init__(self, request):
         super().__init__(request)
-        self.done_table = lambda: db.depth_1st(
-            *prepare(
-                self.request.query_string,
-                self.request.student.key,
-                self.user and db.idof(self.user)))
+        qs = self.request.query_string,
+        skey = self.request.student.key,
+        userkey = self.request.user and db.idof(self.request.user)
+        self.done_table = lambda: db.depth_1st(*prepare(qs,skey,userkey))
 
     def post_response(self):
         for urlsafe in self.request.forms.getall('deletee'):

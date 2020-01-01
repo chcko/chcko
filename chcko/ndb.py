@@ -59,7 +59,7 @@ class Problem(Base):
     # standard formatted from input
     answers = ndb.StringProperty(repeated=True)
     nr = ndb.IntegerProperty()  # needed to restore order
-    answersempty = ndb.ComputedProperty(lambda self: ''.join(self.answers) == '')
+    concatanswers = ndb.StringProperty() #concat duplicate of answers (set_answer)
     link = ndb.ComputedProperty(lambda self: '/'+self.lang+'/content?'+self.query_string)
 
 
@@ -132,7 +132,7 @@ class Ndb(db_mixin):
     #        age,
     #        self.request.student.key))
     #    self.delete(Problem.gql(
-    #        "WHERE answersempty = True AND answered != NULL AND ANCESTOR IS :1",
+    #        "WHERE concatanswers = '' AND answered != NULL AND ANCESTOR IS :1",
     #        self.request.student.key))
 
 

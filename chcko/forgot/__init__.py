@@ -9,18 +9,18 @@ class Page(PageBase):
 
     def __init__(self, request):
         super().__init__(request)
-        self.email = self.request.get('email','')
-        self.params = {'email': email, 'not_found': False}
+        self.email = self.request.forms.get('Email','')
+        self.params = {'email': self.email, 'not_found': False}
 
     def post_response(self):
-        if not self.user:
+        if not self.request.user:
             self.params = {
                 'email': self.email,
                 'not_found': True
             }
             return self.get_response()
 
-        email = self.user.email
+        email = self.request.user.email
         token = db.token_create(email)
 
         relative_url = 'verification?type=p&email={}&signup_token={}'.format(

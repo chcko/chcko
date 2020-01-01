@@ -1,17 +1,11 @@
 bottle
-bottle-oauthlib
 bottle-session
-
-#oauth2 #for simpleauth.py
-#webapp2==3.0.0b1
-#urlfetch
 
 #for email: https://github.com/gsuitedevs/python-samples/blob/master/gmail/quickstart/requirements.txt
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
 
-#fireo #planned
 grpcio
 google-cloud-ndb
 google-cloud-storage

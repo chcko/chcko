@@ -11,15 +11,15 @@ class Page(PageBase):
     def __init__(self, _request):
         super().__init__(_request)
         self.assign_table = lambda: db.assign_table(
-            self.request.student, self.user)
+            self.request.student, self.request.user)
 
     def get_response(self):
-        db.clear_done_assignments(self.request.student, self.user)
+        db.clear_done_assignments(self.request.student, self.request.user)
         return super().get_response()
 
     def post_response(self):
-        for studentkeyurlsafe in self.request.get_all('assignee'):
+        for studentkeyurlsafe in self.request.forms.getall('assignee'):
             db.assign_to_student(studentkeyurlsafe,
-                              self.request.get('query_string'),
-                              self.request.get('duedays'))
+                              self.request.forms.get('query_string'),
+                              self.request.forms.get('duedays'))
         return self.get_response()

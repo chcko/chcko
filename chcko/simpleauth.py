@@ -123,7 +123,7 @@ class SimpleAuthHandler(object):
   # 'state' param during authorization phase to guard agains
   # cross-site-request-forgery
   #
-  # CSRF protection assumes there's self.session method on the handler
+  # CSRF protection assumes there's self.request.session method on the handler
   # instance. See BaseRequestHandler in example/handlers.py for sample usage.
   OAUTH2_CSRF_STATE = False
   OAUTH2_CSRF_STATE_PARAM = 'csrf'

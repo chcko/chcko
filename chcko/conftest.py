@@ -70,8 +70,6 @@ def db(request):
     #cntx.__enter__()
     #cntx.__exit__(*sys.exc_info())
     with cntx:
-        db.clear_all_data()
         yield db
-
 
 #import chcko.app

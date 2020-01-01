@@ -5,6 +5,7 @@ import os
 import os.path
 
 from chcko import bottle
+from chcko.bottle import HTTPError
 import bottle_session as bs
 app = bottle.app()
 try:
@@ -19,30 +20,9 @@ def python_path():
         sys.path.insert(0, local_dir)
 python_path()
 
-from chcko.hlp import import_module, PAGES, is_standard_server, mklookup
+from chcko.hlp import import_module
 from chcko.languages import langnumkind
 from chcko.db import db
-
-from oauthlib import oauth2
-class OAuth2_ResourceValidator(oauth2.RequestValidator):
-    def validate_bearer_token(self, token, subject, request):
-        if not token:
-            return False
-        try:
-            request.user, _ = db.user_timestamp_by_token(token, subject)
-        except:
-            return False
-        return True
-from bottle_oauthlib.oauth2 import BottleOAuth2
-app.auth = BottleOAuth2(app)
-app.auth.initialize(
-    oauth2.ResourceEndpoint(
-        default_token='Bearer',
-        token_types={
-            'Bearer': oauth2.BearerToken(OAuth2_ResourceValidator())
-        }
-    )
-)
 
 def find_lang(session):
     lang = None
@@ -55,13 +35,14 @@ def find_lang(session):
         if langs:
             langs = langs.split(',')
         else:
-            langs = []
-        #langs = ['en-US', 'en;q=0.8']
+            langs = ['en-US', 'en;q=0.8', 'de']
         accepted = set([x.split(';q=')[0].split('-')[0] for x in langs])
-        #accepted = set(['en'])
         candidates = accepted & db.available_langs
         if candidates:
-            lang = list(candidates)[0]
+            if 'en' in candidates:
+                lang = 'en'
+            else:
+                lang = list(candidates)[0]
         else:
             lang = 'en'
     return lang
@@ -75,29 +56,28 @@ def find_pagename(session,lang):
     if pagename is None:
         if lang not in langnumkind:
             pagename = lang
+            lang = 'en'
         else:
             pagename = 'content'
-    if pagename not in PAGES:
-        pagename = 'content'
-    return pagename
+    return lang,pagename
 
 @bottle.hook('before_request')
 def trailing_slash():
     bottle.request.environ['PATH_INFO'] = bottle.request.environ['PATH_INFO'].rstrip('/')
 
-@bottle.route('/')
-def entry(session):
+@bottle.route('/',method=['GET','POST'])
+def nopath(session):
     lang = find_lang(session)
-    pagename = find_pagename(session,lang)
-    bottle.redirect('/'+lang+'/'+pagename)
+    lang,pagename = find_pagename(session,lang)
+    return fullpath(session,lang,pagename)
 
-@bottle.route('/lang')
-def lang(session,lang):
-    pagename = find_pagename(session,lang)
-    bottle.redirect('/'+lang+'/'+pagename)
+@bottle.route('/<lang>',method=['GET','POST'])
+def langonly(session,lang):
+    lang,pagename = find_pagename(session,lang)
+    return fullpath(session,lang,pagename)
 
-@bottle.route('/<lang>/<pagename>',method=['get','post'])
-def pagename(session,lang,pagename):
+@bottle.route('/<lang>/<pagename>',method=['GET','POST'])
+def fullpath(session,lang,pagename):
     bottle.request.session = session
     bottle.request.lang = lang
     bottle.request.pagename = pagename
@@ -108,13 +88,11 @@ def pagename(session,lang,pagename):
     try:
         m = import_module(pagename)
         page = m.Page(bottle.request)
-        if bottle.request.route.method == 'get':
+        if bottle.request.route.method == 'GET':
             return page.get_response()
         else:
             return page.post_response()
     except (ImportError, AttributeError, IOError, NameError) as e:
-        if not is_standard_server:
-            raise
         bottle.redirect('/'+lang)
 
 @bottle.route('/<lang>/logout')

@@ -519,7 +519,7 @@ class db_mixin:
         return self.first(self.query(
             self.Problem,[self.Problem.query_string==query_string,
                       self.Problem.lang==lang,
-                      self.Problem.answer==None], parent=self.idof(student)))
+                      self.Problem.answers==None], parent=self.idof(student)))
     def clear_student_problems(self,student):
         self.delete(self.query(self.Problem,parent=self.idof(student)))
     def student_assignments(self,student):
@@ -527,7 +527,7 @@ class db_mixin:
     def del_stale_open_problems(self,student,age):
         self.delete(self.query(self.Problem,[self.Problem.answered==None,
                                          self.Problem.created<age],parent=self.idof(student)))
-        self.delete(self.query(self.Problem,[self.Problem.answersempty==True,
+        self.delete(self.query(self.Problem,[self.Problem.concatanswers=='',
                                          self.Problem.answered!=None],parent=self.idof(student)))
     def done_assignment(self,assignm):
         q = self.query(self.Problem, [self.ofof(self.Problem)==self.ofof(assignm),
@@ -805,7 +805,7 @@ class db_mixin:
         except:
             usr = None
         try:
-          session = request.session
+            session = request.session
         except:
             session = None
         student = None
@@ -822,7 +822,7 @@ class db_mixin:
         elif usr:
             student = usr.current_student and usr.current_student.get()
         else:
-            studentkey_nouser = session and Session['studentkey_nouser']
+            studentkey_nouser = session.get('studentkey_nouser',None)
             if studentkey_nouser:
                 try:
                     student = Key(
@@ -846,13 +846,14 @@ class db_mixin:
         except:
             pass
 
-
     def set_user(self,request):
         session = request.session
-        userID = session and session['userID']
-        request.usr = None
+        userID = session.get('userID',None)
         if userID:
-            request.usr = self.Key(urlsafe=userID).get()
+            request.user = self.Key(urlsafe=userID).get()
+        else:
+            request.user = None
+
     def _stored_secret(self,name):
         ass = str(
             self.Secret.get_or_insert(
@@ -874,29 +875,31 @@ class db_mixin:
         return self.Key(self.UserToken, token)
     def token_validate(self,token):
         return self.token_key(token).get() is not None
-    def user_timestamp_by_token(self, token):
+    def user_by_token(self, token):
         usrtkn = self.token_key(token).get()
+        usr = None
         if usrtkn:
-            usr = self.Key(self.nameof(self.User), usrtkn.email).get()
-            if usr:
-                timestamp = int(time.mktime(usrtkn.created.timetuple()))
-                return usr, timestamp
-        return None, None
+            usr = self.Key(self.User, usrtkn.email).get()
+        return usr
     def user_email(self,usr):
         return usr.key.string_id()
     def user_name(self,usr):
         return usr.fullname or self.user_email(usr)
     def user_set_password(self, usr, password):
         usr.pwhash = auth.generate_password_hash(password)
-    def user_create(self, email, password):
+    def user_create(self, email, password, fullname):
         usr = self.user_by_login(email,password)
         if not usr:
-            usr = self.User.get_or_insert(email, pwhash=auth.generate_password_hash(password))
+            usr = self.User.get_or_insert(email, pwhash=auth.generate_password_hash(password), fullname=fullname)
         return usr
     def user_by_login(self,email,password):
         usr = self.Key(self.User,email).get()
         if usr:
             if not auth.check_password_hash(usr.pwhash,password):
-                return None
+                raise ValueError("User exists and has different password")
         return usr
+    def set_answer(self,problem,answers):
+        problem.answers = answers
+        problem.concatanswers = ''.join(answers)
+
 
