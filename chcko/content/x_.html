@@ -80,11 +80,11 @@
 
     % if not problem.answered and request.user:
         % teacher = request.student.key.parent().parent().get()
-        % if teacher.userkey == db.idof(request.user):
+        % if teacher.userkey == db.idof(request.user): #self assignment is possible
             <form action="/{{request.lang}}/todo" method="post">
                 % fieldset = False
                 % for ee in db.assignable(teacher,request.user):
-                    % e = e.key
+                    % e = ee.key
                     % kind = e.kind()
                     % if kind =='Class':
                         % if fieldset:

@@ -3,15 +3,11 @@
 import sys
 import os
 import os.path
+from traceback import print_exc
 
 from chcko import bottle
 from chcko.bottle import HTTPError
-import bottle_session as bs
 app = bottle.app()
-try:
-    app.install(bs.SessionPlugin(cookie_name='chcko',cookie_lifetime=bs.MAX_TTL))
-except:
-    pass
 
 def python_path():
     d = os.path.dirname
@@ -24,12 +20,8 @@ from chcko.hlp import import_module
 from chcko.languages import langnumkind
 from chcko.db import db
 
-def find_lang(session):
-    lang = None
-    try:
-        lang = session['lang']
-    except:
-        pass
+def find_lang():
+    lang = bottle.request.get_cookie('chckolang')
     if lang is None:
         langs = bottle.request.headers.get('Accept-Language')
         if langs:
@@ -47,12 +39,8 @@ def find_lang(session):
             lang = 'en'
     return lang
 
-def find_pagename(session,lang):
-    pagename = None
-    try:
-        pagename = session['pagename']
-    except:
-        pass
+def find_pagename(lang):
+    pagename = bottle.request.get_cookie('chckolastpage')
     if pagename is None:
         if lang not in langnumkind:
             pagename = lang
@@ -66,46 +54,51 @@ def trailing_slash():
     bottle.request.environ['PATH_INFO'] = bottle.request.environ['PATH_INFO'].rstrip('/')
 
 @bottle.route('/',method=['GET','POST'])
-def nopath(session):
-    lang = find_lang(session)
-    lang,pagename = find_pagename(session,lang)
-    return fullpath(session,lang,pagename)
+def nopath():
+    lang = find_lang()
+    lang,pagename = find_pagename(lang)
+    return fullpath(lang,pagename)
 
 @bottle.route('/<lang>',method=['GET','POST'])
-def langonly(session,lang):
-    lang,pagename = find_pagename(session,lang)
-    return fullpath(session,lang,pagename)
-
-@bottle.route('/<lang>/<pagename>',method=['GET','POST'])
-def fullpath(session,lang,pagename):
-    bottle.request.session = session
-    bottle.request.lang = lang
-    bottle.request.pagename = pagename
-    db.set_user(bottle.request)
-    errormsg = db.set_student(bottle.request)
-    if errormsg is not None:
-        bottle.redirect('/'+lang+'/'+errormsg)
-    try:
-        m = import_module(pagename)
-        page = m.Page(bottle.request)
-        if bottle.request.route.method == 'GET':
-            return page.get_response()
-        else:
-            return page.post_response()
-    except (ImportError, AttributeError, IOError, NameError) as e:
-        bottle.redirect('/'+lang)
+def langonly(lang):
+    lang,pagename = find_pagename(lang)
+    return fullpath(lang,pagename)
 
 @bottle.route('/<lang>/logout')
-def logout(session):
-    session.destroy()
-    bottle.redirect('/lang')
+def logout(lang):
+    t = bottle.request.get_cookie('chckousertoken')
+    if t:
+        db.token_delete(t)
+        bottle.response.delete_cookie('chckousertoken')
+    bottle.redirect(f'/{lang}/content')
+
+@bottle.route('/<lang>/<pagename>',method=['GET','POST'])
+def fullpath(lang,pagename):
+    bottle.request.lang = lang
+    bottle.request.pagename = pagename
+    db.set_user(bottle.request,bottle.response)
+    errormsg = db.set_student(bottle.request,bottle.response)
+    if errormsg is not None:
+        bottle.redirect(f'/{lang}/{errormsg}')
+    try:
+        m = import_module(pagename)
+        page = m.Page()
+        if bottle.request.route.method == 'GET':
+            respns = page.get_response()
+        else:
+            respns = page.post_response()
+        return respns
+    except (ImportError, AttributeError, IOError, NameError) as e:
+        print_exc()
+        #TODO: logging
+        bottle.redirect(f'/{lang}')
 
 @bottle.route('/<lang>/auth/<provider>')
-def auth(session,provider):
+def auth(provider):
     pass
 
 @bottle.route('/<lang>/auth/<provider>/callback')
-def auth_callback(session,provider):
+def auth_callback(provider):
     pass
 
 if __name__ == "__main__":

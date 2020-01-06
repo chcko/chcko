@@ -59,8 +59,8 @@ def test_get_or_insert(cdb):
     assert ut2.key==ut1.key
 
 def test_token(cdb):
-    ut = cdb.token_create('email1')
-    assert len(ut.key.string_id())>10
+    token = cdb.token_create('email1')
+    assert len(token)>10
 
 def test_user(cdb):
     u1= cdb.user_create('email2','password2','fn')

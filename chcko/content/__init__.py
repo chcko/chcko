@@ -41,25 +41,27 @@ re_id = re.compile(r"^[^\d\W]\w*\.[^\d\W]\w*$", re.UNICODE)
 class Page(PageBase):
     'Entry points are ``get_response`` and ``post_response``.'
 
-    def __init__(self, request):
-        super().__init__(request)
+    def __init__(self):
+        super().__init__()
         self.problem = None
         self.problem_set = None
+        self.query_string = self.request.query_string #as the latter cannot be written
 
     def _get_problem(self, problemkey=None):
         '''init the problem from database if it exists
         '''
-        urlsafe = problemkey or self.request.query_string.startswith(
-            'key=') and self.request.query_string[4:]
+        urlsafe = problemkey or self.query_string.startswith(
+            'key=') and self.query_string[4:]
 
         if urlsafe:
             self.problem = db.from_urlsafe(urlsafe)
             if self.problem:  # else it was deleted
                 if not isinstance(self.problem,db.Problem):
                     raise HTTPError(404, "No such problem")
+                self.query_string = self.problem.query_string
         else:  # get existing unanswered if query_string is same
             self.problem = db.problem_by_query_string(
-                self.request.query_string,
+                self.query_string,
                 self.request.lang,
                 self.request.student)
 
@@ -90,13 +92,13 @@ class Page(PageBase):
 
         '''
 
-        tplid = self.check_query(self.request.query_string)
+        tplid = self.tpl_from_qs()
         _chain = []
         withempty, noempty = self.make_summary()
         nrs = counter()
         problems_cntr = counter()
         SimpleTemplate.overrides = {}
-        problem_set_iter = None
+        problem_set_iter = [None]
 
         def _new(rsv):
             nr = next(nrs)
@@ -142,7 +144,7 @@ class Page(PageBase):
                 SimpleTemplate.overrides.update(pkwargs)
                 _chain[-1] = SimpleTemplate.overrides.copy()
             try:
-                self.current = next(problem_set_iter)
+                self.current = next(problem_set_iter[0])
             except StopIteration:
                 self.current = None
 
@@ -173,12 +175,12 @@ class Page(PageBase):
                 del _chain[:]
                 env.clear()
                 env.update({
-                    'query_string': self.request.query_string,
+                    'query_string': self.query_string,
                     'lang': self.request.lang,
                     'scripts': {}})
                 cleanup = None
                 if '\n' in tplid:
-                    cleanup = lookup(self.request.query_string, to_do)
+                    cleanup = lookup(self.query_string, to_do)
                     try: next(cleanup)
                     except StopIteration:pass
                 tpl = get_tpl(
@@ -200,9 +202,9 @@ class Page(PageBase):
             if not self.problem:
                 prebase(_new)
             else:
-                if not self.problem_set:
+                if len(self.problem_set):
                     self.problem_set = db.problem_set(self.problem)
-                problem_set_iter = iter(self.problem_set)
+                problem_set_iter[0] = iter(self.problem_set)
                 self.current = self.problem
                 try:
                     prebase(_zip)
@@ -239,54 +241,12 @@ class Page(PageBase):
         else:
             return content
 
-    @staticmethod
-    def check_query(qs):
-        '''makes a simple template out of URL request
-
-        >>> qs = 'auth.id1'
-        >>> Page.check_query(qs)
-        'auth.id1'
-        >>> qs = 'auth.id1=1'
-        >>> Page.check_query(qs)
-        'auth.id1'
-        >>> qs = 'auth.id1=3&text.id2=2'
-        >>> Page.check_query(qs) .startswith('<div')
-        True
-        >>> qs = 'auth.id1&auth.id2'
-        >>> Page.check_query(qs).startswith('<div')
-        True
-        >>> qs = 'auth.id1&auth.id2=2'
-        >>> Page.check_query(qs).startswith('<div')
-        True
-        >>> qs = 'auth.t3=3'
-        >>> Page.check_query(qs).startswith('<div')
-        True
-        >>> qs = 'auth'
-        >>> Page.check_query(qs)
-        Traceback (most recent call last):
-            ...
-        HTTPError: ...
-        >>> qs = 'level=2&kind=1&path=Maths&link=r'
-        >>> Page.check_query(qs)
-        [('level', '2'), ('kind', '1'), ('path', 'Maths'), ('link', 'r')]
-        >>> qs = 'level.x=2&todo.tst=3'
-        >>> Page.check_query(qs)
-        Traceback (most recent call last):
-            ...
-        HTTPError: ...
-        >>> qs = '%r.a'
-        >>> Page.check_query(qs)
-        Traceback (most recent call last):
-            ...
-        HTTPError: ...
-
-        '''
-
+    def tpl_from_qs(self):
         codemarkers = set(StplParser.default_syntax) - set([' '])
-        if set(qs) & codemarkers:
+        if set(self.query_string) & codemarkers:
             raise HTTPError(400,'Wrong characters in query.')
 
-        qparsed = parse_qsl(qs, True)
+        qparsed = parse_qsl(self.query_string, True)
 
         if not qparsed:
             return qparsed

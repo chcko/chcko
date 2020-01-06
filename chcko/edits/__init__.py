@@ -24,11 +24,7 @@ class Page(PageBase):
                 # no student any more, redirect to get/generate a new one
                 if choice == '1':  # change
                     self.redirect(
-                        "message?msg=h&oldname={}&newname={}".format(
-                            oldname,
-                            newname))
+                        f'message?msg=h&oldname={oldname}&newname={newname}')
                 elif choice == '2':  # delete
-                    self.redirect(
-                        "message?msg=g&studentname={}".format(oldname))
-                return
+                    self.redirect(f'message?msg=g&studentname={oldname}')
         return self.get_response()

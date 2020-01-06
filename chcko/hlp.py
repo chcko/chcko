@@ -8,7 +8,7 @@ import datetime
 from itertools import chain
 
 from urllib.parse import parse_qsl
-from chcko.bottle import SimpleTemplate
+from chcko.bottle import SimpleTemplate, response
 from chcko.languages import langkindnum, langnumkind, kindint
 
 try:
@@ -23,7 +23,7 @@ from sympy import sstr, Rational as R, S, E
 
 import logging
 import os.path
-logger = logging.getLogger('chchko')
+logger = logging.getLogger('chcko')
 logger.setLevel(logging.INFO)
 fh = logging.FileHandler(os.path.join(os.path.dirname(__file__),'chcko.log'))
 fh.setLevel(logging.INFO)
@@ -500,6 +500,7 @@ class db_mixin:
     def init_db(self):
         from chcko import initdb
         self.available_langs = initdb.available_langs
+        self.student_contexts = student_contexts
         with self.dbclient.context():
             self.clear_students()
             initdb.populate_index(
@@ -516,10 +517,11 @@ class db_mixin:
     def problem_set(self,problem):
         return self.allof(self.query(self.Problem,[self.Problem.collection==self.idof(problem)],self.Problem.nr))
     def problem_by_query_string(self,query_string,lang,student):
-        return self.first(self.query(
+        res = self.first(self.query(
             self.Problem,[self.Problem.query_string==query_string,
                       self.Problem.lang==lang,
                       self.Problem.answers==None], parent=self.idof(student)))
+        return res
     def clear_student_problems(self,student):
         self.delete(self.query(self.Problem,parent=self.idof(student)))
     def student_assignments(self,student):
@@ -552,16 +554,17 @@ class db_mixin:
         self.delete(self.query(self.Problem,[self.Problem.collection==self.idof(problem)]))
         self.delete(self.query(self.Problem,[self.idof(self.Problem)==self.idof(problem)]))
     def copy_to_new_student(self,oldparent, newparent):
-        self.copy_to_new_parent(self.Problem, oldstudent, self.request.student)
-        self.copy_to_new_parent(self.Assignment, oldstudent, self.request.student)
+        self.copy_to_new_parent(self.Problem, oldparent, newparent)
+        self.copy_to_new_parent(self.Assignment, oldparent, newparent)
     def copy_to_new_parent(self, anentity, oldparent, newparent):
+        clms = self.columnsof(anentity)
         for entry in self.allof(self.query(anentity,parent=self.idof(oldparent))):
-            cpy = anentity.create(name=entry.key.string_id(), parent=self.idof(newparent),
-                         **{k: v for k, v in entry.to_dict().items() if k in self.columnsof(anentity)})
+            cpy = anentity.create(name=entry.key.string_id(), parent=newparent.key,
+                         **{k: v for k, v in self.itemsof(entry) if k in clms})
             cpy.put()
 
-    def add_student(self, studentpath=[None]*5, color=None, usr=None):
-        userkey = usr and self.idof(usr) or None
+    def add_student(self, studentpath=[None]*5, user=None, color=None):
+        userkey = user and self.idof(user) or None
         school_, period_, teacher_, class_, student_ = studentpath
         school = self.School.get_or_insert(
             school_ or 'myschool',
@@ -630,7 +633,7 @@ class db_mixin:
         self.delete(self.student_assignments(student))
     def clear_done_assignments(self, student, usr):
         for anobj in self.assign_table(student, usr):
-            if done_assignment(anobj):
+            if self.done_assignment(anobj):
                 anobj.key.delete()
     def clear_all_data(self):
         self.clear_index()
@@ -770,20 +773,20 @@ class db_mixin:
     def table_entry(self, e):
         'what of entity e is used to render html tables'
         if isinstance(e, self.Problem) and e.answered:
-            if self.problem_set(e).count():
+            if len(self.problem_set(e)):
                 return [datefmt(e.answered), e.answers]
             else:
                 return [datefmt(e.answered), e.oks, e.answers, e.results]
         elif isinstance(e, self.Student):
-            return ['', '', '', '', self.idof(e)]
+            return ['', '', '', '', e.id]
         elif isinstance(e, self.Class):
-            return ['', '', '', self.idof(e)]
+            return ['', '', '', e.id]
         elif isinstance(e, self.Teacher):
-            return ['', '', self.idof(e)]
+            return ['', '', e.id]
         elif isinstance(e, self.Period):
-            return ['', self.idof(e)]
+            return ['', e.id]
         elif isinstance(e, self.School):
-            return [self.idof(e)]
+            return [e.id]
         elif isinstance(e, self.Assignment):
             now = datetime.datetime.now()
             overdue = now > e.due
@@ -791,68 +794,65 @@ class db_mixin:
         # elif e is None:
         #    return ['no such object or no permission']
         return []
-    def set_student(self,request):
+    def set_student(self,request,response):
         '''There is always a student role
 
         - There is a student role per client without user
         - There are more student roles for a user with one being current
 
-        Else a redirect string for a message is returned.
+        None or a redirect string for a message is returned.
 
         '''
         try:
             usr = request.user
         except:
             usr = None
-        try:
-            session = request.session
-        except:
-            session = None
         student = None
-        studentpath = [request.get(x,'') for x in student_contexts]
-        color = request.get('color','')
+        studentpath = [request.params.get(x,'') for x in student_contexts]
+        color = request.params.get('color','')
         request.query_string = filter_student(request.query_string)
         if ''.join(studentpath) != '':
-            student = self.add_student(studentpath, color, usr)
+            student = self.add_student(studentpath, usr, color)
             if student.userkey != self.idof(usr):
+                # student role does not belong to user, so don't change current student
                 student = None
-            # student role does not belong to user, so don't change current student
-            else:
                 return 'message?msg=e'
         elif usr:
-            student = usr.current_student and usr.current_student.get()
-        else:
-            studentkey_nouser = session.get('studentkey_nouser',None)
-            if studentkey_nouser:
-                try:
-                    student = Key(
-                        urlsafe=studentkey_nouser).get()
-                except (TypeError, BadKeyError, AttributeError):
-                    pass
+            student = self.current_student(usr)
+        if not student:
+            chckostudenturlsafe = request.get_cookie('chckostudenturlsafe')
+            if chckostudenturlsafe:
+                student = self.from_urlsafe(chckostudenturlsafe)
+                if usr:
+                    if student.userkey != self.idof(usr):
+                        student = None
+                        ## don't convert student to new user when changing user
+                        #    student.userkey = self.idof(usr)
+                        #    student.put()
         if not student and usr:
             student = self.first(self.query(self.Student,[self.Student.userkey==self.idof(usr)]))
         if not student:  # generate
             studentpath = auth.random_student_path(seed=request.remote_addr).split('-')
-            student = self.add_student(studentpath, color, usr)
-        if usr:
-            if usr.current_student and (usr.current_student.string_id() != self.idof(student)):
-                usr.current_student = student.key
+            student = self.add_student(studentpath, usr, color)
+        if usr and student:
+            if not usr.current_student or (usr.current_student != self.idof(student)):
+                usr.current_student = self.idof(student)
                 usr.put()
-        elif session:
-            session['studentkey_nouser'] = student.key.urlsafe()
-        SimpleTemplate.defaults["contextcolor"] = student.color or '#EEE'
-        try:
+        if student:
+            response.set_cookie('chckostudenturlsafe',student.key.urlsafe())
+            SimpleTemplate.defaults["contextcolor"] = student.color or '#EEE'
             request.student = student
-        except:
-            pass
 
-    def set_user(self,request):
-        session = request.session
-        userID = session.get('userID',None)
-        if userID:
-            request.user = self.Key(urlsafe=userID).get()
+    def set_user(self,request,response):
+        chckousertoken = request.get_cookie('chckousertoken')
+        if chckousertoken:
+            request.user = self.user_by_token(chckousertoken)
         else:
-            request.user = None
+            try:
+                tkn = request.forms.get('token')
+                request.user = self.user_by_token(tkn)
+            except:
+                request.user = None
 
     def _stored_secret(self,name):
         ass = str(
@@ -864,19 +864,20 @@ class db_mixin:
         return base64.urlsafe_b64decode(self._stored_secret('chcko.mail').encode())
     def send_mail(self, to, subject, message_text, creds, sender=auth.chcko_mail):
         auth.send_mail(to, subject, message_text, creds=self.stored_email_credential())
+    def token_delete(self, token):
+        self.token_key(token).delete()
     def token_create(self, email):
-        email = email
         token = auth.gen_salt()
         key = self.token_key(token)
         usrtkn = self.UserToken.create(key=key, email=email)
         usrtkn.put()
-        return usrtkn
+        return token
     def token_key(self, token):
         return self.Key(self.UserToken, token)
     def token_validate(self,token):
         return self.token_key(token).get() is not None
     def user_by_token(self, token):
-        usrtkn = self.token_key(token).get()
+        usrtkn = token and self.token_key(token).get()
         usr = None
         if usrtkn:
             usr = self.Key(self.User, usrtkn.email).get()
@@ -887,6 +888,7 @@ class db_mixin:
         return usr.fullname or self.user_email(usr)
     def user_set_password(self, usr, password):
         usr.pwhash = auth.generate_password_hash(password)
+        usr.put()
     def user_create(self, email, password, fullname):
         usr = self.user_by_login(email,password)
         if not usr:

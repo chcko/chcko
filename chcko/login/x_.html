@@ -1,23 +1,17 @@
-% if failed:
-
-<strong>{{tfail}}</strong> {{tcheckagain}}
-
-% end
-
 <script>
-    function validate() {
-        var email = document.login.email.value;
-        if (email == "") {
-            alert("{{temail}}");
-            return false;
-        }
-        var password = document.login.password.value;
-        if (password == "") {
-            alert("{{tpassword}}");
-            return false;
-        }
-        return true;
+function validate() {
+    var email = document.login.email.value;
+    if (email == "") {
+        alert("{{temail}}");
+        return false;
     }
+    var password = document.login.password.value;
+    if (password == "") {
+        alert("{{tpassword}}");
+        return false;
+    }
+    return true;
+}
 </script>
 
 <form method="POST" name=login onsubmit='return validate()'>

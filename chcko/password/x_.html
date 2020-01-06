@@ -9,7 +9,7 @@
         if (confirmp == "") {
             alert("{{tconfirm}}");
             return false;
-        } else if(confirmp != document.pwd.password.value){
+        } else if(confirmp != password){
             alert("{{tnopasswordmatch}}"); 
             return false; 
         }
@@ -26,7 +26,7 @@
     <input type="password" name="password" /><br>
     <label for="confirmp">{{tconfirm}}*</label>
     <input type="password" name="confirmp" />
-    <input type="hidden" name="t" value="{{ defined('token') and token or ''}}" />
+    <input type="hidden" name="token" value="{{ defined('token') and token or ''}}" />
     <input type="submit" value="{{ tupdate }}" />
 </form>
 

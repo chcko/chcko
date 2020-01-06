@@ -1,7 +1,6 @@
 <script>
     function validate() {
-        var email = document.forgot.email.value;
-        if (email == "") {
+        if (document.forgot.email.value == "") {
             alert("{{temail}}");
             return false;
         }
@@ -17,7 +16,7 @@
 
 <form method="POST" name="forgot" onsubmit="return validate()">
     <label for="email">{{temail}}*</label>
-	<input type="email" value="{{ email }}" name="Email"/>
+	<input type="email" value="{{ email }}" name="email"/>
     <input type="submit" value="{{tsend}}"/>
 </form>
 

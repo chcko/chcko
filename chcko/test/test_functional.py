@@ -109,7 +109,7 @@ class TestRunthrough(object):
     def test_forgot(self,chapp):
         self._store('resp', chapp.get('/en/forgot'))
         assert 'POST' == self.resp.form.method
-        self.resp.form[u'Email'] = u'temail'
+        self.resp.form[u'email'] = u'temail@email.com'
         r = self.resp.form.submit()
         assert '302' in r.status
         r = r.follow()
@@ -128,13 +128,13 @@ class TestRunthrough(object):
         self._store('resp', chapp.get('/en/login'))
         assert 'POST' == self.resp.form.method
         # self.resp.showbrowser()
-        self.resp.form[u'email'] = u'temail'
+        self.resp.form[u'email'] = u'temail@email.com'
         self.resp.form[u'password'] = u'tpassword'
         r = self.resp.form.submit()
         self._store('resp', r.follow())
         # self.resp.showbrowser()
         assert '/todo' in self.resp.request.url
-        assert 'logout' in self.resp
+        assert 'Logout' in self.resp
 
     def test_password(self):
         self._store('resp', self.resp.goto('/en/password'))
@@ -151,8 +151,9 @@ class TestRunthrough(object):
         self._store('resp', self.resp.goto('/en/edits'))
         for p in problem_contexts[:-1]:
             self.resp.form[p] = 'tst'
-        self.resp.form[problem_contexts[-2]] = 'U'
+        self.resp.form[problem_contexts[-2]] = 'U' #U belongs to teacher/class=tst/tst
         self.resp.form['color'] = '#BBB'
+        self._store('resp', self.resp.form.submit())
         self._store('resp', self.resp.form.submit())
         assert 'edits' in self.resp.request.url
         assert 'tst' in self.resp
@@ -160,6 +161,9 @@ class TestRunthrough(object):
 
     def test_registered_exercise(self):
         self._store('resp', self.resp.goto('/en/?r.bu'))
+        #only one form is expected,
+        #because this student and the teacher have different users
+        #(the teacher has no user. see test_anonymous above)
         self.resp.form[u'0000_0000'] = u'x'
         self._store('resp', self.resp.form.submit())
         assert '0P' in self.resp
@@ -317,4 +321,4 @@ class TestRunthrough(object):
         self._store('resp', self.resp.goto('/en/done?tst&*&*'))
         curx = self.resp.lxml
         u_student = curx.xpath('//td[contains(text(),"tst")]/text()')
-        assert len(u_student) == 1
+        assert len(u_student) == 4

@@ -4,7 +4,7 @@ import re
 import datetime
 from urllib.parse import parse_qsl
 from chcko.db import db
-from chcko.hlp import last
+from chcko.hlp import last, problem_contexts
 from chcko.util import PageBase
 
 
@@ -66,7 +66,7 @@ def prepare(
                 filters.append((name, op, value))
         return filters
     #qs = ''
-    PC = db.problem_contexts
+    PC = problem_contexts
     # q=query, qq=*->[], qqf=filter->gae filter (name,op,value)
     q = filter(None, [k.strip() for k, v in parse_qsl(qs, True)])
     qq = [[] if x == '*' else x for x in q]
@@ -88,15 +88,15 @@ def prepare(
 
 class Page(PageBase):
 
-    def __init__(self, request):
-        super().__init__(request)
-        qs = self.request.query_string,
-        skey = self.request.student.key,
+    def __init__(self):
+        super().__init__()
+        qs = self.request.query_string
+        skey = self.request.student.key
         userkey = self.request.user and db.idof(self.request.user)
         self.done_table = lambda: db.depth_1st(*prepare(qs,skey,userkey))
 
     def post_response(self):
         for urlsafe in self.request.forms.getall('deletee'):
-            k = db.from_urlsafe(urlsafe)
+            k = db.Key(urlsafe=urlsafe)
             k.delete()
         return self.get_response()

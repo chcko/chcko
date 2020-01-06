@@ -15,23 +15,17 @@ class Page(PageBase):
 
         if not email or not password:
             self.redirect('message?msg=f')
-            return
 
         if not password or password != self.request.forms.get('confirmp'):
             self.redirect('message?msg=c')
-            return
 
         try:
             user = db.user_create(email,password,fullname=f"{name} {lastname}")
         except ValueError:
-            self.redirect(
-                'message?msg=a&email={}'.format(email))
-            return
+            self.redirect(f'message?msg=a&email={email}')
 
         token = db.token_create(email)
-        relative_url = 'verification?type=v&email={}&signup_token={}'.format(
-            email,
-            token)
+        relative_url = 'verification?type=v&email={email}&token={token}'
 
         if is_standard_server:
             confirmation_url = self.request.application_url + \

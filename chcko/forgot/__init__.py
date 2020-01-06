@@ -7,39 +7,30 @@ from chcko.db import db
 
 class Page(PageBase):
 
-    def __init__(self, request):
-        super().__init__(request)
-        self.email = self.request.forms.get('Email','')
-        self.params = {'email': self.email, 'not_found': False}
+    def __init__(self):
+        super().__init__()
+        self.email = self.request.forms.get('email','')
+        self.user = db.Key(db.User,self.email).get()
+        self.not_found = self.user == None
+        self.request.params.update({
+            'email': self.email,
+            'not_found': self.not_found
+        })
 
     def post_response(self):
-        if not self.request.user:
-            self.params = {
-                'email': self.email,
-                'not_found': True
-            }
-            return self.get_response()
+        if self.not_found:
+            self.redirect(f'signup?email={self.email}')
 
-        email = self.request.user.email
-        token = db.token_create(email)
+        token = db.token_create(self.email)
+        relative_url = f'verification?type=p&email={self.email}&token={token}'
 
-        relative_url = 'verification?type=p&email={}&signup_token={}'.format(
-            email,
-            token)
-
-        email = ''
-        try:
-            email = user.email_address
-        except:
-            logger.warning('!! no email for password change !!')
-
-        if is_standard_server and email:
-            confirmation_url = self.request.application_url + \
-                '/' + self.request.lang + '/' + relative_url
+        if is_standard_server:
+            domain = self.request.application_url
+            confirmation_url = f'{domain}/{self.request.lang}/{relative_url}'
             logger.info(confirmation_url)
             m = import_module('forgot.' + self.request.lang)
             db.send_mail(
-                email,
+                self.email,
                 m.subject,
                 m.body %
                 confirmation_url)

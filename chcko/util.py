@@ -114,13 +114,15 @@ class Util:
 
 
 class PageBase:
-    def __init__(self, request):
-        self.request = request
+    def __init__(self):
+        self.request = bottle.request
+        self.response = bottle.response
         self.util = Util(self.request)
         SimpleTemplate.defaults.update(self.request.params)
         SimpleTemplate.defaults.update({
             'self': self,
             'request': self.request,
+            'response': self.response,
             'util': self.util,
             'kinda': langkindnum[self.request.lang],
             'numkind': langnumkind[self.request.lang],
@@ -128,23 +130,19 @@ class PageBase:
             'db': db,
             'logger': logger
         })
-        self.params = self.request.params
     def get_response(self):
-        res = template(self.request.pagename, self.params,
+        res = template(self.request.pagename,**self.request.params,
                 template_lookup=mklookup(self.request.lang))
         return res
     def redirect(self, afterlang):
-        bottle.redirect('/{}/{}'.format(self.request.lang,afterlang))
+        bottle.redirect(f'/{self.request.lang}/{afterlang}')
+    def renew_token(self,token):
+        db.token_delete(token)
+        self.response.set_cookie('chckousertoken',db.token_create(db.user_email(self.request.user)))
 
 def user_required(handler):
-    """
-    Decorator that checks if there's a user associated with the current session.
-    Will also fail if there's no session present.
-    """
-
     def check_login(self, *args, **kwargs):
-        auth = self.auth
-        if not auth.get_user_by_session():
+        if not self.request.user:
             self.redirect('login')
         else:
             return handler(self, *args, **kwargs)

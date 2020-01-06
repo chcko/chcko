@@ -89,7 +89,7 @@ def allcontent():
         lambda x:x==u'Here t_1.\nt_1 gets t_2:\nHere t_2.\nt_2 gets t_1:\nAfter.\nt_1 gets t_3:\nHere t_3.\nt_3 gets none.\n\n')
     ,('test.t_3=3', 'en', lambda x:len(x.split('Here t_3.\nt_3 gets none.'))==4)
     ,('r.a&r.b', 'en', lambda x:True) # mix problem and non-problem
-    ,('r.b=2', 'en', lambda x:True)# more non-problems
+    ,('r.b=2', 'en', lambda x:True) # more non-problems
 ]+list(allcontent()))
 def newuserpage(request,cdb):
     query_string,lang,tst = request.param
@@ -108,7 +108,7 @@ def newuserpage(request,cdb):
     with bddl:
         assert bottle.request.user is not None
         assert bottle.request.student is not None
-        newuserpage = cdb,Page(bottle.request),tst,query_string
+        newuserpage = cdb,Page(),tst,query_string
         yield newuserpage
 
 def test_recursive_includes(newuserpage):
@@ -135,7 +135,7 @@ def test_recursive_includes(newuserpage):
 
 def test_depth_1st(cdb):
     path = ['a', 'b', 'c', 'd', 'e']
-    student = cdb.add_student(path, 'EEE')
+    student = cdb.add_student(path, user=None, color='#EEE')
     problems_for(student,cdb)
     lst = list(cdb.depth_1st(path+[[]]))
     assert len(lst) > 10
@@ -144,7 +144,7 @@ def test_depth_1st(cdb):
     assert cdb.nameof(lst[0]) == 'School'
     assert cdb.nameof(lst[5]) == 'Problem'
     path = ['a', 'b', 'c', 'x', 'e'] #note same name for student
-    student1 = cdb.add_student(path, 'EEE')
+    student1 = cdb.add_student(path, user=None, color='#EEE')
     problems_for(student1,cdb)
     path = ['a','b','c',[],[],[('query_string','=','r.u')]]
     lst = list(cdb.depth_1st(path))

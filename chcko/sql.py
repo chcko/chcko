@@ -183,7 +183,6 @@ class Model(object):
             dbsession.rollback()
             acls = dbsession.query(cls).filter(cls.urlkey==acls.urlkey).one()
         return acls
-
 class UserToken(Model):
     email = C(String)
     created = C(DateTime,default=datetime.datetime.now)
@@ -192,6 +191,8 @@ class User(Model):
     fullname = C(String)
     pwhash = C(String)
     token_model = C(ForeignKey('UserToken.urlkey'))
+    verified = C(Boolean)
+    lang = C(String)
     current_student = C(ForeignKey('Student.urlkey',use_alter=True))
 class Secret(Model):
     secret = C(String)
@@ -230,13 +231,13 @@ class Problem(Model):
 
 
     # a list of names given to the questions (e.g '1','2')
-    inputids = C(PickleType)#C(ARRAY(String))
+    inputids = C(PickleType)
     # calculated from given, then standard formatted to strings
-    results = C(PickleType)#C(ARRAY(String))
-    oks = C(PickleType)#C(ARRAY(Boolean))
-    points = C(PickleType)#C(ARRAY(Integer))
+    results = C(PickleType)
+    oks = C(PickleType)
+    points = C(PickleType)
     # standard formatted from input
-    answers = C(PickleType)#C(ARRAY(String))
+    answers = C(PickleType)
     nr = C(Integer)  # needed to restore order
 
     concatanswers=C(String) #concat duplicate of answers
@@ -283,16 +284,23 @@ class Sql(db_mixin):
     def ofof(self,oe):
         return oe.ofkey
     def idof(self,obj):
-        return obj.urlkey
+        return obj.urlkey if obj else None
     def nameof(self,entity):
         return entity.__tablename__
     def columnsof(self,entity):
         for x in _inspect.get_columns(self.nameof(entity)):
             yield x['name']
+    def itemsof(self,entry):
+        values = vars(entry)
+        for attr in entry.__mapper__.columns.keys():
+            yield attr, values[attr]
     def fieldsof(self,obj):
         return {clmnm: getattr(obj,clmnm) for clmnm in self.columnsof(obj)}
     def add_to_set(self,problem,other):
         problem.collection = other.urlkey
+    def current_student(self,user):
+        res = user.current_student and self.Key(urlsafe=user.current_student).get()
+        return res
 
     def query(self,entity,filt=None,ordr=None,parent=None):
         _filt = filt or []

@@ -155,10 +155,9 @@ Fireo brings google-cloud-firestore closer to SQLAlchemy.
 
 https://github.com/GoogleCloudPlatform/python-docs-samples/tree/master/appengine/standard/ndb
 
-Try to make *chcko* run with Python3 with minimal change,
-before actual endeavor into replacing dependencies
+Make *chcko* run with Python3 with minimal change
 
-- drop webapp2 3.0.0b1 for bottle
+- replace webapp2 3.0.0b1 with bottle
 - drop simpleauth
 - own db abstraction, first supporting google-cloud-ndb and sqlalchemy
 
@@ -309,6 +308,7 @@ https://stackoverflow.com/questions/23360666/sqlalchemy-filter-query-by-picklety
 chcko/test/test_functional.py
 Stuck at test_forgot,
 user managment in general.
+But user is needed, as it holds together more roles.
 
 Googling and Reading:
 
@@ -321,8 +321,71 @@ Googling and Reading:
   https://github.com/salrashid123/google_id_token/blob/master/python/googleidtokens.py
   It uses https://github.com/googleapis/google-auth-library-python
 
-
 Reorder LOG.txt to last at bottom.
 Removed pdt folder.
 
+20200102
+========
 
+User management.
+
+In google.appengine.api.user has gone.
+Do new user handling is in an appengine/gcloud independent way.
+
+- email/password->token to verify email
+  token cookie to stay logged on
+
+- OIDC identity to log on
+
+https://realpython.com/flask-google-login/
+1. development:
+   Get client credential for chcko from each provider (XXX configuration).
+   Store safely locally outside project. Apply using ``environ``.
+   Google: https://console.developers.google.com/apis/credentials
+   During development ``export OAUTHLIB_INSECURE_TRANSPORT=1``
+2. authorization: [login with XXX] -> XXX (asks user) -> returns id token -> chcko stores id token
+3. login: get access token from XXX with id token --> user info on XXX with access token
+
+20200103
+========
+
+Comparing:
+
+/mnt/src/google-auth-library-python: google specific
+/mnt/src/loginpass: best solution
+/mnt/src/bottle-auth: too old, still uses dropped bottle.ext in the example
+/mnt/src/bottle-login: has its own session object, but I use /mnt/src/bottle-session already
+/mnt/src/bottle-cork: more than I need
+/mnt/src/bottle-authenticate: basic authentication as it is currently done, but cookie with username instead of token
+/mnt/src/bottle-jwt: oidc server jwt response covered by loginpass
+/mnt/src/flask-login: ok as a reference
+/mnt/src/flask-oidc
+
+User management summary:
+A user is identified by a token.
+The token is stored in a session.
+The session is found by session cookie.
+The token can result
+- from a direct login
+- or from OIDC.
+
+For OIDC ``loginpass`` is currently the best google-independent solution.
+
+20200104
+========
+
+Continuing with tests:
+chcko/test/test_functional.py
+Remove bottle-session, as User is session memory.
+
+20200105
+========
+
+chcko/test/test_functional.py
+
+20200106
+========
+
+chcko/test/test_functional.py
+
+Success on ``py.test test/test_functional.py --db=sql``

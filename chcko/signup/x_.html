@@ -29,7 +29,11 @@
 
 <form method="POST" name=signup onsubmit='return validate()'>
 <label for="email">{{temail}}*</label>
-<input type="email" name="email" /><br>
+<input type="email" name="email" 
+%if 'email' in self.request.params:
+    value=self.request.params['email']
+%end
+/><br>
 <label for="password">{{tpassword}}*</label>
 <input type="password" name="password" /><br>
 <label for="confirmp">{{tconfirm}}*</label>
