@@ -407,3 +407,12 @@ chcko/test/test_functional.py
 
 Stuck with ndb.BooleanProperty(repeated=True) stored as [None] instead of [False].
 
+20200109
+========
+
+chcko/test/test_functional.py::
+
+  fixes for
+  py.test test/test_functional.py --db=ndb
+  conflict with --db=sql
+

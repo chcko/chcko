@@ -44,7 +44,7 @@ class Page(PageBase):
     def __init__(self):
         super().__init__()
         self.problem = None
-        self.problem_set = None
+        self.problem_set = []
         self.query_string = self.request.query_string #as the latter cannot be written
 
     def _get_problem(self, problemkey=None):
@@ -304,7 +304,7 @@ class Page(PageBase):
                 withempty.__iadd__(sw)
                 noempty.__iadd__(sn)
             if withempty.counted > 0:
-                db.set_answer(self.problem.answers,[Util.summary(withempty, noempty)])
+                db.set_answer(self.problem,[Util.summary(withempty, noempty)])
                 # else cleaning empty answers would remove this
             self.check_answers(self.problem)
         return self.load_content()

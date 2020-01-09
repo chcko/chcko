@@ -16,9 +16,6 @@ Do this after any changes, especially in the main code
 $ doit test
 $ doit cov
 
-coverage2 is the python2 version.
-py.test2 is the python2 version.
-
 Do this to add new content
 
 $ doit -kd. new
@@ -386,15 +383,20 @@ def run_test(test):
 def task_test():
     return {
         'actions':[
-            ['py.test','chcko/test/test_sql.py', 'chcko/test/test_ndb.py'],
+            ['py.test','chcko/test/test_db.py','--db=ndb'],
+            ['py.test','chcko/test/test_integration.py','--db=ndb'],
+            ['py.test','chcko/test/test_functional.py','--db=ndb']
+            ['py.test','chcko/test/test_db.py','--db=sql'],
+            ['py.test','chcko/test/test_integration.py','--db=sql'],
+            ['py.test','chcko/test/test_functional.py','--db=sql']
         ],
         'verbosity':2
     }
 def task_cov():
     return {'actions':
-                ["coverage2 run --parallel-mode `which py.test2` ",
-                 "coverage2 combine",
-                 ("coverage2 report --show-missing %s" % " ".join(PY_FILES))
+                ["coverage run --parallel-mode `which py.test` ",
+                 "coverage combine",
+                ("coverage report --show-missing %s" % " ".join(PY_FILES))
                  ],
             'verbosity': 2}
 def task_serve():

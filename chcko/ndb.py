@@ -161,3 +161,11 @@ class Ndb(db_mixin):
         else:
             return False
 
+    def copy_to_new_parent(self, anentity, oldparent, newparent):
+        clms = self.columnsof(anentity)
+        allentries = self.allof(self.query(anentity,parent=self.idof(oldparent)))
+        for entry in allentries:
+            edict = dict(self.itemsof(entry))
+            edict['oks'] = [bool(x) for x in edict['oks']]
+            cpy = anentity.create(id=entry.key.string_id(), parent=newparent.key, **edict)
+            cpy.put()

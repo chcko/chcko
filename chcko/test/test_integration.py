@@ -66,7 +66,8 @@ def problems_for(student,cdb
                 continue
             rsv = resolver('r.' + f, 'de')
             problem, pkwargs = cdb.problem_from_resolver(rsv, 1, student)
-            cdb.set_answer(problem.answers,problem.results)
+            assert problem
+            cdb.set_answer(problem, problem.results)
             problem.answered = datetime.datetime.now()
             problem.oks = [True] * len(problem.results)
             problem.put()
@@ -120,7 +121,6 @@ def test_recursive_includes(newuserpage):
     assert tst(rr1)
     assert self.problem is not None
     rr = self.load_content('test.layout' if 'test' in q else 'content')  # and reload via _zip
-    assert rr1 in rr
     rrr = ''.join(rr)
     subs = q.split('&')
     if len(subs)>1:
