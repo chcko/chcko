@@ -19,7 +19,7 @@
         %end
         %lastee = ee
         <tr>
-            <td><input type="checkbox" name="deletee" value="{{e.urlsafe()}}" autocomplete="off"></input></td>
+            <td><input type="checkbox" name="deletee" value="{{db.urlsafe(e)}}" autocomplete="off"></input></td>
             % for ate in te:
             <td>
                 % if isinstance(ate,list):
@@ -41,7 +41,7 @@
             </td>
             % end
             % if isinstance(ee,db.Problem):
-            <td><a href="/{{ee.lang}}/?key={{!e.urlsafe()}}">{{ee.query_string}}</a></td>
+            <td><a href="/{{ee.lang}}/?key={{!db.urlsafe(e)}}">{{ee.query_string}}</a></td>
             <td><a href="/{{ee.lang}}/?{{ee.query_string}}">{{tagain}}</a></td>
             % end
         </tr>

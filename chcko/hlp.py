@@ -531,14 +531,6 @@ class db_mixin:
                                          self.Problem.created<age],parent=self.idof(student)))
         self.delete(self.query(self.Problem,[self.Problem.concatanswers=='',
                                          self.Problem.answered!=None],parent=self.idof(student)))
-    def done_assignment(self,assignm):
-        q = self.query(self.Problem, [self.ofof(self.Problem)==self.ofof(assignm),
-                                 self.Problem.query_string == normqs(assignm.query_string),
-                                 self.Problem.answered > assignm.created])
-        if q.count() > 0:
-            return True
-        else:
-            return False
     def clear_unanswered_problems(self):
         self.delete(self.query(self.Problem,[self.Problem.answers==None]))
     def assign_to_student(self, studentkeyurlsafe, query_string, duedays):
@@ -558,9 +550,11 @@ class db_mixin:
         self.copy_to_new_parent(self.Assignment, oldparent, newparent)
     def copy_to_new_parent(self, anentity, oldparent, newparent):
         clms = self.columnsof(anentity)
-        for entry in self.allof(self.query(anentity,parent=self.idof(oldparent))):
-            cpy = anentity.create(name=entry.key.string_id(), parent=newparent.key,
-                         **{k: v for k, v in self.itemsof(entry) if k in clms})
+        allentries = self.allof(self.query(anentity,parent=self.idof(oldparent)))
+        for entry in allentries:
+            edict = dict(self.itemsof(entry))
+            edict['oks'] = [bool(x) for x in edict['oks']]
+            cpy = anentity.create(id=entry.key.string_id(), parent=newparent.key, **edict)
             cpy.put()
 
     def add_student(self, studentpath=[None]*5, user=None, color=None):
@@ -694,7 +688,7 @@ class db_mixin:
         pathi = path[i]
         modli = modl[i]
         modliprops = set(self.columnsof(modli))
-        modliname = self.nameof(modli)
+        modliname = self.kindof(modli)
         parentkey = keys and keys[-1] or None
         parentobj = parentkey and parentkey.get() or None
         permission = permission or parentobj and parentobj.userkey == userkey
@@ -776,17 +770,17 @@ class db_mixin:
             if len(self.problem_set(e)):
                 return [datefmt(e.answered), e.answers]
             else:
-                return [datefmt(e.answered), e.oks, e.answers, e.results]
+                return [datefmt(e.answered), [bool(x) for x in e.oks], e.answers, e.results]
         elif isinstance(e, self.Student):
-            return ['', '', '', '', e.id]
+            return ['', '', '', '', e.key.string_id()]
         elif isinstance(e, self.Class):
-            return ['', '', '', e.id]
+            return ['', '', '', e.key.string_id()]
         elif isinstance(e, self.Teacher):
-            return ['', '', e.id]
+            return ['', '', e.key.string_id()]
         elif isinstance(e, self.Period):
-            return ['', e.id]
+            return ['', e.key.string_id()]
         elif isinstance(e, self.School):
-            return [e.id]
+            return [e.key.string_id()]
         elif isinstance(e, self.Assignment):
             now = datetime.datetime.now()
             overdue = now > e.due
@@ -839,7 +833,7 @@ class db_mixin:
                 usr.current_student = self.idof(student)
                 usr.put()
         if student:
-            response.set_cookie('chckostudenturlsafe',student.key.urlsafe())
+            response.set_cookie('chckostudenturlsafe',self.urlsafe(student.key))
             SimpleTemplate.defaults["contextcolor"] = student.color or '#EEE'
             request.student = student
 

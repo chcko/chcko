@@ -10,6 +10,7 @@ from chcko.hlp import problem_contexts
 
 @pytest.fixture(scope='module')
 def chapp(request,db):
+    db.delete(db.query(db.Problem))
     from chcko.app import app
     return TA(app)
 

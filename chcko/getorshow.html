@@ -27,7 +27,7 @@
     %if answered:
         %if answers[idx].strip() != '':
             ({{answers[idx]}} \\
-            %include('right_wrong',value=oks[idx])
+            %include('right_wrong',value=bool(oks[idx]))
             )
         %end
         %if oks[idx]:

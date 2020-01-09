@@ -281,19 +281,19 @@ class Sql(db_mixin):
         return query.all()
     def first(self,query):
         return query.first()
-    def ofof(self,oe):
-        return oe.ofkey
     def idof(self,obj):
         return obj.urlkey if obj else None
-    def nameof(self,entity):
+    def kindof(self,entity):
         return entity.__tablename__
     def columnsof(self,entity):
-        for x in _inspect.get_columns(self.nameof(entity)):
+        for x in _inspect.get_columns(self.kindof(entity)):
             yield x['name']
     def itemsof(self,entry):
         values = vars(entry)
         for attr in entry.__mapper__.columns.keys():
             yield attr, values[attr]
+    def nameof(self,obj):
+        return obj.id
     def fieldsof(self,obj):
         return {clmnm: getattr(obj,clmnm) for clmnm in self.columnsof(obj)}
     def add_to_set(self,problem,other):
@@ -302,9 +302,13 @@ class Sql(db_mixin):
         res = user.current_student and self.Key(urlsafe=user.current_student).get()
         return res
 
+    def urlsafe(self,key):
+        res = key.urlsafe()
+        return res
+
     def query(self,entity,filt=None,ordr=None,parent=None):
         _filt = filt or []
-        q = DBSession().query(entity).filter(*((_filt+[self.ofof(entity)==parent]) if parent else _filt))
+        q = DBSession().query(entity).filter(*((_filt+[entity.ofkey==parent]) if parent else _filt))
         if ordr:
             q = q.order_by(ordr)
         return q
@@ -313,4 +317,13 @@ class Sql(db_mixin):
         query.delete()
     def filter_expression(self,ap,op,av):
         return text(f'{ap}{op}"{av}"')
+
+    def done_assignment(self,assignm):
+        q = self.query(self.Problem, [self.Problem.ofkey==assignm.ofkey,
+                                 self.Problem.query_string == normqs(assignm.query_string),
+                                 self.Problem.answered > assignm.created])
+        if q.count() > 0:
+            return True
+        else:
+            return False
 

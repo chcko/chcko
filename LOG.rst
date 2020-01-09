@@ -388,4 +388,22 @@ chcko/test/test_functional.py
 
 chcko/test/test_functional.py
 
-Success on ``py.test test/test_functional.py --db=sql``
+Success on::
+
+  py.test test/test_functional.py --db=sql
+
+
+20200107
+========
+
+chcko/test/test_functional.py::
+
+  py.test test/test_functional.py --db=ndb
+
+20200108
+========
+
+chcko/test/test_functional.py
+
+Stuck with ndb.BooleanProperty(repeated=True) stored as [None] instead of [False].
+

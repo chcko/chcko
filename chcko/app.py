@@ -87,6 +87,7 @@ def fullpath(lang,pagename):
             respns = page.get_response()
         else:
             respns = page.post_response()
+        print([x.oks for x in db.allof(db.query(db.Problem)) if None in x.oks])#R#
         return respns
     except (ImportError, AttributeError, IOError, NameError) as e:
         print_exc()

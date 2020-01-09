@@ -97,7 +97,7 @@
                             {{util.translate(kind)}} {{e.string_id()}}
                         </div>
                     % elif kind == 'Student':
-                        <div><input type="checkbox" name="assignee" value="{{e.urlsafe()}}"> 
+                        <div><input type="checkbox" name="assignee" value="{{db.urlsafe(e)}}"> 
                             {{e.string_id()}} </div>
                     % end
                 % end

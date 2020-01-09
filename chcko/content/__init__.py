@@ -111,8 +111,6 @@ class Page(PageBase):
                 db.add_to_set(problem,self.problem)
             if problem.points:
                 next(problems_cntr)
-            # TODO: shouln't it be possible to define given() ... in the
-            # template itself
             problem.put()
             if not rsv.composed():
                 SimpleTemplate.overrides.update(pkwargs)
@@ -223,7 +221,7 @@ class Page(PageBase):
             SimpleTemplate.overrides = {}
             del stdout[:]  # the script functions will write into this
             tpl = get_tpl(layout, template_lookup=mklookup(self.request.lang))
-            problemurlsafe = self.problem and self.problem.key.urlsafe()
+            problemurlsafe = self.problem and db.urlsafe(self.problem.key)
             with_problems = next(problems_cntr) > 0
             env.update(
                 dict(
@@ -284,7 +282,6 @@ class Page(PageBase):
         return res
 
     def check_answers(self, problem):
-        'compare answer to result'
         rsv = resolver(problem.query_string, problem.lang)
         d = rsv.load()
         problem.answered = datetime.datetime.now()
@@ -297,7 +294,7 @@ class Page(PageBase):
     def post_response(self):
         'answers a POST request'
         problemkey = self.request.forms.get('problemkey','') or (
-            self.problem and self.problem.key.urlsafe())
+            self.problem and db.urlsafe(self.problem.key))
         self._get_problem(problemkey)
         if self.problem and not self.problem.answered:
             withempty, noempty = Page.make_summary()

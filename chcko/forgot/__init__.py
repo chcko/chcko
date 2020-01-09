@@ -10,7 +10,10 @@ class Page(PageBase):
     def __init__(self):
         super().__init__()
         self.email = self.request.forms.get('email','')
-        self.user = db.Key(db.User,self.email).get()
+        if self.email:
+            self.user = db.Key(db.User,self.email).get()
+        else:
+            self.user = None
         self.not_found = self.user == None
         self.request.params.update({
             'email': self.email,

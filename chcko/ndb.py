@@ -19,7 +19,7 @@ class UserToken(Model):
 class User(Model):
     fullname = ndb.StringProperty(required=False)
     pwhash = ndb.StringProperty(required=False)
-    verified = ndb.BooleanProperty()
+    verified = ndb.IntegerProperty()
     token_model = ndb.StructuredProperty(UserToken)
     current_student = ndb.KeyProperty(kind='Student')
 class Secret(Model):  # filled manually
@@ -61,7 +61,9 @@ class Problem(Base):
     answers = ndb.StringProperty(repeated=True)
     nr = ndb.IntegerProperty()  # needed to restore order
     concatanswers = ndb.StringProperty() #concat duplicate of answers (set_answer)
-    link = ndb.ComputedProperty(lambda self: '/'+self.lang+'/content?'+self.query_string)
+    @property
+    def link(self):
+        return '/' + self.lang + '/content?' + self.query_string
 
 
 class Assignment(Base):
@@ -92,22 +94,27 @@ class Ndb(db_mixin):
         return list(query.iter())
     def first(self,query):
         return query.get()
-    def ofof(self,obj):
-        return obj.parent
     def idof(self,obj):
         return obj.key if obj else None
-    def nameof(self,entity):
+    def kindof(self,entity):
         return entity._get_kind()
     def columnsof(self,entity):
         return entity._properties.keys()
-    def itemsof(entry):
+    def itemsof(self,entry):
         return entry.to_dict().items()
+    def nameof(self,obj):
+        return obj.key.string_id()
     def fieldsof(self,entity):
         return {s: v.__get__(entity) for s,v in entity._properties.items()}
     def add_to_set(self,problem,other):
         problem.collection = other.key
     def current_student(self,user):
         res = user.current_student and user.current_student.get()
+        return res
+
+    def urlsafe(self,key):
+        res = key.urlsafe()
+        res = res.decode()
         return res
 
     def query(self,entity,filt=None,ordr=None,parent=None):
@@ -144,4 +151,13 @@ class Ndb(db_mixin):
 
     def keys_below(self,parent): #only used in testing, not availabe for sql
         return ndb.Query(ancestor=parent.key).iter(keys_only=True)
+
+    def done_assignment(self,assignm):
+        student = assignm.key.parent()
+        q = self.query(self.Problem, [self.Problem.query_string == normqs(assignm.query_string),
+                                 self.Problem.answered > assignm.created], parent = student)
+        if q.count() > 0:
+            return True
+        else:
+            return False
 

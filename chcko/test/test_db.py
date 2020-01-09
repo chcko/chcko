@@ -1,15 +1,4 @@
 
-''' TODO
-p = db.problem_create(id='someid1',inputids=list('abc'),
-        oks=[True,False,True],points=[2]*3,answers=['1','','1'])
-f = lambda c:c
-withempty,noempty = Page.make_summary(p)
-sfmt = u"{oks}/{of}->{points}/{allpoints}"
-sfmt.format(**withempty)+u"  no empty:" + sfmt.format(**noempty)
-u'2/3->4/6  no empty:2/2->4/4'
-
-'''
-
 import pytest
 
 @pytest.fixture()
@@ -35,7 +24,7 @@ def Student12345(cdb):
 def test_key(cdb):
     k = cdb.Key('School', '1', 'Period', '2', 'Teacher', '3', 'Class', '4', 'Student', '5')
     assert k.pairs()==(('School', '1'), ('Period', '2'), ('Teacher', '3'), ('Class', '4'), ('Student', '5'))
-    assert len(k.urlsafe()) > 30
+    assert len(cdb.urlsafe(k)) > 30
     assert k.string_id()=="5"
     assert k.kind()=='Student'
 
@@ -66,3 +55,16 @@ def test_user(cdb):
     u1= cdb.user_create('email2','password2','fn')
     u2 = cdb.user_by_login('email2','password2')
     assert u1.key == u2.key
+
+def test_problem(cdb,Student12345):
+    p = cdb.problem_create(Student12345,id='someid1',given=dict(zip('abc','ABC')),inputids=list('abc'),results=list('ABC'))
+    p.put()
+    us = p.key.urlsafe()
+    problem = cdb.Key(urlsafe=us).get()
+    problem.oks = [True,False,True]
+    problem.points=[2]*3
+    problem.answers=['1','','1']
+    problem.put()
+    np = cdb.Key(urlsafe=us).get()
+    assert np.oks == [True,False,True]
+

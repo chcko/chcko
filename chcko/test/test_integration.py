@@ -141,26 +141,26 @@ def test_depth_1st(cdb):
     assert len(lst) > 10
     lst = list(cdb.depth_1st(path+[[('query_string','=','r.u')]]))
     assert len(lst) == 6
-    assert cdb.nameof(lst[0]) == 'School'
-    assert cdb.nameof(lst[5]) == 'Problem'
+    assert cdb.kindof(lst[0]) == 'School'
+    assert cdb.kindof(lst[5]) == 'Problem'
     path = ['a', 'b', 'c', 'x', 'e'] #note same name for student
     student1 = cdb.add_student(path, user=None, color='#EEE')
     problems_for(student1,cdb)
     path = ['a','b','c',[],[],[('query_string','=','r.u')]]
     lst = list(cdb.depth_1st(path))
     assert len(lst) == 9
-    assert cdb.nameof(lst[0]) == 'School'
-    assert cdb.nameof(lst[5]) == 'Problem'
-    assert cdb.nameof(lst[6]) == 'Class'
-    assert cdb.nameof(lst[7]) == 'Student'
-    assert cdb.nameof(lst[8]) == 'Problem'
+    assert cdb.kindof(lst[0]) == 'School'
+    assert cdb.kindof(lst[5]) == 'Problem'
+    assert cdb.kindof(lst[6]) == 'Class'
+    assert cdb.kindof(lst[7]) == 'Student'
+    assert cdb.kindof(lst[8]) == 'Problem'
     lst = list(cdb.depth_1st(path,keys=cdb.keys_to_omit(path)))
     assert len(lst) == 6
-    assert cdb.nameof(lst[0]) == 'Class'
-    assert cdb.nameof(lst[2]) == 'Problem'
-    assert cdb.nameof(lst[3]) == 'Class'
-    assert cdb.nameof(lst[4]) == 'Student'
-    assert cdb.nameof(lst[5]) == 'Problem'
+    assert cdb.kindof(lst[0]) == 'Class'
+    assert cdb.kindof(lst[2]) == 'Problem'
+    assert cdb.kindof(lst[3]) == 'Class'
+    assert cdb.kindof(lst[4]) == 'Student'
+    assert cdb.kindof(lst[5]) == 'Problem'
     lst = list(cdb.depth_1st())
     assert lst == []
 
@@ -177,7 +177,7 @@ def dbschool(request,cdb):
         if ient < len(models) - 1:
             ent = models[ient]
             for i in range(2):
-                name = cdb.nameof(ent)[:2] + str(i) #Sc0,Pe0,...
+                name = cdb.kindof(ent)[:2] + str(i) #Sc0,Pe0,...
                 tent = ent.get_or_insert(name, parent=thisent and thisent.key)
                 res.setdefault(name, (tent, recursecreate(ient + 1, tent)))
         else:
@@ -218,16 +218,15 @@ def test_descendants(dbschool):
     assert kinddepth(tbl,cdb,lambda x:x.kind()) == [3, 4, 4]
     # compare latter to this
     tbl = list(cdb.depth_1st(path=['Sc1', 'Pe1', 'Te1', 'Cl1']))
-    assert kinddepth(tbl,cdb,lambda x:cdb.nameof(x)) == [0, 1, 2, 3, 4, 4]
-
+    assert kinddepth(tbl,cdb,lambda x:cdb.kindof(x)) == [0, 1, 2, 3, 4, 4]
 
 def test_find_identities(dbschool):
     '''find all students with name St1'''
     cdb,school=dbschool
     #school = school(finrequest)
-    _students = lambda tbl: [t for t in tbl if cdb.nameof(t) == 'Student']
+    _students = lambda tbl: [t for t in tbl if cdb.kindof(t) == 'Student']
     tbl = list(cdb.depth_1st(path=['Sc1', 'Pe1', [], [], 'St1']))
-    assert kinddepth(tbl,cdb,lambda x:cdb.nameof(x)) == [0, 1, 2, 3, 4, 3, 4, 2, 3, 4, 3, 4]
+    assert kinddepth(tbl,cdb,lambda x:cdb.kindof(x)) == [0, 1, 2, 3, 4, 3, 4, 2, 3, 4, 3, 4]
     stset = set([':'.join(e.key.flat()) for e in _students(tbl)])
     goodstset = set(['School:Sc1:Period:Pe1:Teacher:Te1:Class:Cl1:Student:St1',
                      'School:Sc1:Period:Pe1:Teacher:Te0:Class:Cl1:Student:St1',
@@ -238,7 +237,7 @@ def test_find_identities(dbschool):
 def test_assign_student(dbschool):
     cdb,school=dbschool
     stu = cdb.key_from_path(['Sc1', 'Pe1', 'Te1', 'Cl1', 'St1'])
-    cdb.assign_to_student(stu.urlsafe(), 'r.i&r.u', 1)
+    cdb.assign_to_student(cdb.urlsafe(stu), 'r.i&r.u', 1)
     asses = list(cdb.assign_table(stu.get(), None))
     assert asses
     ass = asses[0]
