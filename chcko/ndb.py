@@ -127,27 +127,21 @@ class Ndb(db_mixin):
             q = q.order(ordr)
         return q
 
-    def delete(self,query):
-        ndb.delete_multi(query.iter(keys_only=True))
+    def save(self,objs):
+        if isinstance(objs,list):
+            ndb.put_multi(objs)
+        else:
+            ndb.transaction(lambda:objs.put())
+
+    def delete_keys(self,keys):
+        ndb.delete_multi(keys)
+
+    def delete_query(self,query):
+        keys = query.iter(keys_only=True)
+        self.delete_keys(keys)
+
     def filter_expression(self,ap,op,av):
         return ndb.FilterNode(ap, op, av)
-    #def problem_by_query_string(self,query_string,lang,student):
-    #    q = Problem.gql( #TODO: does gql still work with Python 3
-    #        "WHERE query_string = :1 AND lang = :2 AND answered = NULL AND ANCESTOR IS :3",
-    #        query_string, lang, student.key)
-    #    fch = q.fetch(1)
-    #    return fch[0] if fch else None
-    #def clear_unanswered_problems(self):
-    #    self.delete(Problem.gql("WHERE answered = NULL"))
-    #def del_stale_open_problems(self,student,age):
-    #    self.delete(Problem.gql(
-    #        "WHERE answered = NULL AND created < :1 AND ANCESTOR IS :2",
-    #        age,
-    #        self.request.student.key))
-    #    self.delete(Problem.gql(
-    #        "WHERE concatanswers = '' AND answered != NULL AND ANCESTOR IS :1",
-    #        self.request.student.key))
-
 
     def keys_below(self,parent): #only used in testing, not availabe for sql
         return ndb.Query(ancestor=parent.key).iter(keys_only=True)
@@ -164,8 +158,10 @@ class Ndb(db_mixin):
     def copy_to_new_parent(self, anentity, oldparent, newparent):
         clms = self.columnsof(anentity)
         allentries = self.allof(self.query(anentity,parent=self.idof(oldparent)))
+        tosave = []
         for entry in allentries:
             edict = dict(self.itemsof(entry))
             edict['oks'] = [bool(x) for x in edict['oks']]
             cpy = anentity.create(id=entry.key.string_id(), parent=newparent.key, **edict)
-            cpy.put()
+            tosave.append(cpy)
+        self.save(tosave)

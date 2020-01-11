@@ -416,3 +416,41 @@ chcko/test/test_functional.py::
   py.test test/test_functional.py --db=ndb
   conflict with --db=sql
 
+20200110
+========
+
+make datastore emulator faster with --no-store-on-disik::
+
+  gcloud beta emulators datastore start --no-store-on-disk
+
+Checking profiling ndb::
+
+  pip install --user pytest-profiling
+  py.test test/test_integration.py --db=ndb --profile
+  pip install --user tuna
+  tuna prof/*.prof
+
+Checking ``python-ndb`` tests::
+
+  pip install --user nox
+  nox
+  #only unit tests were run
+  #
+  #change noxfile.py 3.7 to 3.8
+  export GOOGLE_CLOUD_PROJECT="chcko-262117"
+  export GOOGLE_APPLICATION_CREDENTIALS="/home/roland/.config/gcloud/legacy_credentials/dontbite71@gmail.com/adc.json"
+  nox -s system
+  #now also system tests, but some failed due to index
+
+``python-ndb`` is tested with the remote datastore,
+unless a local emulator is started and::
+
+  DATASTORE_EMULATOR_HOST=localhost:8081 nox -s system
+
+20200111
+========
+
+The occasional failures of tests with ``--db=ndb``
+are because ndb is only eventually consistent.
+Need to use ``ndb.transaction`` in some places.
+

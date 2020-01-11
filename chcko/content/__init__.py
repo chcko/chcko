@@ -111,7 +111,7 @@ class Page(PageBase):
                 db.add_to_set(problem,self.problem)
             if problem.points:
                 next(problems_cntr)
-            problem.put()
+            db.save(problem)
             if not rsv.composed():
                 SimpleTemplate.overrides.update(pkwargs)
                 _chain[-1] = SimpleTemplate.overrides.copy()
@@ -188,10 +188,9 @@ class Page(PageBase):
                     tpl.execute(stdout, env)
                 except AttributeError:
                     c = self.current or self.problem
-                    logger.info(
-                        'data does not fit to template ' + str(c.given)if c else '')
                     if c:
-                        c.key.delete()
+                        logger.info('data does not fit to template ' + str(c.given))
+                        db.delete_keys([c.key])
                     raise
                 if cleanup:
                     try: next(cleanup)
@@ -289,7 +288,7 @@ class Page(PageBase):
             db.set_answer(problem,[self.request.forms.get(q,'') for q in problem.inputids])
             na = d.norm(problem.answers)
             problem.oks = d.equal(na, problem.results)
-        problem.put()
+        db.save(problem)
 
     def post_response(self):
         'answers a POST request'

@@ -85,10 +85,7 @@ class Key:
     def get(self):
         return self._query().first()
     def delete(self):
-        try:
-            self._query().delete()
-        except:
-            pass
+        self._query().delete()
     def string_id(self):
         return self.pth[-1][1]
     def pairs(self):
@@ -306,6 +303,18 @@ class Sql(db_mixin):
         res = key.urlsafe()
         return res
 
+    def save(self,objs):
+        if not isinstance(objs,list):
+            objs = [objs]
+        dbsession = DBSession()
+        dbsession.begin_nested()
+        try:
+            for obj in objs:
+                obj.put()
+            dbsession.commit()
+        except IntegrityError as e:
+            dbsession.rollback()
+
     def query(self,entity,filt=None,ordr=None,parent=None):
         _filt = filt or []
         q = DBSession().query(entity).filter(*((_filt+[entity.ofkey==parent]) if parent else _filt))
@@ -313,8 +322,19 @@ class Sql(db_mixin):
             q = q.order_by(ordr)
         return q
 
-    def delete(self,query):
+    def delete_keys(self,keys):
+        dbsession = DBSession()
+        dbsession.begin_nested()
+        try:
+            for key in keys:
+                key.delete()
+            dbsession.commit()
+        except IntegrityError as e:
+            dbsession.rollback()
+
+    def delete_query(self,query):
         query.delete()
+
     def filter_expression(self,ap,op,av):
         return text(f'{ap}{op}"{av}"')
 
@@ -330,8 +350,10 @@ class Sql(db_mixin):
     def copy_to_new_parent(self, anentity, oldparent, newparent):
         clms = self.columnsof(anentity)
         allentries = self.allof(self.query(anentity,parent=self.idof(oldparent)))
+        tosave = []
         for entry in allentries:
             edict = dict(self.itemsof(entry))
             edict['oks'] = [bool(x) for x in edict['oks']]
             cpy = anentity.create(name=entry.key.string_id(), parent=newparent.key, **edict)
-            cpy.put()
+            tosave.append(cpy)
+        self.save(tosave)

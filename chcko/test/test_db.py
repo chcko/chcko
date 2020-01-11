@@ -9,16 +9,16 @@ def cdb(db):
 @pytest.fixture()
 def Student12345(cdb):
     s=cdb.School.get_or_insert("1")
-    s.put()
+    cdb.save(s)
     mkent = lambda t,i,o: t.get_or_insert(i,parent=o.key)
     p=mkent(cdb.Period,"2",s)
-    p.put()
+    cdb.save(p)
     t=mkent(cdb.Teacher,"3",p)
-    t.put()
+    cdb.save(t)
     c=mkent(cdb.Class,"4",t)
-    c.put()
+    cdb.save(c)
     st=mkent(cdb.Student,"5",c)
-    st.put()
+    cdb.save(st)
     return st
 
 def test_key(cdb):
@@ -58,13 +58,13 @@ def test_user(cdb):
 
 def test_problem(cdb,Student12345):
     p = cdb.problem_create(Student12345,id='someid1',given=dict(zip('abc','ABC')),inputids=list('abc'),results=list('ABC'))
-    p.put()
+    cdb.save(p)
     us = p.key.urlsafe()
     problem = cdb.Key(urlsafe=us).get()
     problem.oks = [True,False,True]
     problem.points=[2]*3
     problem.answers=['1','','1']
-    problem.put()
+    cdb.save(problem)
     np = cdb.Key(urlsafe=us).get()
     assert np.oks == [True,False,True]
 

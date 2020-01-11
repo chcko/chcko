@@ -25,7 +25,7 @@ class Page(PageBase):
             self.renew_token(token)
             if not user.verified:
                 user.verified = True
-                user.put()
+                db.save(user)
             self.redirect('message?msg=b')
         elif verification_type == 'p':
             self.redirect(f'password?token={token}')

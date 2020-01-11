@@ -2,7 +2,7 @@
 %intable = False
 
 <form action="" method="post">
-<input type="checkbox" class="checkall" autocomplete="off">{{tall+' '+str(util.query())}}</input>
+<input type="checkbox" class="checkall" autocomplete="off">{{tall+' '+str(util.parsedquerystring())}}</input>
 %for ee in self.done_table():
     %e = ee.key
     %te = db.table_entry(ee)

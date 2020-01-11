@@ -62,7 +62,7 @@ def db(request):
     if backnd == "ndb":
         from chcko.ndb import Ndb
         db = chckodb.use(Ndb())
-        #TODO: assert that data store emulator is running
+        #TODO: assert that datastore emulator is running
     elif backnd == "sql":
         from chcko.sql import Sql
         db = chckodb.use(Sql())

@@ -200,8 +200,8 @@ Then we distribute forces in unbalanced nodes.
             q,(es,f) = u[0]
             dist=list(distribute(f,es,q))
             for ff,eo in dist:
-                EF[q].append(([eo[0]],-ff))#q is this node of edge eo[0]
-                EF[eo[1]].append(([eo[0]],ff))#eo[1] is the other node of edge eo[0]
+                EF[q].append(([eo[0]],-ff)) #q is this node of edge eo[0]
+                EF[eo[1]].append(([eo[0]],ff)) #eo[1] is the other node of edge eo[0]
             u = unbalanced()
         return EF
 

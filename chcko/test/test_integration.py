@@ -3,6 +3,7 @@
 import re
 import pytest
 import datetime
+import time
 
 from chcko import bottle
 bottle.DEBUG = True
@@ -48,7 +49,6 @@ def check_test_answers(m=None, test_format=None):
         for t in test_format:
             d.norm(t)
 
-
 @pytest.fixture(scope='module')
 def cdb(db):
     db.clear_all_data()
@@ -70,7 +70,7 @@ def problems_for(student,cdb
             cdb.set_answer(problem, problem.results)
             problem.answered = datetime.datetime.now()
             problem.oks = [True] * len(problem.results)
-            problem.put()
+            cdb.save(problem)
 
 def allcontent():
     d = os.path.dirname
@@ -167,7 +167,7 @@ def test_depth_1st(cdb):
 @pytest.fixture(scope="module")
 def dbschool(request,cdb):
     '''returns
-    {'Sc0':(Sc0,{'Pe0':(...)}}
+    {'Sc0':(Sc0,{'Pe0':(...)} }
     '''
     cdb.clear_all_data()
 
@@ -186,10 +186,14 @@ def dbschool(request,cdb):
     school = recursecreate(0, None)
     # recurserem()
 
-    def recurserem(dct=school):
-        for e in dct.values():
-            recurserem(e[1])
-            e[0].key.delete()
+    def recurserem():
+        todelete=[]
+        def _recurserem(dct):
+            for e in dct.values():
+                _recurserem(e[1])
+                todelete.append(e[0].key)
+        _recurserem(school)
+        cdb.delete_keys(todelete)
     request.addfinalizer(recurserem)
     return cdb,school
 
@@ -251,6 +255,12 @@ def test_assign_to_class(dbschool):
     duedays = '2'
     for st in cdb.depth_1st(keys=[classkey], kinds='Class Student'.split()):
         stk = st.key
+        assert stk.parent().string_id() == 'Cl0'
         cdb.assign_to_student(stk.urlsafe(), query_string, duedays)
-        assert cdb.student_assignments(st).count() == 1
+        #eventually consistent only: make two tries
+        assigned_1 =  cdb.student_assignments(st).count() == 1
+        if not assigned_1:
+            time.sleep(1)
+            assigned_1 =  cdb.student_assignments(st).count() == 1
+        assert assigned_1
 

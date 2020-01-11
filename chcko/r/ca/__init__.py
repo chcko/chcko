@@ -16,7 +16,7 @@ def given():
     return g
 
 angle = lambda a, b: 180 * \
-    acos(np.dot(a, b) / np.linalg.norm(a) / np.linalg.norm(b)) / pi
+    acos(np.around(np.dot(a, b) / np.linalg.norm(a) / np.linalg.norm(b),6)) / pi
 taria = lambda a, b: abs(np.cross(a, b) / 2)
 
 

@@ -96,7 +96,8 @@ class Page(PageBase):
         self.done_table = lambda: db.depth_1st(*prepare(qs,skey,userkey))
 
     def post_response(self):
+        todelete = []
         for urlsafe in self.request.forms.getall('deletee'):
-            k = db.Key(urlsafe=urlsafe)
-            k.delete()
+            todelete.append(db.Key(urlsafe=urlsafe))
+        db.delete_keys(todelete)
         return self.get_response()

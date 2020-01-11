@@ -502,7 +502,7 @@ class db_mixin:
         self.available_langs = initdb.available_langs
         self.student_contexts = student_contexts
         with self.dbclient.context():
-            self.clear_students()
+            self.clear_index()
             initdb.populate_index(
                 lambda problemid, lang, kind, level, path: self.Index.get_or_insert(
                         problemid + ':' + lang,
@@ -523,16 +523,16 @@ class db_mixin:
                       self.Problem.answers==None], parent=self.idof(student)))
         return res
     def clear_student_problems(self,student):
-        self.delete(self.query(self.Problem,parent=self.idof(student)))
+        self.delete_query(self.query(self.Problem,parent=self.idof(student)))
     def student_assignments(self,student):
         return self.query(self.Assignment,parent=self.idof(student))
     def del_stale_open_problems(self,student,age):
-        self.delete(self.query(self.Problem,[self.Problem.answered==None,
+        self.delete_query(self.query(self.Problem,[self.Problem.answered==None,
                                          self.Problem.created<age],parent=self.idof(student)))
-        self.delete(self.query(self.Problem,[self.Problem.concatanswers=='',
+        self.delete_query(self.query(self.Problem,[self.Problem.concatanswers=='',
                                          self.Problem.answered!=None],parent=self.idof(student)))
-    def clear_unanswered_problems(self):
-        self.delete(self.query(self.Problem,[self.Problem.answers==None]))
+    #def clear_unanswered_problems(self):
+    #    self.delete_query(self.query(self.Problem,[self.Problem.answers==None]))
     def assign_to_student(self, studentkeyurlsafe, query_string, duedays):
         studentkey = self.Key(urlsafe=studentkeyurlsafe)
         query_string=normqs(query_string)
@@ -541,10 +541,10 @@ class db_mixin:
         assgn = self.Assignment.create(parent=studentkey
                    ,query_string=query_string
                    ,due=due)
-        assgn.put()
+        self.save(assgn)
     def del_collection(self,problem):
-        self.delete(self.query(self.Problem,[self.Problem.collection==self.idof(problem)]))
-        self.delete(self.query(self.Problem,[self.idof(self.Problem)==self.idof(problem)]))
+        self.delete_query(self.query(self.Problem,[self.Problem.collection==self.idof(problem)]))
+        self.delete_query(self.query(self.Problem,[self.idof(self.Problem)==self.idof(problem)]))
     def copy_to_new_student(self,oldparent, newparent):
         self.copy_to_new_parent(self.Problem, oldparent, newparent)
         self.copy_to_new_parent(self.Assignment, oldparent, newparent)
@@ -574,7 +574,7 @@ class db_mixin:
             color=color or '#EEE')
         if stdnt.userkey == userkey and (color and stdnt.color != color):
             stdnt.color = color
-            stdnt.put()
+            self.save(stdnt)
         return stdnt
 
     def key_from_path(self,x):
@@ -582,9 +582,9 @@ class db_mixin:
     def from_urlsafe(self,urlsafe):
         return self.Key(urlsafe=urlsafe).get()
     def clear_index(self):
-        self.delete(self.query(self.Index))
+        self.delete_query(self.query(self.Index))
     def clear_problems(self):
-        self.delete(self.query(self.Problem))
+        self.delete_query(self.query(self.Problem))
     def problem_from_resolver(self, rsv, nr, student):
         '''create a problem from a resolver (see hlp.py)
         '''
@@ -607,25 +607,25 @@ class db_mixin:
         problem = self.problem_create(student,**pkwargs)
         return problem, pkwargs
     def clear_assignments(self):
-        self.delete(self.query(self.Assignment))
-    def clear_students(self):
-        self.delete(self.query(self.Student))
-        self.delete(self.query(self.Class))
-        self.delete(self.query(self.Teacher))
-        self.delete(self.query(self.Period))
-        self.delete(self.query(self.School))
-        self.add_student()
+        self.delete_query(self.query(self.Assignment))
     def clear_student_assignments(self,student):
-        self.delete(self.student_assignments(student))
+        self.delete_query(self.student_assignments(student))
     def clear_done_assignments(self, student, usr):
+        todelete = []
         for anobj in self.assign_table(student, usr):
             if self.done_assignment(anobj):
-                anobj.key.delete()
+                todelete.append(anobj.key)
+        self.delete_keys(todelete)
     def clear_all_data(self):
         self.clear_index()
         self.clear_assignments()
         self.clear_problems()
-        self.clear_students()
+        self.delete_query(self.query(self.Student))
+        self.delete_query(self.query(self.Class))
+        self.delete_query(self.query(self.Teacher))
+        self.delete_query(self.query(self.Period))
+        self.delete_query(self.query(self.School))
+        self.add_student()
     def assignable(self, teacher, usr):
         for akey in self.depth_1st(keys=[teacher.key], kinds='Teacher Class Student'.split(),
                               userkey=usr and self.idof(usr)):
@@ -812,9 +812,6 @@ class db_mixin:
                 if usr:
                     if student.userkey != self.idof(usr):
                         student = None
-                        ## don't convert student to new user when changing user
-                        #    student.userkey = self.idof(usr)
-                        #    student.put()
         if not student and usr:
             student = self.first(self.query(self.Student,[self.Student.userkey==self.idof(usr)]))
         if not student:  # generate
@@ -823,7 +820,7 @@ class db_mixin:
         if usr and student:
             if not usr.current_student or (usr.current_student != self.idof(student)):
                 usr.current_student = self.idof(student)
-                usr.put()
+                self.save(usr)
         if student:
             response.set_cookie('chckostudenturlsafe',self.urlsafe(student.key))
             SimpleTemplate.defaults["contextcolor"] = student.color or '#EEE'
@@ -851,12 +848,12 @@ class db_mixin:
     def send_mail(self, to, subject, message_text, creds, sender=auth.chcko_mail):
         auth.send_mail(to, subject, message_text, creds=self.stored_email_credential())
     def token_delete(self, token):
-        self.token_key(token).delete()
+        self.delete_keys([self.token_key(token)])
     def token_create(self, email):
         token = auth.gen_salt()
         key = self.token_key(token)
         usrtkn = self.UserToken.create(key=key, email=email)
-        usrtkn.put()
+        self.save(usrtkn)
         return token
     def token_key(self, token):
         return self.Key(self.UserToken, token)
@@ -874,7 +871,7 @@ class db_mixin:
         return usr.fullname or self.user_email(usr)
     def user_set_password(self, usr, password):
         usr.pwhash = auth.generate_password_hash(password)
-        usr.put()
+        self.save(usr)
     def user_create(self, email, password, fullname):
         usr = self.user_by_login(email,password)
         if not usr:

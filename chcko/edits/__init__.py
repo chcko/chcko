@@ -20,7 +20,7 @@ class Page(PageBase):
                 oldname = '/'.join([v for k, v in oldstudent.key.pairs()])
                 newname = '/'.join([v for k,
                                     v in self.request.student.key.pairs()])
-                oldstudent.key.delete()
+                db.delete_keys([oldstudent.key])
                 # no student any more, redirect to get/generate a new one
                 if choice == '1':  # change
                     self.redirect(

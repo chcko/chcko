@@ -25,7 +25,7 @@ class Util:
     def __init__(self, request):
         self.request = request
 
-    def query(self):
+    def parsedquerystring(self):
         return [
             d[0] if not d[1] else d for d in parse_qsl(
                 self.request.query_string,
