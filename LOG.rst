@@ -460,3 +460,5 @@ Need to use ``ndb.transaction`` in some places.
 Use
 /mnt/src/python-ndb/test_utils/test_utils/scripts/run_emulator.py
 
+setup.py
+

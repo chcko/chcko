@@ -101,5 +101,8 @@ def auth(provider):
 def auth_callback(provider):
     pass
 
-if __name__ == "__main__":
+def main():
     run(host='localhost', port=8000)
+
+if __name__ == "__main__":
+    main()

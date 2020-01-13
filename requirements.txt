@@ -1,5 +1,5 @@
 bottle
-bottle-session
+sqlalchemy
 
 #for email: https://github.com/gsuitedevs/python-samples/blob/master/gmail/quickstart/requirements.txt
 google-api-python-client
