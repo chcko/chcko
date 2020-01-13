@@ -10,7 +10,8 @@ from chcko.hlp import problem_contexts
 
 @pytest.fixture(scope='module')
 def chapp(request,db):
-    db.delete_query(db.query(db.Problem))
+    db.clear_all_data()
+    db.init_db()
     from chcko.app import app
     return TA(app)
 
@@ -57,7 +58,7 @@ class TestRunthrough(object):
         r = self.resp.form.submit(expect_errors=True)
         self._store('resp', r.follow())
 
-    def test_default_lang(self,chapp):
+    def test_default_lang(self,chapp,db):
         r = chapp.get('/')
         assert r.status == '200 OK'
         assert 'problems' in r #engish index page

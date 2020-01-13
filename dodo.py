@@ -383,12 +383,8 @@ def run_test(test):
 def task_test():
     return {
         'actions':[
-            ['py.test','chcko/test/test_db.py','-vv','--db=ndb'],
-            ['py.test','chcko/test/test_integration.py','-vv','--db=ndb'],
-            ['py.test','chcko/test/test_functional.py','-vv','--db=ndb'],
-            ['py.test','chcko/test/test_db.py','-vv','--db=sql'],
-            ['py.test','chcko/test/test_integration.py','-vv','--db=sql'],
-            ['py.test','chcko/test/test_functional.py','-vv','--db=sql']
+            ['py.test','chcko/tests','-vv','--db=sql'],
+            ['py.test','chcko/tests','-vv','--db=ndb']
         ],
         'verbosity':2
     }

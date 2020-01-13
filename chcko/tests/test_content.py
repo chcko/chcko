@@ -8,7 +8,7 @@ import time
 from chcko import bottle
 bottle.DEBUG = True
 bottle.TEMPLATES.clear()
-from chcko.test.boddle import boddle
+from chcko.tests.boddle import boddle
 
 import os.path
 from chcko.languages import languages
@@ -79,16 +79,17 @@ def allcontent():
         for fs in os.listdir(full):
             if re.match('[a-z]+', fs):
                 contentf = os.path.join(full, fs)
-                for ff in os.listdir(contentf):
-                    m = re.match('_*([a-z]+)\.html', ff)
-                    if m and m.group(1) in languages:
-                        yield ('.'.join([fn, fs]), m.group(1),lambda x:True)
+                if os.path.isdir(contentf):
+                    for ff in os.listdir(contentf):
+                        m = re.match('_*([a-z]+)\.html', ff)
+                        if m and m.group(1) in languages:
+                            yield ('.'.join([fn, fs]), m.group(1),lambda x:True)
 
 
 @pytest.fixture(params=[
-    ('test.t_1','en',
+    ('tests.t_1','en',
         lambda x:x==u'Here t_1.\nt_1 gets t_2:\nHere t_2.\nt_2 gets t_1:\nAfter.\nt_1 gets t_3:\nHere t_3.\nt_3 gets none.\n\n')
-    ,('test.t_3=3', 'en', lambda x:len(x.split('Here t_3.\nt_3 gets none.'))==4)
+    ,('tests.t_3=3', 'en', lambda x:len(x.split('Here t_3.\nt_3 gets none.'))==4)
     ,('r.a&r.b', 'en', lambda x:True) # mix problem and non-problem
     ,('r.b=2', 'en', lambda x:True) # more non-problems
 ]+list(allcontent()))
@@ -120,7 +121,7 @@ def test_recursive_includes(newuserpage):
         )  # via _new ...
     assert tst(rr1)
     assert self.problem is not None
-    rr = self.load_content('test.layout' if 'test' in q else 'content')  # and reload via _zip
+    rr = self.load_content('tests.layout' if 'tests' in q else 'content')  # and reload via _zip
     rrr = ''.join(rr)
     subs = q.split('&')
     if len(subs)>1:

@@ -270,7 +270,6 @@ class Sql(db_mixin):
         self.models = _cls
         for k,v in _cls.items():
             setattr(self,k,v)
-        self.init_db()
 
     def is_sql(self):
         return True

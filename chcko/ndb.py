@@ -86,7 +86,6 @@ class Ndb(db_mixin):
         for k,v in _cls.items():
             setattr(self,k,v)
         self.models = _cls
-        self.init_db()
 
     def is_sql(self):
         return False

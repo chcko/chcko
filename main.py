@@ -4,7 +4,10 @@ Contains entry point ``app`` for google cloud platform.
 
 from chcko.db import use
 from chcko.ndb import Ndb
-use(Ndb())
+db = Ndb()
+with db.dbclient.context():
+    db.init_db()
+use(db)
 import chcko.app
 
 def ndb_wsgi_middleware(wsgi_app):

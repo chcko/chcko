@@ -316,10 +316,10 @@ class resolver:
     Template names with '/' are used in %include statements in templates, if it is not
     a content template, but helper functionality.
 
-    >>> query_string = "test.t_1"
+    >>> query_string = "tests.t_1"
     >>> r = resolver(query_string,'en')
     >>> r.modulename
-    'test.t_1'
+    'tests.t_1'
     >>> os.path.basename(r.templatename)
     'en.html'
     >>> query_string = "content"
@@ -331,7 +331,7 @@ class resolver:
     >>> query_string = "any"
     >>> os.path.basename(resolver(query_string,'en').templatename)
     ''
-    >>> query_string = "test.t_1&wrong.x"
+    >>> query_string = "tests.t_1&wrong.x"
     >>> os.path.basename(resolver(query_string,'en').templatename)
     ''
 
@@ -419,7 +419,7 @@ def author_folder(fn, withtest=False):
     >>> author_folder('n.o')
     False
     '''
-    return (fn not in PAGES + (['test'] if withtest else [])
+    return (fn not in PAGES + (['tests'] if withtest else [])
             and not fn.startswith('_') and '.' not in fn)
 
 
@@ -501,15 +501,14 @@ class db_mixin:
         from chcko import initdb
         self.available_langs = initdb.available_langs
         self.student_contexts = student_contexts
-        with self.dbclient.context():
-            self.clear_index()
-            initdb.populate_index(
-                lambda problemid, lang, kind, level, path: self.Index.get_or_insert(
-                        problemid + ':' + lang,
-                        knd=int(kind),
-                        level=int(level),
-                        path=path)
-                )
+        self.clear_index()
+        initdb.populate_index(
+            lambda problemid, lang, kind, level, path: self.Index.get_or_insert(
+                    problemid + ':' + lang,
+                    knd=int(kind),
+                    level=int(level),
+                    path=path)
+            )
 
     def problem_create(self,student,**pkwargs):
         return self.Problem.create(parent=student.key,

@@ -88,7 +88,7 @@ class Page(PageBase):
         ''' evaluates the templates with includes therein and zips them to database entries
 
         examples:
-            chcko/test/test_content.py
+            chcko/tests/test_content.py
 
         '''
 

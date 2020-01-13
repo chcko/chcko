@@ -262,13 +262,13 @@ Next: testing sql.py and ndb.py
 20191226
 ========
 
-chcko/test/test_sql.py
-chcko/test/test_ndb.py
+chcko/tests/test_sql.py
+chcko/tests/test_ndb.py
 
 20191227
 ========
 
-chcko/test/test_integration.py
+chcko/tests/test_content.py
 
 Using
 https://github.com/chcko/boddle
@@ -277,27 +277,27 @@ for testing.
 20191228
 ========
 
-chcko/test/test_integration.py
+chcko/tests/test_content.py
 
 20191229
 ========
 
-chcko/test/test_integration.py
+chcko/tests/test_content.py
 
 20191230
 ========
 
-chcko/test/test_integration.py
+chcko/tests/test_content.py
 
-chcko/test/test_sql.py
-chcko/test/test_ndb.py
+chcko/tests/test_sql.py
+chcko/tests/test_ndb.py
 to 
-chcko/test/test_db.py
+chcko/tests/test_db.py
 
 20191231
 ========
 
-chcko/test/test_functional.py
+chcko/tests/test_functional.py
 
 https://github.com/bottlepy/bottle/issues/614
 https://stackoverflow.com/questions/23360666/sqlalchemy-filter-query-by-pickletype-contents
@@ -305,7 +305,7 @@ https://stackoverflow.com/questions/23360666/sqlalchemy-filter-query-by-picklety
 20200101
 ========
 
-chcko/test/test_functional.py
+chcko/tests/test_functional.py
 Stuck at test_forgot,
 user managment in general.
 But user is needed, as it holds together more roles.
@@ -375,18 +375,18 @@ For OIDC ``loginpass`` is currently the best google-independent solution.
 ========
 
 Continuing with tests:
-chcko/test/test_functional.py
+chcko/tests/test_functional.py
 Remove bottle-session, as User is session memory.
 
 20200105
 ========
 
-chcko/test/test_functional.py
+chcko/tests/test_functional.py
 
 20200106
 ========
 
-chcko/test/test_functional.py
+chcko/tests/test_functional.py
 
 Success on::
 
@@ -396,21 +396,21 @@ Success on::
 20200107
 ========
 
-chcko/test/test_functional.py::
+chcko/tests/test_functional.py::
 
   py.test test/test_functional.py --db=ndb
 
 20200108
 ========
 
-chcko/test/test_functional.py
+chcko/tests/test_functional.py
 
 Stuck with ndb.BooleanProperty(repeated=True) stored as [None] instead of [False].
 
 20200109
 ========
 
-chcko/test/test_functional.py::
+chcko/tests/test_functional.py::
 
   fixes for
   py.test test/test_functional.py --db=ndb
@@ -426,7 +426,7 @@ make datastore emulator faster with --no-store-on-disik::
 Checking profiling ndb::
 
   pip install --user pytest-profiling
-  py.test test/test_integration.py --db=ndb --profile
+  py.test test/test_content.py --db=ndb --profile
   pip install --user tuna
   tuna prof/*.prof
 
@@ -453,4 +453,10 @@ unless a local emulator is started and::
 The occasional failures of tests with ``--db=ndb``
 are because ndb is only eventually consistent.
 Need to use ``ndb.transaction`` in some places.
+
+20200113
+========
+
+Use
+/mnt/src/python-ndb/test_utils/test_utils/scripts/run_emulator.py
 
