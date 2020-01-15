@@ -9,20 +9,23 @@ from chcko import bottle
 from chcko.bottle import HTTPError
 app = bottle.app()
 
+ROOT = os.path.dirname(__file__)
 def python_path():
-    d = os.path.dirname
-    local_dir = d(d(__file__))
-    if local_dir not in sys.path:
-        sys.path.insert(0, local_dir)
+    prjroot = os.path.dirname(ROOT)
+    if prjroot not in sys.path:
+        sys.path.insert(0, prjroot)
 python_path()
 
 from chcko.hlp import import_module
 from chcko.languages import langnumkind
 from chcko.db import db
 
-def find_lang():
-    lang = bottle.request.get_cookie('chckolang')
+def lang_pagename(lang=None,pagename=None):
     if lang is None:
+        lang = bottle.request.get_cookie('chckolang')
+    if lang not in langnumkind:
+        if pagename == None:
+            pagename = lang
         langs = bottle.request.headers.get('Accept-Language')
         if langs:
             langs = langs.split(',')
@@ -37,32 +40,38 @@ def find_lang():
                 lang = list(candidates)[0]
         else:
             lang = 'en'
-    return lang
-
-def find_pagename(lang):
-    pagename = bottle.request.get_cookie('chckolastpage')
     if pagename is None:
-        if lang not in langnumkind:
-            pagename = lang
-            lang = 'en'
-        else:
-            pagename = 'content'
+        pagename = bottle.request.get_cookie('chckopage')
+    if pagename == 'null':
+        raise ValueError(pagename)
+    if pagename is None or pagename=='null':
+        pagename = 'content'
     return lang,pagename
 
 @bottle.hook('before_request')
 def trailing_slash():
     bottle.request.environ['PATH_INFO'] = bottle.request.environ['PATH_INFO'].rstrip('/')
 
+@bottle.route('/favicon.ico')
+def serve_favicon():
+    return bottle.static_file(os.path.join('static','favicon.ico'), root=ROOT)
+
+#TODO: the images should rather stay in their contextual folder
+@bottle.route('/<ignoredir>/_images/<filename>')
+def serve_image(ignoredir,filename):
+    return bottle.static_file(os.path.join('_images',filename), root=ROOT)
+
+@bottle.route('/static/<filename>')
+def serve_static(filename):
+    return bottle.static_file(os.path.join('static',filename), root=ROOT)
+
 @bottle.route('/',method=['GET','POST'])
 def nopath():
-    lang = find_lang()
-    lang,pagename = find_pagename(lang)
-    return fullpath(lang,pagename)
+    return fullpath(None,None)
 
 @bottle.route('/<lang>',method=['GET','POST'])
 def langonly(lang):
-    lang,pagename = find_pagename(lang)
-    return fullpath(lang,pagename)
+    return fullpath(lang,None)
 
 @bottle.route('/<lang>/logout')
 def logout(lang):
@@ -74,6 +83,12 @@ def logout(lang):
 
 @bottle.route('/<lang>/<pagename>',method=['GET','POST'])
 def fullpath(lang,pagename):
+    try:
+        lang,pagename = lang_pagename(lang,pagename)
+    except ValueError:
+        return ""
+    db.set_cookie(bottle.response,'chckolang',lang)
+    db.set_cookie(bottle.response,'chckopage',pagename)
     bottle.request.lang = lang
     bottle.request.pagename = pagename
     db.set_user(bottle.request,bottle.response)
@@ -101,8 +116,3 @@ def auth(provider):
 def auth_callback(provider):
     pass
 
-def main():
-    run(host='localhost', port=8000)
-
-if __name__ == "__main__":
-    main()

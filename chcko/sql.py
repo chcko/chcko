@@ -25,7 +25,7 @@ from sqlalchemy import create_engine
 from sqlalchemy import util
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-engine = create_engine("sqlite://")
+engine = create_engine("sqlite:///sqlite.db")
 meta = MetaData(engine)
 
 DBSession = scoped_session(sessionmaker(bind=engine))
@@ -189,7 +189,6 @@ class User(Model):
     pwhash = C(String)
     token_model = C(ForeignKey('UserToken.urlkey'))
     verified = C(Boolean)
-    lang = C(String)
     current_student = C(ForeignKey('Student.urlkey',use_alter=True))
 class Secret(Model):
     secret = C(String)

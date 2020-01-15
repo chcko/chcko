@@ -36,11 +36,15 @@ class Util:
             '/?' + lnk + '">' + lnk + '</a>'
 
     def newlang(self, lng):
-        np = self.request.url.replace(
-            '/' + self.request.lang,
-            '/' + lng,
-            1)
-        return '<a href="' + np + '">' + lng + '</a>'
+        oldp = self.request.url
+        ol = '/' + self.request.lang
+        has_lang =  oldp.endswith(ol) or (ol+'/') in oldp
+        if has_lang:
+            newp = oldp.replace(ol,'/' + lng,1)
+        else:
+            soldp = oldp.split('/')
+            newp = '/'.join(soldp[:3]+[lng]+soldp[3:])
+        return '<a href="' + newp + '">' + lng + '</a>'
 
     @staticmethod
     def inc(lnk, cntr=counter(), stack=[]):
@@ -138,7 +142,7 @@ class PageBase:
         bottle.redirect(f'/{self.request.lang}/{afterlang}')
     def renew_token(self,token):
         db.token_delete(token)
-        self.response.set_cookie('chckousertoken',db.token_create(db.user_email(self.request.user)))
+        db.set_cookie(self.response,'chckousertoken',db.token_create(db.user_email(self.request.user)))
 
 def user_required(handler):
     def check_login(self, *args, **kwargs):

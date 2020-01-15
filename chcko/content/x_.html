@@ -3,20 +3,20 @@
 
     <form action="" method="get">
     % for knd, lnks in content:
-    <p><b><a href="/{{request.lang}}/?kind={{knd}}">{{knd}}</a></b><br>
+    <p><b><a href="/{{request.lang}}/content?kind={{knd}}">{{knd}}</a></b><br>
        % for linktext,lnklvl,leaf,depth in lnks:
-          % if not leaf: 
-          <small>({{depth}})</small><em><a href="/{{request.lang}}/?path={{linktext}}">{{linktext}}</a>:</em>
+          % if not leaf:
+          <small>({{depth}})</small><em><a href="/{{request.lang}}/content?path={{linktext}}">{{linktext}}</a>:</em>
           % else:
              % lnk,lvl = lnklvl
-             <small>({{depth}})</small><a href="/{{request.lang}}/?{{lnk}}">{{linktext}}</a>
-             <input type="checkbox" name="choice" value="{{lnk}}">
+             <small>({{depth}})</small><a href="/{{request.lang}}/content?{{lnk}}">{{linktext}}</a>
+             <input type="checkbox" name="choice" value="{{lnk}}" autocomplete="off">
              % try:
              % authorid = lnk.split('.')[0]
-             (<a href="/{{request.lang}}/?link={{authorid}}">{{authorid}}</a>)
+             (<a href="/{{request.lang}}/content?link={{authorid}}">{{authorid}}</a>)
              % except: pass
              %end
-             <a href="/{{request.lang}}/?level={{lvl}}">{{lvl}}</a>
+             <a href="/{{request.lang}}/content?level={{lvl}}">{{lvl}}</a>
           % end
        % end
     % end
@@ -31,7 +31,7 @@
             var e = ee.currentTarget;
             if (e.checked)
                 $(this).before($('<input>',{type:"checkbox", name:"choice", value:e.value}));
-            else 
+            else
                 e.remove();
             }}, "input[type='checkbox']"
         );
@@ -42,12 +42,12 @@
             for (var ch=0; ch!=allchecked.length; ch++)
             {
                 var value = allchecked[ch].value;
-                if (a[value] === undefined) 
-                    a[value]=1; 
-                else 
+                if (a[value] === undefined)
+                    a[value]=1;
+                else
                     a[value]=a[value]+1;
             }
-            document.location.href="/{{request.lang}}/?"+$.param(a)
+            document.location.href="/{{request.lang}}/content?"+$.param(a)
         });
     </script>
 
@@ -93,11 +93,11 @@
                         <fieldset>
                         % fieldset = True
                         <input type="hidden" name="query_string" value="{{request.query_string}}">
-                        <div><input type="checkbox" class="checkall"> 
+                        <div><input type="checkbox" class="checkall">
                             {{util.translate(kind)}} {{e.string_id()}}
                         </div>
                     % elif kind == 'Student':
-                        <div><input type="checkbox" name="assignee" value="{{db.urlsafe(e)}}"> 
+                        <div><input type="checkbox" name="assignee" value="{{db.urlsafe(e)}}">
                             {{e.string_id()}} </div>
                     % end
                 % end
@@ -114,14 +114,14 @@
                     }
                 </script>
                 {{tdue}}
-                <input type="text" name="duedays" id="duedays" value="2" 
+                <input type="text" name="duedays" id="duedays" value="2"
                     onchange="javascript:if (document.getElementById('duedays').value >= 1);
                         else document.getElementById('duedays').value = 1;"
                 />
-                <input type="button" name="add" 
+                <input type="button" name="add"
                     onclick="javascript: document.getElementById('duedays').value++;" value="+"
                     style="border-radius:0px;border:solid 1px;width:2em;font-weight:bold;background:#EEE"/>
-                <input type="button" name="subtract" 
+                <input type="button" name="subtract"
                     onclick="javascript: subtractduedays();" value="&mdash;"
                     style="border-radius:0px;border:solid 1px;width:2em;font-weight:bold;background:#EEE"/>
                 </fieldset>

@@ -244,7 +244,6 @@ class TestRunthrough(object):
         self._store('resp', self.resp.goto('/en/todo'))
         curx = self.resp.lxml
         probs = curx.xpath('//a[contains(@href,"en/?")]/@href')
-        print(probs)#
         assert probs
         for prob in probs:
             #prob = '/en/?r.bc'

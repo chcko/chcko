@@ -54,7 +54,7 @@ def main():
         zip_safe=False,
         tests_require=['pytest', 'pytest-cov', 'mock'],
         entry_points={
-          'console_scripts': ['chcko=chcko.app:main']
+          'console_scripts': ['chcko=chcko.run:main']
         }
     )
 

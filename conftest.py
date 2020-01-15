@@ -11,7 +11,7 @@ import urllib
 import time
 from contextlib import contextmanager
 
-sys.path += [os.path.dirname(os.path.dirname(__file__))]
+sys.path += [os.path.dirname(__file__)]
 
 # from
 # /mnt/src/python-ndb/test_utils/test_utils/scripts/run_emulator.py

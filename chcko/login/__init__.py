@@ -11,8 +11,7 @@ class Page(PageBase):
         if not (email and password):
             self.redirect('message?msg=f')
         self.request.user = db.user_by_login(email,password)
-        if self.request.user:
-            self.response.set_cookie('chckousertoken',db.token_create(email))
+        self.renew_token()
         db.set_student(self.request,self.response)
         self.redirect('todo')
 

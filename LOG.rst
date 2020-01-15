@@ -460,5 +460,27 @@ Need to use ``ndb.transaction`` in some places.
 Use
 /mnt/src/python-ndb/test_utils/test_utils/scripts/run_emulator.py
 
+noxfile.py
 setup.py
+
+Test succeed with nox::
+
+  nox
+
+20200114
+========
+
+Visually check and fix the HTML layout::
+
+  sudo pip install -e .
+  chcko
+
+20200115
+========
+
+Why does changing lang change the cookie?
+Bottle cookie defaults to current path. Use path='/'.
+
+Where is the .../null GET request coming from?
+https://stackoverflow.com/questions/59755918/refreshing-the-browser-produces-a-wsgi-null-as-last-get-request-why-the-nul
 

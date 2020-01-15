@@ -25,7 +25,7 @@ class Page(PageBase):
             self.redirect(f'message?msg=a&email={email}')
 
         token = db.token_create(email)
-        relative_url = 'verification?type=v&email={email}&token={token}'
+        relative_url = f'verification?type=v&email={email}&token={token}'
 
         if is_standard_server:
             confirmation_url = self.request.application_url + \

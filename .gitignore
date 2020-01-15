@@ -1,5 +1,6 @@
 secret.json
 token.pickle
+sqlite.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

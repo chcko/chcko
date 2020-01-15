@@ -808,7 +808,7 @@ class db_mixin:
             chckostudenturlsafe = request.get_cookie('chckostudenturlsafe')
             if chckostudenturlsafe:
                 student = self.from_urlsafe(chckostudenturlsafe)
-                if usr:
+                if student and usr:
                     if student.userkey != self.idof(usr):
                         student = None
         if not student and usr:
@@ -821,13 +821,16 @@ class db_mixin:
                 usr.current_student = self.idof(student)
                 self.save(usr)
         if student:
-            response.set_cookie('chckostudenturlsafe',self.urlsafe(student.key))
+            self.set_cookie(response,'chckostudenturlsafe',self.urlsafe(student.key))
             SimpleTemplate.defaults["contextcolor"] = student.color or '#EEE'
             request.student = student
 
+    def set_cookie(self,response,cookie,value):
+        response.set_cookie(cookie,value,httponly=True,path='/',samesite='strict')
+
     def set_user(self,request,response):
         chckousertoken = request.get_cookie('chckousertoken')
-        if chckousertoken:
+        if chckousertoken and chckousertoken!='null':
             request.user = self.user_by_token(chckousertoken)
         else:
             try:
@@ -873,6 +876,7 @@ class db_mixin:
         self.save(usr)
     def user_create(self, email, password, fullname):
         usr = self.user_by_login(email,password)
+        fullname = fullname.strip()
         if not usr:
             usr = self.User.get_or_insert(email, pwhash=auth.generate_password_hash(password), fullname=fullname)
         return usr
