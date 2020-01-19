@@ -1,3 +1,7 @@
+% if failed:
+<strong>{{tfail}}</strong> {{tcheckagain}}
+% end
+
 <script>
 function validate() {
     var email = document.login.email.value;
@@ -26,15 +30,20 @@ function validate() {
 <input type="submit" value="{{tlogin}}"/>
 </form>
 
-<a href="/{{request.lang}}/forgot">{{tforgot}}</a><br>
+<a href="/{{request.lang}}/forgot" id="forgot">{{tforgot}}</a><br>
 <a href="/{{request.lang}}/signup" id="signup">{{tsignup}}</a>
 
 <script> 
     var emailinput = document.getElementById('email');
     signup = document.getElementById('signup');
+    forgot = document.getElementById('forgot');
     signup.onclick = function () {
         if (emailinput.value != "")
             this.href = ('/{{request.lang}}/signup?email=')+emailinput.value;
+    };
+    forgot.onclick = function () {
+        if (emailinput.value != "")
+            this.href = ('/{{request.lang}}/forgot?email=')+emailinput.value;
     };
 </script>
 

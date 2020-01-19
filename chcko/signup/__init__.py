@@ -10,8 +10,7 @@ class Page(PageBase):
     def post_response(self):
         email = self.request.forms.get('email').strip()
         password = self.request.forms.get('password')
-        name = self.request.forms.get('name')
-        lastname = self.request.forms.get('lastname')
+        fullname = self.request.forms.get('fullname').strip()
 
         if not email or not password:
             self.redirect('message?msg=f')
@@ -20,11 +19,10 @@ class Page(PageBase):
             self.redirect('message?msg=c')
 
         try:
-            user = db.user_create(email,password,fullname=f"{name} {lastname}")
+            user,token = db.user_create(email,password,fullname=f"{fullname}")
         except ValueError:
             self.redirect(f'message?msg=a&email={email}')
 
-        token = db.token_create(email)
         relative_url = f'verification?type=v&email={email}&token={token}'
 
         if is_standard_server:

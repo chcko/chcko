@@ -338,6 +338,7 @@ Do new user handling is in an appengine/gcloud independent way.
 - OIDC identity to log on
 
 https://realpython.com/flask-google-login/
+
 1. development:
    Get client credential for chcko from each provider (XXX configuration).
    Store safely locally outside project. Apply using ``environ``.
@@ -483,4 +484,9 @@ Bottle cookie defaults to current path. Use path='/'.
 
 Where is the .../null GET request coming from?
 https://stackoverflow.com/questions/59755918/refreshing-the-browser-produces-a-wsgi-null-as-last-get-request-why-the-nul
+
+20200119
+========
+
+More fixes.
 

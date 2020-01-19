@@ -140,9 +140,12 @@ class PageBase:
         return res
     def redirect(self, afterlang):
         bottle.redirect(f'/{self.request.lang}/{afterlang}')
-    def renew_token(self,token):
-        db.token_delete(token)
-        db.set_cookie(self.response,'chckousertoken',db.token_create(db.user_email(self.request.user)))
+    def renew_token(self):
+        db.token_delete(self.request.user.token)
+        email = db.user_email(self.request.user)
+        self.request.user.token = db.token_create(email)
+        db.save(self.request.user)
+        db.set_cookie(self.response,'chckousertoken',self.request.user.token)
 
 def user_required(handler):
     def check_login(self, *args, **kwargs):

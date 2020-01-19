@@ -20,7 +20,7 @@ class User(Model):
     fullname = ndb.StringProperty(required=False)
     pwhash = ndb.StringProperty(required=False)
     verified = ndb.IntegerProperty()
-    token_model = ndb.StructuredProperty(UserToken)
+    token = ndb.StringProperty()
     current_student = ndb.KeyProperty(kind='Student')
 class Secret(Model):  # filled manually
     secret = ndb.StringProperty()

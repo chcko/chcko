@@ -40,11 +40,9 @@ def lang_pagename(lang=None,pagename=None):
                 lang = list(candidates)[0]
         else:
             lang = 'en'
-    if pagename is None:
-        pagename = bottle.request.get_cookie('chckopage')
     if pagename == 'null':
-        raise ValueError(pagename)
-    if pagename is None or pagename=='null':
+        raise ValueError(pagename) #TODO: why this null
+    if pagename is None:# or pagename=='null':
         pagename = 'content'
     return lang,pagename
 
@@ -88,7 +86,6 @@ def fullpath(lang,pagename):
     except ValueError:
         return ""
     db.set_cookie(bottle.response,'chckolang',lang)
-    db.set_cookie(bottle.response,'chckopage',pagename)
     bottle.request.lang = lang
     bottle.request.pagename = pagename
     db.set_user(bottle.request,bottle.response)

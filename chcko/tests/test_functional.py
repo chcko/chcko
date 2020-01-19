@@ -53,8 +53,7 @@ class TestRunthrough(object):
         self.resp.form[u'email'] = u'temail@email.com'
         self.resp.form[u'password'] = pw
         self.resp.form[u'confirmp'] = pw
-        self.resp.form[u'name'] = u'tname'
-        self.resp.form[u'lastname'] = u'tlastname'
+        self.resp.form[u'fullname'] = u'tfullname'
         r = self.resp.form.submit(expect_errors=True)
         self._store('resp', r.follow())
 
@@ -226,10 +225,10 @@ class TestRunthrough(object):
         self._store('resp', self.resp.goto('/en/content'))
         assert "problems" in self.resp
         curx = self.resp.lxml
-        probs = curx.xpath('//a[contains(@href,"en/?r.b")]/@href')
+        probs = curx.xpath('//a[contains(@href,"en/content?r.b")]/@href')
         assert probs
         for prob in probs:
-            #prob = '/en/?r.bu'
+            #prob = '/en/content?r.bu'
             self._store('resp', self.resp.goto(prob))
             if len(self.resp.forms) > 1:
                 form = self.resp.forms[1]  # assign
@@ -243,10 +242,10 @@ class TestRunthrough(object):
     def test_todo(self):
         self._store('resp', self.resp.goto('/en/todo'))
         curx = self.resp.lxml
-        probs = curx.xpath('//a[contains(@href,"en/?")]/@href')
+        probs = curx.xpath('//a[contains(@href,"en/content?")]/@href')
         assert probs
         for prob in probs:
-            #prob = '/en/?r.bc'
+            #prob = '/en/content?r.bc'
             self._store('resp', self.resp.goto(prob))
             form = self.resp.forms[0]
             inps = form.fields.values()
@@ -264,14 +263,14 @@ class TestRunthrough(object):
             assert "<form" not in res, prob
         self._store('resp', self.resp.goto('/en/todo'))
         curx = self.resp.lxml
-        probs = curx.xpath('//a[contains(@href,"en/?")]/@href')
+        probs = curx.xpath('//a[contains(@href,"en/content?")]/@href')
         assert probs == []
 
     def test_done_delone(self):
         self._store('resp', self.resp.goto('/en/done'))
         # self.resp.showbrowser()
         curx = self.resp.lxml
-        delone = curx.xpath('//a[contains(@href,"en/?r.bb")]/../..//input')
+        delone = curx.xpath('//a[contains(@href,"en/content?r.bb")]/../..//input')
         value = ''
         if 'value' in delone[0].keys():
             value = dict(delone[0].items())['value']
@@ -284,7 +283,7 @@ class TestRunthrough(object):
                 d.checked = True
         self._store('resp', form.submit('submit'))
         curx = self.resp.lxml
-        delone = curx.xpath('//a[contains(@href,"en/?r.bb")]/../..//input')
+        delone = curx.xpath('//a[contains(@href,"en/content?r.bb")]/../..//input')
         assert delone == []  # deleted
 
     def test_done_delall(self):

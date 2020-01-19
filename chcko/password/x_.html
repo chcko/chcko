@@ -19,10 +19,16 @@
 
 <h1>{{ ttitle }}</h1>
 
+<p>
+{{db.user_email(request.user)}}
+</p>
+
 <form method="POST" name=pwd onsubmit='return validate()'>
     <label>{{tselect}}</label>
     <br>
-    <label for="password">{{tpassword}}*</label>
+    <label for="fullname">{{tfullname}}</label>
+    <input type="text" name="fullname"/><br>
+    <label for="password">{{tpassword}}</label>
     <input type="password" name="password" /><br>
     <label for="confirmp">{{tconfirm}}*</label>
     <input type="password" name="confirmp" />

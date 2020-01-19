@@ -5,6 +5,7 @@
 #        sys.path.insert(0, local_dir)
 #python_path()
 
+import os
 import datetime
 from time import monotonic_ns
 import base64
@@ -25,7 +26,8 @@ from sqlalchemy import create_engine
 from sqlalchemy import util
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-engine = create_engine("sqlite:///sqlite.db")
+SQLITEDB = os.path.join(os.path.dirname(__file__),'sqlite.db')
+engine = create_engine("sqlite:///"+SQLITEDB)
 meta = MetaData(engine)
 
 DBSession = scoped_session(sessionmaker(bind=engine))
@@ -187,8 +189,8 @@ class UserToken(Model):
 class User(Model):
     fullname = C(String)
     pwhash = C(String)
-    token_model = C(ForeignKey('UserToken.urlkey'))
     verified = C(Boolean)
+    token = C(String)
     current_student = C(ForeignKey('Student.urlkey',use_alter=True))
 class Secret(Model):
     secret = C(String)

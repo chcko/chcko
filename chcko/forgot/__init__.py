@@ -9,12 +9,13 @@ class Page(PageBase):
 
     def __init__(self):
         super().__init__()
-        self.email = self.request.forms.get('email','')
+        self.not_found = False
+        self.email = self.request.params.get('email','')
         if self.email:
             self.user = db.Key(db.User,self.email).get()
+            self.not_found = self.user == None
         else:
             self.user = None
-        self.not_found = self.user == None
         self.request.params.update({
             'email': self.email,
             'not_found': self.not_found
@@ -24,7 +25,7 @@ class Page(PageBase):
         if self.not_found:
             self.redirect(f'signup?email={self.email}')
 
-        token = db.token_create(self.email)
+        token = db.token_create(self.email) #not in user.token = signup token
         relative_url = f'verification?type=p&email={self.email}&token={token}'
 
         if is_standard_server:

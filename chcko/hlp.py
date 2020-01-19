@@ -826,18 +826,16 @@ class db_mixin:
             request.student = student
 
     def set_cookie(self,response,cookie,value):
-        response.set_cookie(cookie,value,httponly=True,path='/',samesite='strict')
+        response.set_cookie(cookie,value,httponly=True,path='/',samesite='strict',maxage=datetime.timedelta(days=30))
 
     def set_user(self,request,response):
+        request.user = None
         chckousertoken = request.get_cookie('chckousertoken')
         if chckousertoken and chckousertoken!='null':
             request.user = self.user_by_token(chckousertoken)
-        else:
-            try:
-                tkn = request.forms.get('token')
-                request.user = self.user_by_token(tkn)
-            except:
-                request.user = None
+        if request.user is None:
+            tkn = request.params.get('token')
+            request.user = self.user_by_token(tkn)
 
     def _stored_secret(self,name):
         ass = str(
@@ -876,10 +874,12 @@ class db_mixin:
         self.save(usr)
     def user_create(self, email, password, fullname):
         usr = self.user_by_login(email,password)
-        fullname = fullname.strip()
         if not usr:
-            usr = self.User.get_or_insert(email, pwhash=auth.generate_password_hash(password), fullname=fullname)
-        return usr
+            token = self.token_create(email)
+            usr = self.User.get_or_insert(email, pwhash=auth.generate_password_hash(password), fullname=fullname, token=token, verified=False)
+        else:
+            token = usr.token
+        return usr,token
     def user_by_login(self,email,password):
         usr = self.Key(self.User,email).get()
         if usr:

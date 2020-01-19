@@ -11,7 +11,8 @@ import urllib
 import time
 from contextlib import contextmanager
 
-sys.path += [os.path.dirname(__file__)]
+THISPATH = os.path.dirname(__file__)
+sys.path += [THISPATH]
 
 # from
 # /mnt/src/python-ndb/test_utils/test_utils/scripts/run_emulator.py
@@ -91,6 +92,9 @@ def db(request):
                 db.init_db()
                 yield db
     else: # backnd == "sql":
+        dbfile = os.path.join(THISPATH,'chcko','sqlite.db')
+        if os.path.exists(dbfile):
+            os.remove(dbfile)
         from chcko.sql import Sql
         db = chckodb.use(Sql())
         with db.dbclient.context():

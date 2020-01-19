@@ -151,6 +151,12 @@ Test ``chcko``::
   doit cov
   doit serve
 
+  #or e.g.
+  #breakpoint() in code
+  py.test tests/test_functional.py --db=sql
+  b chcko/app.py:90
+  c
+
 Upload::
 
   cd ~/chcko
