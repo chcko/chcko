@@ -17,7 +17,7 @@ def prepare(
 ):
     '''prepares the parameters for db.depth_1st
 
-    >>> from chchko.db import db
+    >>> from chcko.db import db
     >>> skey = db.key_from_path(['Sc1', 'Pe1', 'Te1','Cl1','St1'])
     >>> #qs= "Sc0&*&*&*&*&*"
     >>> qs= "q~r.be"
