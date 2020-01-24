@@ -1,0 +1,34 @@
+<p>
+% if defined('msg'):
+% if msg == 'a':
+    User with email {{email}} exists already.
+% elif msg == 'b':
+    The registration was successful.
+% elif msg == 'c':
+    Passwords do not match
+% elif msg == 'd':
+    The password has been updated.
+% elif msg == 'e':
+    Student belongs to other user.
+% elif msg == 'f':
+    Wrong input.
+% elif msg == 'g':
+    Student {{studentname}} deleted.
+% elif msg == 'h':
+    Student {{oldname}} is now {{newname}}.
+% elif msg == 'i':
+    An error has occurred.
+% elif msg == 'j':
+    A email has been sent to you. Click at the link in the email to complete the process.
+% elif msg == 'k':
+    Could not find any user with signup token {{token}}.
+% elif msg == 'l':
+    Verification type not supported.
+% end
+% else:
+    Welcome.
+% end
+</p>
+
+% include('chcko/main')
+

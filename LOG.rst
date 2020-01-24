@@ -164,7 +164,7 @@ Make *chcko* run with Python3 with minimal change
 mail problem
 ------------
 
-chcko/signup/__init__.py: ``from google.appengine.api import mail`` does not support Python3
+chcko/chcko/signup/__init__.py: ``from google.appengine.api import mail`` does not support Python3
 ``~/.local/opt/google-cloud-sdk/platform/google_appengine/google/appengine/api/mail.py``
 Problem lies in ProtocolBuffer.py containing ProtocolMessage.
 Solution is in **hlp.py**.
@@ -179,7 +179,7 @@ https://developers.google.com/gmail/api/quickstart/python
 , https://stackabuse.com/how-to-send-emails-with-gmail-using-python/
 , https://medium.com/@erdoganyesil/read-file-from-google-cloud-storage-with-python-cf1b913bd134
 Created ``chcko.mail@gmail.com`` and enabled Gmail API:
-chcko/credentials.json
+chcko/chcko/credentials.json
 https://cloud.google.com/appengine/docs/standard/python3/sending-messages
 , https://pypi.org/project/mailgun3-python/
 , https://cloud.google.com/kms/docs/secret-management#choosing_a_secret_management_solution
@@ -262,13 +262,13 @@ Next: testing sql.py and ndb.py
 20191226
 ========
 
-chcko/tests/test_sql.py
-chcko/tests/test_ndb.py
+chcko/chcko/tests/test_sql.py
+chcko/chcko/tests/test_ndb.py
 
 20191227
 ========
 
-chcko/tests/test_content.py
+chcko/chcko/tests/test_content.py
 
 Using
 https://github.com/chcko/boddle
@@ -277,27 +277,27 @@ for testing.
 20191228
 ========
 
-chcko/tests/test_content.py
+chcko/chcko/tests/test_content.py
 
 20191229
 ========
 
-chcko/tests/test_content.py
+chcko/chcko/tests/test_content.py
 
 20191230
 ========
 
-chcko/tests/test_content.py
+chcko/chcko/tests/test_content.py
 
-chcko/tests/test_sql.py
-chcko/tests/test_ndb.py
+chcko/chcko/tests/test_sql.py
+chcko/chcko/tests/test_ndb.py
 to 
-chcko/tests/test_db.py
+chcko/chcko/tests/test_db.py
 
 20191231
 ========
 
-chcko/tests/test_functional.py
+chcko/chcko/tests/test_functional.py
 
 https://github.com/bottlepy/bottle/issues/614
 https://stackoverflow.com/questions/23360666/sqlalchemy-filter-query-by-pickletype-contents
@@ -305,7 +305,7 @@ https://stackoverflow.com/questions/23360666/sqlalchemy-filter-query-by-picklety
 20200101
 ========
 
-chcko/tests/test_functional.py
+chcko/chcko/tests/test_functional.py
 Stuck at test_forgot,
 user managment in general.
 But user is needed, as it holds together more roles.
@@ -376,18 +376,18 @@ For OIDC ``loginpass`` is currently the best google-independent solution.
 ========
 
 Continuing with tests:
-chcko/tests/test_functional.py
+chcko/chcko/tests/test_functional.py
 Remove bottle-session, as User is session memory.
 
 20200105
 ========
 
-chcko/tests/test_functional.py
+chcko/chcko/tests/test_functional.py
 
 20200106
 ========
 
-chcko/tests/test_functional.py
+chcko/chcko/tests/test_functional.py
 
 Success on::
 
@@ -397,21 +397,21 @@ Success on::
 20200107
 ========
 
-chcko/tests/test_functional.py::
+chcko/chcko/tests/test_functional.py::
 
   py.test test/test_functional.py --db=ndb
 
 20200108
 ========
 
-chcko/tests/test_functional.py
+chcko/chcko/tests/test_functional.py
 
 Stuck with ndb.BooleanProperty(repeated=True) stored as [None] instead of [False].
 
 20200109
 ========
 
-chcko/tests/test_functional.py::
+chcko/chcko/tests/test_functional.py::
 
   fixes for
   py.test test/test_functional.py --db=ndb
@@ -489,4 +489,16 @@ https://stackoverflow.com/questions/59755918/refreshing-the-browser-produces-a-w
 ========
 
 More fixes.
+
+20200124
+========
+
+chcko has now the state of Mamchecker,
+
+- with Python3
+- support Sql databes in addition to Google Datastore via ndb.
+
+git tag python3_ndb_sql_no_namespace
+
+Next: separate content via namespace packages
 

@@ -5,28 +5,28 @@
     {
       "staticFiles": {
         "mimeType": "image/x-icon", 
-        "path": "chcko/static/favicon.ico", 
-        "uploadPathRegex": "chcko/static/favicon\\.ico"
+        "path": "chcko/chcko/static/favicon.ico", 
+        "uploadPathRegex": "chcko/chcko/static/favicon\\.ico"
       }, 
       "urlRegex": "/favicon\\.ico"
     }, 
     {
       "staticFiles": {
-        "path": "chcko/static/\\1", 
-        "uploadPathRegex": "chcko/static/.*"
+        "path": "chcko/chcko/static/\\1", 
+        "uploadPathRegex": "chcko/chcko/static/.*"
       }, 
       "urlRegex": "/static/(.*)"
     }, 
     {
       "staticFiles": {
-        "path": "chcko/_images/\\1", 
-        "uploadPathRegex": "chcko/_images/.*"
+        "path": "chcko/chcko/_images/\\1", 
+        "uploadPathRegex": "chcko/chcko/_images/.*"
       }, 
       "urlRegex": "/[^/]*/_images/(.*)"
     }, 
     {
       "script": {
-        "scriptPath": "chcko.app.app"
+        "scriptPath": "chcko.chcko.app.app"
       }, 
       "securityLevel": "SECURE_OPTIONAL", 
       "urlRegex": ".*"

@@ -83,10 +83,10 @@ def pytest_addoption(parser):
 @pytest.fixture(scope='session')
 def db(request):
     backnd = request.config.getoption("--db")
-    import chcko.db as chckodb
+    import chcko.chcko.db as chckodb
     if backnd == "ndb":
         with emulator():
-            from chcko.ndb import Ndb
+            from chcko.chcko.ndb import Ndb
             db = chckodb.use(Ndb())
             with db.dbclient.context():
                 db.init_db()
@@ -95,7 +95,7 @@ def db(request):
         dbfile = os.path.join(THISPATH,'chcko','sqlite.db')
         if os.path.exists(dbfile):
             os.remove(dbfile)
-        from chcko.sql import Sql
+        from chcko.chcko.sql import Sql
         db = chckodb.use(Sql())
         with db.dbclient.context():
             db.init_db()

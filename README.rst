@@ -124,7 +124,7 @@ Clone and initialize ``chcko``::
 
   cd ~
   git clone https://github.com/chcko/chcko
-  cd ~/chcko/chcko
+  cd ~/chcko/chcko/chcko
   pip install --user doit
   doit -kd. html
   cd ..
@@ -154,7 +154,7 @@ Test ``chcko``::
   #or e.g.
   #breakpoint() in code
   py.test tests/test_functional.py --db=sql
-  b chcko/app.py:90
+  b chcko/chcko/app.py:90
   c
 
 Upload::

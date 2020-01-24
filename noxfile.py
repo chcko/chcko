@@ -10,7 +10,7 @@ def test_for_db(session, dbname):
     if session.posargs:
         run_args.extend(session.posargs)
     run_args.extend([f'--db={dbname}'])
-    run_args.append(os.path.join('chcko', 'tests'))
+    run_args.append(os.path.join('chcko','chcko','tests'))
     session.run(*run_args)
 
 @nox.session(py=DEFAULT_INTERPRETER)

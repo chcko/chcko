@@ -1,0 +1,12 @@
+% for anc in db.student_roles(request.user):
+    % cntxt = [not users and '<em>'+an.string_id()+'</em>' or an.string_id() for an,users in anc]
+
+    <p>
+    <a href="/{{ request.lang }}/todo?{{!db.urlstring(anc[-1][0])}}">
+        {{!' &nbsp;&nbsp; '.join(cntxt)}}
+    </a>
+    <p>
+% end
+
+% include('chcko/main')
+

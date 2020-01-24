@@ -1,5 +1,5 @@
 .PHONY: test
 
 test:
-	py.test chcko/tests --db=sql
-	py.test chcko/tests --db=ndb
+	py.test chcko/chcko/tests --db=sql
+	py.test chcko/chcko/tests --db=ndb

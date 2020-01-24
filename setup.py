@@ -22,8 +22,7 @@ def main():
             'lxml',
             'sympy'
     ]
-    packages=['chcko']
-    data_files = [str(x.relative_to(proot/'chcko')) for x in proot.rglob('chcko/**/*.html')]
+    packages=['chcko.chcko']
     setuptools.setup(
         name="chcko",
         version = "0.0.1",
@@ -46,15 +45,14 @@ def main():
             'Topic :: Education :: Computer Aided Instruction (CAI)'
         ],
         packages=packages,
-        package_data={'chcko': data_files},
-        #namespace_packages=["chcko"],
+        namespace_packages=["chcko"],
         install_requires=dependencies,
         extras_require={},
         include_package_data=True,
         zip_safe=False,
         tests_require=['pytest', 'pytest-cov', 'mock'],
         entry_points={
-          'console_scripts': ['chcko=chcko.run:main']
+          'console_scripts': ['chcko=chcko.chcko.run:main']
         }
     )
 

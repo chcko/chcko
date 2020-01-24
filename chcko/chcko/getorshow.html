@@ -1,0 +1,58 @@
+%def oneidx(idx,example=''):
+    %if defined('choices') and idx in choices:
+        %for i,val in enumerate(choices[idx]):
+        {{str(i+1)}}. <input type="radio" \\
+            %if answered and norm(i+1)==results[idx]:
+            checked \\
+            %end
+            %if answered:
+            disabled \\
+            %end
+            name="{{inputids[idx]}}" value="{{str(i+1)}}"/>{{val}}<br>
+        %end
+    %else:
+        %if not answered:
+            <input type="text" name="{{inputids[idx]}}" size="8" autocomplete="off"> {{example}}
+            %if points[idx] > 0:
+                [{{points[idx]}}P]\\
+            %end
+        %else:
+            %if defined('show'):
+            {{!show(results[idx])}}\\
+            %else:
+            {{!results[idx]}}\\
+            %end
+        %end
+    %end
+    %if answered:
+        %if answers[idx].strip() != '':
+            ({{answers[idx]}} \\
+            %include('chcko/right_wrong',value=bool(oks[idx]))
+            )
+        %end
+        %if oks[idx]:
+            <span class='right'>[{{points[idx]}}P]</span>
+        %else:
+            <span class='wrong'>[0P]</span>
+        %end
+    %end
+%end
+
+%if defined('idx'):
+    %if defined('example'):
+        %oneidx(idx,example)
+    %else:
+        %oneidx(idx)
+    %end
+%else:
+    %if not defined('examples'):
+        %examples = ['']*len(results)
+    %end
+    %for idx in range(len(results)):
+        %if defined('names'):
+        <br>{{names[idx]}}
+        %end
+        %oneidx(idx,examples[idx])
+    %end
+%end
+

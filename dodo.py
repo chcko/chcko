@@ -3,7 +3,7 @@
 doit utility::
 
 Do this after having changed a rst file.
-Start this from below chcko/chcko.
+Start this from chcko-x/chcko/.
 
 $ doit -kd. html
 
@@ -44,6 +44,7 @@ def iteritems(d, **kw):
 
 from doit.task import clean_targets
 
+#TODO namespace package
 thisdir = os.getcwd()
 basedir = os.path.dirname(__file__)
 sphinxbase = os.path.join(basedir,'chcko')

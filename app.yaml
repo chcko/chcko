@@ -10,18 +10,18 @@ automatic_scaling:
 handlers:
 
     - url: /favicon\.ico
-      static_files: chcko/static/favicon.ico
-      upload: chcko/static/favicon\.ico
+      static_files: chcko/chcko/static/favicon.ico
+      upload: chcko/chcko/static/favicon\.ico
       mime_type: image/x-icon
 
     - url: /static
-      static_dir: chcko/static
+      static_dir: chcko/chcko/static
 
     - url: /[^/]*/_images
-      static_dir: chcko/_images
+      static_dir: chcko/chcko/_images
 
     - url: .*
-      script: chcko.app.app
+      script: chcko.chcko.app.app
       secure: optional
 
 skip_files:
