@@ -41,6 +41,8 @@ re_id = re.compile(r"^[^\d\W]\w*(\.[^\d\W]\w*)*$", re.UNICODE)
 #re_id.match('a.b.c=2') #KO
 #re_id.match('a.b&c.c') #KO
 
+codemarkers = set(StplParser.default_syntax) - set([' '])
+
 class Page(PageBase):
     'Entry points are ``get_response`` and ``post_response``.'
 
@@ -245,11 +247,10 @@ class Page(PageBase):
             return content
 
     def tpl_from_qs(self):
-        codemarkers = set(StplParser.default_syntax) - set([' '])
-        if set(self.query_string) & codemarkers:
-            raise HTTPError(400,'Wrong characters in query.')
-
         qparsed = parse_qsl(self.query_string, True)
+
+        if set(''.join(x+y for x,y in qparsed))&codemarkers:
+            raise HTTPError(400,'Wrong characters in query.')
 
         if not qparsed:
             return qparsed

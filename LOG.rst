@@ -502,3 +502,12 @@ git tag python3_ndb_sql_no_namespace
 
 Next: separate content via namespace packages
 
+20200125
+========
+
+Make chcko consistent with namespace packaging.
+
+- manually go through chcko-r
+- check noxfile.py
+
+

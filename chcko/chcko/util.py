@@ -135,7 +135,7 @@ class PageBase:
             'logger': logger
         })
     def get_response(self):
-        res = template(self.request.pagename,**self.request.params,
+        res = template('chcko.'+self.request.pagename,**self.request.params,
                 template_lookup=mklookup(self.request.lang))
         return res
     def redirect(self, afterlang):

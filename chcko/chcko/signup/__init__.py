@@ -29,7 +29,7 @@ class Page(PageBase):
             confirmation_url = self.request.application_url + \
                 '/' + self.request.lang + '/' + relative_url
             logger.info(confirmation_url)
-            m = chcko_import('signup.' + self.request.lang)
+            m = chcko_import('chcko.signup.' + self.request.lang)
             db.send_mail(
                 email,
                 m.subject,

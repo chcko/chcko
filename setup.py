@@ -22,7 +22,6 @@ def main():
             'lxml',
             'sympy'
     ]
-    packages=['chcko.chcko']
     setuptools.setup(
         name="chcko",
         version = "0.0.1",
@@ -44,11 +43,11 @@ def main():
             'Topic :: Education',
             'Topic :: Education :: Computer Aided Instruction (CAI)'
         ],
-        packages=packages,
+        packages=setuptools.find_namespace_packages(),
+        include_package_data=True,
         namespace_packages=["chcko"],
         install_requires=dependencies,
         extras_require={},
-        include_package_data=True,
         zip_safe=False,
         tests_require=['pytest', 'pytest-cov', 'mock'],
         entry_points={

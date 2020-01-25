@@ -12,7 +12,10 @@ import time
 from contextlib import contextmanager
 
 THISPATH = os.path.dirname(__file__)
-sys.path += [THISPATH]
+sys.path.insert(0,THISPATH)
+RCONTENT = os.path.normpath(os.path.join(THISPATH,'..','chcko-r'))
+if os.path.exists(RCONTENT):
+    sys.path.insert(0,RCONTENT)
 
 # from
 # /mnt/src/python-ndb/test_utils/test_utils/scripts/run_emulator.py

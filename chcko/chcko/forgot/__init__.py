@@ -32,7 +32,7 @@ class Page(PageBase):
             domain = self.request.application_url
             confirmation_url = f'{domain}/{self.request.lang}/{relative_url}'
             logger.info(confirmation_url)
-            m = chcko_import('forgot.' + self.request.lang)
+            m = chcko_import('chcko.forgot.' + self.request.lang)
             db.send_mail(
                 self.email,
                 m.subject,

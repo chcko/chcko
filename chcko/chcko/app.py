@@ -5,16 +5,16 @@ import os
 import os.path
 from traceback import print_exc
 
+#ROOT = os.path.dirname(__file__)
+#def python_path():
+#    prjroot = os.path.dirname(ROOT)
+#    if prjroot not in sys.path:
+#        sys.path.insert(0, prjroot)
+#python_path()
+
 from chcko.chcko import bottle
 from chcko.chcko.bottle import HTTPError
 app = bottle.app()
-
-ROOT = os.path.dirname(__file__)
-def python_path():
-    prjroot = os.path.dirname(ROOT)
-    if prjroot not in sys.path:
-        sys.path.insert(0, prjroot)
-python_path()
 
 from chcko.chcko.hlp import chcko_import
 from chcko.chcko.languages import langnumkind
@@ -93,7 +93,7 @@ def fullpath(lang,pagename):
     if errormsg is not None:
         bottle.redirect(f'/{lang}/{errormsg}')
     try:
-        m = chcko_import(pagename)
+        m = chcko_import('chcko.'+pagename)
         page = m.Page()
         if bottle.request.route.method == 'GET':
             respns = page.get_response()
@@ -104,6 +104,9 @@ def fullpath(lang,pagename):
         print_exc()
         #TODO: logging
         bottle.redirect(f'/{lang}')
+    except:
+        print_exc()
+        raise
 
 @bottle.route('/<lang>/auth/<provider>')
 def auth(provider):
