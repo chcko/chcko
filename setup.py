@@ -10,6 +10,7 @@ def main():
     with io.open(readme_filename, encoding="utf-8") as readme_file:
         readme = readme_file.read()
     dependencies = [
+            'psutil',
             'pyyaml',
             'sphinx',
             'sphinxcontrib.tikz',
@@ -55,7 +56,7 @@ def main():
         zip_safe=False,
         tests_require=['pytest', 'pytest-cov', 'mock'],
         entry_points={
-          'console_scripts': ['chcko=chcko.chcko.run:main']
+          'console_scripts': ['runchcko=chcko.chcko.run:main']
         }
     )
 

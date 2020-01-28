@@ -147,13 +147,18 @@ Only run datastore emulator::
 
 Test ``chcko``::
 
-  doit test
-  doit cov
-  doit serve
+  #tests assume chcko-r (and possibly other chcko-x) parallel to the chcko directory
+  make test
+
+  #TODO check these
+  #doit test
+  #doit cov
+  #doit serve
 
   #or e.g.
   #breakpoint() in code
-  py.test tests/test_functional.py --db=sql
+  cd chcko
+  py.test chcko/chcko/tests/test_functional.py --db=sql
   b chcko/chcko/app.py:90
   c
 

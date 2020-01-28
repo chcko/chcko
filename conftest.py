@@ -7,19 +7,21 @@ import sys
 import os
 import os.path
 import pytest
-import urllib
+import urllib.request
+import urllib.error
 import time
 from contextlib import contextmanager
 
 def syspath_uninstalled():
     d = os.path.dirname
     j = os.path.join
-    abovechcko = d(d(__file__))
-    chckodirs = [chd for chd in os.listdir(abovechcko) if chd.startswith('chcko')]
+    a = os.path.abspath
+    abovechcko = d(d(a(__file__)))
+    chckodirs = set([chd for chd in os.listdir(abovechcko) if chd.startswith('chcko')])
     for chd in chckodirs:
         asyspath = j(abovechcko,chd)
-        sys.path.insert(0,asyspath)
-
+        if asyspath not in sys.path:
+            sys.path.insert(0,asyspath)
 syspath_uninstalled()
 
 
@@ -43,9 +45,14 @@ def cleanup(pid):
     proc.kill()
 @contextmanager
 def emulator():
-    start_command = ('gcloud', 'beta', 'emulators', 'datastore', 'start', '--no-store-on-disk')
-    proc_start = subprocess.Popen(start_command, stdout=subprocess.PIPE,
-                                  stderr=subprocess.PIPE)
+    print()
+    ap=[x.name() for x in psutil.process_iter(attrs=['name']) if 'datastore' in x.name()]
+    proc_start = None
+    if not ap:
+        print('Starting datastore emulator ...')
+        start_command = ('gcloud', 'beta', 'emulators', 'datastore', 'start', '--no-store-on-disk')
+        proc_start = subprocess.Popen(start_command, stdout=subprocess.PIPE,
+                                      stderr=subprocess.PIPE)
     try:
         env_init_command = ('gcloud', 'beta', 'emulators', 'datastore', 'env-init')
         proc_env = subprocess.Popen(env_init_command, stdout=subprocess.PIPE,
@@ -59,6 +66,7 @@ def emulator():
                 k,v = env_var.replace('export ','').split('=')
                 val = v.replace('::1','localhost')
                 os.environ[k] = val
+                print(k,val)
         except ValueError:
             print('chcko conftest.py emulator problem. This happens occasionally. If it persists, debug it.')
             pytest.exit(1)
@@ -75,11 +83,12 @@ def emulator():
             except urllib.error.URLError:
                 notOK = notOK + 1
                 if notOK == 10:
-                    print('chcko conftest.py emulator start fails. Retry, else debug it.')
+                    print('chcko conftest.py emulator start fails. Retry, else debug it or start separately.')
                     pytest.exit(1)
         yield
     finally:
-        cleanup(proc_start.pid)
+        if proc_start:
+            cleanup(proc_start.pid)
 
 
 # mark step-wise tests with: @pytest.mark.incremental

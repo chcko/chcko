@@ -525,7 +525,11 @@ class db_mixin:
     def key_from_path(self,x):
         return self.Key(*list(chain(*zip(problem_contexts[:len(x)], x))))
     def from_urlsafe(self,urlsafe):
-        return self.Key(urlsafe=urlsafe).get()
+        try:
+          obj = self.Key(urlsafe=urlsafe).get()
+          return obj
+        except:
+          return None
     def clear_index(self):
         self.delete_query(self.query(self.Index))
     def clear_problems(self):

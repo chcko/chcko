@@ -1,5 +1,11 @@
 
+import sys
+import os
+
 def main():
+    thisdir = os.path.abspath('.')
+    if not thisdir in sys.path:
+        sys.path.insert(0,thisdir)
     from chcko.chcko.db import use
     from chcko.chcko.sql import Sql
     db = Sql()
