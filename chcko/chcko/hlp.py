@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import os.path
+import os
 import importlib
 import string
 import datetime
@@ -22,17 +22,20 @@ from chcko.chcko import auth
 from sympy import sstr, Rational as R, S, E
 
 import logging
-import os.path
 logger = logging.getLogger('chcko')
-logger.setLevel(logging.INFO)
-fh = logging.FileHandler(os.path.join(os.path.dirname(__file__),'chcko.log'))
-fh.setLevel(logging.INFO)
-logger.addHandler(fh)
-#logger.info("info")
-#logger.debug("debug")
-#logger.warn("warn")
-#logger.error("error")
+logger.addHandler(logging.NullHandler())
 
+def authordirs():
+    dirs = []
+    for x in chcko.__path__:
+        for y in os.listdir(x):
+            xy = os.path.join(x,y)
+            if xy.endswith('chcko'):
+                continue
+            if os.path.exists(os.path.join(xy,'__init__.py')):
+                dirs.append(xy)
+    return set(dirs)
+AUTHORDIRS = authordirs()
 
 def ziplongest(*args):
     '''zip_longest with last element as filler
@@ -343,8 +346,8 @@ class resolver:
 def mklookup(lang):
     def get_templatename(n):
         templatename = ''
-        for startdir in chcko.__path__:
-            npath = os.path.join(startdir,n.replace('.',os.sep))
+        for pkgdir in chcko.__path__:
+            npath = os.path.join(pkgdir,n.replace('.',os.sep))
             if os.path.isdir(npath):
                 templatename = template_from_path(npath,lang)
             else:
@@ -435,17 +438,23 @@ class db_mixin:
         return '&'.join([r + '=' + str(v) for r, v in key.pairs()])
 
     def init_db(self):
-        from chcko.chcko import initdb
-        self.available_langs = initdb.available_langs
-        self.student_contexts = student_contexts
         self.clear_index()
-        initdb.populate_index(
-            lambda problemid, lang, kind, level, path: self.Index.get_or_insert(
-                    problemid + ':' + lang,
-                    knd=int(kind),
-                    level=int(level),
-                    path=path)
-            )
+        self.available_langs = []
+        self.student_contexts = student_contexts
+        chckopackages = set(os.path.basename(chckopath) for chckopath in AUTHORDIRS)
+        chckopackages = chckopackages - set(['chcko'])
+        for chckop in chckopackages:
+            initdbmod = chckop+'.initdb'
+            initdb = chcko_import(initdbmod)
+            self.available_langs.extend(initdb.available_langs)
+            initdb.populate_index(
+                lambda problemid, lang, kind, level, path: self.Index.get_or_insert(
+                        problemid + ':' + lang,
+                        knd=int(kind),
+                        level=int(level),
+                        path=path)
+                )
+        self.available_langs = set(self.available_langs)
 
     def problem_create(self,student,**pkwargs):
         return self.Problem.create(parent=student.key,
@@ -824,7 +833,6 @@ class db_mixin:
     def set_answer(self,problem,answers):
         problem.answers = answers
         problem.concatanswers = ''.join(answers)
-
 
 rindex = lambda al,a: len(al) - al[-1::-1].index(a)-1
 def check_test_answers(m=None, norm_inputs=None):

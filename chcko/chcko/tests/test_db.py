@@ -1,10 +1,19 @@
 
 import pytest
 
+#import os
+#d = os.path.dirname
+#sys.path.insert(0,
+#                d(d(d(d(__file__))))
+#                )
+
+
 @pytest.fixture()
 def cdb(db):
-    db.clear_all_data()
-    return db
+    with db.dbclient.context():
+        db.clear_all_data()
+    with db.dbclient.context():
+        yield db
 
 @pytest.fixture()
 def Student12345(cdb):

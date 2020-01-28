@@ -11,11 +11,17 @@ import urllib
 import time
 from contextlib import contextmanager
 
-THISPATH = os.path.dirname(__file__)
-sys.path.insert(0,THISPATH)
-RCONTENT = os.path.normpath(os.path.join(THISPATH,'..','chcko-r'))
-if os.path.exists(RCONTENT):
-    sys.path.insert(0,RCONTENT)
+def syspath_uninstalled():
+    d = os.path.dirname
+    j = os.path.join
+    abovechcko = d(d(__file__))
+    chckodirs = [chd for chd in os.listdir(abovechcko) if chd.startswith('chcko')]
+    for chd in chckodirs:
+        asyspath = j(abovechcko,chd)
+        sys.path.insert(0,asyspath)
+
+syspath_uninstalled()
+
 
 # from
 # /mnt/src/python-ndb/test_utils/test_utils/scripts/run_emulator.py
@@ -48,18 +54,29 @@ def emulator():
         if env_status != 0:
             raise RuntimeError(env_status, proc_env.stderr.read())
         env_lines = proc_env.stdout.read().decode().strip().split('\n')
-        for env_var in env_lines:
-            k,v = env_var.replace('export ','').split('=')
-            os.environ[k] = v
+        try:
+            for env_var in env_lines:
+                k,v = env_var.replace('export ','').split('=')
+                val = v.replace('::1','localhost')
+                os.environ[k] = val
+        except ValueError:
+            print('chcko conftest.py emulator problem. This happens occasionally. If it persists, debug it.')
+            pytest.exit(1)
 
-        time.sleep(2)
+        time.sleep(1)
         OK = ''
+        notOK = 0
         while 'Ok' not in OK:
+            time.sleep(0.3)
             try:
-                OK = urllib.request.urlopen(os.environ['DATASTORE_HOST']).read().decode()
+                emulatorURL = os.environ['DATASTORE_HOST']
+                OK = urllib.request.urlopen(emulatorURL).read().decode()
+                print(emulatorURL,OK)
             except urllib.error.URLError:
-                pass
-
+                notOK = notOK + 1
+                if notOK == 10:
+                    print('chcko conftest.py emulator start fails. Retry, else debug it.')
+                    pytest.exit(1)
         yield
     finally:
         cleanup(proc_start.pid)
@@ -80,7 +97,7 @@ def pytest_runtest_setup(item):
 
 def pytest_addoption(parser):
     parser.addoption(
-        "--db", action="store", default="ndb", help="A session cannot have both [Ndb] and Sql DB"
+        "--db", action="store", default="ndb", help="A session cannot have both [ndb] and sql DB"
     )
 
 @pytest.fixture(scope='session')
@@ -93,16 +110,17 @@ def db(request):
             db = chckodb.use(Ndb())
             with db.dbclient.context():
                 db.init_db()
-                yield db
+            yield db
     else: # backnd == "sql":
-        dbfile = os.path.join(THISPATH,'chcko','sqlite.db')
-        if os.path.exists(dbfile):
-            os.remove(dbfile)
+        testdburl = os.path.join(os.path.dirname(__file__),'chcko.sqlite')
+        if os.path.exists(testdburl):
+            os.remove(testdburl)
+        testdburl = "sqlite:///"+testdburl
         from chcko.chcko.sql import Sql
-        db = chckodb.use(Sql())
+        db = chckodb.use(Sql(testdburl))
         with db.dbclient.context():
             db.init_db()
-            yield db
+        yield db
     #cntx=db.dbclient.context()
     #cntx.__enter__()
     #cntx.__exit__(*sys.exc_info())

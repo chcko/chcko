@@ -3,12 +3,6 @@
 Sphinx setting.
 '''
 
-
-import os.path
-import sys
-
-#TODO
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 extensions = [
     'chcko.chcko.inl',
     'sphinx.ext.mathjax',
@@ -16,7 +10,9 @@ extensions = [
     'sphinxcontrib.texfigure']
 
 # i.e. same as conf.py and with page.html containing only {{body}}
-templates_path = ['.']
+import os
+templates_path = [os.path.dirname(__file__)]
+del os
 
 # The suffix of source filenames.
 source_suffix = '.rst'
@@ -51,3 +47,6 @@ latex_elements = {
 # html
 # sphinx-build[2] -b html -c . -D master_doc=<rst-file> -D project=<rst-file> <src-dir> <build-dir>
 # sphinx-build2 -c . -D master_doc=vector -D project=vector r/b _build
+
+
+

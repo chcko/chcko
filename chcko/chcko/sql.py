@@ -4,15 +4,12 @@
 #    if local_dir not in sys.path:
 #        sys.path.insert(0, local_dir)
 #python_path()
-
+#http://sqlalche.me/e/e3q8
 import os
 import datetime
 from time import monotonic_ns
 import base64
 from itertools import chain
-
-from chcko.chcko.hlp import normqs, db_mixin
-import chcko.chcko.auth as auth
 
 import threading
 
@@ -22,34 +19,33 @@ from sqlalchemy.ext.declarative.api import declared_attr
 from sqlalchemy import *
 C = Column
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy import create_engine
 from sqlalchemy import util
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-SQLITEDB = os.path.join(os.path.dirname(os.path.dirname(__file__)),'sqlite.db')
-engine = create_engine("sqlite:///"+SQLITEDB)
-meta = MetaData(engine)
-
-DBSession = scoped_session(sessionmaker(bind=engine))
+meta = MetaData()
 
 class Context:
     def __init__(self):
-        self.dbsession = DBSession()
+        self.sess = _sqlobj.session
     def __enter__(self):
-        return self.dbsession
-    def __exit__(self, type_, value, traceback):
+        return self.sess
+    def flush(self):
         try:
-            self.dbsession.commit()
+            self.sess.commit()
         except:
             with util.safe_reraise():
-                self.dbsession.rollback()
+                self.sess.rollback()
         else:
-            self.dbsession.rollback()
-        DBSession.remove()
+            self.sess.rollback()
+    def __exit__(self, type_, value, traceback):
+        self.flush()
 
 class Client:
     def context(self):
-        return Context()
+        contextobj = Context()
+        return contextobj
 
 #pad64=lambda x: x+b"="*((4-len(x)%4)%4)
 pad64=lambda x: x+b"="*3
@@ -78,12 +74,12 @@ class Key:
         parnt = kwargs.pop('parent',None)
         if parnt:
             self.strpth = parnt.pairs()+self.strpth
-        self.pth = [(_cls[k],v) for k,v in self.strpth]
+        self.pth = [(_sqlobj.models[k],v) for k,v in self.strpth]
     def __eq__(self, other):
         return self.strpth == other.strpth
     def _query(self):
         thscls = self.pth[-1][0]
-        return DBSession().query(thscls).filter(thscls.urlkey==self.urlsafe())
+        return _sqlobj.session.query(thscls).filter(thscls.urlkey==self.urlsafe())
     def get(self):
         return self._query().first()
     def delete(self):
@@ -117,7 +113,7 @@ class _Counter(object):
 @as_declarative(metadata=meta)
 class Model(object):
     def put(self):
-        DBSession().add(self)
+        _sqlobj.session.add(self)
     @property
     def key(self):
         thiskey = Key(urlsafe=self.urlkey)
@@ -136,7 +132,7 @@ class Model(object):
     def cols(cls):
         clsname = cls.__name__
         if clsname not in cls._cols:
-            cls._cols[clsname] = [x['name'] for x in _inspect.get_columns(clsname)]
+            cls._cols[clsname] = [x['name'] for x in _sqlobj.inspector.get_columns(clsname)]
         return cls._cols[clsname]
     _cntr={}
     @classmethod
@@ -170,17 +166,17 @@ class Model(object):
     @classmethod
     def get_or_insert(cls,name,*args,**kwargs):
         acls = cls.create(id=name,*args,**kwargs)
-        dbsession = DBSession()
-        found = dbsession.query(cls).filter(cls.urlkey==acls.urlkey).first()
+        sssn = _sqlobj.session
+        found = sssn.query(cls).filter(cls.urlkey==acls.urlkey).first()
         if found:
             return found
-        dbsession.begin_nested()
+        sssn.begin_nested()
         try:
-            dbsession.add(acls)
-            dbsession.commit()
+            sssn.add(acls)
+            sssn.commit()
         except IntegrityError as e:
-            dbsession.rollback()
-            acls = dbsession.query(cls).filter(cls.urlkey==acls.urlkey).one()
+            sssn.rollback()
+            acls = sssn.query(cls).filter(cls.urlkey==acls.urlkey).one()
         return acls
 class UserToken(Model):
     email = C(String)
@@ -258,19 +254,24 @@ class Index(Model):
     knd = C(Integer)
     level = C(Integer)
 
-
-meta.create_all()
-
-_cls = {x.__tablename__:x for x in [School,Period,Teacher,Class,Student,Problem,Assignment,Index,UserToken,User,Secret]}
-_inspect = inspect(engine)
-
+from chcko.chcko.hlp import normqs, db_mixin
+_sqlobj = None
 class Sql(db_mixin):
-    def __init__(self):
-        self.dbclient = Client()
+    def __init__(self,
+        dburl = "sqlite:///"+os.path.join(os.path.expanduser('~'),'chcko.sqlite')
+        ):
+        global _sqlobj
+        _sqlobj = self
+        self.engine = create_engine(dburl)
+        meta.bind = self.engine
+        self.session = scoped_session(sessionmaker(bind=self.engine))
+        meta.create_all()
+        self.inspector = inspect(self.engine)
         self.Key = Key
-        self.models = _cls
-        for k,v in _cls.items():
+        self.models = {x.__tablename__:x for x in [School,Period,Teacher,Class,Student,Problem,Assignment,Index,UserToken,User,Secret]}
+        for k,v in self.models.items():
             setattr(self,k,v)
+        self.dbclient = Client()
 
     def is_sql(self):
         return True
@@ -283,7 +284,7 @@ class Sql(db_mixin):
     def kindof(self,entity):
         return entity.__tablename__
     def columnsof(self,entity):
-        for x in _inspect.get_columns(self.kindof(entity)):
+        for x in self.inspector.get_columns(self.kindof(entity)):
             yield x['name']
     def itemsof(self,entry):
         values = vars(entry)
@@ -306,31 +307,31 @@ class Sql(db_mixin):
     def save(self,objs):
         if not isinstance(objs,list):
             objs = [objs]
-        dbsession = DBSession()
-        dbsession.begin_nested()
+        ss = self.session
+        ss.begin_nested()
         try:
             for obj in objs:
                 obj.put()
-            dbsession.commit()
+            ss.commit()
         except IntegrityError as e:
-            dbsession.rollback()
+            ss.rollback()
 
     def query(self,entity,filt=None,ordr=None,parent=None):
         _filt = filt or []
-        q = DBSession().query(entity).filter(*((_filt+[entity.ofkey==parent]) if parent else _filt))
+        q = self.session.query(entity).filter(*((_filt+[entity.ofkey==parent]) if parent else _filt))
         if ordr:
             q = q.order_by(ordr)
         return q
 
     def delete_keys(self,keys):
-        dbsession = DBSession()
-        dbsession.begin_nested()
+        ss = self.session
+        ss.begin_nested()
         try:
             for key in keys:
                 key.delete()
-            dbsession.commit()
+            ss.commit()
         except IntegrityError as e:
-            dbsession.rollback()
+            ss.rollback()
 
     def delete_query(self,query):
         query.delete()

@@ -7,7 +7,7 @@ def main():
         db.init_db()
     use(db)
     import chcko.chcko.app
-    import bottle
+    from chcko.chcko import bottle
     bottle.run(app=chcko.chcko.app.app)
 
 if __name__ == "__main__":

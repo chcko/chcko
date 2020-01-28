@@ -7,7 +7,6 @@ import datetime
 import time
 
 import chcko
-startdirs = list(x for x in chcko.__path__ if not x.endswith(os.path.join('chcko','chcko')))
 
 from chcko.chcko import bottle
 bottle.DEBUG = True
@@ -15,45 +14,43 @@ bottle.TEMPLATES.clear()
 from chcko.chcko.tests.boddle import boddle
 
 from chcko.chcko.languages import languages
-from chcko.chcko.hlp import resolver
+from chcko.chcko.hlp import resolver, AUTHORDIRS
 
-@pytest.fixture(scope='module')
+@pytest.fixture
 def cdb(db):
-    db.clear_all_data()
-    return db
+    with db.dbclient.context():
+        db.clear_all_data()
+    with db.dbclient.context():
+        yield db
 
-def problems_for(student,cdb
-        ,skip=2
-    ):
-    skipc = 0
-    for startdir in startdirs:
-        contentdir = os.path.join(startdir, 'r')
-        if os.path.exists(contentdir):
-            for f in os.listdir(contentdir):
-                if not f.startswith('_'):
-                    skipc = skipc + 1
-                    if skipc % skip != 0:
-                        continue
-                    rsv = resolver('r.' + f, 'de')
-                    problem, pkwargs = cdb.problem_from_resolver(rsv, 1, student)
-                    assert problem
-                    cdb.set_answer(problem, problem.results)
-                    problem.answered = datetime.datetime.now()
-                    problem.oks = [True] * len(problem.results)
-                    cdb.save(problem)
+def _problems(authordir):
+    for p,d,f in os.walk(authordir):
+        authorid = os.path.basename(authordir)
+        for problemid in d:
+            if not problemid.startswith('_'):
+                yield '.'.join([authorid,problemid])
+        del d[:]
+
+def problems_for(student,cdb):
+    for authordir in AUTHORDIRS:
+        for pi in _problems(authordir):
+            if pi not in {'r.'+x for x in 'abiu'}: continue #ndb slow
+            rsv = resolver(pi, 'de')
+            problem, pkwargs = cdb.problem_from_resolver(rsv, 1, student)
+            assert problem
+            cdb.set_answer(problem, problem.results)
+            problem.answered = datetime.datetime.now()
+            problem.oks = [True] * len(problem.results)
+            cdb.save(problem)
 
 def allcontent():
-    for startdir in startdirs:
-        for fn, full in ((fn, os.path.join(startdir, fn)) for fn in os.listdir(startdir)):
-            for fs in os.listdir(full):
-                if re.match('[a-z]+', fs):
-                    contentf = os.path.join(full, fs)
-                    if os.path.isdir(contentf):
-                        for ff in os.listdir(contentf):
-                            m = re.match('_*([a-z]+)\.html', ff)
-                            if m and m.group(1) in languages:
-                                yield ('.'.join([fn, fs]), m.group(1),lambda x:True)
-
+    for authordir in AUTHORDIRS:
+        for pi in _problems(authordir):
+            aidir = os.path.join(authordir, pi.split('.')[1])
+            for ff in os.listdir(aidir):
+                m = re.match('_*([a-z]+)\.html', ff)
+                if m and m.group(1) in languages:
+                    yield (pi, m.group(1),lambda x:True)
 
 @pytest.fixture(params=[
     ('chcko.tests.t_1','en',
@@ -109,7 +106,7 @@ def test_depth_1st(cdb):
     student = cdb.add_student(path, user=None, color='#EEE')
     problems_for(student,cdb)
     lst = list(cdb.depth_1st(path+[[]]))
-    assert len(lst) > 10
+    assert len(lst) > 8
     lst = list(cdb.depth_1st(path+[[('query_string','=','r.u')]]))
     assert len(lst) == 6
     assert cdb.kindof(lst[0]) == 'School'
@@ -135,27 +132,31 @@ def test_depth_1st(cdb):
     lst = list(cdb.depth_1st())
     assert lst == []
 
-@pytest.fixture(scope="module")
-def dbschool(request,cdb):
+@pytest.fixture
+def dbschool(request,db):
     '''returns
     {'Sc0':(Sc0,{'Pe0':(...)} }
     '''
-    cdb.clear_all_data()
+    models = list(db.models.values())[:6]
 
-    models = list(cdb.models.values())[:6]
+    with db.dbclient.context():
+        db.clear_all_data()
+
     def recursecreate(ient, thisent):
         res = {}
         if ient < len(models) - 1:
             ent = models[ient]
             for i in range(2):
-                name = cdb.kindof(ent)[:2] + str(i) #Sc0,Pe0,...
+                name = db.kindof(ent)[:2] + str(i) #Sc0,Pe0,...
                 tent = ent.get_or_insert(name, parent=thisent and thisent.key)
                 res.setdefault(name, (tent, recursecreate(ient + 1, tent)))
         else:
-            problems_for(thisent, cdb, skip=4)
+            problems_for(thisent, db)
         return res
-    school = recursecreate(0, None)
-    # recurserem()
+
+    with db.dbclient.context():
+        school = recursecreate(0, None)
+        yield db, school
 
     def recurserem():
         todelete=[]
@@ -164,44 +165,45 @@ def dbschool(request,cdb):
                 _recurserem(e[1])
                 todelete.append(e[0].key)
         _recurserem(school)
-        cdb.delete_keys(todelete)
-    request.addfinalizer(recurserem)
-    return cdb,school
+        db.delete_keys(todelete)
 
-kinddepth = lambda tbl,cdb,nm: list(filter(
-    lambda x: x != 5, [list(cdb.models.keys())[:6].index(nm(tbl[i]))
+    with db.dbclient.context():
+        recurserem()
+
+kinddepth = lambda tbl,db,nm: list(filter(
+    lambda x: x != 5, [list(db.models.keys())[:6].index(nm(tbl[i]))
            for i in range(len(tbl))]))
 
 def test_school_setup(dbschool):
-    cdb,school=dbschool
-    if cdb.is_sql():
+    db,school=dbschool
+    if db.is_sql():
         pytest.skip("ancestor not available for SQL")
     #school = school(finrequest)
-    tbl = list(cdb.keys_below(school['Sc0'][0]))
-    kinds = kinddepth(tbl,cdb,lambda x:x.kind())
+    tbl = list(db.keys_below(school['Sc0'][0]))
+    kinds = kinddepth(tbl,db,lambda x:x.kind())
     assert kinds == [
         0, 1, 2, 3, 4, 4, 3, 4, 4, 2, 3, 4, 4, 3, 4,
         4, 1, 2, 3, 4, 4, 3, 4, 4, 2, 3, 4, 4, 3, 4, 4]
 
 def test_descendants(dbschool):
-    cdb,school=dbschool
-    if cdb.is_sql():
+    db,school=dbschool
+    if db.is_sql():
         pytest.skip("ancestor not available for SQL")
     #school = school(finrequest)
-    cla = cdb.key_from_path(['Sc1', 'Pe1', 'Te1', 'Cl1']).get()
-    tbl = list(cdb.keys_below(cla))
-    assert kinddepth(tbl,cdb,lambda x:x.kind()) == [3, 4, 4]
+    cla = db.key_from_path(['Sc1', 'Pe1', 'Te1', 'Cl1']).get()
+    tbl = list(db.keys_below(cla))
+    assert kinddepth(tbl,db,lambda x:x.kind()) == [3, 4, 4]
     # compare latter to this
-    tbl = list(cdb.depth_1st(path=['Sc1', 'Pe1', 'Te1', 'Cl1']))
-    assert kinddepth(tbl,cdb,lambda x:cdb.kindof(x)) == [0, 1, 2, 3, 4, 4]
+    tbl = list(db.depth_1st(path=['Sc1', 'Pe1', 'Te1', 'Cl1']))
+    assert kinddepth(tbl,db,lambda x:db.kindof(x)) == [0, 1, 2, 3, 4, 4]
 
 def test_find_identities(dbschool):
     '''find all students with name St1'''
-    cdb,school=dbschool
+    db,school=dbschool
     #school = school(finrequest)
-    _students = lambda tbl: [t for t in tbl if cdb.kindof(t) == 'Student']
-    tbl = list(cdb.depth_1st(path=['Sc1', 'Pe1', [], [], 'St1']))
-    assert kinddepth(tbl,cdb,lambda x:cdb.kindof(x)) == [0, 1, 2, 3, 4, 3, 4, 2, 3, 4, 3, 4]
+    _students = lambda tbl: [t for t in tbl if db.kindof(t) == 'Student']
+    tbl = list(db.depth_1st(path=['Sc1', 'Pe1', [], [], 'St1']))
+    assert kinddepth(tbl,db,lambda x:db.kindof(x)) == [0, 1, 2, 3, 4, 3, 4, 2, 3, 4, 3, 4]
     stset = set([':'.join(e.key.flat()) for e in _students(tbl)])
     goodstset = set(['School:Sc1:Period:Pe1:Teacher:Te1:Class:Cl1:Student:St1',
                      'School:Sc1:Period:Pe1:Teacher:Te0:Class:Cl1:Student:St1',
@@ -210,28 +212,28 @@ def test_find_identities(dbschool):
     assert stset == goodstset
 
 def test_assign_student(dbschool):
-    cdb,school=dbschool
-    stu = cdb.key_from_path(['Sc1', 'Pe1', 'Te1', 'Cl1', 'St1'])
-    cdb.assign_to_student(cdb.urlsafe(stu), 'r.i&r.u', 1)
-    asses = list(cdb.assign_table(stu.get(), None))
+    db,school=dbschool
+    stu = db.key_from_path(['Sc1', 'Pe1', 'Te1', 'Cl1', 'St1'])
+    db.assign_to_student(db.urlsafe(stu), 'r.i&r.u', 1)
+    asses = list(db.assign_table(stu.get(), None))
     assert asses
     ass = asses[0]
     assert ass.query_string == 'r.i&r.u'
 
 def test_assign_to_class(dbschool):
-    cdb,school=dbschool
+    db,school=dbschool
     #school = school(finrequest)
-    classkey = cdb.key_from_path(['Sc0', 'Pe0', 'Te0', 'Cl0'])
+    classkey = db.key_from_path(['Sc0', 'Pe0', 'Te0', 'Cl0'])
     query_string = 'r.a&r.b'
     duedays = '2'
-    for st in cdb.depth_1st(keys=[classkey], kinds='Class Student'.split()):
+    for st in db.depth_1st(keys=[classkey], kinds='Class Student'.split()):
         stk = st.key
         assert stk.parent().string_id() == 'Cl0'
-        cdb.assign_to_student(stk.urlsafe(), query_string, duedays)
+        db.assign_to_student(stk.urlsafe(), query_string, duedays)
         #eventually consistent only: make two tries
-        assigned_1 =  cdb.student_assignments(st).count() == 1
+        assigned_1 =  db.student_assignments(st).count() == 1
         if not assigned_1:
             time.sleep(1)
-            assigned_1 =  cdb.student_assignments(st).count() == 1
+            assigned_1 =  db.student_assignments(st).count() == 1
         assert assigned_1
 

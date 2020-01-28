@@ -10,17 +10,21 @@ def main():
     with io.open(readme_filename, encoding="utf-8") as readme_file:
         readme = readme_file.read()
     dependencies = [
-            'bottle',
+            'pyyaml',
+            'sphinx',
+            'sphinxcontrib.tikz',
+            'sphinxcontrib.texfigure',
+            'numpy',
+            'matplotlib',
+            'lxml',
+            'sympy',
+            #XXX: only when using gcloud
             'google-api-python-client',
             'google-auth-httplib2',
             'google-auth-oauthlib',
             'grpcio',
             'google-cloud-ndb',
             'google-cloud-storage',
-            'numpy',
-            'matplotlib',
-            'lxml',
-            'sympy'
     ]
     setuptools.setup(
         name="chcko",

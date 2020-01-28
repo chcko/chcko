@@ -77,15 +77,13 @@ class Index(Model):
     knd = ndb.IntegerProperty()
     level = ndb.IntegerProperty()
 
-_cls = {x._get_kind():x for x in [School,Period,Teacher,Class,Student,Problem,Assignment,Index,UserToken,User,Secret]}
-
 class Ndb(db_mixin):
     def __init__(self):
         self.dbclient = ndb.Client('chcko')
         self.Key = ndb.Key
-        for k,v in _cls.items():
+        self.models = {x._get_kind():x for x in [School,Period,Teacher,Class,Student,Problem,Assignment,Index,UserToken,User,Secret]}
+        for k,v in self.models.items():
             setattr(self,k,v)
-        self.models = _cls
 
     def is_sql(self):
         return False

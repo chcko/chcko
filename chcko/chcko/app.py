@@ -2,15 +2,7 @@
 
 import sys
 import os
-import os.path
 from traceback import print_exc
-
-#ROOT = os.path.dirname(__file__)
-#def python_path():
-#    prjroot = os.path.dirname(ROOT)
-#    if prjroot not in sys.path:
-#        sys.path.insert(0, prjroot)
-#python_path()
 
 from chcko.chcko import bottle
 from chcko.chcko.bottle import HTTPError
@@ -50,9 +42,11 @@ def lang_pagename(lang=None,pagename=None):
 def trailing_slash():
     bottle.request.environ['PATH_INFO'] = bottle.request.environ['PATH_INFO'].rstrip('/')
 
+ROOT = os.path.dirname(os.path.dirname(__file__))
+
 @bottle.route('/favicon.ico')
 def serve_favicon():
-    return bottle.static_file(os.path.join('static','favicon.ico'), root=ROOT)
+    return bottle.static_file(os.path.join('chcko','static','favicon.ico'), root=ROOT)
 
 #TODO: the images should rather stay in their contextual folder
 @bottle.route('/<ignoredir>/_images/<filename>')
@@ -61,7 +55,7 @@ def serve_image(ignoredir,filename):
 
 @bottle.route('/static/<filename>')
 def serve_static(filename):
-    return bottle.static_file(os.path.join('static',filename), root=ROOT)
+    return bottle.static_file(os.path.join('chcko','static',filename), root=ROOT)
 
 @bottle.route('/',method=['GET','POST'])
 def nopath():

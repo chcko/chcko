@@ -10,10 +10,13 @@ from chcko.chcko.hlp import problem_contexts
 
 @pytest.fixture(scope='module')
 def chapp(request,db):
-    db.clear_all_data()
-    db.init_db()
+    with db.dbclient.context():
+        db.clear_all_data()
+    with db.dbclient.context():
+        db.init_db()
     from chcko.chcko.app import app
-    return TA(app)
+    with db.dbclient.context():
+        yield TA(app)
 
 @pytest.mark.parametrize("path",[
     ''
@@ -57,7 +60,7 @@ class TestRunthrough(object):
         r = self.resp.form.submit(expect_errors=True)
         self._store('resp', r.follow())
 
-    def test_default_lang(self,chapp,db):
+    def test_default_lang(self,chapp):
         r = chapp.get('/')
         assert r.status == '200 OK'
         assert 'problems' in r #engish index page
