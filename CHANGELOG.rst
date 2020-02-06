@@ -2,34 +2,31 @@
 CHANGELOG
 =========
 
-Top entry is `[TODO]`.
-Entries have a short description and
-possibly a link to documents with further detail.
-
 TODO
 ====
 
-- Allow more DB backends
-- Use GCP Python 3 libraries
-- Adapt to changes in used 3rd party packages
+- reach 100% test coverage
 
 - content: move meta content to doc and/or readme.rst
 
-- replace webapp2 with bottle
+- ``pip freeze``
 
-- reach 100% test coverage
-
-- support ``.rst`` without Sphinx, i.e. only using docutils
-- additionally support ``.md`` for content
-
-- ``pip freeze`` and make chcko Python Package
-
-- Allow using content as chcko_author plugins listed in ``requirements.txt``
-
-- Make client apps
-
-1.0.0
+0.1.0
 =====
+
+- Adapt to changes in used 3rd party packages:
+  ``google-cloud-ndb``, ``simpleauth`` dropped for ``loginpass``,
+  ``webapp2`` dropped for ``bottle``.
+
+- Allow more DB backends: done via ``SqlAlchemy`` in addition to ``google-cloud-ndb``
+
+- make chcko Python Package
+
+- Allow adding content via adding ``chcko_<author>`` packages to ``requirements.txt``
+
+
+Mamchecker
+==========
 
 History as mamchecker:
 

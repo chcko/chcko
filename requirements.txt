@@ -1,17 +1,1 @@
-bottle
-sqlalchemy
-
-#for email: https://github.com/gsuitedevs/python-samples/blob/master/gmail/quickstart/requirements.txt
-google-api-python-client
-google-auth-httplib2
-google-auth-oauthlib
-
-grpcio
-google-cloud-ndb
-google-cloud-storage
-
-numpy
-matplotlib
-lxml
-sympy
-
+requirements-gcp.txt

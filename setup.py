@@ -10,22 +10,10 @@ def main():
     with io.open(readme_filename, encoding="utf-8") as readme_file:
         readme = readme_file.read()
     dependencies = [
-            'psutil',
-            'pyyaml',
-            'sphinx',
-            'sphinxcontrib.tikz',
-            'sphinxcontrib.texfigure',
             'numpy',
             'matplotlib',
             'lxml',
             'sympy',
-            #XXX: only when using gcloud
-            'google-api-python-client',
-            'google-auth-httplib2',
-            'google-auth-oauthlib',
-            'grpcio',
-            'google-cloud-ndb',
-            'google-cloud-storage',
     ]
     setuptools.setup(
         name="chcko",
@@ -54,7 +42,7 @@ def main():
         install_requires=dependencies,
         extras_require={},
         zip_safe=False,
-        tests_require=['pytest', 'pytest-cov', 'mock'],
+        tests_require=['pytest', 'pytest-cov', 'psutil', 'pyyaml', 'sphinx', 'sphinxcontrib.tikz', 'sphinxcontrib.texfigure'],
         entry_points={
           'console_scripts': ['runchcko=chcko.chcko.run:main']
         }

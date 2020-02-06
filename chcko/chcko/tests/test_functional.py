@@ -32,7 +32,7 @@ def test_paths(chapp,path):
     chapp.get(path)
 
 # see
-# http://stackoverflow.com/questions/12538808/pytest-2-3-adding-teardowns-within-the-class
+# https://stackoverflow.com/questions/12538808/pytest-2-3-adding-teardowns-within-the-class
 # but cleanup is not necessary if testbed is in-memory
 
 def url_lang(url):

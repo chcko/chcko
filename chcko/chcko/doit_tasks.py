@@ -338,7 +338,6 @@ def task_initdb():
                         ,defs['kind']
                         ,defs['level']
                         ,defs['path']))
-                    # TODO: make <em><i><b><strong> to keywords
 
             #per author
             initdb = os.path.join(sphinxbase,authordir,'initdb.py')

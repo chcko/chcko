@@ -32,8 +32,8 @@ def lang_pagename(lang=None,pagename=None):
                 lang = list(candidates)[0]
         else:
             lang = 'en'
-    if pagename == 'null':
-        raise ValueError(pagename) #TODO: why this null
+    if pagename == 'null': #XXX: why does this null happen?
+        raise ValueError(pagename)
     if pagename is None:# or pagename=='null':
         pagename = 'content'
     return lang,pagename
@@ -48,7 +48,6 @@ ROOT = os.path.dirname(os.path.dirname(__file__))
 def serve_favicon():
     return bottle.static_file(os.path.join('chcko','static','favicon.ico'), root=ROOT)
 
-#TODO: the images should rather stay in their contextual folder
 @bottle.route('/<ignoredir>/_images/<filename>')
 def serve_image(ignoredir,filename):
     return bottle.static_file(os.path.join('_images',filename), root=ROOT)
@@ -56,6 +55,37 @@ def serve_image(ignoredir,filename):
 @bottle.route('/static/<filename>')
 def serve_static(filename):
     return bottle.static_file(os.path.join('chcko','static',filename), root=ROOT)
+
+from requests_oauthlib import OAuth2Session
+from urllib.parse import urljoin
+from chcko.chcko import auth
+@bottle.route('/auth/<provider>')
+def auth_login(provider):
+    PROVIDER = provider.upper()
+    client_id = os.environ[f'{PROVIDER}_CLIENT_ID']
+    client_secret = os.environ[f'{PROVIDER}_CLIENT_SECRET']
+    redirect_uri=urljoin(bottle.request.url, f'/auth/{provider}/callback')
+    provider_auth = OAuth2Session(client_id
+                          ,redirect_uri=redirect_uri
+                          ,scope=auth.provider.client_kwargs['scope']
+                          )
+    authorize_url, state = provider_auth.authorization_url(
+            auth.provider.authorize_url
+            , **auth.provider.client_kwargs
+            )
+    redirect(authorize_url)
+@bottle.route('/auth/<provider>/callback')
+def auth_callback(provider):
+    client_id = os.environ[f'{PROVIDER}_CLIENT_ID']
+    provider_auth = OAuth2Session(client_id
+                                  , token=token
+                                  , auto_refresh_url=refresh_url
+                                  , auto_refresh_kwargs=extra
+                                  , token_updater=token_saver)
+    r = provider_auth.get(protected_url)
+    user_info = remote.profile(token=token)
+    return handle_authorize(remote, token, user_info)
+
 
 @bottle.route('/',method=['GET','POST'])
 def nopath():
@@ -96,17 +126,8 @@ def fullpath(lang,pagename):
         return respns
     except (ImportError, AttributeError, IOError, NameError) as e:
         print_exc()
-        #TODO: logging
         bottle.redirect(f'/{lang}')
     except:
         print_exc()
         raise
-
-@bottle.route('/<lang>/auth/<provider>')
-def auth(provider):
-    pass
-
-@bottle.route('/<lang>/auth/<provider>/callback')
-def auth_callback(provider):
-    pass
 

@@ -1,0 +1,10 @@
+# for sql databases using sqlalchemy
+
+bottle
+sqlalchemy
+
+numpy
+matplotlib
+lxml
+sympy
+

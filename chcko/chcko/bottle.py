@@ -11,7 +11,7 @@ a built-in HTTP Server and adapters for many third party WSGI/HTTP-server and
 template engines - all in a single file and with no dependencies other than the
 Python Standard Library.
 
-Homepage and documentation: http://bottlepy.org/
+Homepage and documentation: https://bottlepy.org/
 
 Copyright (c) 2009-2018, Marcel Hellkamp.
 License: MIT (see LICENSE for details)
@@ -1414,7 +1414,7 @@ class BaseRequest(object):
             args['encoding'] = 'utf8'
             post.recode_unicode = False
         data = cgi.FieldStorage(**args)
-        self['_cgi.FieldStorage'] = data  #http://bugs.python.org/issue18394
+        self['_cgi.FieldStorage'] = data  #https://bugs.python.org/issue18394
         data = data.list or []
         for item in data:
             if item.filename:
@@ -3347,7 +3347,7 @@ class MeinheldServer(ServerAdapter):
 
 
 class FapwsServer(ServerAdapter):
-    """ Extremely fast webserver using libev. See http://www.fapws.org/ """
+    """ Extremely fast webserver using libev. See https://www.fapws.org/ """
 
     def run(self, handler):  # pragma: no cover
         import fapws._evwsgi as evwsgi
@@ -3445,7 +3445,7 @@ class GeventServer(ServerAdapter):
 
 
 class GunicornServer(ServerAdapter):
-    """ Untested. See http://gunicorn.org/configure.html for options. """
+    """ Untested. See https://gunicorn.org/configure.html for options. """
 
     def run(self, handler):
         from gunicorn.app.base import Application
@@ -3716,7 +3716,7 @@ def run(app=None,
         if not server.quiet:
             _stderr("Bottle v%s server starting up (using %s)...\n" %
                     (__version__, repr(server)))
-            _stderr("Listening on http://%s:%d/\n" %
+            _stderr("Listening on https://%s:%d/\n" %
                     (server.host, server.port))
             _stderr("Hit Ctrl-C to quit.\n\n")
 

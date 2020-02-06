@@ -25,6 +25,8 @@ task_included is internal.
 
 '''
 
+import os
+import fnmatch
 import sys
 sys.path.insert(0,'.')
 
@@ -36,7 +38,6 @@ task_included = doit_tasks.task_included
 task_html = doit_tasks.task_html
 task_initdb = doit_tasks.task_initdb
 
-#TODO: test
 CODE_FILES = [os.path.join(dirpath,f)
         for dirpath, dirnames, files in os.walk('chcko')
         for f in fnmatch.filter(files,'*.py')]
@@ -49,18 +50,15 @@ def run_test(test):
 def task_test():
     return {
         'actions':[
-            ['py.test','chcko/tests','-vv','--db=sql'],
-            ['py.test','chcko/tests','-vv','--db=ndb']
+            ['py.test','chcko/chcko/tests','-vv','--db=sql'],
+            ['py.test','chcko/chcko/tests','-vv','--db=ndb']
         ],
         'verbosity':2
     }
 def task_cov():
-    return {'actions':
-                ["coverage run --parallel-mode `which py.test` ",
-                 "coverage combine",
-                ("coverage report --show-missing %s" % " ".join(PY_FILES))
-                 ],
-            'verbosity': 2}
-def task_serve():
-    return {'actions': ["cd %s && dev_appserver.py chcko --host=0.0.0.0"%os.path.dirname(basedir)],
-            'verbosity': 2}
+    return {
+        'actions':[
+            ['py.test','chcko/chcko/tests','--cov','--db=sql'],
+        ],
+        'verbosity':2
+    }
