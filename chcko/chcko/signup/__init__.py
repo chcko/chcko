@@ -2,7 +2,8 @@
 
 import os
 from chcko.chcko.util import PageBase
-from chcko.chcko.hlp import chcko_import, is_standard_server, logger
+from chcko.chcko.hlp import chcko_import, logger
+from chcko.chcko.auth import is_standard_server, send_mail
 from chcko.chcko.db import db
 
 class Page(PageBase):
@@ -19,7 +20,7 @@ class Page(PageBase):
             self.redirect('message?msg=c')
 
         try:
-            user,token = db.user_create(email,password,fullname=f"{fullname}")
+            user,token = db.user_create(email,fullname=f"{fullname}",password)
         except ValueError:
             self.redirect(f'message?msg=a&email={email}')
 
@@ -30,7 +31,7 @@ class Page(PageBase):
                 '/' + self.request.lang + '/' + relative_url
             logger.info(confirmation_url)
             m = chcko_import('chcko.signup.' + self.request.lang)
-            db.send_mail(
+            send_mail(
                 email,
                 m.subject,
                 m.body %

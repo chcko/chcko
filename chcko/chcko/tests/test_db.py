@@ -61,7 +61,7 @@ def test_token(cdb):
     assert len(token)>10
 
 def test_user(cdb):
-    u1,_ = cdb.user_create('email2','password2','fn')
+    u1,_ = cdb.user_create('email2','fn','password2')
     u2 = cdb.user_by_login('email2','password2')
     assert u1.key == u2.key
 

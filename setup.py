@@ -3,6 +3,9 @@ import io
 import setuptools
 from pathlib import Path
 
+devrequirements = [x for x in open('requirements-dev.txt').read().splitlines(
+    keepends=False) if x and not x.strip().startswith('#')]
+
 def main():
     package_root = os.path.abspath(os.path.dirname(__file__))
     proot = Path(package_root)
@@ -42,7 +45,7 @@ def main():
         install_requires=dependencies,
         extras_require={},
         zip_safe=False,
-        tests_require=['pytest', 'pytest-cov', 'psutil', 'pyyaml', 'sphinx', 'sphinxcontrib.tikz', 'sphinxcontrib.texfigure'],
+        tests_require=devrequirements,
         entry_points={
           'console_scripts': ['runchcko=chcko.chcko.run:main']
         }

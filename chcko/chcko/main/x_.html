@@ -77,21 +77,14 @@
 % def footer():
 
     % if request.user:
-    % social = hasattr(request.user,'link')
 
     <div class="footer" style="border-top:double;background-color:{{contextcolor}}">
     <div class="grid_10">
-        %if social:
-        <a href="{{ request.user.link }}" target="_blank" rel="nofollow">
-        %end
         {{ db.user_name(request.user) }}
-        %if social:
-        </a>
-        %end
         &nbsp;
         <a href="/{{request.lang}}/logout">{{ tlogout }} </a>
         &nbsp;
-        %if not social:
+        %if not db.is_social_login(request.user):
             <a href="/{{request.lang}}/password">{{ tchangepassword }} </a>
         %end
     </div> 
@@ -106,26 +99,15 @@
     </div>
 
     <div class="footer" style="background-color:{{contextcolor}}">
-    <div class="grid_2">
-    <a href="/{{request.lang}}/login">chcko</a>
-    {{ torvia }}
-    </div> 
-    <div class="grid_2"> 
-    <a href="/auth/facebook">Facebook</a>
-    </div> 
-    <div class="grid_2">
-    <a href="/auth/google">Google</a>
-    </div> 
-    <div class="grid_2">
-    <a href="/auth/linkedin2">LinkedIn</a>
-    </div> 
-    <div class="grid_2"> 
-    <a href="/auth/twitter">Twitter</a>
-    </div> 
-    %#because of https://stackoverflow.com/questions/2981226/app-engine-remote-api-with-openid
-    %#<div class="grid_2">
-    %#<a href="/auth/openid?identity_url=me.yahoo.com">Yahoo!</a>
-    %#</div> 
+        <div class="grid_2">
+        <a href="/{{request.lang}}/login">chcko</a>
+        {{ torvia }}
+        </div> 
+        %for social,P in social_logins.items():
+        <div class="grid_2"> 
+        <a href="/auth/{{ social }}">{{ P.name }}</a>
+        </div> 
+        %end
     </div>
 
     %end
@@ -134,7 +116,7 @@
     <div class="footer" style="background-color:{{contextcolor}}"> &nbsp; </div>
 
     <div class="grid_10">
-        {{development}} <a href="https://github.com/chcko/chcko">Github</a>
+        {{tdevelopment}} <a href="https://github.com/chcko/chcko">Github</a>
     </div>
 
     <div class="footer" style="background-color:{{contextcolor}}"> &nbsp; </div>

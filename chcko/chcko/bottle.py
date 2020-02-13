@@ -3716,7 +3716,7 @@ def run(app=None,
         if not server.quiet:
             _stderr("Bottle v%s server starting up (using %s)...\n" %
                     (__version__, repr(server)))
-            _stderr("Listening on https://%s:%d/\n" %
+            _stderr("Listening on http[s]://%s:%d/\n" %
                     (server.host, server.port))
             _stderr("Hit Ctrl-C to quit.\n\n")
 

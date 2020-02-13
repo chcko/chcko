@@ -188,8 +188,6 @@ class User(Model):
     verified = C(Boolean)
     token = C(String)
     current_student = C(ForeignKey('Student.urlkey',use_alter=True))
-class Secret(Model):
-    secret = C(String)
 
 class School(Model):
     userkey = C(ForeignKey('User.urlkey'))
@@ -258,7 +256,8 @@ from chcko.chcko.hlp import normqs, db_mixin
 _sqlobj = None
 class Sql(db_mixin):
     def __init__(self,
-        dburl = "sqlite:///"+os.path.join(os.path.expanduser('~'),'chcko.sqlite')
+        #dburl = "sqlite:///"+os.path.join(os.path.expanduser('~'),'chcko.sqlite')
+        dburl = "sqlite://" # in memory
         ):
         global _sqlobj
         _sqlobj = self
@@ -268,7 +267,7 @@ class Sql(db_mixin):
         meta.create_all()
         self.inspector = inspect(self.engine)
         self.Key = Key
-        self.models = {x.__tablename__:x for x in [School,Period,Teacher,Class,Student,Problem,Assignment,Index,UserToken,User,Secret]}
+        self.models = {x.__tablename__:x for x in [School,Period,Teacher,Class,Student,Problem,Assignment,Index,UserToken,User]}
         for k,v in self.models.items():
             setattr(self,k,v)
         self.dbclient = Client()

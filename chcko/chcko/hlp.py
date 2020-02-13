@@ -15,9 +15,15 @@ from collections.abc import Iterable
 from functools import wraps
 
 import chcko
-from chcko.chcko.bottle import SimpleTemplate, response
+from chcko.chcko.bottle import SimpleTemplate
 from chcko.chcko.languages import langkindnum, langnumkind, kindint
-from chcko.chcko import auth
+from chcko.chcko.auth import (
+  gen_salt
+  ,jwtcode
+  ,random_student_path
+  ,generate_password_hash
+  ,check_password_hash
+)
 
 from sympy import sstr, Rational as R, S, E
 
@@ -362,10 +368,6 @@ def mklookup(lang):
     return get_templatename
 
 datefmt = lambda dt: dt.isoformat(' ').split('.')[0]
-
-is_standard_server = False
-if os.getenv('GAE_ENV', '').startswith('standard'):
-  is_standard_server = True
 
 def normqs(qs):
     '''take away =1 from a content query
@@ -762,7 +764,7 @@ class db_mixin:
         if not student and usr:
             student = self.first(self.query(self.Student,[self.Student.userkey==self.idof(usr)]))
         if not student:  # generate
-            studentpath = auth.random_student_path(seed=request.remote_addr).split('-')
+            studentpath = random_student_path(seed=request.remote_addr).split('-')
             student = self.add_student(studentpath, usr, color)
         if usr and student:
             if not usr.current_student or (usr.current_student != self.idof(student)):
@@ -776,7 +778,7 @@ class db_mixin:
     def set_cookie(self,response,cookie,value):
         response.set_cookie(cookie,value,httponly=True,path='/',samesite='strict',maxage=datetime.timedelta(days=30))
 
-    def set_user(self,request,response):
+    def set_user(self,request):
         request.user = None
         chckousertoken = request.get_cookie('chckousertoken')
         if chckousertoken and chckousertoken!='null':
@@ -785,22 +787,17 @@ class db_mixin:
             tkn = request.params.get('token')
             request.user = self.user_by_token(tkn)
 
-    def _stored_secret(self,name):
-        ass = str(
-            self.Secret.get_or_insert(
-            name,
-            secret=auth.make_secret()).secret)
-        return ass
-    def stored_email_credential(self):
-        return base64.urlsafe_b64decode(self._stored_secret('chcko.mail').encode())
-    def send_mail(self, to, subject, message_text, creds, sender=auth.chcko_mail):
-        auth.send_mail(to, subject, message_text, creds=self.stored_email_credential())
     def token_delete(self, token):
         self.delete_keys([self.token_key(token)])
     def token_create(self, email):
-        token = auth.gen_salt()
+        token = gen_salt()
         key = self.token_key(token)
-        usrtkn = self.UserToken.create(key=key, email=email)
+        usrtkn = self.UserToken.create(id=key, email=email)
+        self.save(usrtkn)
+        return token
+    def token_insert(self,jwt,email):
+        token = jwtcode(jwt).decode()
+        usrtkn = self.UserToken.create(id=token, email=email)
         self.save(usrtkn)
         return token
     def token_key(self, token):
@@ -818,21 +815,35 @@ class db_mixin:
     def user_name(self,usr):
         return usr.fullname or self.user_email(usr)
     def user_set_password(self, usr, password):
-        usr.pwhash = auth.generate_password_hash(password)
+        usr.pwhash = generate_password_hash(password)
         self.save(usr)
-    def user_create(self, email, password, fullname):
-        usr = self.user_by_login(email,password)
+    def is_social_login(self,usr):
+        return usr.pwhash == ''
+    def user_create(self, email, fullname, password=None, token=None):
+        usr = self.user_by_login(email,password,token)
         if not usr:
-            token = self.token_create(email)
-            usr = self.User.get_or_insert(email, pwhash=auth.generate_password_hash(password), fullname=fullname, token=token, verified=False)
+            if token is None and password is not None:
+                token = self.token_create(email)
+                usr = self.User.get_or_insert(email, pwhash=generate_password_hash(password), fullname=fullname, token=token, verified=False)
+            elif token is not None:
+                #token comes from token_insert(), which is called before user_create()
+                usr = self.User.get_or_insert(email, pwhash='', fullname=fullname, token=token, verified=True)
         else:
             token = usr.token
         return usr,token
-    def user_by_login(self,email,password):
+    def user_by_login(self,email,password=None,token=None):
         usr = self.Key(self.User,email).get()
         if usr:
-            if not auth.check_password_hash(usr.pwhash,password):
-                raise ValueError("User exists and has different password")
+            if password is not None and token is None:
+                if not check_password_hash(usr.pwhash,password):
+                    raise ValueError("User exists and has different password")
+            elif token is not None:
+                #there is always just one way to log in,
+                #here we switch from password to social
+                usr.pwhash = ''
+                usr.token = token
+                usr.verified = True
+                self.save(usr)
         return usr
     def set_answer(self,problem,answers):
         problem.answers = answers

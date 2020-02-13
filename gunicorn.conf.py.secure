@@ -1,0 +1,5 @@
+# remove the '.secure' extension to activate secure
+# openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365
+bind = '127.0.0.1:8080'
+certfile = 'cert.pem'
+keyfile = 'key.pem'

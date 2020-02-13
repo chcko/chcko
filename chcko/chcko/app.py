@@ -11,6 +11,7 @@ app = bottle.app()
 from chcko.chcko.hlp import chcko_import
 from chcko.chcko.languages import langnumkind
 from chcko.chcko.db import db
+from functools import partial
 
 def lang_pagename(lang=None,pagename=None):
     if lang is None:
@@ -56,36 +57,39 @@ def serve_image(ignoredir,filename):
 def serve_static(filename):
     return bottle.static_file(os.path.join('chcko','static',filename), root=ROOT)
 
-from requests_oauthlib import OAuth2Session
 from urllib.parse import urljoin
-from chcko.chcko import auth
+from chcko.chcko.auth import social_logins
 @bottle.route('/auth/<provider>')
 def auth_login(provider):
-    PROVIDER = provider.upper()
-    client_id = os.environ[f'{PROVIDER}_CLIENT_ID']
-    client_secret = os.environ[f'{PROVIDER}_CLIENT_SECRET']
-    redirect_uri=urljoin(bottle.request.url, f'/auth/{provider}/callback')
-    provider_auth = OAuth2Session(client_id
-                          ,redirect_uri=redirect_uri
-                          ,scope=auth.provider.client_kwargs['scope']
-                          )
-    authorize_url, state = provider_auth.authorization_url(
-            auth.provider.authorize_url
-            , **auth.provider.client_kwargs
+    try:
+        callback_uri = urljoin(bottle.request.url, f'/auth/{provider}/callback')
+        provider_url, state = social_logins[provider].authorize(
+            callback_uri = callback_uri
             )
-    redirect(authorize_url)
+    except Exception as e:
+        raise HTTPError(404, f"Login via {provider} not supported: "+str(e))
+    db.set_cookie(bottle.response,'chckosocialloginstate',state)
+    bottle.redirect(provider_url)
 @bottle.route('/auth/<provider>/callback')
 def auth_callback(provider):
-    client_id = os.environ[f'{PROVIDER}_CLIENT_ID']
-    provider_auth = OAuth2Session(client_id
-                                  , token=token
-                                  , auto_refresh_url=refresh_url
-                                  , auto_refresh_kwargs=extra
-                                  , token_updater=token_saver)
-    r = provider_auth.get(protected_url)
-    user_info = remote.profile(token=token)
-    return handle_authorize(remote, token, user_info)
-
+    token_inserter = db.token_insert
+    def token_updater(jwt):
+        nonlocal token_inserter
+        token_inserter = partial(token_inserter,jwt)
+    callback_uri = urljoin(bottle.request.url, f'/auth/{provider}/callback')
+    info = social_logins[provider].authorized(
+        callback_uri = callback_uri
+        ,response_uri=bottle.request.url
+        ,state=bottle.request.get_cookie('chckosocialloginstate')
+        ,token_updater=token_updater
+    )
+    if info is None: #assuming denied: just continue without login
+        bottle.redirect('/')
+    fullname =  f'{info["name"]}({social_logins[provider].name})'
+    token = token_inserter(info['email'])
+    db.user_create(info['email'], fullname, token=token)
+    db.set_cookie(bottle.response,'chckousertoken',token)
+    bottle.redirect('/')
 
 @bottle.route('/',method=['GET','POST'])
 def nopath():
@@ -112,7 +116,7 @@ def fullpath(lang,pagename):
     db.set_cookie(bottle.response,'chckolang',lang)
     bottle.request.lang = lang
     bottle.request.pagename = pagename
-    db.set_user(bottle.request,bottle.response)
+    db.set_user(bottle.request)
     errormsg = db.set_student(bottle.request,bottle.response)
     if errormsg is not None:
         bottle.redirect(f'/{lang}/{errormsg}')

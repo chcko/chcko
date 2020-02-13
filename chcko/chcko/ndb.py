@@ -22,8 +22,6 @@ class User(Model):
     verified = ndb.IntegerProperty()
     token = ndb.StringProperty()
     current_student = ndb.KeyProperty(kind='Student')
-class Secret(Model):  # filled manually
-    secret = ndb.StringProperty()
 
 class Base(Model):
     userkey = ndb.KeyProperty(kind='User')
@@ -81,7 +79,7 @@ class Ndb(db_mixin):
     def __init__(self):
         self.dbclient = ndb.Client('chcko')
         self.Key = ndb.Key
-        self.models = {x._get_kind():x for x in [School,Period,Teacher,Class,Student,Problem,Assignment,Index,UserToken,User,Secret]}
+        self.models = {x._get_kind():x for x in [School,Period,Teacher,Class,Student,Problem,Assignment,Index,UserToken,User]}
         for k,v in self.models.items():
             setattr(self,k,v)
 

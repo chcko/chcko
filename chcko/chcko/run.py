@@ -2,7 +2,7 @@
 import sys
 import os
 
-def main():
+def main(server='gunicorn'):
     thisdir = os.path.abspath('.')
     if not thisdir in sys.path:
         sys.path.insert(0,thisdir)
@@ -14,7 +14,13 @@ def main():
     use(db)
     import chcko.chcko.app
     from chcko.chcko import bottle
-    bottle.run(app=chcko.chcko.app.app)
+    if server is None:
+        bottle.run(app=chcko.chcko.app.app)
+        return
+    try:
+        bottle.run(app=chcko.chcko.app.app, server=server)
+    except:
+        bottle.run(app=chcko.chcko.app.app)
 
 if __name__ == "__main__":
     main()

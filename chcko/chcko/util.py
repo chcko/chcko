@@ -16,6 +16,7 @@ from chcko.chcko.bottle import SimpleTemplate, template
 from chcko.chcko.hlp import listable, mklookup, counter, logger
 from chcko.chcko.languages import langkindnum, langnumkind, CtxStrings
 from chcko.chcko.db import db
+from chcko.chcko.auth import social_logins
 
 
 class Util:
@@ -132,7 +133,8 @@ class PageBase:
             'numkind': langnumkind[self.request.lang],
             'langs': list(CtxStrings.keys()),
             'db': db,
-            'logger': logger
+            'logger': logger,
+            'social_logins': social_logins,
         })
     def get_response(self):
         res = template('chcko.'+self.request.pagename,**self.request.params,
