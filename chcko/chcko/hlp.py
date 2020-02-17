@@ -819,19 +819,7 @@ class db_mixin:
         self.save(usr)
     def is_social_login(self,usr):
         return usr.pwhash == ''
-    def user_create(self, email, fullname, password=None, token=None):
-        usr = self.user_by_login(email,password,token)
-        if not usr:
-            if token is None and password is not None:
-                token = self.token_create(email)
-                usr = self.User.get_or_insert(email, pwhash=generate_password_hash(password), fullname=fullname, token=token, verified=False)
-            elif token is not None:
-                #token comes from token_insert(), which is called before user_create()
-                usr = self.User.get_or_insert(email, pwhash='', fullname=fullname, token=token, verified=True)
-        else:
-            token = usr.token
-        return usr,token
-    def user_by_login(self,email,password=None,token=None):
+    def user_login(self, email, fullname, password=None, token=None):
         usr = self.Key(self.User,email).get()
         if usr:
             if password is not None and token is None:
@@ -839,12 +827,20 @@ class db_mixin:
                     raise ValueError("User exists and has different password")
             elif token is not None:
                 #there is always just one way to log in,
-                #here we switch from password to social
+                #here switch from password to social
                 usr.pwhash = ''
                 usr.token = token
                 usr.verified = True
                 self.save(usr)
-        return usr
+            token = usr.token
+        else:
+            if token is None and password is not None:
+                token = self.token_create(email)
+                usr = self.User.get_or_insert(email, pwhash=generate_password_hash(password), fullname=fullname, token=token, verified=False)
+            elif token is not None:
+                #token comes from token_insert(), which is called before user_login()
+                usr = self.User.get_or_insert(email, pwhash='', fullname=fullname, token=token, verified=True)
+        return usr,token
     def set_answer(self,problem,answers):
         problem.answers = answers
         problem.concatanswers = ''.join(answers)
