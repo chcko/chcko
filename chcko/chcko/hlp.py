@@ -776,7 +776,7 @@ class db_mixin:
             request.student = student
 
     def set_cookie(self,response,cookie,value):
-        response.set_cookie(cookie,value,httponly=True,path='/',samesite='strict',maxage=datetime.timedelta(days=30))
+        response.set_cookie(cookie,value,httponly=True,path='/',samesite='strict',max_age=datetime.timedelta(days=30))
 
     def set_user(self,request):
         request.user = None

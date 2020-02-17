@@ -82,7 +82,7 @@ from chcko.chcko import bottle
 from urllib.parse import urljoin
 from functools import wraps
 from social_core.strategy import BaseStrategy
-from social_core.storage import UserMixin,BaseStorage
+from social_core.storage import UserMixin, BaseStorage
 #from social_core.backends.google import GoogleOAuth2 as google
 from social_core.backends.oauth import BaseOAuth2
 class BaseLocalAuth(object):
@@ -142,8 +142,8 @@ class local(BaseLocalOAuth2API, BaseOAuth2):
       ~/mine/chcko
       export OAUTHLIB_INSECURE_TRANSPORT=1
       #as given on the example-oauth2-server page
-      export LOCAL_CLIENT_ID="GAy9OcsNjCAlWqB9dPw7pWWK"
-      export LOCAL_CLIENT_SECRET="nC0vbG3az6UZfyUs0PCcm0MqzY6OMbT7B9eOGrDgl3HIqqw3"
+      export SOCIAL_AUTH_LOCAL_KEY="92pSnHmecuU9F66SXutV5A1h"
+      export SOCIAL_AUTH_LOCAL_SECRET="1FuSRKIM6VKzilZcQm0mfRss0pMtX9f93FrTsD2A17aJlcgN"
       ./runchcko_with_sql.py
     """
     name = 'local'
@@ -159,12 +159,6 @@ class local(BaseLocalOAuth2API, BaseOAuth2):
         ('expires_in', 'expires'),
         ('token_type', 'token_type', True)
     ]
-social_logins = {}
-for social in 'local google facebook linkedin instagram twitter pinterest'.split():
-    try:
-        social_logins[social]=globals()[social]
-    except:
-        pass
 social_core_setting = {
         'SOCIAL_AUTH_SANITIZE_REDIRECTS': False
         ,'SOCIAL_AUTH_LOCAL_FIELDS_STORED_IN_SESSION': []
@@ -176,57 +170,20 @@ social_core_setting = {
                       ,'chcko.chcko.app.social_user'
                       )
 }
+social_logins = {}
+for social in 'local google facebook linkedin instagram twitter pinterest'.split():
+    try:
+        sli=globals()[social]
+        for suffix in ['KEY','SECRET']:
+            envkey = 'SOCIAL_AUTH_'+sli.name.upper()+'_'+suffix
+            social_core_setting[envkey] = os.environ[envkey]
+        social_logins[social] = sli
+    except:
+        pass
 class UserModel(UserMixin):
-#    @classmethod
-#    def clean_username(cls, value):
-#        return None
-#    @classmethod
-#    def changed(cls, user):
-#        return None
-#    @classmethod
-#    def get_username(cls, user):
-#        return None
     @classmethod
     def user_model(cls):
         return tuple # type =! dict
-#    @classmethod
-#    def username_max_length(cls):
-#        return None
-#    @classmethod
-#    def allowed_to_disconnect(cls, user, backend_name, association_id=None):
-#        return None
-#    @classmethod
-#    def disconnect(cls, entry):
-#        return None
-#    @classmethod
-#    def user_exists(cls, *args, **kwargs):
-#        return None
-#    @classmethod
-#    def create_user(cls, *args, **kwargs):
-#        return None
-#    @classmethod
-#    def get_user(cls, pk):
-#        return None
-#    @classmethod
-#    def get_users_by_email(cls, email):
-#        return None
-#    @classmethod
-#    def get_social_auth(cls, provider, uid):
-#        if not isinstance(uid, six.string_types):
-#            uid = str(uid)
-#        try:
-#            return cls._query().filter_by(provider=provider,
-#                                          uid=uid)[0]
-#        except IndexError:
-#            return None
-#        return None
-#    @classmethod
-#    def get_social_auth_for_user(cls, user, provider=None, id=None):
-#        return None
-#    @classmethod
-#    def create_social_auth(cls, user, uid, provider):
-#        return None
-
 class storage_for_social_core(BaseStorage):
     user = UserModel
     #pass
