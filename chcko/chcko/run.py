@@ -14,13 +14,17 @@ def main(server='gunicorn'):
     use(db)
     import chcko.chcko.app
     from chcko.chcko import bottle
+    try:
+        chcko_port = os.environ['CHCKOPORT']
+    except:
+        chcko_port = 8080
     if server is None:
-        bottle.run(app=chcko.chcko.app.app)
+        bottle.run(app=chcko.chcko.app.app, port=chcko_port)
         return
     try:
-        bottle.run(app=chcko.chcko.app.app, server=server)
+        bottle.run(app=chcko.chcko.app.app, server=server, port=chcko_port)
     except:
-        bottle.run(app=chcko.chcko.app.app)
+        bottle.run(app=chcko.chcko.app.app, port=chcko_port)
 
 if __name__ == "__main__":
     main()

@@ -16,7 +16,11 @@ from chcko.chcko.bottle import SimpleTemplate, template
 from chcko.chcko.hlp import listable, mklookup, counter, logger
 from chcko.chcko.languages import langkindnum, langnumkind, CtxStrings
 from chcko.chcko.db import db
-from chcko.chcko.auth import social_logins
+
+try:
+    from chcko.chcko.auth import social_logins
+except:
+    social_logins = {}
 
 
 class Util:

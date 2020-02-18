@@ -104,9 +104,17 @@ Pepare content::
 
   cd ~/mine/chcko-r/chcko/r
   doit -kd. html
-  cd ~/mine/chcko/chcko/chcko
-  cd ..
+  cd ~/mine/chcko-r
   doit initdb
+
+Run based on sql without installing::
+
+  cd ~/mine/chcko
+  ./runchcko_with_sql.py
+
+  #if OSError: [Errno 98] Address already in use
+  export CHCKOPORT=8382
+  ./runchcko_with_sql.py
 
 Virtual environment::
 

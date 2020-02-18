@@ -59,42 +59,45 @@ def serve_static(filename):
     return bottle.static_file(os.path.join('chcko','static',filename), root=ROOT)
 
 #social
-from social_core.exceptions import SocialAuthBaseException
-from social_core.actions import do_auth, do_complete
-from chcko.chcko.auth import make_backend_obj
-@bottle.route('/auth/<provider>', method=('GET', 'POST'))
-@make_backend_obj()
-def auth_login(backend):
-    try:
-        do_auth(backend)
-    except SocialAuthBaseException:
+try:
+    from social_core.exceptions import SocialAuthBaseException
+    from social_core.actions import do_auth, do_complete
+    from chcko.chcko.auth import make_backend_obj
+    @bottle.route('/auth/<provider>', method=('GET', 'POST'))
+    @make_backend_obj()
+    def auth_login(backend):
+        try:
+            do_auth(backend)
+        except SocialAuthBaseException:
+            bottle.redirect('/')
+    @bottle.route('/auth/<provider>/callback', method=('GET', 'POST'))
+    @make_backend_obj()
+    def auth_callback(backend):
+        try:
+            user = do_complete(backend, login=None)
+        except SocialAuthBaseException:
+            pass
         bottle.redirect('/')
-@bottle.route('/auth/<provider>/callback', method=('GET', 'POST'))
-@make_backend_obj()
-def auth_callback(backend):
-    try:
-        user = do_complete(backend, login=None)
-    except SocialAuthBaseException:
-        pass
-    bottle.redirect('/')
-#this is called via social_core
-def social_user(backend, uid, user=None, *args, **kwargs):
-    info = kwargs['details']
-    fullname = f'{info["fullname"]}({backend.name})'
-    email = info['email']
-    jwt = kwargs['response']
-    token = db.token_insert(jwt,email)
-    user, token = db.user_login(email,fullname=fullname,token=token)
-    db.set_cookie(bottle.response,'chckousertoken',user.token)
-    #statisfy social_core:
-    class AttributeDict(dict): 
-        __getattr__ = dict.__getitem__
-        __setattr__ = dict.__setitem__
-    kwargs['user'] = AttributeDict()
-    kwargs['social'] = user
-    kwargs['is_new'] = None
-    kwargs['user'].social = user
-    return kwargs
+    #this is called via social_core
+    def social_user(backend, uid, user=None, *args, **kwargs):
+        info = kwargs['details']
+        fullname = f'{info["fullname"]}({backend.name})'
+        email = info['email']
+        jwt = kwargs['response']
+        token = db.token_insert(jwt,email)
+        user, token = db.user_login(email,fullname=fullname,token=token)
+        db.set_cookie(bottle.response,'chckousertoken',user.token)
+        #statisfy social_core:
+        class AttributeDict(dict): 
+            __getattr__ = dict.__getitem__
+            __setattr__ = dict.__setitem__
+        kwargs['user'] = AttributeDict()
+        kwargs['social'] = user
+        kwargs['is_new'] = None
+        kwargs['user'].social = user
+        return kwargs
+except:
+    pass
 
 @bottle.route('/',method=['GET','POST'])
 def nopath():

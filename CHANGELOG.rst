@@ -15,7 +15,7 @@ TODO
 
 - reach near 100% test coverage
 
-0.1.0
+0.1.1
 =====
 
 - Adapt to changes in used 3rd party packages:

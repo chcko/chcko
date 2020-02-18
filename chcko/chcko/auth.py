@@ -78,90 +78,93 @@ if os.getenv('GAE_ENV', '').startswith('standard'):
   is_standard_server = True
 
 #social
-from chcko.chcko import bottle
-from urllib.parse import urljoin
-from functools import wraps
-from social_core.strategy import BaseStrategy
-from social_core.storage import UserMixin, BaseStorage
-social_core_setting = {
-        'SOCIAL_AUTH_SANITIZE_REDIRECTS': False
-        ,'SOCIAL_AUTH_LOCAL_FIELDS_STORED_IN_SESSION': []
-        ,'SOCIAL_AUTH_LOCAL_KEY': "92pSnHmecuU9F66SXutV5A1h"
-        ,'SOCIAL_AUTH_LOCAL_SECRET': "1FuSRKIM6VKzilZcQm0mfRss0pMtX9f93FrTsD2A17aJlcgN"
-        ,'SOCIAL_AUTH_PIPELINE': ('social_core.pipeline.social_auth.social_details'
-                      ,'social_core.pipeline.social_auth.social_uid'
-                      ,'social_core.pipeline.social_auth.auth_allowed'
-                      ,'chcko.chcko.app.social_user'
-                      )
-}
-from social_core.backends.google import GoogleOAuth2 as google
-from social_core.backends.facebook import FacebookAppOAuth2 as facebook
-from social_core.backends.linkedin import LinkedinOAuth2 as linkedin
-from social_core.backends.instagram import InstagramOAuth2 as instagram
-from social_core.backends.twitter import TwitterOAuth as twitter
-from social_core.backends.pinterest import PinterestOAuth2 as pinterest
-social_logins = {}
-for social in 'google facebook linkedin instagram twitter pinterest'.split():
-    try:
-        sli=globals()[social]
-        for suffix in ['KEY','SECRET']:
-            envkey = 'SOCIAL_AUTH_'+sli.name.upper()+'_'+suffix
-            social_core_setting[envkey] = os.environ[envkey]
-        social_logins[social] = sli
-    except:
-        pass
-class UserModel(UserMixin):
-    @classmethod
-    def user_model(cls):
-        return tuple # type =! dict
-class storage_for_social_core(BaseStorage):
-    user = UserModel
-    #pass
-class strategy_for_social_core(BaseStrategy):
-    def __init__(self, storage=None, tpl=None):
-        super().__init__(storage,tpl)
-        self.save = {}
-    def get_setting(self, name):
-        return social_core_setting[name]
-    def request_data(self, merge=True):
-        request = bottle.request
-        if merge:
-            data = request.params
-        elif request.method == 'POST':
-            data = request.forms
-        else:
-            data = request.query
-        return data
-    def redirect(self, url):
-        return bottle.redirect(url)
-    def session_get(self, name, default=None):
-        nn = 'chcko_'+name
-        sessval = bottle.request.get_cookie(nn)
-        if sessval is None and nn in self.save:
-            sessval = self.save[nn]
-        return sessval
-    def session_set(self, name, value):
-        nn = 'chcko_'+name
-        self.save[nn] = value
-        #bottle.response.set_cookie(nn,value,httponly=True,path='/',samesite='strict',maxage=datetime.timedelta(days=30))
-        bottle.response.set_cookie(nn,value)
-    def session_pop(self, name):
-        nn = 'chcko_'+name
-        del self.save[nn]
-        bottle.response.delete_cookie(nn)
-    def build_absolute_uri(self, path=None):
-        return urljoin(bottle.request.url,path or '')
-def make_backend_obj():
-    def decorator(func):
-        @wraps(func)
-        def wrapper(provider, *args, **kwargs):
-            uri = urljoin(bottle.request.url, f'/auth/{provider}/callback')
-            strategy = strategy_for_social_core(storage_for_social_core)
-            Backend = social_logins[provider]
-            backend = Backend(strategy, redirect_uri=uri)
-            return func(backend, *args, **kwargs)
-        return wrapper
-    return decorator
+try:
+  from social_core.strategy import BaseStrategy
+  from social_core.storage import UserMixin, BaseStorage
+  from chcko.chcko import bottle
+  from urllib.parse import urljoin
+  from functools import wraps
+  social_core_setting = {
+          'SOCIAL_AUTH_SANITIZE_REDIRECTS': False
+          ,'SOCIAL_AUTH_LOCAL_FIELDS_STORED_IN_SESSION': []
+          ,'SOCIAL_AUTH_LOCAL_KEY': "92pSnHmecuU9F66SXutV5A1h"
+          ,'SOCIAL_AUTH_LOCAL_SECRET': "1FuSRKIM6VKzilZcQm0mfRss0pMtX9f93FrTsD2A17aJlcgN"
+          ,'SOCIAL_AUTH_PIPELINE': ('social_core.pipeline.social_auth.social_details'
+                        ,'social_core.pipeline.social_auth.social_uid'
+                        ,'social_core.pipeline.social_auth.auth_allowed'
+                        ,'chcko.chcko.app.social_user'
+                        )
+  }
+  from social_core.backends.google import GoogleOAuth2 as google
+  from social_core.backends.facebook import FacebookAppOAuth2 as facebook
+  from social_core.backends.linkedin import LinkedinOAuth2 as linkedin
+  from social_core.backends.instagram import InstagramOAuth2 as instagram
+  from social_core.backends.twitter import TwitterOAuth as twitter
+  from social_core.backends.pinterest import PinterestOAuth2 as pinterest
+  social_logins = {}
+  for social in 'google facebook linkedin instagram twitter pinterest'.split():
+      try:
+          sli=globals()[social]
+          for suffix in ['KEY','SECRET']:
+              envkey = 'SOCIAL_AUTH_'+sli.name.upper()+'_'+suffix
+              social_core_setting[envkey] = os.environ[envkey]
+          social_logins[social] = sli
+      except:
+          pass
+  class UserModel(UserMixin):
+      @classmethod
+      def user_model(cls):
+          return tuple # type =! dict
+  class storage_for_social_core(BaseStorage):
+      user = UserModel
+      #pass
+  class strategy_for_social_core(BaseStrategy):
+      def __init__(self, storage=None, tpl=None):
+          super().__init__(storage,tpl)
+          self.save = {}
+      def get_setting(self, name):
+          return social_core_setting[name]
+      def request_data(self, merge=True):
+          request = bottle.request
+          if merge:
+              data = request.params
+          elif request.method == 'POST':
+              data = request.forms
+          else:
+              data = request.query
+          return data
+      def redirect(self, url):
+          return bottle.redirect(url)
+      def session_get(self, name, default=None):
+          nn = 'chcko_'+name
+          sessval = bottle.request.get_cookie(nn)
+          if sessval is None and nn in self.save:
+              sessval = self.save[nn]
+          return sessval
+      def session_set(self, name, value):
+          nn = 'chcko_'+name
+          self.save[nn] = value
+          #bottle.response.set_cookie(nn,value,httponly=True,path='/',samesite='strict',maxage=datetime.timedelta(days=30))
+          bottle.response.set_cookie(nn,value)
+      def session_pop(self, name):
+          nn = 'chcko_'+name
+          del self.save[nn]
+          bottle.response.delete_cookie(nn)
+      def build_absolute_uri(self, path=None):
+          return urljoin(bottle.request.url,path or '')
+  def make_backend_obj():
+      def decorator(func):
+          @wraps(func)
+          def wrapper(provider, *args, **kwargs):
+              uri = urljoin(bottle.request.url, f'/auth/{provider}/callback')
+              strategy = strategy_for_social_core(storage_for_social_core)
+              Backend = social_logins[provider]
+              backend = Backend(strategy, redirect_uri=uri)
+              return func(backend, *args, **kwargs)
+          return wrapper
+      return decorator
+except:
+  pass
 
 #email
 try:
