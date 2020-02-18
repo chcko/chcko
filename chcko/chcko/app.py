@@ -58,7 +58,7 @@ def serve_image(ignoredir,filename):
 def serve_static(filename):
     return bottle.static_file(os.path.join('chcko','static',filename), root=ROOT)
 
-
+#social
 from social_core.exceptions import SocialAuthBaseException
 from social_core.actions import do_auth, do_complete
 from chcko.chcko.auth import make_backend_obj
@@ -84,7 +84,7 @@ def social_user(backend, uid, user=None, *args, **kwargs):
     email = info['email']
     jwt = kwargs['response']
     token = db.token_insert(jwt,email)
-    user, token = db.user_login(email,fullname,token=token)
+    user, token = db.user_login(email,fullname=fullname,token=token)
     db.set_cookie(bottle.response,'chckousertoken',user.token)
     #statisfy social_core:
     class AttributeDict(dict): 

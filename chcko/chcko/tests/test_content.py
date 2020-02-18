@@ -63,7 +63,7 @@ def newuserpage(request,cdb):
     query_string,lang,tst = request.param
     bottle.SimpleTemplate.defaults["contextcolor"] = '#EEE'
     from chcko.chcko.content import Page
-    user,_ = cdb.user_login('email@email.com','first last','password1')
+    user,_ = cdb.user_login('email@email.com',fullname='first last',password='password1')
     bddl=boddle(path=f'/{lang}/content'
                 ,user = user
                 ,student = cdb.add_student()

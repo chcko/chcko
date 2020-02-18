@@ -90,7 +90,7 @@ class TestRunthrough(object):
     def test_logout(self):
         r = self.resp.goto('/en/logout')
         self._store('resp', r.follow())
-        assert 'Twitter' in self.resp
+        assert 'log in' in self.resp
         # self.resp.showbrowser()
 
     def test_registersame(self,chapp):

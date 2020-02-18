@@ -101,12 +101,14 @@
     <div class="footer" style="background-color:{{contextcolor}}">
         <div class="grid_2">
         <a href="/{{request.lang}}/login">chcko</a>
+        %if len(social_logins)>0:
         {{ torvia }}
         </div> 
-        %for social,P in social_logins.items():
+            %for social,P in social_logins.items():
         <div class="grid_2"> 
         <a href="/auth/{{ social }}">{{ P.name }}</a>
         </div> 
+            %end
         %end
     </div>
 

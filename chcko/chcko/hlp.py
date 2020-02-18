@@ -792,12 +792,12 @@ class db_mixin:
     def token_create(self, email):
         token = gen_salt()
         key = self.token_key(token)
-        usrtkn = self.UserToken.create(id=key, email=email)
+        usrtkn = self.UserToken.create(key=key, email=email)
         self.save(usrtkn)
         return token
     def token_insert(self,jwt,email):
         token = jwtcode(jwt).decode()
-        usrtkn = self.UserToken.create(id=token, email=email)
+        usrtkn = self.UserToken.create(key=token, email=email)
         self.save(usrtkn)
         return token
     def token_key(self, token):
@@ -819,7 +819,7 @@ class db_mixin:
         self.save(usr)
     def is_social_login(self,usr):
         return usr.pwhash == ''
-    def user_login(self, email, fullname, password=None, token=None):
+    def user_login(self, email, fullname=None, password=None, token=None):
         usr = self.Key(self.User,email).get()
         if usr:
             if password is not None and token is None:
