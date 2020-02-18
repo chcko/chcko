@@ -3,7 +3,7 @@ import io
 import setuptools
 from pathlib import Path
 
-devrequirements = [x for x in open('requirements-dev.txt').read().splitlines(
+devrequirements = [x for x in open('requirements_dev.txt').read().splitlines(
     keepends=False) if x and not x.strip().startswith('#')]
 
 def main():
@@ -20,7 +20,7 @@ def main():
     ]
     setuptools.setup(
         name="chcko",
-        version = "0.0.1",
+        version = "0.1.0",
         description="chcko randomly parameterized exercises automatically checked (formerly mamchecker)",
         long_description=readme,
         long_description_content_type="text/x-rst",
@@ -28,7 +28,7 @@ def main():
         author_email="roland.puntaier@gmail.com",
         url="https://github.com/chcko/chcko",
         classifiers=[
-            "Development Status :: 2 - Pre-Alpha",
+            "Development Status :: 4 - Beta",
             "Intended Audience :: Developers",
             "Programming Language :: Python",
             "Programming Language :: Python :: 3.8",

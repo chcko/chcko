@@ -4,7 +4,7 @@ import nox
 DEFAULT_INTERPRETER = "3.8"
 
 def test_for_db(session, dbname):
-    session.install('-r','requirements.txt')
+    session.install('-r','requirements_'+dbname+'.txt')
     session.install('pytest','pytest-cov','psutil','webtest')
     run_args = ["pytest"]
     if session.posargs:

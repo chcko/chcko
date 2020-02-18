@@ -1,1 +1,1 @@
-requirements-gcp.txt
+requirements_ndb.txt

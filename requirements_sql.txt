@@ -3,6 +3,9 @@
 bottle
 sqlalchemy
 
+pyjwt
+social-auth-core
+
 numpy
 matplotlib
 lxml

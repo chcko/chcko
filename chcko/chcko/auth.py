@@ -164,61 +164,64 @@ def make_backend_obj():
     return decorator
 
 #email
-import base64
-import pickle
-from googleapiclient.discovery import build
-from google.auth.transport.requests import Request
-from google_auth_oauthlib.flow import InstalledAppFlow
-from email.mime.text import MIMEText
-pth = lambda x: os.path.join(os.path.dirname(__file__),x)
-chcko_mail = 'chcko.mail@gmail.com'
-def get_credential(
-        scopes=['https://www.googleapis.com/auth/gmail.send']
-        ,secret_file = pth('secret.json')
-        ,token_file = pth('token.pickle')
-    ):
-    '''
-    Tested with secret.json of chcko.mail@gmail.com for the quickstart app from
-        https://developers.google.com/gmail/api/quickstart/python
-    chcko.mail@gmail.com authorized manually,
-    knowing that actually they are for the chcko app.
-    The resulting token allows the chcko app to send emails.
-    '''
-    atoken = None
-    if os.path.exists(token_file):
-        with open(token_file, 'rb') as tokenf:
-            atoken = pickle.load(tokenf)
-    if not atoken or not atoken.valid:
-        if atoken and atoken.expired and atoken.refresh_token:
-            atoken.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-              pth(secret_file),scopes)
-            atoken = flow.run_local_server(port=0)
-        with open(token_file, 'wb') as tokenf:
-            pickle.dump(atoken, tokenf)
-    return atoken
+try:
+  from googleapiclient.discovery import build
+  import base64
+  import pickle
+  from google.auth.transport.requests import Request
+  from google_auth_oauthlib.flow import InstalledAppFlow
+  from email.mime.text import MIMEText
+  pth = lambda x: os.path.join(os.path.dirname(__file__),x)
+  chcko_mail = 'chcko.mail@gmail.com'
+  def get_credential(
+          scopes=['https://www.googleapis.com/auth/gmail.send']
+          ,secret_file = pth('secret.json')
+          ,token_file = pth('token.pickle')
+      ):
+      '''
+      Tested with secret.json of chcko.mail@gmail.com for the quickstart app from
+          https://developers.google.com/gmail/api/quickstart/python
+      chcko.mail@gmail.com authorized manually,
+      knowing that actually they are for the chcko app.
+      The resulting token allows the chcko app to send emails.
+      '''
+      atoken = None
+      if os.path.exists(token_file):
+          with open(token_file, 'rb') as tokenf:
+              atoken = pickle.load(tokenf)
+      if not atoken or not atoken.valid:
+          if atoken and atoken.expired and atoken.refresh_token:
+              atoken.refresh(Request())
+          else:
+              flow = InstalledAppFlow.from_client_secrets_file(
+                pth(secret_file),scopes)
+              atoken = flow.run_local_server(port=0)
+          with open(token_file, 'wb') as tokenf:
+              pickle.dump(atoken, tokenf)
+      return atoken
 
-@lru_cache
-def email_credential():
-    try:
-        creds = base64.urlsafe_b64decode(os.environ['CHCKO_MAIL_CREDENTIAL'])
-    except:
-        creds = get_credential()
-    return creds
+  @lru_cache
+  def email_credential():
+      try:
+          creds = base64.urlsafe_b64decode(os.environ['CHCKO_MAIL_CREDENTIAL'])
+      except:
+          creds = get_credential()
+      return creds
 
-def send_mail(to, subject, message_text, sender=chcko_mail):
-    '''
-    >>> ( to, subject, message_text) = ('roland.puntaier@gmail.com','test 2','test second message text')
-    >>> send_mail(to, subject, message_text, get_credential())
-    '''
-    service = build('gmail', 'v1', credentials=email_credential)
-    message = MIMEText(message_text)
-    message['to'] = to
-    message['from'] = sender
-    message['subject'] = subject
-    mbody = {'raw':base64.urlsafe_b64encode(message.as_bytes()).decode()}
-    message = (service.users().messages().send(userId=sender, body=mbody).execute())
-    return message
-
+  def send_mail(to, subject, message_text, sender=chcko_mail):
+      '''
+      >>> ( to, subject, message_text) = ('roland.puntaier@gmail.com','test 2','test second message text')
+      >>> send_mail(to, subject, message_text, get_credential())
+      '''
+      service = build('gmail', 'v1', credentials=email_credential)
+      message = MIMEText(message_text)
+      message['to'] = to
+      message['from'] = sender
+      message['subject'] = subject
+      mbody = {'raw':base64.urlsafe_b64encode(message.as_bytes()).decode()}
+      message = (service.users().messages().send(userId=sender, body=mbody).execute())
+      return message
+except:
+  def send_mail(to, subject, message_text, sender=None):
+      pass
 

@@ -1,5 +1,3 @@
-Work in Progress.
-
 chcko
 =====
 
@@ -98,7 +96,7 @@ Clone and initialize ``chcko``::
   cd ~
   git clone https://github.com/chcko/chcko
   git clone https://github.com/chcko/chcko-r #sample content
-  cd ~/chcko/chcko/chcko
+  cd ~/mine/chcko/chcko/chcko
   pip install --user doit
   doit -kd. html
   cd ..
@@ -118,12 +116,23 @@ Virtual environment::
 
 Test ``chcko``::
 
-  #tests assume chcko-r (and possibly other chcko-x) parallel to the chcko directory
+  # unit tests
+  cd ~/mine/chcko
   make test
   make cov
-  #or
   doit test
   doit cov
+  nox
+
+  # install test
+  pip uninstall chcko-r
+  pip uninstall chcko
+  ~/mine/chcko
+  pip install --user .
+  ~/mine/chcko-r
+  pip install --user .
+  cd
+  runchcko
 
   #breakpoint() in code
   cd chcko
@@ -133,7 +142,7 @@ Test ``chcko``::
 
 Upload::
 
-  cd ~/chcko
+  cd ~/mine/chcko
   gcloud app deploy app.yaml
 
 ``gcloud`` commands (see `reference <https://cloud.google.com/sdk/gcloud/reference/>`__)::
