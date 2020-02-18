@@ -23,7 +23,7 @@ The data model is::
 
   school 1-n period 1-n teacher 1-n class 1-n student 1-n problem
 
-This first 5 are called a context.
+The first 5 are called a context or role.
 A user has more contexts.
 
 DB for answers to problems
@@ -93,12 +93,16 @@ Install Google Cloud SDK::
 
 Clone and initialize ``chcko``::
 
-  cd ~
+  cd ~/mine
   git clone https://github.com/chcko/chcko
   git clone https://github.com/chcko/chcko-r #sample content
-  cd ~/mine/chcko/chcko/chcko
   pip install --user doit
+
+Pepare content::
+
+  cd ~/mine/chcko-r/chcko/r
   doit -kd. html
+  cd ~/mine/chcko/chcko/chcko
   cd ..
   doit initdb
 

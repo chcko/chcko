@@ -3,6 +3,8 @@ token.pickle
 chcko.sqlite
 *.pem
 
+.doit.db
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

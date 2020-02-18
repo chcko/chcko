@@ -5,11 +5,15 @@ CHANGELOG
 TODO
 ====
 
-- reach 100% test coverage
+- courses via URL and cookie
+
+- add man file
 
 - content: move meta content to doc and/or readme.rst
 
 - ``pip freeze``
+
+- reach near 100% test coverage
 
 0.1.0
 =====
@@ -20,9 +24,9 @@ TODO
 
 - Allow more DB backends: done via ``SqlAlchemy`` in addition to ``google-cloud-ndb``
 
-- make chcko Python Package
+- Allow adding content via adding ``chcko-<author>`` packages to ``requirements.txt``
 
-- Allow adding content via adding ``chcko_<author>`` packages to ``requirements.txt``
+- make ``chcko`` and ``chcko-r`` Python Package
 
 
 Mamchecker
