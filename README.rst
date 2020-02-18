@@ -3,7 +3,9 @@ chcko
 
 Educational content server.
 
-Content packages are separate.
+Content packages are separate. Example:
+https://github.com/chcko/chcko-r
+
 Content packages consist of small content items
 identified with short names.
 
