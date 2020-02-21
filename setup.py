@@ -8,7 +8,10 @@ devrequirements = [x for x in open('requirements_dev.txt').read().splitlines(
     keepends=False) if x and not x.strip().startswith('#')]
 
 def main():
-    shutil.rmtree('build')
+    try:
+        shutil.rmtree('build')
+    except:
+        pass
     package_root = os.path.abspath(os.path.dirname(__file__))
     proot = Path(package_root)
     readme_filename = os.path.join(package_root, "README.rst")
