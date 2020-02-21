@@ -2,11 +2,13 @@ import os
 import io
 import setuptools
 from pathlib import Path
+import shutil
 
 devrequirements = [x for x in open('requirements_dev.txt').read().splitlines(
     keepends=False) if x and not x.strip().startswith('#')]
 
 def main():
+    shutil.rmtree('build')
     package_root = os.path.abspath(os.path.dirname(__file__))
     proot = Path(package_root)
     readme_filename = os.path.join(package_root, "README.rst")
@@ -21,7 +23,7 @@ def main():
     ]
     setuptools.setup(
         name="chcko",
-        version = "0.1.1",
+        version = "0.1.2",
         description="chcko randomly parameterized exercises automatically checked (formerly mamchecker)",
         long_description=readme,
         long_description_content_type="text/x-rst",

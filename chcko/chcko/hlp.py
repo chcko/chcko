@@ -27,9 +27,7 @@ from chcko.chcko.auth import (
 
 from sympy import sstr, Rational as R, S, E
 
-import logging
-logger = logging.getLogger('chcko')
-logger.addHandler(logging.NullHandler())
+import logging as logger
 
 def authordirs():
     dirs = []
@@ -445,17 +443,19 @@ class db_mixin:
         self.student_contexts = student_contexts
         chckopackages = set(os.path.basename(chckopath) for chckopath in AUTHORDIRS)
         chckopackages = chckopackages - set(['chcko'])
+        all_problems = []
         for chckop in chckopackages:
             initdbmod = chckop+'.initdb'
             initdb = chcko_import(initdbmod)
             self.available_langs.extend(initdb.available_langs)
             initdb.populate_index(
-                lambda problemid, lang, kind, level, path: self.Index.get_or_insert(
-                        problemid + ':' + lang,
+                lambda problemid, lang, kind, level, path: all_problems.append(self.Index.create(
+                        id=problemid + ':' + lang,
                         knd=int(kind),
                         level=int(level),
-                        path=path)
+                        path=path))
                 )
+        self.save(all_problems)
         self.available_langs = set(self.available_langs)
 
     def problem_create(self,student,**pkwargs):

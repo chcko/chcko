@@ -1,0 +1,15 @@
+.*
+*~
+*.pyc
+*.pyo
+/build
+/dist
+*.egg-info
+*.pem
+*.sqlite
+/*.rst
+*.secure
+LICENSE
+Makefile
+noxfile.py
+pytest.ini

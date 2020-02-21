@@ -14,6 +14,10 @@ grpcio
 google-cloud-ndb
 google-cloud-storage
 
+#DEBUG
+google-python-cloud-debugger
+google-cloud-logging
+
 numpy
 matplotlib
 lxml

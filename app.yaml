@@ -20,16 +20,7 @@ handlers:
     - url: /[^/]*/_images
       static_dir: chcko/chcko/_images
 
-    - url: .*
-      script: chcko.chcko.app.app
-      secure: optional
-
-skip_files:
-
-    - ^(.*/)?#.*#
-    - ^(.*/)?.*~
-    - ^(.*/)?.*\.py[co]
-    - ^(.*/)?.*/RCS/.*
-    - ^(.*/)?\..*
-    - ^(.*/)?\.rst
+    - url: /.*
+      script: auto
+      secure: always
 

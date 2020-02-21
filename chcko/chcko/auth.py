@@ -40,7 +40,7 @@ def check_password_hash(pwhash, password):
     equal = compare_digest(h,hashval)
     return equal
 
-@lru_cache
+@lru_cache()
 def chckosecret():
     try:
         secret = os.environ['CHCKOSECRET']
@@ -203,7 +203,7 @@ try:
               pickle.dump(atoken, tokenf)
       return atoken
 
-  @lru_cache
+  @lru_cache()
   def email_credential():
       try:
           creds = base64.urlsafe_b64decode(os.environ['CHCKO_MAIL_CREDENTIAL'])

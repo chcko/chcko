@@ -1,3 +1,7 @@
+doit
+
+restview
+
 pytest
 pytest-cov
 
@@ -12,8 +16,6 @@ sqlalchemy
 
 pyjwt
 social-auth-core
-
-restview
 
 #for email: https://github.com/gsuitedevs/python-samples/blob/master/gmail/quickstart/requirements.txt
 google-api-python-client

@@ -2,7 +2,7 @@
 ##python_path()
 #os.environ.update({'DATASTORE_EMULATOR_HOST': 'localhost:8081'})
 
-from chcko.chcko.hlp import normqs, db_mixin
+from chcko.chcko.hlp import normqs, db_mixin, logger
 import chcko.chcko.auth as auth
 
 from google.cloud import ndb
@@ -77,7 +77,7 @@ class Index(Model):
 
 class Ndb(db_mixin):
     def __init__(self):
-        self.dbclient = ndb.Client('chcko')
+        self.dbclient = ndb.Client('chcko-262117')
         self.Key = ndb.Key
         self.models = {x._get_kind():x for x in [School,Period,Teacher,Class,Student,Problem,Assignment,Index,UserToken,User]}
         for k,v in self.models.items():
@@ -129,7 +129,10 @@ class Ndb(db_mixin):
             ndb.transaction(lambda:objs.put())
 
     def delete_keys(self,keys):
-        ndb.delete_multi(keys)
+        try:
+            ndb.delete_multi(keys)
+        except:
+            logger.info("ndb.delete_multi() failled")
 
     def delete_query(self,query):
         keys = query.iter(keys_only=True)
