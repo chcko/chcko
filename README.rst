@@ -3,15 +3,51 @@ chcko
 
 Educational content server.
 
-Content packages are separate. Example:
-https://github.com/chcko/chcko-r
+Content Packages
+================
+
+Content packages are separate python packages within the same ``chcko`` namespace.
+An example package is https://github.com/chcko/chcko-r.
+This is a technical example without didactic thread.
 
 Content packages consist of small content items
-identified with short names.
 
 - short explanations
 - problems with randomly generated values
-- courses as path through explanations and problems
+- courses as path through explanations and problems (TODO)
+
+Content items are identified in the URL with ``<author_id>.<content_id>``, each short,
+and correspond to the folder ``chcko/<author_id>/<content_id>/`` within the content package.
+The item folder contains ``__init__.py`` and ``<language_id>.html`` files.
+
+``<language_id>.rst`` are also possible.
+They can contain `tikz <https://github.com/pgf-tikz/pgf>`__ images
+and are statically converted to ``_<language_id>.html`` with::
+
+  doit -kd. html
+  doit -kd. initdb
+
+The server can run on
+
+- on gcloud (currently: https://mamchecker.appspot.com)
+- on any other server using `sqlalchemy <https://www.sqlalchemy.org/>`__
+
+Updating content on gcloud (TODO):
+
+- a content package is registered in ``requirements.txt`` via pull request
+- a content package author uploads a new version to https://pypi.org
+- regularly a new version of chcko is deployed
+  (once a day or whenever a content package has changed on pypi)
+
+
+.. mamchecker/r/cz/en.rst
+   mamchecker/r/da/en.rst
+   mamchecker/r/db/en.rst
+   mamchecker/r/de/en.rst
+   mamchecker/r/dc/en.rst
+   mamchecker/r/df/en.rst
+   mamchecker/r/dd/en.rst
+
 
 Implementation
 ==============
@@ -57,23 +93,14 @@ Pages:
 - ``todo``: assigned exercises
 - some additional helper pages
 
-Content
--------
+Environment Variables
+---------------------
 
-Every author has a separate ``chcko-X`` package within the ``chcko`` namespace.
-
-The exercise folder has the exercise in several language files (templates), either as ``.html`` or as ``.rst``.
-``.rst`` files are translated to html with ``dodo -kd. html``.
-
-Translations are done via pull requests.
-
-.. mamchecker/r/cz/en.rst
-   mamchecker/r/da/en.rst
-   mamchecker/r/db/en.rst
-   mamchecker/r/de/en.rst
-   mamchecker/r/dc/en.rst
-   mamchecker/r/df/en.rst
-   mamchecker/r/dd/en.rst
+:CHCKOSECRET: a secret used to encode the user token cookie
+:CHCKO_MAIL_CREDENTIAL: used for verifying email addresses (deprecated, prefer social oauth login)
+:CHCKOPORT: used to change port for local server
+:SOCIAL_AUTH_<PROVIDER>_KEY: for social login
+:SOCIAL_AUTH_<PROVIDER>_SECRET: for social login
 
 Commands
 ========
