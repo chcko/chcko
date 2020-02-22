@@ -104,9 +104,9 @@
         %if len(social_logins)>0:
         {{ torvia }}
         </div> 
-            %for social,P in social_logins.items():
+            %for social in social_logins.keys():
         <div class="grid_2"> 
-        <a href="/auth/{{ social }}">{{ P.name }}</a>
+        <a href="/auth/{{ social }}">{{ social }}</a>
         </div> 
             %end
         %end

@@ -16,7 +16,7 @@ from functools import partial
 
 def lang_pagename(lang=None,pagename=None):
     if lang is None:
-        lang = bottle.request.get_cookie('chckolang')
+        lang = db.get_cookie('chckolang')
     if lang not in langnumkind:
         if pagename == None:
             pagename = lang
@@ -45,6 +45,11 @@ def trailing_slash():
     bottle.request.environ['PATH_INFO'] = bottle.request.environ['PATH_INFO'].rstrip('/')
 
 ROOT = os.path.dirname(os.path.dirname(__file__))
+
+#for google verification
+@bottle.route('/<filename>.html')
+def statichtml(filename):
+    return bottle.static_file(filename+'.html', root=ROOT)
 
 @bottle.route('/favicon.ico')
 def serve_favicon():
@@ -86,7 +91,7 @@ try:
         jwt = kwargs['response']
         token = db.token_insert(jwt,email)
         user, token = db.user_login(email,fullname=fullname,token=token)
-        db.set_cookie(bottle.response,'chckousertoken',user.token)
+        db.set_cookie('chckousertoken',user.token)
         #statisfy social_core:
         class AttributeDict(dict): 
             __getattr__ = dict.__getitem__
@@ -109,7 +114,7 @@ def langonly(lang):
 
 @bottle.route('/<lang>/logout')
 def logout(lang):
-    t = bottle.request.get_cookie('chckousertoken')
+    t = db.get_cookie('chckousertoken')
     if t:
         db.token_delete(t)
         bottle.response.delete_cookie('chckousertoken')
@@ -121,11 +126,11 @@ def fullpath(lang,pagename):
         lang,pagename = lang_pagename(lang,pagename)
     except ValueError:
         return ""
-    db.set_cookie(bottle.response,'chckolang',lang)
+    db.set_cookie('chckolang',lang)
     bottle.request.lang = lang
     bottle.request.pagename = pagename
-    db.set_user(bottle.request)
-    errormsg = db.set_student(bottle.request,bottle.response)
+    db.set_user()
+    errormsg = db.set_student()
     if errormsg is not None:
         bottle.redirect(f'/{lang}/{errormsg}')
     try:

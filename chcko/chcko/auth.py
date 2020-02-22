@@ -93,8 +93,9 @@ try:
                         ,'chcko.chcko.app.social_user'
                         )
   }
-  from social_core.backends.google import GoogleOAuth2 as google
-  from social_core.backends.facebook import FacebookAppOAuth2 as facebook
+  from social_core.utils import setting_name
+  from social_core.backends.google import GoogleOpenId as google
+  from social_core.backends.facebook import FacebookOAuth2 as facebook
   from social_core.backends.linkedin import LinkedinOAuth2 as linkedin
   from social_core.backends.instagram import InstagramOAuth2 as instagram
   from social_core.backends.twitter import TwitterOAuth as twitter
@@ -104,7 +105,8 @@ try:
       try:
           sli=globals()[social]
           for suffix in ['KEY','SECRET']:
-              envkey = 'SOCIAL_AUTH_'+sli.name.upper()+'_'+suffix
+              #'SOCIAL_AUTH_'+sli.name.upper().replace('-','_')+'_'+suffix
+              envkey = setting_name(sli.name,suffix)
               social_core_setting[envkey] = os.environ[envkey]
           social_logins[social] = sli
       except:
@@ -135,15 +137,14 @@ try:
           return bottle.redirect(url)
       def session_get(self, name, default=None):
           nn = 'chcko_'+name
-          sessval = bottle.request.get_cookie(nn)
+          sessval = bottle.request.get_cookie(nn,secret=chckosecret())
           if sessval is None and nn in self.save:
               sessval = self.save[nn]
           return sessval
       def session_set(self, name, value):
           nn = 'chcko_'+name
           self.save[nn] = value
-          #bottle.response.set_cookie(nn,value,httponly=True,path='/',samesite='strict',maxage=datetime.timedelta(days=30))
-          bottle.response.set_cookie(nn,value)
+          bottle.response.set_cookie(nn,value,secret=chckosecret(),httponly=True,path='/',samesite='strict',maxage=datetime.timedelta(days=30))
       def session_pop(self, name):
           nn = 'chcko_'+name
           del self.save[nn]
@@ -154,11 +155,14 @@ try:
       def decorator(func):
           @wraps(func)
           def wrapper(provider, *args, **kwargs):
-              uri = urljoin(bottle.request.url, f'/auth/{provider}/callback')
-              strategy = strategy_for_social_core(storage_for_social_core)
-              Backend = social_logins[provider]
-              backend = Backend(strategy, redirect_uri=uri)
-              return func(backend, *args, **kwargs)
+              try:
+                  Backend = social_logins[provider]
+                  strategy = strategy_for_social_core(storage_for_social_core)
+                  uri = urljoin(bottle.request.url, f'/auth/{provider}/callback')
+                  backend = Backend(strategy, redirect_uri=uri)
+                  return func(backend, *args, **kwargs)
+              except KeyError:
+                  bottle.redirect('/')
           return wrapper
       return decorator
 except:
@@ -167,6 +171,7 @@ except:
 #email
 try:
   from googleapiclient.discovery import build
+  import codecs
   import base64
   import pickle
   from google.auth.transport.requests import Request
@@ -185,6 +190,12 @@ try:
       chcko.mail@gmail.com authorized manually,
       knowing that actually they are for the chcko app.
       The resulting token allows the chcko app to send emails.
+
+      >>> pickled = codecs.encode(pickle.dumps(atoken), "base64").decode()
+      >>> #pickled=CHCKO_MAIL_CREDENTIAL
+      >>> unpickled = pickle.loads(codecs.decode(pickled.encode(), "base64"))
+      >>> atoken == unpickled
+
       '''
       atoken = None
       if os.path.exists(token_file):
@@ -204,7 +215,9 @@ try:
   @lru_cache()
   def email_credential():
       try:
-          creds = base64.urlsafe_b64decode(os.environ['CHCKO_MAIL_CREDENTIAL'])
+          # ~/my/mam/chcko/environment.yaml
+          pickled = os.environ['CHCKO_MAIL_CREDENTIAL']
+          creds = pickle.loads(codecs.decode(pickled.encode(), "base64"))
       except:
           creds = get_credential()
       return creds

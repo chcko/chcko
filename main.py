@@ -9,18 +9,20 @@ Contains entry point ``app`` for google cloud platform.
 # https://stackoverflow.com/questions/54507222/localhost-how-to-get-credentials-to-connect-gae-python-3-app-and-datastore-emul
 import os
 if os.getenv('GAE_ENV', '').startswith('standard'):
-    ## depends on imports in : requirements.txt
-    try:
-      import googleclouddebugger
-      googleclouddebugger.enable()
-    except ImportError:
-      pass
-    try:
-      import google.cloud.logging
-      logger = google.cloud.logging.Client()
-      logger.setup_logging()
-    except ImportError:
-      pass
+    pass
+    # ## depends on imports in : requirements.txt
+    # try:
+    #   import googleclouddebugger
+    #   googleclouddebugger.enable()
+    # except ImportError:
+    #   pass
+    # ## needs logging permission
+    # try:
+    #   import google.cloud.logging
+    #   logger = google.cloud.logging.Client()
+    #   logger.setup_logging()
+    # except ImportError:
+    #   pass
 else:
     # localhost
     from unittest import mock

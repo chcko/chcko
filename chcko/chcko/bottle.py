@@ -1855,10 +1855,10 @@ class BaseResponse(object):
         Morsel._reserved.setdefault('samesite', 'SameSite')
 
         if secret:
-            if not isinstance(value, basestring):
-                depr(0, 13, "Pickling of arbitrary objects into cookies is "
-                            "deprecated.", "Only store strings in cookies. "
-                            "JSON strings are fine, too.")
+            # if not isinstance(value, basestring):
+            #     depr(0, 13, "Pickling of arbitrary objects into cookies is "
+            #                 "deprecated.", "Only store strings in cookies. "
+            #                 "JSON strings are fine, too.")
             encoded = base64.b64encode(pickle.dumps([name, value], -1))
             sig = base64.b64encode(hmac.new(tob(secret), encoded,
                                             digestmod=digestmod).digest())

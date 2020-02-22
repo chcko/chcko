@@ -2,7 +2,7 @@
 # is run automatically in conftest.py
 # but it fails sometimes, so better start it manually before testing
 
-.PHONY: test cov check dist up
+.PHONY: test cov check dist up deploy
 
 test:
 	py.test chcko/chcko/tests --db=sql
@@ -20,5 +20,11 @@ dist:
 up:
 	twine upload dist/`ls dist -rt | tail -1`
 
-
+deploy:
+	cat app.yaml > .app.yaml
+	cat ~/my/mam/chcko/environment.yaml >> .app.yaml
+	# # also change in ~/mine/chcko/chcko/chcko/ndb.py
+	# gcloud config set project mamchecker
+	gcloud config set project chcko-262117
+	gcloud app deploy .app.yaml
 

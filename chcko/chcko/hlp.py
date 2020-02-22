@@ -15,10 +15,11 @@ from collections.abc import Iterable
 from functools import wraps
 
 import chcko
-from chcko.chcko.bottle import SimpleTemplate
+from chcko.chcko import bottle
 from chcko.chcko.languages import langkindnum, langnumkind, kindint
 from chcko.chcko.auth import (
   gen_salt
+  ,chckosecret
   ,jwtcode
   ,random_student_path
   ,generate_password_hash
@@ -729,7 +730,7 @@ class db_mixin:
         # elif e is None:
         #    return ['no such object or no permission']
         return []
-    def set_student(self,request,response):
+    def set_student(self):
         '''There is always a student role
 
         - There is a student role per client without user
@@ -738,6 +739,7 @@ class db_mixin:
         None or a redirect string for a message is returned.
 
         '''
+        request, response = bottle.request, bottle.response
         try:
             usr = request.user
         except:
@@ -755,7 +757,7 @@ class db_mixin:
         elif usr:
             student = self.current_student(usr)
         if not student:
-            chckostudenturlsafe = request.get_cookie('chckostudenturlsafe')
+            chckostudenturlsafe = self.get_cookie('chckostudenturlsafe')
             if chckostudenturlsafe:
                 student = self.from_urlsafe(chckostudenturlsafe)
                 if student and usr:
@@ -771,16 +773,19 @@ class db_mixin:
                 usr.current_student = self.idof(student)
                 self.save(usr)
         if student:
-            self.set_cookie(response,'chckostudenturlsafe',self.urlsafe(student.key))
-            SimpleTemplate.defaults["contextcolor"] = student.color or '#EEE'
+            self.set_cookie('chckostudenturlsafe',self.urlsafe(student.key))
+            bottle.SimpleTemplate.defaults["contextcolor"] = student.color or '#EEE'
             request.student = student
 
-    def set_cookie(self,response,cookie,value):
-        response.set_cookie(cookie,value,httponly=True,path='/',samesite='strict',max_age=datetime.timedelta(days=30))
+    def set_cookie(self,cookie,value):
+        bottle.response.set_cookie(cookie,value,secret=chckosecret(),httponly=True,path='/',samesite='strict',max_age=datetime.timedelta(days=30))
+    def get_cookie(self,cookie):
+        return bottle.request.get_cookie(cookie,secret=chckosecret())
 
-    def set_user(self,request):
+    def set_user(self):
+        request = bottle.request
         request.user = None
-        chckousertoken = request.get_cookie('chckousertoken')
+        chckousertoken = self.get_cookie('chckousertoken')
         if chckousertoken and chckousertoken!='null':
             request.user = self.user_by_token(chckousertoken)
         if request.user is None:

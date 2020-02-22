@@ -4,6 +4,7 @@ chcko.sqlite
 *.pem
 
 .doit.db
+.app.yaml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

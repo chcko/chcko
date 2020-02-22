@@ -78,6 +78,7 @@ class Index(Model):
 class Ndb(db_mixin):
     def __init__(self):
         self.dbclient = ndb.Client('chcko-262117')
+        # self.dbclient = ndb.Client('mamchecker')
         self.Key = ndb.Key
         self.models = {x._get_kind():x for x in [School,Period,Teacher,Class,Student,Problem,Assignment,Index,UserToken,User]}
         for k,v in self.models.items():
