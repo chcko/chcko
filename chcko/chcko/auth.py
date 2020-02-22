@@ -86,9 +86,7 @@ try:
   from functools import wraps
   social_core_setting = {
           'SOCIAL_AUTH_SANITIZE_REDIRECTS': False
-          ,'SOCIAL_AUTH_LOCAL_FIELDS_STORED_IN_SESSION': []
-          ,'SOCIAL_AUTH_LOCAL_KEY': "92pSnHmecuU9F66SXutV5A1h"
-          ,'SOCIAL_AUTH_LOCAL_SECRET': "1FuSRKIM6VKzilZcQm0mfRss0pMtX9f93FrTsD2A17aJlcgN"
+          ,'SOCIAL_AUTH_FIELDS_STORED_IN_SESSION': []
           ,'SOCIAL_AUTH_PIPELINE': ('social_core.pipeline.social_auth.social_details'
                         ,'social_core.pipeline.social_auth.social_uid'
                         ,'social_core.pipeline.social_auth.auth_allowed'
