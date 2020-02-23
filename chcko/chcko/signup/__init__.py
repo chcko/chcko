@@ -20,7 +20,7 @@ class Page(PageBase):
             self.redirect('message?msg=c')
 
         try:
-            user,token = db.user_login(email,fullname=f"{fullname}",password=password)
+            user,token = db.user_login(email,fullname=f"{fullname}",password=password,lang=self.request.lang)
         except ValueError:
             self.redirect(f'message?msg=a&email={email}')
 

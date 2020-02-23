@@ -22,6 +22,7 @@ class User(Model):
     verified = ndb.IntegerProperty()
     token = ndb.StringProperty()
     current_student = ndb.KeyProperty(kind='Student')
+    lang = ndb.StringProperty(required=False)
 
 class Base(Model):
     userkey = ndb.KeyProperty(kind='User')

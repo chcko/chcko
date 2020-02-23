@@ -2,7 +2,6 @@ import os
 import datetime
 import uuid
 import hashlib
-import jwt as pyjwt
 from functools import lru_cache
 from hmac import compare_digest
 from random import choice
@@ -48,15 +47,6 @@ def chckosecret():
         secret = 'CHCKOSECRET'
     return secret
 
-def jwtcode(jwt):
-    #jwt = {'access_token': 'D447qOKuh0v48OVTNQ7sj2Bj1uux0Kk5AA01kOFbM5',
-    #   'expires_in': 864000, 'scope': ['profile', 'email'], 'token_type': 'Bearer', 'expires_at': 1582360976.518611}
-    try:
-        jwt = pyjwt.encode(jwt,chckosecret())
-    except:
-        jwt = pyjwt.decode(jwt,chckosecret())
-    return jwt
-
 def random_student_path(seed=None):
     ''' UUID parts are used as names
     >>> #myschool,myperiod,myteacher,myclass,myself = random_student_path().split('-')
@@ -94,7 +84,7 @@ try:
                         )
   }
   from social_core.utils import setting_name
-  from social_core.backends.google import GoogleOpenId as google
+  from social_core.backends.google import GoogleOAuth2 as google
   from social_core.backends.facebook import FacebookOAuth2 as facebook
   from social_core.backends.linkedin import LinkedinOAuth2 as linkedin
   from social_core.backends.instagram import InstagramOAuth2 as instagram
@@ -111,6 +101,10 @@ try:
           social_logins[social] = sli
       except:
           pass
+  def social_login_name(cls):
+      for k,v in social_logins.items():
+          if v == cls:
+              return k
   class UserModel(UserMixin):
       @classmethod
       def user_model(cls):
@@ -137,17 +131,25 @@ try:
           return bottle.redirect(url)
       def session_get(self, name, default=None):
           nn = 'chcko_'+name
-          sessval = bottle.request.get_cookie(nn,secret=chckosecret())
-          if sessval is None and nn in self.save:
-              sessval = self.save[nn]
+          # don't return deleted cookies
+          if nn in self.save and self.save[nn]=='':
+              sessval = None
+          else:
+              sessval = bottle.request.get_cookie(nn,secret=chckosecret())
+              # save needed due to session_setdefault() in social_core/strategy.py
+              if sessval is None and nn in self.save:
+                  sessval = self.save[nn]
           return sessval
       def session_set(self, name, value):
           nn = 'chcko_'+name
           self.save[nn] = value
-          bottle.response.set_cookie(nn,value,secret=chckosecret(),httponly=True,path='/',samesite='strict',maxage=datetime.timedelta(days=30))
+          bottle.response.set_cookie(nn,value,secret=chckosecret(),maxage=datetime.timedelta(days=30))
       def session_pop(self, name):
           nn = 'chcko_'+name
-          del self.save[nn]
+          try:
+              self.save[nn]=''
+          except KeyError:
+              pass
           bottle.response.delete_cookie(nn)
       def build_absolute_uri(self, path=None):
           return urljoin(bottle.request.url,path or '')

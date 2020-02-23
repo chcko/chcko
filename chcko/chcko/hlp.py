@@ -20,7 +20,6 @@ from chcko.chcko.languages import langkindnum, langnumkind, kindint
 from chcko.chcko.auth import (
   gen_salt
   ,chckosecret
-  ,jwtcode
   ,random_student_path
   ,generate_password_hash
   ,check_password_hash
@@ -730,7 +729,7 @@ class db_mixin:
         # elif e is None:
         #    return ['no such object or no permission']
         return []
-    def set_student(self):
+    def student_by(self):
         '''There is always a student role
 
         - There is a student role per client without user
@@ -778,12 +777,18 @@ class db_mixin:
             request.student = student
 
     def set_cookie(self,cookie,value):
-        bottle.response.set_cookie(cookie,value,secret=chckosecret(),httponly=True,path='/',samesite='strict',max_age=datetime.timedelta(days=30))
+        bottle.response.set_cookie(cookie,value,secret=chckosecret(),max_age=datetime.timedelta(days=30),path='/')
     def get_cookie(self,cookie):
-        return bottle.request.get_cookie(cookie,secret=chckosecret())
+        coval = bottle.request.get_cookie(cookie,secret=chckosecret())
+        return coval
 
-    def set_user(self):
+    def user_by_cookie(self):
         request = bottle.request
+        try:
+            if request.user != None:
+                return
+        except AttributeError:
+            pass
         request.user = None
         chckousertoken = self.get_cookie('chckousertoken')
         if chckousertoken and chckousertoken!='null':
@@ -798,11 +803,6 @@ class db_mixin:
         token = gen_salt()
         key = self.token_key(token)
         usrtkn = self.UserToken.create(key=key, email=email)
-        self.save(usrtkn)
-        return token
-    def token_insert(self,jwt,email):
-        token = jwtcode(jwt).decode()
-        usrtkn = self.UserToken.create(key=token, email=email)
         self.save(usrtkn)
         return token
     def token_key(self, token):
@@ -824,7 +824,8 @@ class db_mixin:
         self.save(usr)
     def is_social_login(self,usr):
         return usr.pwhash == ''
-    def user_login(self, email, fullname=None, password=None, token=None):
+    def user_login(self, email, fullname=None, password=None, token=None, lang=None):
+        lang = lang or 'en'
         usr = self.Key(self.User,email).get()
         if usr:
             if password is not None and token is None:
@@ -833,18 +834,20 @@ class db_mixin:
             elif token is not None:
                 #there is always just one way to log in,
                 #here switch from password to social
+                usr.fullname = fullname
                 usr.pwhash = ''
                 usr.token = token
                 usr.verified = True
+                usr.lang = lang
                 self.save(usr)
             token = usr.token
         else:
             if token is None and password is not None:
                 token = self.token_create(email)
-                usr = self.User.get_or_insert(email, pwhash=generate_password_hash(password), fullname=fullname, token=token, verified=False)
+                usr = self.User.get_or_insert(email, pwhash=generate_password_hash(password), fullname=fullname, token=token, verified=False, lang=lang)
             elif token is not None:
-                #token comes from token_insert(), which is called before user_login()
-                usr = self.User.get_or_insert(email, pwhash='', fullname=fullname, token=token, verified=True)
+                #token comes from token_create(), which is called before user_login()
+                usr = self.User.get_or_insert(email, pwhash='', fullname=fullname, token=token, verified=True, lang=lang)
         return usr,token
     def set_answer(self,problem,answers):
         problem.answers = answers

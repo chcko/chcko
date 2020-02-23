@@ -67,11 +67,12 @@ def serve_static(filename):
 try:
     from social_core.exceptions import SocialAuthBaseException
     from social_core.actions import do_auth, do_complete
-    from chcko.chcko.auth import make_backend_obj
+    from chcko.chcko.auth import make_backend_obj, social_login_name
     @bottle.route('/auth/<provider>', method=('GET', 'POST'))
     @make_backend_obj()
     def auth_login(backend):
         try:
+            backend.strategy.session_pop(backend.name + '_state')
             do_auth(backend)
         except SocialAuthBaseException:
             bottle.redirect('/')
@@ -82,16 +83,22 @@ try:
             user = do_complete(backend, login=None)
         except SocialAuthBaseException:
             pass
+        db.set_cookie('chckousertoken',bottle.request.user.token)
         bottle.redirect('/')
     #this is called via social_core
     def social_user(backend, uid, user=None, *args, **kwargs):
         info = kwargs['details']
-        fullname = f'{info["fullname"]}({backend.name})'
+        sln = social_login_name(backend.__class__)
+        fullname = f'{info["fullname"]} ({sln})'
         email = info['email']
         jwt = kwargs['response']
-        token = db.token_insert(jwt,email)
-        user, token = db.user_login(email,fullname=fullname,token=token)
-        db.set_cookie('chckousertoken',user.token)
+        try:
+            lang = jwt['locale']
+        except:
+            lang = 'en'
+        token = db.token_create(email)
+        user, token = db.user_login(email,fullname=fullname,token=token,lang=lang)
+        bottle.request.user = user
         #statisfy social_core:
         class AttributeDict(dict): 
             __getattr__ = dict.__getitem__
@@ -129,8 +136,8 @@ def fullpath(lang,pagename):
     db.set_cookie('chckolang',lang)
     bottle.request.lang = lang
     bottle.request.pagename = pagename
-    db.set_user()
-    errormsg = db.set_student()
+    db.user_by_cookie()
+    errormsg = db.student_by()
     if errormsg is not None:
         bottle.redirect(f'/{lang}/{errormsg}')
     try:

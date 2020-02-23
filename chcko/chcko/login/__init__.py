@@ -17,7 +17,7 @@ class Page(PageBase):
         try:
             self.request.user,_ = db.user_login(email,password=password)
             self.renew_token()
-            db.set_student()
+            db.student_by()
             self.redirect('todo')
         except (ValueError, AttributeError):
             self.request.params.update({
