@@ -24,6 +24,7 @@ def syspath_uninstalled():
             sys.path.insert(0,asyspath)
 syspath_uninstalled()
 
+os.environ['CHCKOTESTING'] = "yes"
 
 # from
 # /mnt/src/python-ndb/test_utils/test_utils/scripts/run_emulator.py

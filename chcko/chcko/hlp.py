@@ -824,30 +824,35 @@ class db_mixin:
         self.save(usr)
     def is_social_login(self,usr):
         return usr.pwhash == ''
-    def user_login(self, email, fullname=None, password=None, token=None, lang=None):
+    def user_login(self, email, fullname=None, password=None, token=None, lang=None, verified=True):
         lang = lang or 'en'
         usr = self.Key(self.User,email).get()
         if usr:
             if password is not None and token is None:
                 if not check_password_hash(usr.pwhash,password):
-                    raise ValueError("User exists and has different password")
+                    raise ValueError(f"User {email} exists and has different password")
             elif token is not None:
                 #there is always just one way to log in,
                 #here switch from password to social
                 usr.fullname = fullname
                 usr.pwhash = ''
                 usr.token = token
-                usr.verified = True
+                usr.verified = verified
                 usr.lang = lang
                 self.save(usr)
             token = usr.token
         else:
             if token is None and password is not None:
+                logging_in = fullname is None
+                if logging_in:
+                    raise ValueError(f"User {email} not registered")
                 token = self.token_create(email)
-                usr = self.User.get_or_insert(email, pwhash=generate_password_hash(password), fullname=fullname, token=token, verified=False, lang=lang)
+                usr = self.User.get_or_insert(email, pwhash=generate_password_hash(password),
+                                              fullname=fullname, token=token, verified=verified, lang=lang)
             elif token is not None:
                 #token comes from token_create(), which is called before user_login()
-                usr = self.User.get_or_insert(email, pwhash='', fullname=fullname, token=token, verified=True, lang=lang)
+                usr = self.User.get_or_insert(email, pwhash='',
+                                              fullname=fullname, token=token, verified=verified, lang=lang)
         return usr,token
     def set_answer(self,problem,answers):
         problem.answers = answers

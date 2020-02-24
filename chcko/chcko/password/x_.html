@@ -29,7 +29,7 @@
     <label>{{tselect}}</label>
     <br>
     <label for="fullname">{{tfullname}}</label>
-    <input type="text" name="fullname"/><br>
+    <input type="text" value="{{request.user.fullname}}" name="fullname"/><br>
     <label for="password">{{tpassword}}</label>
     <input type="password" name="password" /><br>
     <label for="confirmp">{{tconfirm}}*</label>

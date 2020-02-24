@@ -87,17 +87,21 @@ try:
         bottle.redirect('/')
     #this is called via social_core
     def social_user(backend, uid, user=None, *args, **kwargs):
-        info = kwargs['details']
         sln = social_login_name(backend.__class__)
+        info = kwargs['details']
         fullname = f'{info["fullname"]} ({sln})'
-        email = info['email']
         jwt = kwargs['response']
         try:
             lang = jwt['locale']
         except:
             lang = 'en'
+        email = info['email']
+        verified = True
+        if not email:
+            email = fullname
+            verified = False
         token = db.token_create(email)
-        user, token = db.user_login(email,fullname=fullname,token=token,lang=lang)
+        user, token = db.user_login(email,fullname=fullname,token=token,lang=lang,verified=verified)
         bottle.request.user = user
         #statisfy social_core:
         class AttributeDict(dict): 

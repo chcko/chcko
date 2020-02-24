@@ -3,7 +3,7 @@
 import os
 from chcko.chcko.util import PageBase
 from chcko.chcko.hlp import chcko_import, logger
-from chcko.chcko.auth import is_standard_server, send_mail
+from chcko.chcko.auth import send_mail
 from chcko.chcko.db import db
 
 class Page(PageBase):
@@ -20,22 +20,24 @@ class Page(PageBase):
             self.redirect('message?msg=c')
 
         try:
-            user,token = db.user_login(email,fullname=f"{fullname}",password=password,lang=self.request.lang)
+            user,token = db.user_login(email,fullname=f"{fullname}"
+                                       ,password=password,lang=self.request.lang,verified=False)
         except ValueError:
+            # if user exists and has different password
             self.redirect(f'message?msg=a&email={email}')
 
         relative_url = f'verification?type=v&email={email}&token={token}'
 
-        if is_standard_server:
-            confirmation_url = self.request.application_url + \
-                '/' + self.request.lang + '/' + relative_url
-            logger.info(confirmation_url)
-            m = chcko_import('chcko.signup.' + self.request.lang)
-            send_mail(
+        domain = self.request.url
+        confirmation_url = f'{domain}/{self.request.lang}/{relative_url}'
+        logger.info(confirmation_url)
+        m = chcko_import('chcko.signup.' + self.request.lang)
+        if send_mail(
                 email,
                 m.subject,
                 m.body %
-                confirmation_url)
+                confirmation_url):
             self.redirect('message?msg=j')
-        else:
-            self.redirect(relative_url)
+        # else just do without email verification
+        relative_url = relative_url+'&verified=0'
+        self.redirect(relative_url)

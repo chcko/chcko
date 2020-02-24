@@ -97,10 +97,13 @@ Environment Variables
 ---------------------
 
 :CHCKOSECRET: a secret used to encode the user token cookie
-:CHCKO_MAIL_CREDENTIAL: used for verifying email addresses (deprecated, prefer social oauth login)
 :CHCKOPORT: used to change port for local server
 :SOCIAL_AUTH_<PROVIDER>_KEY: for social login
 :SOCIAL_AUTH_<PROVIDER>_SECRET: for social login
+
+
+.. :CHCKO_MAIL_CREDENTIAL: used for verifying email addresses
+   (currently not used due to with_email_verification=False)
 
 Commands
 ========

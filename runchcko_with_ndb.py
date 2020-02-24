@@ -2,6 +2,9 @@
 
 if __name__ == '__main__':
     import conftest
+    import os
+    os.environ['CHCKOTESTING'] = "no"
+
     with conftest.emulator():
 
         import main

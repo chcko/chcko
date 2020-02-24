@@ -7,7 +7,6 @@
 
 import sys
 import os
-import conftest
 
 from chcko.chcko.run import main
 

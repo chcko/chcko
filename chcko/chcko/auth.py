@@ -65,7 +65,7 @@ def random_student_path(seed=None):
 
 is_standard_server = False
 if os.getenv('GAE_ENV', '').startswith('standard'):
-  is_standard_server = True
+    is_standard_server = True
 
 #social
 try:
@@ -74,8 +74,21 @@ try:
   from chcko.chcko import bottle
   from urllib.parse import urljoin
   from functools import wraps
+  # secrets are not in the repo,
+  # but included via `make deploy` from local ~/my/mam/chcko/environment.yaml
   social_core_setting = {
           'SOCIAL_AUTH_SANITIZE_REDIRECTS': False
+          # sign in with linkedin is not automatic but needs reviewing: therefore not tested
+          # ,'SOCIAL_AUTH_LINKEDIN_OAUTH2_FIELD_SELECTORS': ['emailAddress']
+          # ,'SOCIAL_AUTH_LINKEDIN_OAUTH2_EXTRA_DATA':[('id', 'id'),
+          #                                    ('firstName', 'first_name'),
+          #                                    ('lastName', 'last_name'),
+          #                                    ('emailAddress', 'email_address')]
+          # including email produces a popup, without not
+          # ,'SOCIAL_AUTH_FACEBOOK_SCOPE': ['email']
+          # ,'SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS': {
+          #                                     'fields': 'id, name, email'
+          #                                   }
           ,'SOCIAL_AUTH_FIELDS_STORED_IN_SESSION': []
           ,'SOCIAL_AUTH_PIPELINE': ('social_core.pipeline.social_auth.social_details'
                         ,'social_core.pipeline.social_auth.social_uid'
@@ -170,74 +183,76 @@ try:
 except:
   pass
 
-#email
-try:
-  from googleapiclient.discovery import build
-  import codecs
-  import base64
-  import pickle
-  from google.auth.transport.requests import Request
-  from google_auth_oauthlib.flow import InstalledAppFlow
-  from email.mime.text import MIMEText
-  pth = lambda x: os.path.join(os.path.dirname(__file__),x)
-  chcko_mail = 'chcko.mail@gmail.com'
-  def get_credential(
-          scopes=['https://www.googleapis.com/auth/gmail.send']
-          ,secret_file = pth('secret.json')
-          ,token_file = pth('token.pickle')
-      ):
-      '''
-      Tested with secret.json of chcko.mail@gmail.com for the quickstart app from
-          https://developers.google.com/gmail/api/quickstart/python
-      chcko.mail@gmail.com authorized manually,
-      knowing that actually they are for the chcko app.
-      The resulting token allows the chcko app to send emails.
-
-      >>> pickled = codecs.encode(pickle.dumps(atoken), "base64").decode()
-      >>> #pickled=CHCKO_MAIL_CREDENTIAL
-      >>> unpickled = pickle.loads(codecs.decode(pickled.encode(), "base64"))
-      >>> atoken == unpickled
-
-      '''
-      atoken = None
-      if os.path.exists(token_file):
-          with open(token_file, 'rb') as tokenf:
-              atoken = pickle.load(tokenf)
-      if not atoken or not atoken.valid:
-          if atoken and atoken.expired and atoken.refresh_token:
-              atoken.refresh(Request())
-          else:
-              flow = InstalledAppFlow.from_client_secrets_file(
-                pth(secret_file),scopes)
-              atoken = flow.run_local_server(port=0)
-          with open(token_file, 'wb') as tokenf:
-              pickle.dump(atoken, tokenf)
-      return atoken
-
-  @lru_cache()
-  def email_credential():
-      try:
-          # ~/my/mam/chcko/environment.yaml
-          pickled = os.environ['CHCKO_MAIL_CREDENTIAL']
-          creds = pickle.loads(codecs.decode(pickled.encode(), "base64"))
-      except:
-          creds = get_credential()
-      return creds
-
-  def send_mail(to, subject, message_text, sender=chcko_mail):
-      '''
-      >>> ( to, subject, message_text) = ('roland.puntaier@gmail.com','test 2','test second message text')
-      >>> send_mail(to, subject, message_text, get_credential())
-      '''
-      service = build('gmail', 'v1', credentials=email_credential)
-      message = MIMEText(message_text)
-      message['to'] = to
-      message['from'] = sender
-      message['subject'] = subject
-      mbody = {'raw':base64.urlsafe_b64encode(message.as_bytes()).decode()}
-      message = (service.users().messages().send(userId=sender, body=mbody).execute())
-      return message
-except:
-  def send_mail(to, subject, message_text, sender=None):
-      pass
+# GAE had email. The hack below was a try,
+# but currently no need to invest more time to make it work
+with_email_verification = False
+if with_email_verification:
+    from googleapiclient.discovery import build
+    import codecs
+    import base64
+    import pickle
+    from google.auth.transport.requests import Request
+    from google_auth_oauthlib.flow import InstalledAppFlow
+    from email.mime.text import MIMEText
+    pth = lambda x: os.path.join(os.path.dirname(__file__),x)
+    chcko_mail = 'chcko.mail@gmail.com'
+    def get_credential(
+            scopes=['https://www.googleapis.com/auth/gmail.send']
+            ,secret_file = pth('secret.json')
+            ,token_file = pth('token.pickle')
+        ):
+        '''
+        Tested with secret.json of chcko.mail@gmail.com for the quickstart app from
+            https://developers.google.com/gmail/api/quickstart/python
+        chcko.mail@gmail.com authorized manually,
+        knowing that actually they are for the chcko app.
+        The resulting token allows the chcko app to send emails.
+  
+        >>> pickled = codecs.encode(pickle.dumps(atoken), "base64").decode()
+        >>> #pickled=CHCKO_MAIL_CREDENTIAL
+        >>> unpickled = pickle.loads(codecs.decode(pickled.encode(), "base64"))
+        >>> atoken == unpickled
+  
+        '''
+        atoken = None
+        if os.path.exists(token_file):
+            with open(token_file, 'rb') as tokenf:
+                atoken = pickle.load(tokenf)
+        if not atoken or not atoken.valid:
+            if atoken and atoken.expired and atoken.refresh_token:
+                atoken.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                  pth(secret_file),scopes)
+                atoken = flow.run_local_server(port=0)
+            with open(token_file, 'wb') as tokenf:
+                pickle.dump(atoken, tokenf)
+        return atoken
+  
+    @lru_cache()
+    def email_credential():
+        try:
+            # ~/my/mam/chcko/environment.yaml
+            pickled = os.environ['CHCKO_MAIL_CREDENTIAL']
+            creds = pickle.loads(codecs.decode(pickled.encode(), "base64"))
+        except:
+            creds = get_credential()
+        return creds
+  
+    def send_mail(to, subject, message_text, sender=chcko_mail):
+        '''
+        >>> ( to, subject, message_text) = ('roland.puntaier@gmail.com','test 2','test second message text')
+        >>> send_mail(to, subject, message_text, get_credential())
+        '''
+        service = build('gmail', 'v1', credentials=email_credential)
+        message = MIMEText(message_text)
+        message['to'] = to
+        message['from'] = sender
+        message['subject'] = subject
+        mbody = {'raw':base64.urlsafe_b64encode(message.as_bytes()).decode()}
+        message = (service.users().messages().send(userId=sender, body=mbody).execute())
+        return message
+else:
+    def send_mail(to, subject, message_text, sender=None):
+        pass
 

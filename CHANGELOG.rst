@@ -5,15 +5,23 @@ CHANGELOG
 TODO
 ====
 
-- courses via URL and cookie
+- Courses via URL and cookie
 
-- add man file
+- Add man file
 
-- content: move meta content to doc and/or readme.rst
+- Content: move meta content to doc and/or readme.rst
 
 - ``pip freeze``
 
-- reach near 100% test coverage
+- Reach near 100% test coverage.
+  Fix ndb tests: Currently ndb tests sometimes fail,
+  most likely due to the eventually consistent nature of ndb.
+
+0.1.3
+=====
+
+- OAUTH login with google and facebook
+- Fixes for GCLOUD
 
 0.1.1
 =====
