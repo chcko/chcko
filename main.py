@@ -23,8 +23,9 @@ else:
     # $1: gcloud beta emulators datastore start --no-store-on-disk --data-dir .
     # $2: cd .. && python2 `which dev_appserver.py` chcko
     import sys
-    if sys.path[0] != '.':
-        sys.path.insert(0,'.')
+    thispath = os.path.dirname(__file__)
+    if sys.path[0] != thispath:
+        sys.path.insert(0, thispath)
     from conftest import emulator
     emulator().__enter__()
 

@@ -16,7 +16,7 @@ from functools import partial
 
 def lang_pagename(lang=None,pagename=None):
     if lang is None:
-        lang = db.get_cookie('chckolang')
+        lang = db.get_cookie('chcko_cookie_lang')
     if lang not in langnumkind:
         if pagename == None:
             pagename = lang
@@ -83,7 +83,7 @@ try:
             user = do_complete(backend, login=None)
         except SocialAuthBaseException:
             pass
-        db.set_cookie('chckousertoken',bottle.request.user.token)
+        db.set_cookie('chcko_cookie_usertoken',bottle.request.user.token)
         bottle.redirect('/')
     #this is called via social_core
     def social_user(backend, uid, user=None, *args, **kwargs):
@@ -125,10 +125,10 @@ def langonly(lang):
 
 @bottle.route('/<lang>/logout')
 def logout(lang):
-    t = db.get_cookie('chckousertoken')
+    t = db.get_cookie('chcko_cookie_usertoken')
     if t:
         db.token_delete(t)
-        bottle.response.delete_cookie('chckousertoken')
+        bottle.response.delete_cookie('chcko_cookie_usertoken')
     bottle.redirect(f'/{lang}/content')
 
 @bottle.route('/<lang>/<pagename>',method=['GET','POST'])
@@ -137,7 +137,7 @@ def fullpath(lang,pagename):
         lang,pagename = lang_pagename(lang,pagename)
     except ValueError:
         return ""
-    db.set_cookie('chckolang',lang)
+    db.set_cookie('chcko_cookie_lang',lang)
     bottle.request.lang = lang
     bottle.request.pagename = pagename
     db.user_by_cookie()

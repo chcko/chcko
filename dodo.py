@@ -28,7 +28,10 @@ task_included is internal.
 import os
 import fnmatch
 import sys
-sys.path.insert(0,'.')
+
+thispath = os.path.dirname(__file__)
+if sys.path[0] != thispath:
+    sys.path.insert(0, thispath)
 
 from chcko.chcko import doit_tasks
 

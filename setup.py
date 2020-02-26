@@ -18,7 +18,7 @@ def main():
     with io.open(readme_filename, encoding="utf-8") as readme_file:
         readme = readme_file.read()
     dependencies = [
-            'pyjwt',
+            'psutil',
             'numpy',
             'matplotlib',
             'lxml',

@@ -756,7 +756,7 @@ class db_mixin:
         elif usr:
             student = self.current_student(usr)
         if not student:
-            chckostudenturlsafe = self.get_cookie('chckostudenturlsafe')
+            chckostudenturlsafe = self.get_cookie('chcko_cookie_studenturlsafe')
             if chckostudenturlsafe:
                 student = self.from_urlsafe(chckostudenturlsafe)
                 if student and usr:
@@ -772,7 +772,7 @@ class db_mixin:
                 usr.current_student = self.idof(student)
                 self.save(usr)
         if student:
-            self.set_cookie('chckostudenturlsafe',self.urlsafe(student.key))
+            self.set_cookie('chcko_cookie_studenturlsafe',self.urlsafe(student.key))
             bottle.SimpleTemplate.defaults["contextcolor"] = student.color or '#EEE'
             request.student = student
 
@@ -790,7 +790,7 @@ class db_mixin:
         except AttributeError:
             pass
         request.user = None
-        chckousertoken = self.get_cookie('chckousertoken')
+        chckousertoken = self.get_cookie('chcko_cookie_usertoken')
         if chckousertoken and chckousertoken!='null':
             request.user = self.user_by_token(chckousertoken)
         if request.user is None:

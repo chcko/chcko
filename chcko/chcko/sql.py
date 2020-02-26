@@ -1,10 +1,3 @@
-#def python_path():
-#    d = os.path.dirname
-#    local_dir = d(d(__file__))
-#    if local_dir not in sys.path:
-#        sys.path.insert(0, local_dir)
-#python_path()
-#https://sqlalche.me/e/e3q8
 import os
 import datetime
 from time import monotonic_ns

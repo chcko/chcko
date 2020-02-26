@@ -4,7 +4,7 @@ import os
 
 def main(server='gunicorn'):
     thisdir = os.path.abspath('.')
-    if not thisdir in sys.path:
+    if not any(x in sys.path for x in ['.',thisdir]):
         sys.path.insert(0,thisdir)
     from chcko.chcko.db import use
     from chcko.chcko.sql import Sql

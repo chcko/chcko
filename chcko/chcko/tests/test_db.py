@@ -1,13 +1,6 @@
 
 import pytest
 
-#import os
-#d = os.path.dirname
-#sys.path.insert(0,
-#                d(d(d(d(__file__))))
-#                )
-
-
 @pytest.fixture()
 def cdb(db):
     with db.dbclient.context():

@@ -2,7 +2,6 @@
 
 bottle
 
-#pyjwt
 social-auth-core
 
 #for email: https://github.com/gsuitedevs/python-samples/blob/master/gmail/quickstart/requirements.txt

@@ -151,7 +151,7 @@ class PageBase:
         email = db.user_email(self.request.user)
         self.request.user.token = db.token_create(email)
         db.save(self.request.user)
-        db.set_cookie('chckousertoken',self.request.user.token)
+        db.set_cookie('chcko_cookie_usertoken',self.request.user.token)
 
 def user_required(handler):
     def check_login(self, *args, **kwargs):
