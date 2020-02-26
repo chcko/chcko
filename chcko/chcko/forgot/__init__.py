@@ -31,7 +31,6 @@ class Page(PageBase):
 
         try:
             chckotesting = os.environ['CHCKOTESTING'].lower()!='no'
-            print('chckotesting',os.environ['CHCKOTESTING'])#
         except:
             chckotesting = False
 
@@ -44,14 +43,11 @@ class Page(PageBase):
                 m.subject,
                 m.body %
                 confirmation_url):
-            print('a')#
             self.redirect('message?msg=j')
         elif not chckotesting:
-            print('b')#
             # else we need to inform that email does not work on this server
             self.redirect('message?msg=m')
         else:
-            print('c')#
             relative_url = relative_url+'&verified=0'
             self.redirect(relative_url)
 

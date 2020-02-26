@@ -2,11 +2,7 @@
 Contains entry point ``app`` for google cloud platform.
 """
 
-#####################################
-# To run with dev_appserver.py
-# ~/mine
-# python2 `which dev_appserver.py` chcko
-# https://stackoverflow.com/questions/54507222/localhost-how-to-get-credentials-to-connect-gae-python-3-app-and-datastore-emul
+
 import os
 if os.getenv('GAE_ENV', '').startswith('standard'):
     pass
@@ -24,17 +20,13 @@ if os.getenv('GAE_ENV', '').startswith('standard'):
     # except ImportError:
     #   pass
 else:
-    # localhost
-    from unittest import mock
-    from google.cloud import datastore
-    import google.auth.credentials
-    os.environ["DATASTORE_DATASET"] = "chcko-262117"
-    os.environ["DATASTORE_EMULATOR_HOST"] = "localhost:8081"
-    os.environ["DATASTORE_EMULATOR_HOST_PATH"] = "localhost:8081/datastore"
-    os.environ["DATASTORE_HOST"] = "http://localhost:8081"
-    os.environ["DATASTORE_PROJECT_ID"] = "chcko-262117"
-    credentials = mock.Mock(spec=google.auth.credentials.Credentials)
-    dta = datastore.Client(project="chcko-262117", credentials=credentials)
+    # $1: gcloud beta emulators datastore start --no-store-on-disk --data-dir .
+    # $2: cd .. && python2 `which dev_appserver.py` chcko
+    import sys
+    if sys.path[0] != '.':
+        sys.path.insert(0,'.')
+    from conftest import emulator
+    emulator().__enter__()
 
 from chcko.chcko.db import use
 from chcko.chcko.ndb import Ndb
@@ -42,6 +34,7 @@ db = Ndb()
 with db.dbclient.context():
     db.init_db()
 use(db)
+
 import chcko.chcko.app
 
 def ndb_wsgi_middleware(wsgi_app):

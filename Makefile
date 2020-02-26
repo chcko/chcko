@@ -23,8 +23,7 @@ up:
 deploy:
 	cat app.yaml > .app.yaml
 	cat ~/my/mam/chcko/environment.yaml >> .app.yaml
-	# # also change in ~/mine/chcko/chcko/chcko/ndb.py
-	# gcloud config set project mamchecker
-	gcloud config set project chcko-262117
+	# there will be a confirmation: CHECK THE PROJECT, else cancel and do, e.g.
+	# $ gcloud config set project chcko-262117
 	gcloud app deploy .app.yaml
 

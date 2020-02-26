@@ -152,7 +152,6 @@ Virtual environment::
   source .nox/test_sql/bin/activate
   deactivate
 
-  #gcloud config set project chcko-262117
   gcloud beta emulators datastore start --no-store-on-disk
 
   ./runchcko_with_emulator.py

@@ -15,6 +15,7 @@ google-cloud-ndb
 google-cloud-storage
 
 # # DEBUG
+psutil
 # google-python-cloud-debugger
 # # needs logging permission
 # google-cloud-logging

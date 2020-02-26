@@ -6,11 +6,26 @@ This initializes py.test.
 import sys
 import os
 import os.path
-import pytest
 import urllib.request
 import urllib.error
 import time
 from contextlib import contextmanager
+
+try:
+    import pytest
+    def abort():
+        pytest.exit(1)
+    xfail = pytest.xfail
+    fixture = pytest.fixture
+except: #for dev_appserver.py environment
+    def abort():
+        sys.exit(1)
+    def xfail(*a, **ka):
+        sys.exit(1)
+    def fixture(*a, **ka):
+        def wrapper(*p,**k):
+            pass
+        return wrapper
 
 def syspath_uninstalled():
     d = os.path.dirname
@@ -70,7 +85,7 @@ def emulator():
                 print(k,val)
         except ValueError:
             print('chcko conftest.py emulator problem. This happens occasionally. If it persists, debug it.')
-            pytest.exit(1)
+            abort()
 
         time.sleep(1)
         OK = ''
@@ -85,7 +100,7 @@ def emulator():
                 notOK = notOK + 1
                 if notOK == 10:
                     print('chcko conftest.py emulator start fails. Retry, else debug it or start separately.')
-                    pytest.exit(1)
+                    abort()
         yield
     finally:
         if proc_start:
@@ -102,7 +117,7 @@ def pytest_runtest_makereport(item, call):
 def pytest_runtest_setup(item):
     previousfailed = getattr(item.parent, "_previousfailed", None)
     if previousfailed is not None:
-        pytest.xfail("previous test failed (%s)" % previousfailed.name)
+        xfail("previous test failed (%s)" % previousfailed.name)
 
 
 def pytest_addoption(parser):
@@ -110,7 +125,7 @@ def pytest_addoption(parser):
         "--db", action="store", default="ndb", help="A session cannot have both [ndb] and sql DB"
     )
 
-@pytest.fixture(scope='session')
+@fixture(scope='session')
 def db(request):
     backnd = request.config.getoption("--db")
     import chcko.chcko.db as chckodb
