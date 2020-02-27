@@ -73,10 +73,10 @@ Templates:
 
 - ``bottle`` SimpleTemplate
 
-The URL format is::
+The URL format is, e.g ``<...>/en/content?r.bd&r.ba&r.a``::
 
   URL = "https://"domain"/"lang"/"page_request"
-  domain = "mamchecker.appspot.com"
+  domain = "chcko-262117.appspot.com"
   lang = "en"|"de"|...
   page_request = ["content?"]{author"."exercise["="count]"&"}
                | "done?"context{field("~"|"="|"!"|"<"|">")value","}
@@ -84,6 +84,9 @@ The URL format is::
                | "edits?"("new"|"change"|"delete")
                | "contexts"
   context = [[[[[school&]period&]teacher&]class&]student&]
+
+Courses: ``&&`` instead of one ``&`` is a sequence separator. ``&&&`` marks the current position.
+E.g. ``<...>/en/content?r.bd&&r.ba&&&r.a`` has ``r.a`` as current item in the course.
 
 Pages:
 

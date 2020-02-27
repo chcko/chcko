@@ -13,7 +13,7 @@ from urllib.parse import parse_qsl
 from chcko.chcko import bottle
 from chcko.chcko.bottle import SimpleTemplate, template
 
-from chcko.chcko.hlp import listable, mklookup, counter, logger
+from chcko.chcko.hlp import listable, mklookup, counter, logger, from_py
 from chcko.chcko.languages import langkindnum, langnumkind, CtxStrings
 from chcko.chcko.db import db
 
@@ -123,11 +123,12 @@ class Util:
 
 
 class PageBase:
-    def __init__(self):
+    def __init__(self,mod):
         self.request = bottle.request
         self.response = bottle.response
         self.util = Util(self.request)
         SimpleTemplate.defaults.update(self.request.params)
+        SimpleTemplate.defaults.update(from_py(mod))
         SimpleTemplate.defaults.update({
             'self': self,
             'request': self.request,

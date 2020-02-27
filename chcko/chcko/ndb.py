@@ -60,9 +60,6 @@ class Problem(Base):
     answers = ndb.StringProperty(repeated=True)
     nr = ndb.IntegerProperty()  # needed to restore order
     concatanswers = ndb.StringProperty() #concat duplicate of answers (set_answer)
-    @property
-    def link(self):
-        return '/' + self.lang + '/content?' + self.query_string
 
 
 class Assignment(Base):

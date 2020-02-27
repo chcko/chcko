@@ -8,8 +8,8 @@ from chcko.chcko.util import PageBase
 
 class Page(PageBase):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, mod):
+        super().__init__(mod)
         self.assign_table = lambda: db.assign_table(
             self.request.student, self.request.user)
 

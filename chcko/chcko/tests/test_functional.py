@@ -40,8 +40,6 @@ def url_lang(url):
 
 @pytest.mark.incremental
 class TestRunthrough(object):
-    #>> self = TestRunthrough()
-    #>> chapp = chapp(finrequest,None)
 
     resp = None
 

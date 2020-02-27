@@ -8,8 +8,8 @@ from chcko.chcko.db import db
 
 class Page(PageBase):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, mod):
+        super().__init__(mod)
         self.not_found = False
         self.email = self.request.params.get('email','')
         if self.email:

@@ -230,10 +230,6 @@ class Problem(Model):
     #a separate Answers table would be an alternative:
     #https://stackoverflow.com/questions/23360666/sqlalchemy-filter-query-by-pickletype-contents
 
-    @property
-    def link(self):
-        return '/' + self.lang + '/content?' + self.query_string
-
 class Assignment(Model):
     userkey = C(ForeignKey('User.urlkey'))
     created = C(DateTime,default=datetime.datetime.now)

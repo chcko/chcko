@@ -141,12 +141,10 @@ def fullpath(lang,pagename):
     bottle.request.lang = lang
     bottle.request.pagename = pagename
     db.user_by_cookie()
-    errormsg = db.student_by()
-    if errormsg is not None:
-        bottle.redirect(f'/{lang}/{errormsg}')
+    db.student_by()
     try:
-        m = chcko_import('chcko.'+pagename)
-        page = m.Page()
+        mod = chcko_import('chcko.'+pagename)
+        page = mod.Page(mod)
         if bottle.request.route.method == 'GET':
             respns = page.get_response()
         else:

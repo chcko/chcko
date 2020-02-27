@@ -268,7 +268,6 @@ def counter():
 
 
 class Struct(dict):
-
     '''Access dict entries as attributes.
     >>> ad = Struct(a=1,b=2); ad
     {'a': 1, 'b': 2}
@@ -281,15 +280,12 @@ class Struct(dict):
     {'a': 2, 'b': 4}
 
     '''
-
     def __init__(self, *args, **kwargs):
         super(Struct, self).__init__(*args, **kwargs)
         self.__dict__ = self
-
     def __add__(self, other):
         return Struct(**{x: getattr(self, x, 0) + getattr(other, x, 0)
                       for x in self})
-
     def __iadd__(self, other):
         self.update({x: getattr(self, x, 0) + getattr(other, x, 0)
                     for x in self})
@@ -297,21 +293,17 @@ class Struct(dict):
 
 
 def chcko_import(name):
-    m = importlib.import_module('chcko.'+name)
-    return m
+    mod = importlib.import_module('chcko.'+name)
+    return mod
 
 
-def from_py(m):
-    d = Struct(given=getattr(m, 'given', lambda: Struct()),
-               calc=getattr(m, 'calc', lambda g: []),
-               norm=getattr(m, 'norm', norm_rounded),
-               equal=getattr(m, 'equal', equal_eq),
-               points=getattr(m, 'points', None))
-    try:  # get other static data not stored, like names of variables
-        dd = {e: getattr(m, e) for e in m.__all__ if e not in d.keys()}
-        d.update(dd)
-    except:
-        pass
+def from_py(mod):
+    d = Struct(given=getattr(mod, 'given', lambda: Struct()),
+               calc=getattr(mod, 'calc', lambda g: []),
+               norm=getattr(mod, 'norm', norm_rounded),
+               equal=getattr(mod, 'equal', equal_eq),
+               points=getattr(mod, 'points', None))
+    d.update(mod.__dict__)
     return d
 
 
@@ -540,9 +532,8 @@ class db_mixin:
         d = rsv.load()
         g = d.given()
         r = d.norm(d.calc(g))
-        pkwargs = d.__dict__.copy()
         points = d.points or [1] * len(r or [])
-        pkwargs.update(dict(
+        d.update(dict(
             g=g,
             answered=None,
             lang=rsv.lang,
@@ -553,8 +544,8 @@ class db_mixin:
             inputids=["{:0=4x}".format(nr) + "_{:0=4x}".format(a) for a in range(len(r))],
             points=points
         ))
-        problem = self.problem_create(student,**pkwargs)
-        return problem, pkwargs
+        problem = self.problem_create(student,**d)
+        return problem, d
     def clear_assignments(self):
         self.delete_query(self.query(self.Assignment))
     def clear_student_assignments(self,student):
@@ -735,8 +726,6 @@ class db_mixin:
         - There is a student role per client without user
         - There are more student roles for a user with one being current
 
-        None or a redirect string for a message is returned.
-
         '''
         request, response = bottle.request, bottle.response
         try:
@@ -752,7 +741,7 @@ class db_mixin:
             if student.userkey != self.idof(usr):
                 # student role does not belong to user, so don't change current student
                 student = None
-                return 'message?msg=e'
+                bottle.redirect(f'/{bottle.request.lang}/message?msg=e')
         elif usr:
             student = self.current_student(usr)
         if not student:

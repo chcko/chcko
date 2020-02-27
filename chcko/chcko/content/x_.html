@@ -52,7 +52,7 @@
     </script>
 
 
-% else: # specific content wanted
+% else: # specific content
 
     % if with_problems and not problem.answered:
     <form action="" method="post">
@@ -64,17 +64,41 @@
         </p>
     % end
 
+
     {{! content }}
 
+
+    %qs=query_string
+    %is_seq_qs=seq_qs(qs)
+    %alinks = ['/'+request.lang+'/content?'+x for x in [start_qs(qs),next_qs(qs,-1),qs,next_qs(qs),end_qs(qs)]]
+
+    %def qsnav(where,sign):
+    <button class="grid_1" type="button" onclick="window.location.href='{{ alinks[where] }}';" id="nbutton">{{ sign }}</button>
+    %end
+
+    <p>
+    % bottonwidth = 'grid_10'
+    %if is_seq_qs:
+        % bottonwidth = 'grid_6'
+        %qsnav(0,'⯈')
+        %qsnav(1,'⯇')
+    %end
+
     % if with_problems and problem.answered:
-        <p>
-        <a href="{{ problem.link }}">{{tagain}}</a>
-        </p>
+        <button type="button" class="{{bottonwidth}}" onclick="window.location.href='{{ alinks[2] }}';" id="nbutton"> {{tagain}} </button>
     % end
+    % if with_problems and not problem.answered:
+        <input class="{{bottonwidth}}" style="text-align:center" type="submit" name="submit" id="nbutton" value="{{tcheck}}"/>
+        <input type="hidden" name="problemkey" value="{{problemkey}}">
+    %end
+
+    %if is_seq_qs:
+        %qsnav(3,'⯈')
+        %qsnav(4,'⯇')
+    %end
+    </p>
 
     % if with_problems and not problem.answered:
-        <p><input type="submit" name="submit" value="{{tcheck}}"/></p>
-        <p><input type="hidden" name="problemkey" value="{{problemkey}}"></p>
     </form>
     % end
 
@@ -92,7 +116,7 @@
                         % end
                         <fieldset>
                         % fieldset = True
-                        <input type="hidden" name="query_string" value="{{request.query_string}}">
+                        <input type="hidden" name="query_string" value="{{query_string}}">
                         <div><input type="checkbox" class="checkall">
                             {{util.translate(kind)}} {{e.string_id()}}
                         </div>

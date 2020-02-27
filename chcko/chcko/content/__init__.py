@@ -46,11 +46,12 @@ codemarkers = set(StplParser.default_syntax) - set([' '])
 class Page(PageBase):
     'Entry points are ``get_response`` and ``post_response``.'
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, mod):
+        super().__init__(mod)
         self.problem = None
         self.problem_set = []
-        self.query_string = self.request.query_string #as the latter cannot be written
+        self.query_string = self.request.query_string.replace(';','&')
+        self.query_show = show_qs(self.query_string)
 
     def _get_problem(self, problemkey=None):
         '''init the problem from database if it exists
@@ -63,10 +64,12 @@ class Page(PageBase):
             if self.problem:  # else it was deleted
                 if not isinstance(self.problem,db.Problem):
                     raise HTTPError(404, "No such problem")
-                self.query_string = self.problem.query_string
+                # query_string here is "key=..."
+                # replace query_show/query_string with that of the problem to load the problem in tpl_from_qs()
+                self.query_show = self.problem.query_string
         else:  # get existing unanswered if query_string is same
             self.problem = db.problem_by_query_string(
-                self.query_string,
+                self.query_show,
                 self.request.lang,
                 self.request.student)
 
@@ -108,7 +111,7 @@ class Page(PageBase):
 
         def _new(rsv):
             nr = next(nrs)
-            problem, pkwargs = db.problem_from_resolver(
+            problem, from_py = db.problem_from_resolver(
                 rsv, nr, self.request.student)
             if not self.problem:
                 self.problem = problem
@@ -119,7 +122,7 @@ class Page(PageBase):
                 next(problems_cntr)
             db.save(problem)
             if not rsv.composed:
-                SimpleTemplate.overrides.update(pkwargs)
+                SimpleTemplate.overrides.update(from_py)
                 _chain[-1] = SimpleTemplate.overrides.copy()
 
         def _zip(rsv):
@@ -130,10 +133,9 @@ class Page(PageBase):
                     ms += self.current.query_string
                 logger.info(ms)
                 raise HTTPError(400,ms)
-            d = rsv.load()  # for the things not stored, like 'names'
-            pkwargs = d.__dict__.copy()
-            pkwargs.update(db.fieldsof(self.current))
-            pkwargs.update({
+            from_py = rsv.load()  # for the things not stored, like 'names'
+            from_py.update(db.fieldsof(self.current))
+            from_py.update({
                 'lang': self.request.lang,
                 'g': self.current.given,
                 'request': self.request})
@@ -141,32 +143,32 @@ class Page(PageBase):
                 next(problems_cntr)
             if self.current.answered:
                 sw, sn = self.make_summary(self.current)
-                pkwargs.update({'summary': (sw, sn)})
+                from_py.update({'summary': (sw, sn)})
                 withempty.__iadd__(sw)
                 noempty.__iadd__(sn)
             if not rsv.composed:
-                SimpleTemplate.overrides.update(pkwargs)
+                SimpleTemplate.overrides.update(from_py)
                 _chain[-1] = SimpleTemplate.overrides.copy()
             try:
                 self.current = next(problem_set_iter[0])
             except StopIteration:
                 self.current = None
 
-        def lookup(query_string, to_do=None):
+        def lookup(atpl, to_do=None):
             'Template lookup. This is an extension to bottle SimpleTemplate'
-            if query_string in _chain:
+            if atpl in _chain:
                 return
-            if any([dc['query_string'] == query_string
+            if any([dc['query_string'] == atpl
                 for dc in _chain if isinstance(dc, dict)]):
                 return
-            rsv = resolver(query_string, self.request.lang)
-            _chain.append(query_string)
-            if to_do and '.' in query_string:#. -> not for scripts
+            rsv = resolver(atpl, self.request.lang)
+            _chain.append(atpl)
+            if to_do and '.' in atpl:#. -> not for scripts
                 to_do(rsv)
             else:
-                rsv.templatename = langlookup(query_string)
-            if not rsv.templatename and re_id.match(query_string):
-                raise HTTPError(404, '✘ '+query_string)
+                rsv.templatename = langlookup(atpl)
+            if not rsv.templatename and re_id.match(atpl):
+                raise HTTPError(404, '✘ '+atpl)
             yield rsv.templatename
             del _chain[-1]
             if _chain and isinstance(_chain[-1], dict):
@@ -186,7 +188,7 @@ class Page(PageBase):
                     'scripts': {}})
                 cleanup = None
                 if '\n' in tplid:
-                    cleanup = lookup(self.query_string, to_do)
+                    cleanup = lookup(self.query_show, to_do)
                     try: next(cleanup)
                     except StopIteration:pass
                 tpl = get_tpl(
@@ -247,7 +249,9 @@ class Page(PageBase):
             return content
 
     def tpl_from_qs(self):
-        qparsed = parse_qsl(self.query_string, True)
+        qs = self.query_show
+
+        qparsed = parse_qsl(qs, True)
 
         if set(''.join(x+y for x,y in qparsed))&codemarkers:
             raise HTTPError(400,'Wrong characters in query.')
@@ -274,7 +278,11 @@ class Page(PageBase):
             for q, i in qparsed:
                 if not i:
                     i = '1'
-                for _ in range(int(i)):
+                try:
+                    ii = int(i)
+                except ValueError:
+                    ii = 1
+                for _ in range(ii):
                     res.append(Util.inc(q, icnt))
             return '\n'.join(res)
         else:
@@ -331,3 +339,156 @@ class Page(PageBase):
                           allpoints=sum(fpoints))
         return (smry(lambda c: c),
             smry(lambda c: [cc for i, cc in enumerate(c) if p.answers[i]]))
+
+
+# sequences
+
+def seq_qs(qs):
+    return '&&' in qs
+
+def show_qs(qs):
+    """
+    >>> qs = 'a.x&&b.y&&&c.z=1'
+    >>> show_qs(qs)
+    'c.z'
+    >>> qs = 'a.x&&b.y&&c.z'
+    >>> show_qs(qs)
+    'a.x'
+    >>> qs = 'a.x&b.y&c.z'
+    >>> show_qs(qs)
+    'a.x&b.y&c.z'
+    >>> qs = '&&a.x&b.y&c.z'
+    >>> show_qs(qs)
+    'a.x&b.y&c.z'
+    >>> qs = 'a.x&&&b.y&c.z&&&'
+    >>> show_qs(qs)
+    'b.y&c.z'
+    >>> qs = 'a.x&&&&b.y&c.z'
+    >>> show_qs(qs)
+    'a.x'
+    >>> qs = 'a.x'
+    >>> show_qs(qs)
+    'a.x'
+    >>> qs = ''
+    >>> show_qs(qs)
+    ''
+
+    """
+    if seq_qs(qs):
+        qs = [x for x in qs.strip('&').split('&&') if x]
+        try:
+            qs = next(filter(lambda x:x[0]=='&',qs))
+        except StopIteration:
+            qs = qs[0]
+        qs = qs.strip('&')
+        if qs.endswith('=1'):
+            qs = qs[:-2]
+    return qs
+
+def next_qs(qs,direction=1):
+    """
+    >>> qs = 'a.x&&b.y&&&c.z'
+    >>> next_qs(qs)
+    'a.x&&b.y&&c.z'
+    >>> qs = 'a.x&&b.y&&c.z'
+    >>> next_qs(qs)
+    'a.x&&&b.y&&c.z'
+    >>> qs = 'a.x&b.y&c.z'
+    >>> next_qs(qs)
+    'a.x&b.y&c.z'
+    >>> qs = '&&a.x&b.y&c.z'
+    >>> next_qs(qs)
+    'a.x&b.y&c.z'
+    >>> qs = 'a.x&&&b.y&c.z&&&'
+    >>> next_qs(qs)
+    'a.x&&b.y&c.z'
+    >>> qs = 'a.x&&&&b.y&c.z'
+    >>> next_qs(qs)
+    'a.x&&&b.y&c.z'
+    >>> qs = 'a.x&&&b.y&&c.z'
+    >>> next_qs(qs)
+    'a.x&&b.y&&&c.z'
+    >>> qs = 'a.x'
+    >>> next_qs(qs)
+    'a.x'
+    >>> qs = ''
+    >>> next_qs(qs)
+    ''
+    >>> qs = 'a.x&&b.y&&&c.z'
+    >>> next_qs(qs,-1)
+    'a.x&&&b.y&&c.z'
+    >>> qs = 'a.x&&b.y&&c.z'
+    >>> next_qs(qs,-1)
+    'a.x&&b.y&&&c.z'
+    >>> qs = 'a.x&b.y&c.z'
+    >>> next_qs(qs,-1)
+    'a.x&b.y&c.z'
+    >>> qs = '&&a.x&b.y&c.z'
+    >>> next_qs(qs,-1)
+    'a.x&b.y&c.z'
+    >>> qs = 'a.x&&&b.y&c.z&&&'
+    >>> next_qs(qs,-1)
+    'a.x&&b.y&c.z'
+    >>> qs = 'a.x&&&&b.y&c.z'
+    >>> next_qs(qs,-1)
+    'a.x&&&b.y&c.z'
+    >>> qs = 'a.x&&b.y&&&c.z'
+    >>> next_qs(qs,-1)
+    'a.x&&&b.y&&c.z'
+    >>> qs = 'a.x'
+    >>> next_qs(qs,-1)
+    'a.x'
+    >>> qs = ''
+    >>> next_qs(qs,-1)
+    ''
+
+    """
+    if seq_qs(qs):
+        qs = [x for x in qs.strip('&').split('&&') if x]
+        qslen = len(qs)
+        try:
+            qi,_ = next(filter(lambda x:x[1][0]=='&',enumerate(qs)))
+        except StopIteration:
+            qi = 0
+        qs = [q.strip('&') for q in qs]
+        qi = (qi+direction) % qslen
+        if qi >= 0 and qi < qslen:
+            qs[qi] = '&'+qs[qi]
+        qs = '&&'.join(qs)
+    return qs.strip('&')
+
+def start_qs(qs):
+    """
+    >>> qs = 'a.x&&b.y&&&c.z'
+    >>> start_qs(qs)
+    'a.x&&b.y&&c.z'
+    >>> qs = 'a.x&b.y&c.z'
+    >>> start_qs(qs)
+    'a.x&b.y&c.z'
+    >>> qs = ''
+    >>> start_qs(qs)
+    ''
+
+    """
+    return '&&'.join([x.strip('&') for x in qs.strip('&').split('&&') if x])
+
+def end_qs(qs):
+    """
+    >>> qs = 'a.x&&b.y&&c.z'
+    >>> end_qs(qs)
+    'a.x&&b.y&&&c.z'
+    >>> qs = 'a.x&b.y&c.z'
+    >>> end_qs(qs)
+    'a.x&b.y&c.z'
+    >>> qs = ''
+    >>> end_qs(qs)
+    ''
+
+    """
+    try:
+        qss = [x.strip('&') for x in qs.strip('&').split('&&') if x]
+        res = '&&'.join(qss[:-1]+['&'+qss[-1]])
+    except:
+        res = ''
+    return res.strip('&')
+

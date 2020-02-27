@@ -14,7 +14,7 @@ bottle.TEMPLATES.clear()
 from chcko.chcko.tests.boddle import boddle
 
 from chcko.chcko.languages import languages
-from chcko.chcko.hlp import resolver, AUTHORDIRS
+from chcko.chcko.hlp import Struct, resolver, AUTHORDIRS
 
 @pytest.fixture
 def cdb(db):
@@ -62,7 +62,7 @@ def allcontent():
 def newuserpage(request,cdb):
     query_string,lang,tst = request.param
     bottle.SimpleTemplate.defaults["contextcolor"] = '#EEE'
-    from chcko.chcko.content import Page
+    from chcko.chcko import content
     user,_ = cdb.user_login('email@email.com',fullname='first last',password='password1',lang=lang)
     bddl=boddle(path=f'/{lang}/content'
                 ,user = user
@@ -77,7 +77,7 @@ def newuserpage(request,cdb):
     with bddl:
         assert bottle.request.user is not None
         assert bottle.request.student is not None
-        newuserpage = cdb,Page(),tst,query_string
+        newuserpage = cdb,content.Page(content),tst,query_string
         yield newuserpage
 
 def test_recursive_includes(newuserpage):
@@ -106,7 +106,7 @@ def test_depth_1st(cdb):
     student = cdb.add_student(path, user=None, color='#EEE')
     problems_for(student,cdb)
     lst = list(cdb.depth_1st(path+[[]]))
-    assert len(lst) > 8
+    assert len(lst) >= 8
     lst = list(cdb.depth_1st(path+[[('query_string','=','r.u')]]))
     assert len(lst) == 6
     assert cdb.kindof(lst[0]) == 'School'

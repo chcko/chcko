@@ -88,8 +88,8 @@ def prepare(
 
 class Page(PageBase):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, mod):
+        super().__init__(mod)
         qs = self.request.query_string
         skey = self.request.student.key
         userkey = self.request.user and db.idof(self.request.user)
