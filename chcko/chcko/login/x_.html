@@ -19,15 +19,19 @@ function validate() {
 </script>
 
 <form method="POST" name=login onsubmit='return validate()'>
+<p>
 <label for="email">{{temail}}</label>
 <input type="email" name="email" id="email"
 %if 'email' in self.request.params:
      value="{{self.request.params['email']}}"
 %end
-/><br>
-<label for="password">{{tpassword}}</label>
-<input type="password" name="password"/><br>
-<input type="submit" value="{{tlogin}}"/>
+/>
+</p>
+<p><label for="password">{{tpassword}}</label>&nbsp;<input type="password" name="password"/></p>
+<p>
+<input id="nbutton" class="grid_10" style="text-align:center" type="submit" value="{{tlogin}}"/>
+</p>
+<br>
 </form>
 
 <a href="/{{request.lang}}/forgot" id="forgot">{{tforgot}}</a><br>

@@ -1,5 +1,37 @@
+<script>
+    function a_lnk(alnk)
+    {
+        %# use like: <a href="#" onclick="a_lnk('{{alnk}}');return false;">{{alnk}}</a>
+        // see Util.a
+        // // keep for testing
+        //alnk='r.a';
+        //alnk='r.bd';
+        //alnk='r.b';
+        //href='http://localhost:8080/en/content?r.bd&r.ba&&r.a';
+
+        href = window.location.href;
+        url = new URL(href);
+        qs = url.search.replace('?','');
+        seqs = qs.split('&&').filter(x=>x).map(x => x[0]=='&'? x.substring(1) : x)
+        console.log(seqs)
+        iseqs = seqs.findIndex(x=>x.split('&').filter(x=>x).find(i=>i==alnk));
+        if (iseqs >= 0) {
+            if (iseqs > 0) {
+                seqs = seqs.map((e,i) => i==iseqs ? '&'+e : e);
+            }
+            newqs = seqs.join('&&');
+        } else {
+            newqs = alnk;
+        }
+        target = url.origin+url.pathname+'?'+newqs;
+        console.log(target)
+        window.location.assign(target) // keeps history to go back to previous location in course
+    }
+</script>
+
 % if isinstance(content, list): #no specific content: therefore index
 
+    <p>{{texplain}}</p>
 
     <form action="" method="get">
     % for knd, lnks in content:
@@ -21,39 +53,59 @@
        % end
     % end
 
-    <p><input type="submit" name="compose" value="{{tselected}}"/></p>
-    <p>{{texplain}}</p>
+    <br>
+    <div class="grid_1"><label for="course">{{tcourse}}</label><input id="course" name="course" type="checkbox"></div>
+    <input class="grid_8" name="acomposed" id="acomposed"/>
+    <input id="nbutton" style="text-align:center" type="submit" name="compose" value="{{tgo}}"/>
+    <br>
 
     </form>
 
     <script>
+    var acomposed;
+    $(document).ready(()=>{
+        acomposed = $("#acomposed");
+        acomposed.val(window.sessionStorage.getItem('chcko_selection'));
+        acomposed.focusout(()=>window.sessionStorage.setItem('chcko_selection',acomposed.val()));
+        });
     $("form").on({click:function(ee){
             var e = ee.currentTarget;
-            if (e.checked)
+            if (e.name=='course')
+                return true;
+            var delim = $("#course").is(":checked")?'&&':'&';
+            if (e.checked) {
                 $(this).before($('<input>',{type:"checkbox", name:"choice", value:e.value}));
-            else
+                let newval = (acomposed.val()?acomposed.val()+delim:'')+e.value;
+                acomposed.val(newval);
+                window.sessionStorage.setItem('chcko_selection',newval);
+            } else {
                 e.remove();
+                }
             }}, "input[type='checkbox']"
         );
     $("form").on("submit",function(e){
             e.preventDefault();
-            var allchecked = $("input[type='checkbox']:checked");
-            var a = {};
-            for (var ch=0; ch!=allchecked.length; ch++)
-            {
-                var value = allchecked[ch].value;
-                if (a[value] === undefined)
-                    a[value]=1;
-                else
-                    a[value]=a[value]+1;
-            }
-            document.location.href="/{{request.lang}}/content?"+$.param(a)
+            //var allchecked = $("input[type='checkbox']:checked");
+            //var a = {};
+            //for (var ch=0; ch!=allchecked.length; ch++)
+            //{
+            //    var value = allchecked[ch].value;
+            //    if (a[value] === undefined)
+            //        a[value]=1;
+            //    else
+            //        a[value]=a[value]+1;
+            //}
+            //window.location.href="/{{request.lang}}/content?"+$.param(a)
+            window.location.href="/{{request.lang}}/content?"+acomposed.val()
         });
     </script>
 
 
 % else: # specific content
 
+    <script>
+    $(document).ready(()=>window.sessionStorage.removeItem('chcko_selection'));
+    </script>
     % if with_problems and not problem.answered:
     <form action="" method="post">
     % end
@@ -67,9 +119,8 @@
 
     {{! content }}
 
-
     %qs=query_string
-    %is_seq_qs=seq_qs(qs)
+    %is_course=course_qs(qs)
     %alinks = ['/'+request.lang+'/content?'+x for x in [start_qs(qs),next_qs(qs,-1),qs,next_qs(qs),end_qs(qs)]]
 
     %def qsnav(where,sign):
@@ -78,25 +129,26 @@
 
     <p>
     % bottonwidth = 'grid_10'
-    %if is_seq_qs:
+    %if is_course:
         % bottonwidth = 'grid_6'
         %qsnav(0,'⯈')
         %qsnav(1,'⯇')
     %end
 
     % if with_problems and problem.answered:
-        <button type="button" class="{{bottonwidth}}" onclick="window.location.href='{{ alinks[2] }}';" id="nbutton"> {{tagain}} </button>
+        <button type="button" class="{{bottonwidth}}" onclick="windows.location.href='{{ alinks[2] }}';" id="nbutton"> {{tagain}} </button>
     % end
     % if with_problems and not problem.answered:
-        <input class="{{bottonwidth}}" style="text-align:center" type="submit" name="submit" id="nbutton" value="{{tcheck}}"/>
+        <input id="nbutton" class="{{bottonwidth}}" style="text-align:center" type="submit" name="submit" value="{{tcheck}}"/>
         <input type="hidden" name="problemkey" value="{{problemkey}}">
     %end
 
-    %if is_seq_qs:
+    %if is_course:
         %qsnav(3,'⯈')
         %qsnav(4,'⯇')
     %end
     </p>
+    <br>
 
     % if with_problems and not problem.answered:
     </form>
@@ -149,7 +201,8 @@
                     onclick="javascript: subtractduedays();" value="&mdash;"
                     style="border-radius:0px;border:solid 1px;width:2em;font-weight:bold;background:#EEE"/>
                 </fieldset>
-                <p><input type="submit" name="assign" value="{{tassign}}"></p>
+                <p><input id="nbutton" class="grid_10" style="text-align:center" type="submit" name="assign" value="{{tassign}}"></p>
+                <br>
             </form>
 
             <script>

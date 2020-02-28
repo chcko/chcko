@@ -36,9 +36,8 @@ class Util:
                 self.request.query_string,
                 True)]
 
-    def a(self, lnk):
-        return '<a href="/' + self.request.lang + \
-            '/?' + lnk + '">' + lnk + '</a>'
+    def a(self, alnk):
+        return '<a href="#" onclick="a_content('+alnk+');return false;">'+alnk+'</a>'
 
     def newlang(self, lng):
         oldp = self.request.url

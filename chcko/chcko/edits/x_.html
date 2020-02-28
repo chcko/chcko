@@ -53,12 +53,15 @@ $("input[type='radio']").change(function(){
 <canvas style="display: block;margin-left:auto;margin-right:auto;" height="100" id="palette"></canvas>
 <canvas style="display: block;margin-left:auto;margin-right:auto;" height="100" id="current"></canvas>
 <canvas style="display: block;margin-left:auto;margin-right:auto;" height="100" id="chosen"></canvas>
+<p>
 <div style="text-align:center;">
     <input type="text" id="hex" value="{{contextcolor}}" name="color" tabindex=14/>
 </div>
+</p>
 </div>
 
-<input type="submit" name="submit" value="{{tsubmit}}" tabindex=15/>
+<p><input id="nbutton" class="grid_10" style="text-align:center" type="submit" name="submit" value="{{tsubmit}}" tabindex=15/></p>
+<br>
 </form>
 
 <script>

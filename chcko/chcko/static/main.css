@@ -1,3 +1,6 @@
+/* the first part are changes to the 
+second part from docutils */
+
 body {
   font-family: monospace;
 }
@@ -35,6 +38,32 @@ th, td {
   padding: 0.5em;
   margin-right:0.5em;
 }
+
+
+#nbutton {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    height: 2em;
+    font-weight: bold;
+}
+
+.subproblem0 {
+  margin-top: 1em;
+  padding-top: 1em;
+}
+
+.subproblem1 {
+  margin-top: 1em;
+  padding-top: 1em;
+  background-color: {{contextcolor}};
+}
+
+.inlined {
+    background-color: {{contextcolor}};
+}
+
 
 
 /*From docutils
@@ -361,10 +390,3 @@ h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
 ul.auto-toc {
   list-style-type: none }
 
-#nbutton {
-    padding-top: 0px;
-    margin-top: 0px;
-    padding-bottom: 0px;
-    margin-bottom: 0px;
-    height: 2em;
-}

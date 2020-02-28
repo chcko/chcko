@@ -341,9 +341,9 @@ class Page(PageBase):
             smry(lambda c: [cc for i, cc in enumerate(c) if p.answers[i]]))
 
 
-# sequences
+# course
 
-def seq_qs(qs):
+def course_qs(qs):
     return '&&' in qs
 
 def show_qs(qs):
@@ -374,7 +374,7 @@ def show_qs(qs):
     ''
 
     """
-    if seq_qs(qs):
+    if course_qs(qs):
         qs = [x for x in qs.strip('&').split('&&') if x]
         try:
             qs = next(filter(lambda x:x[0]=='&',qs))
@@ -443,7 +443,7 @@ def next_qs(qs,direction=1):
     ''
 
     """
-    if seq_qs(qs):
+    if course_qs(qs):
         qs = [x for x in qs.strip('&').split('&&') if x]
         qslen = len(qs)
         try:

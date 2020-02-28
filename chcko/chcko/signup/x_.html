@@ -38,14 +38,12 @@
 %if 'email' in self.request.params:
     value="{{self.request.params['email']}}"
 %end
-/><br>
-<label for="password">{{tpassword}}*</label>
-<input type="password" name="password" /><br>
-<label for="confirmp">{{tconfirm}}*</label>
-<input type="password" name="confirmp"/><br>
-<label for="fullname">{{tfullname}}</label>
-<input type="text" name="fullname" /><br>
-<input type="submit" value="{{tcreate}}" />
+/>
+<p><label for="password">{{tpassword}}*</label>&nbsp;<input type="password" name="password" /></p>
+<p><label for="confirmp">{{tconfirm}}*</label>&nbsp;<input type="password" name="confirmp"/></p>
+<p><label for="fullname">{{tfullname}}</label>&nbsp;<input type="text" name="fullname" /></p>
+<p><input id="nbutton" class="grid_10" style="text-align:center" type="submit" value="{{tcreate}}" /></p>
+<br>
 </form>
 
 <script>

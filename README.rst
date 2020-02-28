@@ -85,8 +85,9 @@ The URL format is, e.g ``<...>/en/content?r.bd&r.ba&r.a``::
                | "contexts"
   context = [[[[[school&]period&]teacher&]class&]student&]
 
-Courses: ``&&`` instead of one ``&`` is a sequence separator. ``&&&`` marks the current position.
+Courses: ``&&`` instead of one ``&`` is a separator. ``&&&`` marks the current position.
 E.g. ``<...>/en/content?r.bd&&r.ba&&&r.a`` has ``r.a`` as current item in the course.
+Sequence is the other variant: all in one page.
 
 Pages:
 

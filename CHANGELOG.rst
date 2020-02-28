@@ -5,17 +5,26 @@ CHANGELOG
 TODO
 ====
 
-- Courses via URL and cookie
+- math display improvements
+
+- CSS use http://getbem.com/naming/
+
+- HTML modernize, dri
 
 - Add man file
 
-- Content: move meta content to doc and/or readme.rst
+- rework meta content
 
 - ``pip freeze``
 
 - Reach near 100% test coverage.
   Fix ndb tests: Currently ndb tests sometimes fail,
   most likely due to the eventually consistent nature of ndb.
+
+0.1.4
+=====
+
+- Courses via URL
 
 0.1.3
 =====
