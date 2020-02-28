@@ -5,7 +5,6 @@ CHANGELOG
 TODO
 ====
 
-- math display improvements
 
 - CSS use http://getbem.com/naming/
 
@@ -25,6 +24,8 @@ TODO
 =====
 
 - Courses via URL
+- math display improvements
+- find images also if not content packages are not installed
 
 0.1.3
 =====

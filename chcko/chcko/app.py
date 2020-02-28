@@ -44,24 +44,31 @@ def lang_pagename(lang=None,pagename=None):
 def trailing_slash():
     bottle.request.environ['PATH_INFO'] = bottle.request.environ['PATH_INFO'].rstrip('/')
 
-ROOT = os.path.dirname(os.path.dirname(__file__))
+pj = os.path.join
+
+ROOTS = [x for x in sys.path if os.path.split(x)[1].startswith('chcko')]
+def findstatic(filename):
+    for ROOT in ROOTS:
+        cr = pj(ROOT,filename)
+        if os.path.exists(cr):
+            return bottle.static_file(filename,root=ROOT)
 
 #for google verification
 @bottle.route('/<filename>.html')
 def statichtml(filename):
-    return bottle.static_file(filename+'.html', root=ROOT)
+    return findstatic(pj('chcko',filename+'.html'))
 
 @bottle.route('/favicon.ico')
 def serve_favicon():
-    return bottle.static_file(os.path.join('chcko','static','favicon.ico'), root=ROOT)
+    return findstatic(pj('chcko','chcko','static','favicon.ico'))
 
-@bottle.route('/<ignoredir>/_images/<filename>')
-def serve_image(ignoredir,filename):
-    return bottle.static_file(os.path.join('_images',filename), root=ROOT)
+@bottle.route('/<lang>/_images/<filename>')
+def serve_image(lang,filename):
+    return findstatic(pj('chcko','_images',filename))
 
 @bottle.route('/static/<filename>')
 def serve_static(filename):
-    return bottle.static_file(os.path.join('chcko','static',filename), root=ROOT)
+    return findstatic(pj('chcko','chcko','static',filename))
 
 #social
 try:

@@ -96,7 +96,7 @@
             //        a[value]=a[value]+1;
             //}
             //window.location.href="/{{request.lang}}/content?"+$.param(a)
-            window.location.href="/{{request.lang}}/content?"+acomposed.val()
+            window.location.assign("/{{request.lang}}/content?"+acomposed.val()) // keeps history to go back to previous location in course
         });
     </script>
 
