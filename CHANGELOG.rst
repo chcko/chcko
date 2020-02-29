@@ -25,7 +25,7 @@ TODO
 
 - Courses via URL
 - math display improvements
-- find images also if not content packages are not installed
+- find images also for non-installed content packages
 
 0.1.3
 =====
