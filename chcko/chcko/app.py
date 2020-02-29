@@ -46,7 +46,9 @@ def trailing_slash():
 
 pj = os.path.join
 
-ROOTS = [x for x in sys.path if os.path.split(x)[1].startswith('chcko')]
+#not installed parallel chcko-xyz plus chcko
+ROOTS = [x for x in sys.path 
+         if x.endswith('site-packages') or os.path.split(x)[1].startswith('chcko')]
 def findstatic(filename):
     for ROOT in ROOTS:
         cr = pj(ROOT,filename)
