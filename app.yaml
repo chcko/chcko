@@ -17,9 +17,6 @@ handlers:
     - url: /static
       static_dir: chcko/chcko/static
 
-    - url: /[^/]*/_images
-      static_dir: chcko/chcko/_images
-
     - url: /.*
       script: auto
       secure: always

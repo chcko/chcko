@@ -5,27 +5,26 @@ CHANGELOG
 TODO
 ====
 
-
-- CSS use http://getbem.com/naming/
-
-- HTML modernize, dri
+- Auto choose size.
 
 - Add man file
 
 - rework meta content
 
-- ``pip freeze``
-
 - Reach near 100% test coverage.
   Fix ndb tests: Currently ndb tests sometimes fail,
   most likely due to the eventually consistent nature of ndb.
+
+- HTML modernize, dri
+
+- CSS use http://getbem.com/naming/?
 
 0.1.4
 =====
 
 - Courses via URL
 - math display improvements
-- find images also for non-installed content packages
+- find images, locally if non-installed, and on gcloud
 
 0.1.3
 =====

@@ -27,6 +27,7 @@ else:
     if sys.path[0] != thispath:
         sys.path.insert(0, thispath)
     from conftest import emulator
+    os.environ['CHCKOTESTING'] = "no"
     emulator().__enter__()
 
 from chcko.chcko.db import use

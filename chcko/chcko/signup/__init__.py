@@ -3,7 +3,7 @@
 import os
 from chcko.chcko.util import PageBase
 from chcko.chcko.hlp import chcko_import, logger
-from chcko.chcko.auth import send_mail
+from chcko.chcko.auth import send_mail, newurl
 from chcko.chcko.db import db
 
 class Page(PageBase):
@@ -26,10 +26,9 @@ class Page(PageBase):
             # if user exists and has different password
             self.redirect(f'message?msg=a&email={email}')
 
-        relative_url = f'verification?type=v&email={email}&token={token}'
+        qry = f'type=v&email={email}&token={token}'
 
-        domain = self.request.url
-        confirmation_url = f'{domain}/{self.request.lang}/{relative_url}'
+        confirmation_url = newurl(f'/{self.request.lang}/verification',qry,'')
         logger.info(confirmation_url)
         m = chcko_import('chcko.signup.' + self.request.lang)
         if send_mail(
@@ -39,5 +38,4 @@ class Page(PageBase):
                 confirmation_url):
             self.redirect('message?msg=j')
         # else just do without email verification
-        relative_url = relative_url+'&verified=0'
-        self.redirect(relative_url)
+        self.redirect(f'verification?{qry}&verified=0')

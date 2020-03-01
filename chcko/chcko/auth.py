@@ -5,6 +5,16 @@ import hashlib
 from functools import lru_cache
 from hmac import compare_digest
 from random import choice
+from urllib.parse import urlunsplit
+
+def newurl(path=None,query=None,fragment=None):
+    p = bottle.request.urlparts
+    return urlunsplit(p[:2]+(
+        path is None and p[2] or path
+        ,query is None and p[3] or query
+        ,fragment is None and p[4] or fragment
+    ))
+
 METHOD = "pbkdf2:sha256:150000"
 SALT_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 def gen_salt():
@@ -72,7 +82,6 @@ try:
   from social_core.strategy import BaseStrategy
   from social_core.storage import UserMixin, BaseStorage
   from chcko.chcko import bottle
-  from urllib.parse import urljoin
   from functools import wraps
   # secrets are not in the repo,
   # but included via `make deploy` from local ~/my/mam/chcko/environment.yaml
@@ -165,7 +174,7 @@ try:
               pass
           bottle.response.delete_cookie(nn)
       def build_absolute_uri(self, path=None):
-          return urljoin(bottle.request.url,path or '')
+          return newurl(path,'','')
   def make_backend_obj():
       def decorator(func):
           @wraps(func)
@@ -173,7 +182,7 @@ try:
               try:
                   Backend = social_logins[provider]
                   strategy = strategy_for_social_core(storage_for_social_core)
-                  uri = urljoin(bottle.request.url, f'/auth/{provider}/callback')
+                  uri = newurl('/auth/{provider}/callback','','')
                   backend = Backend(strategy, redirect_uri=uri)
                   return func(backend, *args, **kwargs)
               except KeyError:

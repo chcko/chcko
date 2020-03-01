@@ -5,7 +5,6 @@ import os
 from traceback import print_exc
 
 from chcko.chcko import bottle
-from chcko.chcko.bottle import HTTPError
 app = bottle.app()
 
 from chcko.chcko.util import user_required
@@ -13,6 +12,12 @@ from chcko.chcko.hlp import chcko_import
 from chcko.chcko.languages import langnumkind
 from chcko.chcko.db import db
 from functools import partial
+
+def no_null_requests(end_of_route):
+    if end_of_route is None:
+        return
+    if end_of_route.endswith('null'): #XXX: why does this null happen?
+        raise bottle.HTTPError(404,'not found')
 
 def lang_pagename(lang=None,pagename=None):
     if lang is None:
@@ -34,9 +39,7 @@ def lang_pagename(lang=None,pagename=None):
                 lang = list(candidates)[0]
         else:
             lang = 'en'
-    if pagename == 'null': #XXX: why does this null happen?
-        raise ValueError(pagename)
-    if pagename is None:# or pagename=='null':
+    if pagename is None:
         pagename = 'content'
     return lang,pagename
 
@@ -47,29 +50,54 @@ def trailing_slash():
 pj = os.path.join
 
 #not installed parallel chcko-xyz plus chcko
-ROOTS = [x for x in sys.path 
+ROOTS = [x for x in sys.path
          if x.endswith('site-packages') or os.path.split(x)[1].startswith('chcko')]
+d = os.path.dirname
+ROOT = d(d(d(__file__)))
 def findstatic(filename):
-    for ROOT in ROOTS:
-        cr = pj(ROOT,filename)
-        if os.path.exists(cr):
-            return bottle.static_file(filename,root=ROOT)
+    for r in ROOTS:
+        res = bottle.static_file(filename,root=r)
+        if not isinstance(res,bottle.HTTPError):
+            return res
+    return res
 
 #for google verification
+# test: http://localhost:8080/google509fdbaf2f77476f.html
 @bottle.route('/<filename>.html')
 def statichtml(filename):
-    return findstatic(pj('chcko',filename+'.html'))
+    if len(filename.split(os.sep)) > 1:
+        return bottle.HTTPError(403, "Access denied.")
+    if not os.path.splitext(filename)[1]:
+        filename = filename+'.html'
+    return findstatic(pj('chcko',filename))
 
+# test: http://localhost:8080/favicon
 @bottle.route('/favicon.ico')
 def serve_favicon():
-    return findstatic(pj('chcko','chcko','static','favicon.ico'))
+    return bottle.static_file(pj('chcko','chcko','static','favicon.ico'),root=ROOT)
 
+# test:
+# http://localhost:8080/en/_images/r_dg_c1.png
+# http://localhost:8080/_images/r_dg_c1.png
+# http://localhost:8080/r_dg_c1.png
 @bottle.route('/<lang>/_images/<filename>')
-def serve_image(lang,filename):
+@bottle.route('/_images/<filename>')
+@bottle.route('/<filename>.png')
+def serve_image(filename,lang='en'):
+    no_null_requests(filename)
+    if len(filename.split(os.sep)) > 1:
+        return bottle.HTTPError(403, "Access denied.")
+    if not os.path.splitext(filename)[1]:
+        filename = filename+'.png'
     return findstatic(pj('chcko','_images',filename))
 
+# test:
+# http://localhost:8080/static/main.css
 @bottle.route('/static/<filename>')
 def serve_static(filename):
+    no_null_requests(filename)
+    if len(filename.split(os.sep)) > 1:
+        return bottle.HTTPError(403, "Access denied.")
     return findstatic(pj('chcko','chcko','static',filename))
 
 #social
@@ -130,6 +158,7 @@ def nopath():
 
 @bottle.route('/<lang>',method=['GET','POST'])
 def langonly(lang):
+    no_null_requests(lang)
     return fullpath(lang,None)
 
 @bottle.route('/<lang>/logout')
@@ -142,6 +171,7 @@ def logout(lang):
 
 @bottle.route('/<lang>/<pagename>',method=['GET','POST'])
 def fullpath(lang,pagename):
+    no_null_requests(pagename)
     try:
         lang,pagename = lang_pagename(lang,pagename)
     except ValueError:

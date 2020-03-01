@@ -141,25 +141,11 @@ Pepare content::
   cd ~/mine/chcko-r
   doit initdb
 
-Run based on sql without installing::
-
-  cd ~/mine/chcko
-  ./runchcko_with_sql.py
-
-  #if OSError: [Errno 98] Address already in use
-  export CHCKOPORT=8382
-  ./runchcko_with_sql.py
 
 Virtual environment::
 
-  nox
   source .nox/test_sql/bin/activate
   deactivate
-
-  gcloud beta emulators datastore start --no-store-on-disk
-
-  ./runchcko_with_emulator.py
-
 
 Test ``chcko``::
 
@@ -170,6 +156,22 @@ Test ``chcko``::
   doit test
   doit cov
   nox
+
+  # not installed tests (check "r.dj" for images)
+  # on other CLI:
+  # gcloud beta emulators datastore start --no-store-on-disk --data-dir .
+  # check test routes in app.py
+
+  ./runchcko_with_sql.py
+
+  #if OSError: [Errno 98] Address already in use
+  export CHCKOPORT=8382
+  ./runchcko_with_sql.py
+
+  ./runchcko_with_ndb.py
+
+  cd ~/mine
+  python2 `which dev_appserver.py` chcko                                                                                                                          0(∞)
 
   # install test
   pip uninstall chcko-r

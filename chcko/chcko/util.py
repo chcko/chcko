@@ -17,6 +17,8 @@ from chcko.chcko.hlp import listable, mklookup, counter, logger, from_py
 from chcko.chcko.languages import langkindnum, langnumkind, CtxStrings
 from chcko.chcko.db import db
 
+from chcko.chcko.auth import newurl
+
 try:
     from chcko.chcko.auth import social_logins
 except:
@@ -40,15 +42,16 @@ class Util:
         return '<a href="#" onclick="a_content('+alnk+');return false;">'+alnk+'</a>'
 
     def newlang(self, lng):
-        oldp = self.request.url
-        ol = '/' + self.request.lang
-        has_lang =  oldp.endswith(ol) or (ol+'/') in oldp
+        oldp = self.request.urlparts.path
+        curlng = self.request.lang
+        scurlng = '/' + curlng
+        has_lang = oldp==scurlng or oldp.startswith(scurlng+'/')
         if has_lang:
-            newp = oldp.replace(ol,'/' + lng,1)
+            newp = oldp.replace(scurlng,'/' + lng,1)
         else:
-            soldp = oldp.split('/')
-            newp = '/'.join(soldp[:3]+[lng]+soldp[3:])
-        return '<a href="' + newp + '">' + lng + '</a>'
+            newp = ('/'+lng+'/'+oldp).rstrip('/')
+        newlnk = newurl(newp)
+        return '<a href="' + newlnk + '">' + lng + '</a>'
 
     @staticmethod
     def inc(lnk, cntr=counter(), stack=[]):
