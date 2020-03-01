@@ -26,7 +26,7 @@ def main():
     ]
     setuptools.setup(
         name="chcko",
-        version = "0.1.3",
+        version = "0.1.4",
         description="chcko randomly parameterized exercises automatically checked (formerly mamchecker)",
         long_description=readme,
         long_description_content_type="text/x-rst",
