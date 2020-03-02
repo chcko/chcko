@@ -119,8 +119,8 @@
 
     {{! content }}
 
-    %qs=query_string
-    %is_course=course_qs(qs)
+    %qs = query_string
+    %pe = course_labels(qs)
     %alinks = ['/'+request.lang+'/content?'+x for x in [start_qs(qs),next_qs(qs,-1),qs,next_qs(qs),end_qs(qs)]]
 
     %def qsnav(where,sign):
@@ -129,23 +129,25 @@
 
     <p>
     % bottonwidth = 'grid_10'
-    %if is_course:
+    %pe2=''
+    %if pe:
         % bottonwidth = 'grid_6'
         %qsnav(0,'⯈')
-        %qsnav(1,'⯇')
+        %qsnav(1,pe[1]+'⯇')
+        %pe2=' '+pe[2]
     %end
 
     % if with_problems and problem.answered:
-        <button type="button" class="{{bottonwidth}}" onclick="windows.location.href='{{ alinks[2] }}';" id="nbutton"> {{tagain}} </button>
+        <button type="button" class="{{bottonwidth}}" onclick="windows.location.href='{{ alinks[2] }}';" id="nbutton"> {{tagain+pe2}} </button>
     % end
     % if with_problems and not problem.answered:
-        <input id="nbutton" class="{{bottonwidth}}" style="text-align:center" type="submit" name="submit" value="{{tcheck}}"/>
+        <input id="nbutton" class="{{bottonwidth}}" style="text-align:center" type="submit" name="submit" value="{{tcheck+pe2}}"/>
         <input type="hidden" name="problemkey" value="{{problemkey}}">
     %end
 
-    %if is_course:
-        %qsnav(3,'⯈')
-        %qsnav(4,'⯇')
+    %if pe:
+        %qsnav(3,'⯈'+pe[3])
+        %qsnav(4,'⯇'+pe[4])
     %end
     </p>
     <br>

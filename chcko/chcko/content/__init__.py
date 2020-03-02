@@ -343,8 +343,42 @@ class Page(PageBase):
 
 # course
 
-def course_qs(qs):
-    return '&&' in qs
+def course_labels(qs):
+    """
+    >>> qs = 'a.x&&b.y&&&c.z=1'
+    >>> course_labels(qs)
+    ['1', '2', '3', '1', '3']
+    >>> qs = 'a.x&&b.y&&c.z'
+    >>> course_labels(qs)
+    ['1', '3', '1', '2', '3']
+    >>> qs = 'a.x&b.y&c.z'
+    >>> course_labels(qs)
+    >>> qs = '&&a.x&b.y&c.z'
+    >>> course_labels(qs)
+    >>> qs = 'a.x&&&b.y&c.z&&&'
+    >>> course_labels(qs)
+    ['1', '1', '2', '1', '2']
+    >>> qs = 'a.x&&&&b.y&c.z'
+    >>> course_labels(qs)
+    ['1', '2', '1', '2', '2']
+    >>> qs = 'a.x'
+    >>> course_labels(qs)
+    >>> qs = ''
+    >>> course_labels(qs)
+
+    """
+    if '&&' in qs:
+        qs = [x for x in qs.strip('&').split('&&') if x]
+        end = len(qs)
+        if end > 1:
+            try:
+                pos = next(i for i,x in enumerate(qs) if x[0]=='&')
+            except StopIteration:
+                pos = 0
+            b0 = 0,(pos-1)%end,pos,(pos+1)%end,end-1
+            return [str(b+1) for b in b0]
+
+
 
 def show_qs(qs):
     """
@@ -374,7 +408,7 @@ def show_qs(qs):
     ''
 
     """
-    if course_qs(qs):
+    if '&&' in qs:
         qs = [x for x in qs.strip('&').split('&&') if x]
         try:
             qs = next(filter(lambda x:x[0]=='&',qs))
@@ -443,7 +477,7 @@ def next_qs(qs,direction=1):
     ''
 
     """
-    if course_qs(qs):
+    if '&&' in qs:
         qs = [x for x in qs.strip('&').split('&&') if x]
         qslen = len(qs)
         try:
