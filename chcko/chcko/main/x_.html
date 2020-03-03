@@ -32,10 +32,14 @@
                 <ul style="text-align:right">
                     %for key_ownd_list in db.student_roles(request.user):
                     %studentkey = key_ownd_list[-1][0]
-                    <li><a href="/{{request.lang}}/{{request.pagename}}?{{! qs(db.urlstring(studentkey)) }}">
+                    <li>
+                    <a
+                    style="background-color:{{studentkey.get().color}}"
+                    href="/{{request.lang}}/{{request.pagename}}?{{! qs(db.urlstring(studentkey)) }}">
                         %cntxt = [not ownd and '<em>'+an.string_id()+'</em>' or an.string_id() for an,ownd in key_ownd_list]
                         {{!' &nbsp;&nbsp; '.join(cntxt)}}
-                    </a><li>
+                    </a>
+                    <li>
                     %end
                 </ul></li>
                 </li>

@@ -182,7 +182,7 @@ try:
               try:
                   Backend = social_logins[provider]
                   strategy = strategy_for_social_core(storage_for_social_core)
-                  uri = newurl('/auth/{provider}/callback','','')
+                  uri = f'/auth/{provider}/callback'
                   backend = Backend(strategy, redirect_uri=uri)
                   return func(backend, *args, **kwargs)
               except KeyError:
