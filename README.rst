@@ -3,6 +3,12 @@ chcko
 
 Educational content server.
 
+Reachable via
+
+- mamchecker.appspot.com
+- chcko-262117.appspot.com
+- chcko.eu
+
 Content Packages
 ================
 
