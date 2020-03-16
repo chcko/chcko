@@ -31,9 +31,17 @@
 
 % if isinstance(content, list): #no specific content: therefore index
 
-    <p>{{texplain}}</p>
 
     <form action="" method="get">
+
+    <br>
+    <div class="grid_1"><label for="course">{{tcourse}}</label><input id="course" name="course" type="checkbox"></div>
+    <input class="grid_8" name="acomposed" id="acomposed"/>
+    <input id="nbutton" style="text-align:center" type="submit" name="compose" value="{{tgo}}"/>
+    <br>
+
+    <p>{{texplain}}</p>
+
     % for knd, lnks in content:
     <p><b><a href="/{{request.lang}}/content?kind={{knd}}">{{knd}}</a></b><br>
        % for linktext,lnklvl,leaf,depth in lnks:
@@ -52,12 +60,6 @@
           % end
        % end
     % end
-
-    <br>
-    <div class="grid_1"><label for="course">{{tcourse}}</label><input id="course" name="course" type="checkbox"></div>
-    <input class="grid_8" name="acomposed" id="acomposed"/>
-    <input id="nbutton" style="text-align:center" type="submit" name="compose" value="{{tgo}}"/>
-    <br>
 
     </form>
 
