@@ -81,7 +81,7 @@ Templates:
 The URL format is, e.g ``<...>/en/content?r.bd&r.ba&r.a``::
 
   URL = "https://"domain"/"lang"/"page_request"
-  domain = "chcko-262117.appspot.com"
+  domain = "chcko.eu"
   lang = "en"|"de"|...
   page_request = ["content?"]{author"."exercise["="count]"&"}
                | "done?"context{field("~"|"="|"!"|"<"|">")value","}
