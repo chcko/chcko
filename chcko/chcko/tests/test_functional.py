@@ -6,7 +6,7 @@ import pytest
 from webtest import TestApp as TA
 from chcko.chcko import bottle
 from chcko.chcko.languages import languages
-from chcko.chcko.hlp import problem_contexts
+from chcko.chcko.hlp import problemplaces
 
 @pytest.fixture(scope='module')
 def chapp(request,db):
@@ -97,7 +97,7 @@ class TestRunthrough(object):
 
     def test_anonymous(self):
         self._store('resp', self.resp.goto('/en/edits'))
-        for p in problem_contexts[:-1]:
+        for p in problemplaces[:-1]:
             self.resp.form[p] = 'tst'
         # later we will check access permission
         self._store('resp', self.resp.form.submit())
@@ -151,9 +151,9 @@ class TestRunthrough(object):
         curx = cur.xpath('//div[contains(text(),"School")]/text()')
         self._store('curs', curx[1].strip())
         self._store('resp', self.resp.goto('/en/edits'))
-        for p in problem_contexts[:-1]:
+        for p in problemplaces[:-1]:
             self.resp.form[p] = 'tst'
-        self.resp.form[problem_contexts[-2]] = 'U' #U belongs to teacher/class=tst/tst
+        self.resp.form[problemplaces[-2]] = 'U' #U belongs to teacher/class=tst/tst
         self.resp.form['color'] = '#BBB'
         self._store('resp', self.resp.form.submit())
         self._store('resp', self.resp.form.submit())
@@ -179,8 +179,8 @@ class TestRunthrough(object):
         trs = cur.xpath('//tr')
         assert len(trs) == 5
 
-    def test_contexts(self):
-        self._store('resp', self.resp.goto('/en/contexts'))
+    def test_roles(self):
+        self._store('resp', self.resp.goto('/en/roles'))
         cur = self.resp.lxml
         curx = cur.xpath('//div[contains(text(),"School")]//text()')
         assert curx[1].strip() != self.curs

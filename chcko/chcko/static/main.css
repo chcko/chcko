@@ -57,11 +57,11 @@ th, td {
 .subproblem1 {
   margin-top: 1em;
   padding-top: 1em;
-  background-color: {{contextcolor}};
+  background-color: {{rolecolor}};
 }
 
 .inlined {
-    background-color: {{contextcolor}};
+    background-color: {{rolecolor}};
 }
 
 

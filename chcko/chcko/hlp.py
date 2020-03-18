@@ -380,8 +380,12 @@ def normqs(qs):
     if len(qparsed) == 1 and qparsed[0][1] == '1':
         return qparsed[0][0]
     return qs
+
+studentplaces = ['School', 'Period', 'Teacher', 'Class', 'Student']
+problemplaces = studentplaces + ['Problem']
+
 def filter_student(querystring):
-    '''filter out student_contexts and color
+    '''filter out studentplaces and color
     >>> querystring = 'School=b&Period=3&Teacher=5e&Class=9&Student=0&color=#E&bm&ws>0,d~1&b.v=3'
     >>> filter_student(querystring)
     'bm&ws>0,d~1&b.v=3'
@@ -389,7 +393,7 @@ def filter_student(querystring):
     '''
     qfiltered = [x  for x in
             parse_qsl(querystring, True)
-            if x[0] not in student_contexts + ['color']]
+            if x[0] not in studentplaces + ['color']]
     qsfiltered = '&'.join([k + '=' + v if v else k for k, v in qfiltered])
     return qsfiltered
 
@@ -421,9 +425,6 @@ def key_value_leaf_id(p_ll):  # key_value_leaf_depth
                 yield (kk, ll, depth == nkeys - 1, lvl_id)
                 previous = this[:]
 
-student_contexts = ['School', 'Period', 'Teacher', 'Class', 'Student']
-problem_contexts = student_contexts + ['Problem']
-
 class db_mixin:
     def urlstring(self,key):
         #'School=myschool&Period=myperiod&Teacher=myteacher&Class=myclass&Student=myself'
@@ -432,7 +433,7 @@ class db_mixin:
     def init_db(self):
         self.clear_index()
         self.available_langs = []
-        self.student_contexts = student_contexts
+        self.studentplaces = studentplaces
         chckopackages = set(os.path.basename(chckopath) for chckopath in AUTHORDIRS)
         chckopackages = chckopackages - set(['chcko'])
         all_problems = []
@@ -517,7 +518,7 @@ class db_mixin:
         return stdnt
 
     def key_from_path(self,x):
-        return self.Key(*list(chain(*zip(problem_contexts[:len(x)], x))))
+        return self.Key(*list(chain(*zip(problemplaces[:len(x)], x))))
     def from_urlsafe(self,urlsafe):
         try:
           obj = self.Key(urlsafe=urlsafe).get()
@@ -574,7 +575,7 @@ class db_mixin:
         for e in self.depth_1st(keys=[student.key], kinds='Student Assignment'.split(),
                            userkey=usr and self.idof(usr)):
             yield e
-    def student_roles(self, usr):
+    def userroles(self, usr):
         students = self.allof(self.query(self.Student,[self.Student.userkey==self.idof(usr)]))
         for student in students:
             yield self.key_ownd_path(student, usr)
@@ -598,7 +599,7 @@ class db_mixin:
     def depth_1st(self
                   , path=None
                   , keys=None  # start keys, keys_to_omit(path) to skip initial hierarchy
-                  , kinds=problem_contexts
+                  , kinds=problemplaces
                   , permission=False
                   , userkey=None
                   ):
@@ -733,7 +734,7 @@ class db_mixin:
         except:
             usr = None
         student = None
-        studentpath = [request.params.get(x,'') for x in student_contexts]
+        studentpath = [request.params.get(x,'') for x in studentplaces]
         color = request.params.get('color','')
         request.query_string = filter_student(request.query_string)
         if ''.join(studentpath) != '':
@@ -762,7 +763,7 @@ class db_mixin:
                 self.save(usr)
         if student:
             self.set_cookie('chcko_cookie_studenturlsafe',self.urlsafe(student.key))
-            bottle.SimpleTemplate.defaults["contextcolor"] = student.color or '#EEE'
+            bottle.SimpleTemplate.defaults["rolecolor"] = student.color or '#EEE'
             request.student = student
 
     def set_cookie(self,cookie,value):

@@ -1,4 +1,4 @@
-% for anc in db.student_roles(request.user):
+% for anc in db.userroles(request.user):
     % cntxt = [not users and '<em>'+an.string_id()+'</em>' or an.string_id() for an,users in anc]
 
     <p>

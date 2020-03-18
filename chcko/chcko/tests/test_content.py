@@ -61,7 +61,7 @@ def allcontent():
 ]+list(allcontent()))
 def newuserpage(request,cdb):
     query_string,lang,tst = request.param
-    bottle.SimpleTemplate.defaults["contextcolor"] = '#EEE'
+    bottle.SimpleTemplate.defaults["rolecolor"] = '#EEE'
     from chcko.chcko import content
     user,_ = cdb.user_login('email@email.com',fullname='first last',password='password1',lang=lang)
     bddl=boddle(path=f'/{lang}/content'

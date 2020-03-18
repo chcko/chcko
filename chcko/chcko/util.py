@@ -66,7 +66,7 @@ class Util:
 
     def translate(self, word):
         try:
-            idx = db.student_contexts.index(word)
+            idx = db.studentplaces.index(word)
             res = CtxStrings[self.request.lang][idx]
             return res
         except:

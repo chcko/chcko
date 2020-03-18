@@ -1,4 +1,4 @@
-# gcloud beta emulators datastore start --no-store-on-disk
+# gcloud beta emulators datastore start --no-store-on-disk --data-dir .
 # is run automatically in conftest.py
 # but it fails sometimes, so better start it manually before testing
 

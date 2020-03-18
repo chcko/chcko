@@ -158,8 +158,6 @@ Test ``chcko``::
   cd ~/mine/chcko
   make test
   make cov
-  doit test
-  doit cov
   nox
 
   # not installed tests (check "r.dj" for images)
@@ -188,9 +186,11 @@ Test ``chcko``::
   cd
   runchcko
 
-  #breakpoint() in code
-  cd chcko
+To debug, put ``breakpoint()`` somewhere in code::
+
+  ~/mine/chcko
   py.test chcko/chcko/tests/test_functional.py --db=sql
+  # hit bp, set new one:
   b chcko/chcko/app.py:90
   c
 

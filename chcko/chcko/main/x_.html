@@ -1,15 +1,15 @@
 % if not defined('header'):
 % def header():
 
-    %for page, txt in [('edits',tedit),('content',tcontent),('done',tdone),('todo',ttodo),('contexts',tcontexts)]:
+    %for page, txt in [('edits',tedit),('content',tcontent),('done',tdone),('todo',ttodo),('roles',troles)]:
     <div class="grid_2"
         %if request.pagename == page:
-        style="text-align:center;border-bottom:1px solid;background-color:{{contextcolor}}"
+        style="text-align:center;border-bottom:1px solid;background-color:{{rolecolor}}"
         %else:
         style="text-align:center"
         %end
         >
-        %if request.user is None and page=='contexts':
+        %if request.user is None and page=='roles':
             <p> &nbsp;</p>
         %else:
             <p><a href="/{{request.lang}}/{{page}}">{{txt}}</a></p>
@@ -17,7 +17,7 @@
     </div>
     %end
 
-    <div class="header" style="background-color:{{contextcolor}}">
+    <div class="header" style="background-color:{{rolecolor}}">
 
     %if request.user:
         %for key2prnt,is_users in db.key_ownd_path(request.student,request.user):
@@ -30,7 +30,7 @@
                 <a href="/{{request.lang}}/{{request.pagename}}?{{! qs(db.urlstring(key2prnt)) }}">
                     {{key2prnt.string_id()}} </a>
                 <ul style="text-align:right">
-                    %for key_ownd_list in db.student_roles(request.user):
+                    %for key_ownd_list in db.userroles(request.user):
                     %studentkey = key_ownd_list[-1][0]
                     <li>
                     <a
@@ -82,7 +82,7 @@
 
     % if request.user:
 
-    <div class="footer" style="border-top:double;background-color:{{contextcolor}}">
+    <div class="footer" style="border-top:double;background-color:{{rolecolor}}">
     <div class="grid_10">
         {{ db.user_name(request.user) }}
         &nbsp;
@@ -96,13 +96,13 @@
 
     % elif request.pagename not in ['login','forgot','verification','password']:
 
-    <div class="footer" style="border-top:double;background-color:{{contextcolor}}">
+    <div class="footer" style="border-top:double;background-color:{{rolecolor}}">
     <div class="grid_10">
         {{ tloginat }}
     </div> 
     </div>
 
-    <div class="footer" style="background-color:{{contextcolor}}">
+    <div class="footer" style="background-color:{{rolecolor}}">
         <div class="grid_2">
         <a href="/{{request.lang}}/login">chcko</a>
         %if len(social_logins)>0:
@@ -119,13 +119,13 @@
     %end
 
 
-    <div class="footer" style="background-color:{{contextcolor}}"> &nbsp; </div>
+    <div class="footer" style="background-color:{{rolecolor}}"> &nbsp; </div>
 
     <div class="grid_10">
         {{tdevelopment}} <a href="https://github.com/chcko/chcko">Github</a>
     </div>
 
-    <div class="footer" style="background-color:{{contextcolor}}"> &nbsp; </div>
+    <div class="footer" style="background-color:{{rolecolor}}"> &nbsp; </div>
 
     <div class="grid_10">
         %for lng in langs:
@@ -210,7 +210,7 @@
         width:290%;
         border: 1px solid;
         margin-top:-1px;
-        background-color: {{contextcolor}};
+        background-color: {{rolecolor}};
     }
     ul#nav>li>a {
         line-height:auto;

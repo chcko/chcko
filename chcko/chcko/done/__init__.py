@@ -4,7 +4,7 @@ import re
 import datetime
 from urllib.parse import parse_qsl
 from chcko.chcko.db import db
-from chcko.chcko.hlp import last, problem_contexts
+from chcko.chcko.hlp import last, problemplaces
 from chcko.chcko.util import PageBase
 
 
@@ -66,13 +66,13 @@ def prepare(
                 filters.append((name, op, value))
         return filters
     #qs = ''
-    PC = problem_contexts
+    PR = problemplaces
     # q=query, qq=*->[], qqf=filter->gae filter (name,op,value)
     q = filter(None, [k.strip() for k, v in parse_qsl(qs, True)])
     qq = [[] if x == '*' else x for x in q]
     qqf = [filters() if filters(x) else x for x in qq]
-    # fill up to len(PC)
-    delta = len(PC) - len(qqf)
+    # fill up to len(PR)
+    delta = len(PR) - len(qqf)
     if delta > 0:
         ext = [str(v) for k, v in skey.pairs()]
         extpart = min(len(ext), delta)
@@ -81,9 +81,9 @@ def prepare(
     keys = db.keys_to_omit(qqf)
     obj = keys and keys[-1].get()  # parent to start from
     if obj and obj.userkey == userkey:
-        return qqf, keys, PC, True
+        return qqf, keys, PR, True
     else:
-        return qqf, [], PC, False, userkey
+        return qqf, [], PR, False, userkey
 
 
 class Page(PageBase):
