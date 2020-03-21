@@ -475,12 +475,16 @@ class db_mixin:
     #    self.delete_query(self.query(self.Problem,[self.Problem.answers==None]))
     def assign_to_student(self, studentkeyurlsafe, query_string, duedays):
         studentkey = self.Key(urlsafe=studentkeyurlsafe)
-        query_string=normqs(query_string)
-        now = datetime.datetime.now()
-        due=now+datetime.timedelta(days=int(duedays))
-        assgn = self.Assignment.create(parent=studentkey
-                   ,query_string=query_string
-                   ,due=due)
+        #query_string = 'a.x=1&&&b.y=2'
+        #query_string = 'a.x=1&b.y=2'
+        qusi = [normqs(x.strip('&')) for x in query_string.split('&&')]
+        assgn = []
+        for qsi in qusi:
+            now = datetime.datetime.now()
+            due=now+datetime.timedelta(days=int(duedays))
+            assgn.append(self.Assignment.create(parent=studentkey
+                       ,query_string=qsi
+                       ,due=due))
         self.save(assgn)
     def del_collection(self,problem):
         self.delete_query(self.query(self.Problem,[self.Problem.collection==self.idof(problem)]))
@@ -492,30 +496,67 @@ class db_mixin:
     def add_student(self, studentpath=[None]*5, user=None, color=None):
         userkey = user and self.idof(user) or None
         school_, period_, teacher_, class_, student_ = studentpath
+        to_save = []
+        def claim_ownership(obj):
+            if obj.userkey is None and userkey is not None:
+                obj.userkey = userkey
+                to_save.append(obj)
         school = self.School.get_or_insert(
-            school_ or 'myschool',
+            school_,
             userkey=userkey)
+        claim_ownership(school)
         period = self.Period.get_or_insert(
-            period_ or 'myperiod',
+            period_,
             parent=school.key,
             userkey=userkey)
+        claim_ownership(period)
         teacher = self.Teacher.get_or_insert(
-            teacher_ or 'myteacher',
+            teacher_,
             parent=period.key,
             userkey=userkey)
+        claim_ownership(teacher)
         clss = self.Class.get_or_insert(
-            class_ or 'myclass',
+            class_,
             parent=teacher.key,
             userkey=userkey)
-        stdnt = self.Student.get_or_insert(
-            student_ or 'myself',
-            parent=clss.key,
-            userkey=userkey,
-            color=color or '#EEE')
-        if stdnt.userkey == userkey and (color and stdnt.color != color):
-            stdnt.color = color
-            self.save(stdnt)
-        return stdnt
+        claim_ownership(clss)
+        #student_="x; y; "
+        #student_="x"
+        try:
+            delim = next(x for x in ';,' if x in student_)
+        except StopIteration:
+            delim = ','
+        students_ = [x.strip() for x in student_.split(delim)]
+        nstud = len(students_)
+        if nstud > 1: # batch creation
+            ukey = None
+        else:
+            ukey = userkey
+        for student_ in filter(lambda x:x,students_):
+            stdnt = self.Student.get_or_insert(
+                student_,
+                parent=clss.key,
+                userkey=ukey,
+                color=color or '#EEE')
+            if stdnt.userkey == ukey: # including None (without ownership no color protection)
+                if color and stdnt.color != color:
+                    stdnt.color = color
+                    to_save.append(stdnt)
+            elif ukey is not None:
+                if stdnt.userkey is not None:
+                    # student role belongs to other user
+                    bottle.redirect(f'/{bottle.request.lang}/message?msg=e')
+                # else claim ownership of this role (I assume my coach made it for me)
+                stdnt.userkey = ukey
+                to_save.append(stdnt)
+            else: #ukey is None and stdnt.userkey is not None
+                return
+            if to_save:
+                self.save(to_save)
+            if nstud == 1:
+                return stdnt
+        # else coach made student roles to be claimed soon
+        return
 
     def key_from_path(self,x):
         return self.Key(*list(chain(*zip(problemplaces[:len(x)], x))))
@@ -659,7 +700,7 @@ class db_mixin:
             - level
             - kind
             - path
-            - link
+            - link (e.g. 'r.a')
 
         >>> from chcko.chcko.db import db
         >>> lang = 'en'
@@ -678,7 +719,7 @@ class db_mixin:
                 return -1
         kindnum = langkindnum[lang]
         numkind = langnumkind[lang]
-        optd = dict(opt)
+        optd = opt and dict(opt) or {}
         knd_pathlnklvl = {}
         idx = self.allof(self.query(self.Index))
         for e in idx:
@@ -703,7 +744,7 @@ class db_mixin:
             if len(self.problem_set(e)):
                 return [datefmt(e.answered), e.answers]
             else:
-                return [datefmt(e.answered), [bool(x) for x in e.oks], e.answers, e.results]
+                return [datefmt(e.answered), [bool(x) for x in e.oks] if e.oks else [], e.answers, e.results]
         elif isinstance(e, self.Student):
             return ['', '', '', '', e.key.string_id()]
         elif isinstance(e, self.Class):
@@ -734,15 +775,22 @@ class db_mixin:
         except:
             usr = None
         student = None
-        studentpath = [request.params.get(x,'') for x in studentplaces]
+        studentpath = [request.params.get(plc,'') # or request.params.get(plc[:2],'')
+                       for plc in studentplaces]
+        rndsp = random_student_path(seed=request.remote_addr)
         color = request.params.get('color','')
         request.query_string = filter_student(request.query_string)
         if ''.join(studentpath) != '':
-            student = self.add_student(studentpath, usr, color)
-            if student.userkey != self.idof(usr):
-                # student role does not belong to user, so don't change current student
-                student = None
-                bottle.redirect(f'/{bottle.request.lang}/message?msg=e')
+            if usr:
+                # '-' means the parent is owned
+                nspr = [pe or '-'*len(pe) for i,pe in enumerate(studentpath)]
+            else:
+                nspr = [pe or rndsp[i] for i,pe in enumerate(studentpath)]
+            student = self.add_student(
+                nspr
+                ,usr
+                ,color
+                )
         elif usr:
             student = self.current_student(usr)
         if not student:
@@ -755,8 +803,7 @@ class db_mixin:
         if not student and usr:
             student = self.first(self.query(self.Student,[self.Student.userkey==self.idof(usr)]))
         if not student:  # generate
-            studentpath = random_student_path(seed=request.remote_addr).split('-')
-            student = self.add_student(studentpath, usr, color)
+            student = self.add_student(rndsp, usr, color)
         if usr and student:
             if not usr.current_student or (usr.current_student != self.idof(student)):
                 usr.current_student = self.idof(student)

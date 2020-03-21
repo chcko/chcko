@@ -69,6 +69,7 @@ class Assignment(Base):
 
 
 class Index(Model):
+    #id=problemid + ':' + lang
     path = ndb.StringProperty()
     knd = ndb.IntegerProperty()
     level = ndb.IntegerProperty()

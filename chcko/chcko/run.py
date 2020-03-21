@@ -1,7 +1,8 @@
 import sys
 import os
+import argparse
 
-def main(server='gunicorn'):
+def run_server(server='gunicorn'):
     from chcko.chcko.db import use
     from chcko.chcko.sql import Sql
     db = Sql()
@@ -22,5 +23,37 @@ def main(server='gunicorn'):
     except:
         bottle.run(app=chcko.chcko.app.app, port=chcko_port)
 
-if __name__ == "__main__":
+def init_content(init):
+    print("init_content not implemented")
+
+def main(**args):
+    if not args:
+        parser = argparse.ArgumentParser(
+            description =
+            '''runs chcko server, if no parameters, else see parameter list.'''
+        )
+        parser.add_argument(
+            '-i',
+            '--init',
+            action='store',
+            help='''initialize a content package''')
+        parser.add_argument(
+            '-s',
+            '--server',
+            action='store',
+            help='''run chcko server (default is gunicorn)''')
+        #args={'server':'gunicorn'}
+        args = list(filter(lambda x:print(x), parser.parse_args(args).__dict__.items()))
+    if not args or not args['server']:
+        args['server'] = 'gunicorn'
+    if 'server' in args:
+        run_server(args.pop('server'))
+    if 'init' in args:
+        init = args.pop('init')
+        if init:
+            init_content(init)
+
+if __name__ == '__main__':
     main()
+    os._exit(0)
+

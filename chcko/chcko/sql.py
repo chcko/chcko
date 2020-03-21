@@ -238,6 +238,7 @@ class Assignment(Model):
     due = C(DateTime)
 
 class Index(Model):
+    #id=problemid + ':' + lang
     path = C(String)
     knd = C(Integer)
     level = C(Integer)
@@ -329,7 +330,7 @@ class Sql(db_mixin):
         return text(f'{ap}{op}"{av}"')
 
     def done_assignment(self,assignm):
-        q = self.query(self.Problem, [self.Problem.ofkey==assignm.ofkey,
+        q = self.query(self.Problem, [self.Problem.ofkey == assignm.ofkey,
                                  self.Problem.query_string == normqs(assignm.query_string),
                                  self.Problem.answered > assignm.created])
         if q.count() > 0:

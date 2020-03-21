@@ -3,6 +3,9 @@ token.pickle
 chcko.sqlite
 *.pem
 
+README.html
+*.rest
+
 .doit.db
 .app.yaml
 

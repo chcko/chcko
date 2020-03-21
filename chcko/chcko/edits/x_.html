@@ -15,8 +15,19 @@ $("input[type='radio']").change(function(){
         olds.attr('type','hidden');
         olds.hide();
         }
-    })
+    });
+$("input.newinput#Student").on("input paste", function(e){
+    var etv = e.target.value;
+% for i in [1,2]:
+    if (etv.includes(',')) {
+         $("#radionewchangedelete{{i}}").parent().hide();
+    } else {
+         $("#radionewchangedelete{{i}}").parent().show();
+    }
+% end
+});
 })
+
 </script>
 
 <form action="" method="post" name='edits'>
@@ -25,14 +36,18 @@ $("input[type='radio']").change(function(){
         %langkind = util.translate(a[0])
         <label for="{{langkind}}">{{langkind}}:</label>
     </div>
+    % if i<4:
     <div class="grid_2">
-        <input type="text" class="newinput" name="{{a[0]}}" value="{{str(a[1])}}" autocomplete="off" tabindex={{i}}/>
-        <input type="hidden" class="oldinput" readonly="readonly" name="old{{a[0]}}" value="{{str(a[1])}}" tabindex={{i+5}}/>
+    % else:
+    <div class="grid_6">
+    % end
+        <input style="display:table-cell; width:100%" type="text" class="newinput" name="{{a[0]}}" value="{{str(a[1])}}" autocomplete="off" tabindex={{i}} id="{{a[0]}}"/>
+        <input style="display:table-cell; width:100%" type="hidden" class="oldinput" readonly="readonly" name="old{{a[0]}}" value="{{str(a[1])}}" tabindex={{i+5}} id="{{a[0]}}"/>
     </div>
     <div class='grid_2'>&nbsp;</div>
     % if i < len(trequests):
     <div class="grid_2">
-        <input type="radio" name="choice" value="{{str(i)}}" autocomplete="off"
+        <input type="radio" name="choice" value="{{str(i)}}" autocomplete="off" id="radionewchangedelete{{i}}"
         %if i==0:
             checked
         %end

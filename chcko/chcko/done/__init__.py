@@ -68,7 +68,7 @@ def prepare(
     #qs = ''
     PR = problemplaces
     # q=query, qq=*->[], qqf=filter->gae filter (name,op,value)
-    q = filter(None, [k.strip() for k, v in parse_qsl(qs, True)])
+    q = filter(None, [k.strip() for k, v in parse_qsl(qs, True) if k not in PR])
     qq = [[] if x == '*' else x for x in q]
     qqf = [filters() if filters(x) else x for x in qq]
     # fill up to len(PR)

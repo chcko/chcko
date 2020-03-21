@@ -264,10 +264,13 @@ class Page(PageBase):
         if indexquery:
             return indexquery
 
-        if any(['.' not in qa for qa,_ in qparsed]):
-            raise HTTPError(404,'There is no top level content.')
+        ## ignore top level entries in query
+        # qparsed=[('a',2),('b.c',3)]
+        qparsed = [(qa,qb) for qa,qb in qparsed if '.' in qa]
 
         cnt = len(qparsed)
+        if cnt == 0:
+            return
         if (cnt > 1 or
                 (cnt == 1 and
                  len(qparsed[0]) == 2 and

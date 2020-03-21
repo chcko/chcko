@@ -59,7 +59,7 @@ def chckosecret():
 
 def random_student_path(seed=None):
     ''' UUID parts are used as names
-    >>> #myschool,myperiod,myteacher,myclass,myself = random_student_path().split('-')
+    >>> #myschool,myperiod,myteacher,myclass,myself = random_student_path()
     '''
     if not seed:
         seed = datetime.datetime.now().isoformat()
@@ -71,7 +71,7 @@ def random_student_path(seed=None):
                 bytes=seed[
                     :16].encode()),
             datetime.datetime.now().isoformat()))
-    return student_path
+    return student_path.split('-')
 
 is_standard_server = False
 if os.getenv('GAE_ENV', '').startswith('standard'):

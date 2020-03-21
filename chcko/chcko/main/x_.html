@@ -26,8 +26,8 @@
             <ul id="nav">
                 {{util.translate(key2prnt.kind())}}<br>
                 <li>
-                %qs = lambda x: request.query_string+'&'+x if request.query_string else x
-                <a href="/{{request.lang}}/{{request.pagename}}?{{! qs(db.urlstring(key2prnt)) }}">
+                %addqs = lambda x: request.query_string+'&'+x if request.query_string else x
+                <a href="/{{request.lang}}/{{request.pagename}}?{{! addqs(db.urlstring(key2prnt)) }}">
                     {{key2prnt.string_id()}} </a>
                 <ul style="text-align:right">
                     %for key_ownd_list in db.userroles(request.user):
@@ -35,7 +35,7 @@
                     <li>
                     <a
                     style="background-color:{{studentkey.get().color}}"
-                    href="/{{request.lang}}/{{request.pagename}}?{{! qs(db.urlstring(studentkey)) }}">
+                    href="/{{request.lang}}/{{request.pagename}}?{{! addqs(db.urlstring(studentkey)) }}">
                         %cntxt = [not ownd and '<em>'+an.string_id()+'</em>' or an.string_id() for an,ownd in key_ownd_list]
                         {{!' &nbsp;&nbsp; '.join(cntxt)}}
                     </a>

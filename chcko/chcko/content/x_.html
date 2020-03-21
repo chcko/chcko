@@ -121,9 +121,9 @@
 
     {{! content }}
 
-    %qs = query_string
-    %pe = course_labels(qs)
-    %alinks = ['/'+request.lang+'/content?'+x for x in [start_qs(qs),next_qs(qs,-1),qs,next_qs(qs),end_qs(qs)]]
+    %cq = query_string
+    %pe = course_labels(cq)
+    %alinks = ['/'+request.lang+'/content?'+x for x in [start_qs(cq),next_qs(cq,-1),cq,next_qs(cq),end_qs(cq)]]
 
     %def qsnav(where,sign):
     <button class="grid_1" type="button" onclick="window.location.href='{{ alinks[where] }}';" id="nbutton">{{ sign }}</button>
@@ -158,9 +158,10 @@
     </form>
     % end
 
-    % if not problem.answered and request.user:
+    % # ASSIGN
+    % if request.user:
         % teacher = request.student.key.parent().parent().get()
-        % if teacher.userkey == db.idof(request.user): #self assignment is possible
+        % if teacher.userkey == db.idof(request.user): # self assignment is possible
             <form action="/{{request.lang}}/todo" method="post">
                 % fieldset = False
                 % for ee in db.assignable(teacher,request.user):

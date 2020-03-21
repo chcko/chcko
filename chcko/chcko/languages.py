@@ -74,10 +74,14 @@ def kindint(knd, numkind):
             return -1
 
 
-CtxStrings = {
-
-    'en': ['School', 'Period', 'Teacher', 'Class', 'Student'],
-    'de': ['Schule', 'Periode', 'Lehrer', 'Klasse', 'Student']
+role_strings = {
+    # these are listed on the page
+    'en': ['School', 'Period', 'Teacher', 'Class', 'Student']
+    ,'de': ['Schule', 'Periode', 'Lehrer', 'Klasse', 'Student']
+    # ... add more if some translations exist (defaults to en)
+    #,'it': ['Scuola', 'Periodo', 'Prof', 'Classe', 'Studente']
+    #,'fr': ['École', 'Période', 'Prof', 'Classe', 'Etudiant']
+    #,'es': ['Escuola', 'Periodo', 'Prof', 'Clase', 'Estudiante']
 
 }
 

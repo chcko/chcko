@@ -14,7 +14,7 @@ from chcko.chcko import bottle
 from chcko.chcko.bottle import SimpleTemplate, template
 
 from chcko.chcko.hlp import listable, mklookup, counter, logger, from_py
-from chcko.chcko.languages import langkindnum, langnumkind, CtxStrings
+from chcko.chcko.languages import langkindnum, langnumkind, role_strings
 from chcko.chcko.db import db
 
 from chcko.chcko.auth import newurl
@@ -24,6 +24,7 @@ try:
 except:
     social_logins = {}
 
+langs = list(role_strings.keys())
 
 class Util:
     ''' A Util instance named ``util`` is available in html files.
@@ -36,21 +37,22 @@ class Util:
         return [
             d[0] if not d[1] else d for d in parse_qsl(
                 self.request.query_string,
-                True)]
+                True) if d[0] not in db.studentplaces]
 
     def a(self, alnk):
         return '<a href="#" onclick="a_content('+alnk+');return false;">'+alnk+'</a>'
 
     def newlang(self, lng):
-        oldp = self.request.urlparts.path
-        curlng = self.request.lang
-        scurlng = '/' + curlng
-        has_lang = oldp==scurlng or oldp.startswith(scurlng+'/')
-        if has_lang:
-            newp = oldp.replace(scurlng,'/' + lng,1)
+        oldp = self.request.urlparts.path.strip('/')
+        try:
+            curlng = next(x for x in langs if oldp==x or oldp.startswith(x+'/'))
+        except StopIteration:
+            curlng = ''
+        if curlng:
+            newp = oldp.replace(curlng,lng,1)
         else:
-            newp = ('/'+lng+'/'+oldp).rstrip('/')
-        newlnk = newurl(newp)
+            newp = lng+'/'+oldp
+        newlnk = newurl('/'+newp)
         return '<a href="' + newlnk + '">' + lng + '</a>'
 
     @staticmethod
@@ -67,7 +69,7 @@ class Util:
     def translate(self, word):
         try:
             idx = db.studentplaces.index(word)
-            res = CtxStrings[self.request.lang][idx]
+            res = role_strings[self.request.lang][idx]
             return res
         except:
             return word
@@ -138,7 +140,7 @@ class PageBase:
             'util': self.util,
             'kinda': langkindnum[self.request.lang],
             'numkind': langnumkind[self.request.lang],
-            'langs': list(CtxStrings.keys()),
+            'langs': langs,
             'db': db,
             'logger': logger,
             'social_logins': social_logins,
