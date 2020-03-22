@@ -1,6 +1,8 @@
 import sys
 import os
 import argparse
+from txdir import to_tree
+from subprocess import check_output
 
 def run_server(server='gunicorn'):
     from chcko.chcko.db import use
@@ -23,8 +25,174 @@ def run_server(server='gunicorn'):
     except:
         bottle.run(app=chcko.chcko.app.app, port=chcko_port)
 
+txdirstr = r"""
+chcko-{author_id}/MANIFEST.in
+    include *.html
+    graft chcko
+    global-exclude __pycache__
+    global-exclude *.py[co]
+    global-exclude *.log
+    global-exclude *.db
+chcko-{author_id}/Makefile
+    .PHONY: check render dist up
+
+    check:
+    	restview --long-description --strict
+
+    render:
+    	cd chcko/{author_id}
+    	doit -kd. html
+    	doit -kd. initdb
+
+    dist:
+    	sudo python setup.py bdist_wheel
+
+    up:
+    	twine upload dist/`ls dist -rt | tail -1`
+chcko-{author_id}/README.rst
+    chko-{author_id}
+    ================
+
+    TODO
+chcko-{author_id}/dodo.py
+    # -*- coding: utf-8 -*-
+    '''
+    doit utility::
+
+    Do this after having changed an RST file.
+    Start this from chcko-x/chcko/::
+
+        $ doit -kd. html
+
+    Do this after having changed the header (path, kind, level) in a html or rst file::
+
+        $ doit initdb
+
+    Do this after any changes, especially in the main code::
+
+        $ doit test
+        $ doit cov
+
+    Do this to add new content, html or rst::
+
+        $ doit -kd. new
+        $ doit -kd. rst
+
+    task_included is internal.
+
+    '''
+
+    import sys
+    import os
+
+    chckouninstalled = os.path.normpath(os.path.join(os.path.dirname(__file__),'..','chcko'))
+    if os.path.exists(chckouninstalled):
+        sys.path.insert(0,chckouninstalled)
+
+    from chcko.chcko import doit_tasks
+
+    doit_tasks.set_base(__file__)
+
+    task_included = doit_tasks.task_included
+    task_html = doit_tasks.task_html
+    task_initdb = doit_tasks.task_initdb
+chcko-{author_id}/authors.yaml
+    # The URL request to a resource is: author.id
+    # The location in the file system is: author/id
+    # author is a short base26 id ([a-z]+) 
+    # id is a counter which is base26 encoded
+    # 'doit new' creates folder and increases id counter
+    - author_id:      {author_id}
+      gitname:        {author_name}
+      gitemail:       {author_email}
+      default_lang:   {author_lang}
+      translate_to:   [{author_lang}]
+      translate_from: []
+chcko-{author_id}/nextids.yaml
+    -
+      {author_id}:  "a"
+chcko-{author_id}/setup.py
+    import os
+    import io
+    import setuptools
+    from pathlib import Path
+
+    package_root = os.path.abspath(os.path.dirname(__file__))
+
+    def main():
+        os.chdir(package_root)
+        try:
+            import shutil
+            shutil.rmtree('build')
+        except:
+            pass
+        proot = Path(package_root)
+        readme_filename = os.path.join(package_root, "README.rst")
+        with io.open(readme_filename, encoding="utf-8") as readme_file:
+            readme = readme_file.read()
+        setuptools.setup(
+            name="chcko-{author_id}",
+            version = "0.1.3",
+            description="A random mix of exercises for chcko",
+            long_description=readme,
+            long_description_content_type="text/x-rst",
+            author="Roland Puntaier",
+            author_email="roland.puntaier@gmail.com",
+            url="https://github.com/chcko/chcko-{author_id}",
+            classifiers=[
+                "Development Status :: 4 - Beta",
+                "Intended Audience :: Developers",
+                "Programming Language :: Python",
+                "Programming Language :: Python :: 3.7",
+                "Operating System :: OS Independent",
+                "Topic :: Internet",
+                'Programming Language :: Python :: 3',
+                'License :: OSI Approved :: GNU General Public License (GPL)',
+                'Topic :: Education',
+                'Topic :: Education :: Computer Aided Instruction (CAI)'
+            ],
+            packages=setuptools.find_namespace_packages(),
+            include_package_data=True,
+            namespace_packages=["chcko"],
+            install_requires=[],#don't ["chcko"], because on gcloud chcko is uploaded and not installed
+            extras_require={},
+            zip_safe=False,
+        )
+
+    if __name__ == "__main__":
+        main()
+chcko-{author_id}/chcko/{author_id}/__init__.py
+chcko-{author_id}/chcko/{author_id}/a/__init__.py
+    from random import sample
+    from chcko.chcko.hlp import Struct, norm_int as norm
+    def given():
+        a, c = sample(list(range(2, 9)) + list(range(-9, -2)), 2)
+        x = sample(list(range(2, 9)) + list(range(-9, -2)), 1)[0]
+        b = (c - a) * x
+        g = Struct(a=a, b=b, c=c)
+        return g
+    def calc(g):
+        res = g.b / (g.c - g.a)
+        return [res]
+chcko-{author_id}/chcko/{author_id}/a/en.html
+    %path = "maths/linear equation/with integers"
+    %kind = kinda["problems"]
+    %level = 9
+
+    \[{{g.a}} x {{util.sgn(g.b)}} {{abs(g.b)}} = {{g.c}} x\]
+    <br>
+    x=
+    %include('chcko/getorshow')
+"""
+gitget = lambda what: check_output(['git','config','--global',what]).strip().decode()
 def init_content(init):
-    print("init_content not implemented")
+    txds = txdirstr.replace('{{','{{{{').replace('}}','}}}}').replace('{}','{{}}').format(
+      author_id=init
+      ,author_name=gitget('user.name')
+      ,author_email=gitget('user.email')
+      ,author_lang='en'
+    )
+    to_tree(txds.splitlines())
 
 def main(**args):
     if not args:
@@ -36,7 +204,7 @@ def main(**args):
             '-i',
             '--init',
             action='store',
-            help='''initialize a content package''')
+            help='''provide author id to initialize a content package chcko-<author_id>''')
         parser.add_argument(
             '-s',
             '--server',

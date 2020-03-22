@@ -233,7 +233,7 @@ Replace the ``&`` with ``&&`` to make a *course*::
 In the URL
 
 - content items are ``<author_id>.<content_id>``
-- corresonding to the folder ``chcko/<author_id>/<content_id>/``
+- corresponding to the folder ``chcko/<author_id>/<content_id>/``
 
 ``initdb.py`` fills the database with content items. It is generated using::
 
@@ -250,7 +250,7 @@ To add a new content package on https://chcko.eu:
 
 https://chcko.eu will be updated timely.
 
-You can als run a server locally with::
+You can also run a server locally with::
 
     runchcko
 
@@ -269,25 +269,21 @@ Create a new content package with::
 
     runchcko --init chcko-<id>
 
-Then in the genererated folder
-add a new content item::
+Then in the generated folder::
+
+    make render
+
+Add a new content item with::
 
     doit -kd. new
+    make render
 
 Edit the problem text in ``en.html`` using a `text editor`_.
 See the example `above <example>`_.
 
 Then::
 
-  doit -kd. initdb
-  runchcko_with_sql.py
-  doit test
-
-Commit the changes::
-
-  git status
-  git diff
-  git commit -am "what you did"
+    runchcko
 
 Tools
 -----
