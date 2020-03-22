@@ -15,7 +15,14 @@ with example content package
 
 ``chcko.eu`` wants to collect problems,
 usable by students with or without learn coaches around the world.
-There is no need to do things again and again.
+
+``chcko`` makes it easy to compose a problem set for students,
+it checks the answers and gives the results.
+
+The focus is on collecting content not about code or format.
+
+The problem packages are python packages.
+the whole system can be installed locally too.
 
 URL
 ===
@@ -28,7 +35,7 @@ Pages are:
 
 - ``edits``: add roles and choose a color
 - ``content``: specific content items or overview if no ``query``
-- ``done``: done problems filtered by context
+- ``done``: done problems
 - ``todo``: assigned problems
 - ``roles``: roles, only if user is logged in
 - some additional helper pages
@@ -418,7 +425,7 @@ Plan
 - Answers to problems are stored in a DB and combined with the
   language texts during loading.
 
-- A user context/role is identified by an ID path/hierarchy::
+- A user role is identified by an ID path/hierarchy::
 
   school 1-n period 1-n teacher 1-n class 1-n student
 
@@ -429,11 +436,11 @@ Plan
 
 - Teachers see what their classes/students have done so far (*done* query)
 
-- Users initially get a generated context/role (generated random strings for each),
+- Users initially get a generated role (generated random strings for each),
   which they can change, though (*edits* query).
-  There users can choose a color to help then see in which context/role they are.
+  There users can choose a color to help then see in which role they are.
 
-- Registered users can have more contexts/roles (*contexts* query).
+- Registered users can have more roles (*roles* query).
   Registration can also be done via Google, Twitter, Facebook or LinkedIn.
 
 Design
@@ -449,7 +456,7 @@ The data model is::
 
   school 1-n period 1-n teacher 1-n class 1-n student 1-n problem
 
-The first 5 are called a context or role.
+The first 5 are called a role.
 A user has more roles.
 You can have more **teacher=subject** roles.
 
@@ -489,8 +496,8 @@ The URL format is::
 If ``<lang>`` is dropped, the last language or the browser setting is used.
 See `languages.py`_.
 
-``<page>`` is one of ``content``, ``done``, ``todo``, ``edits`` and ``contexts``.
-``contexts`` requires a logged-in user, who can have more contexts/roles.
+``<page>`` is one of ``content``, ``done``, ``todo``, ``edits`` and ``roles``.
+``roles`` requires a logged-in user, who can have more roles.
 ``content`` is default, if dropped.
 
 ``<query>`` starts after the ``?`` and it is a ``&``-separated list.
@@ -509,9 +516,9 @@ an English content page with one ``r.a`` and two ``r.by`` problems.
 
 Use ``&&`` instead of ``&`` to show one problem at a time (**course**).
 
-For logged-in users it is possible to make **assignments** to class/students with the same
-School-Period-Teacher prefix. You must have selected a context where the teacher role
-belongs to you, though, i.e. you created that teacher ID.
+For logged-in users it is possible
+to make **assignments** to class/students with the same School-Period-Teacher prefix.
+You must have created the teacher role, before the others.
 
 Problems have more questions and every question has points associated (default 1).
 After checking the entered values at the top there will be a summary of achieved
@@ -542,7 +549,7 @@ allows
 - a student to filter his problems
 - a teacher to see the problems of his classes or students
 
-From the left, omitted entries will be filled by the corresponding current context IDs.
+Omitted entries *on the left* will be filled by the corresponding current role IDs.
 Therefore a student only needs ``<problem>``, if it should be filtered at all.
 ``<..>`` are placeholders for the actual strings.
 
@@ -590,26 +597,26 @@ For fields left empty
 - ``-`` is used for logged in users
 - a random ID is generated non-logged-in users
 
-If the set of IDs for a full context path is owned already, then it will be told.
-If context path prefixes of others are used, it will be recognizable by their italic format.
+Setting role IDs fails, if the role is owned already.
+Role prefixes of others are italic.
 These other users can query your done problems.
 
-``new`` will create a new context/role.
+``new`` will create a new role.
 
-``change`` will change the identification of the current context/role,
+``change`` will change the identification of the current role,
 i.e. all the problems done will be copied over.
 
-``delete`` will delete the context/role and all its done problems.
+``delete`` will delete the role and all its done problems.
 
-A **color** can be chosen to more easily see in which context/role one is.
+A **color** can be chosen to more easily see in which role one is.
 
-contexts
-^^^^^^^^
+roles
+^^^^^
 
-``../<lang>/contexts`` lists all contexts/roles of the currently logged-in user.
+``../<lang>/roles`` lists all roles of the currently logged-in user.
 
-These contexts/roles can also be accessed via a drop down menu when hovering over the student ID.
-Then the currently open page will be reopened with the new context/role.
+These roles can also be accessed via a drop down menu when hovering over the student ID.
+Then the currently open page will be reopened with the new role.
 
 Permissions
 -----------

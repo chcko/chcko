@@ -15,11 +15,12 @@ from chcko.chcko.tests.boddle import boddle
 
 from chcko.chcko.languages import languages
 from chcko.chcko.hlp import Struct, resolver, AUTHORDIRS
+from chcko.chcko.tests.boddle import clear_all_data
 
 @pytest.fixture
 def cdb(db):
     with db.dbclient.context():
-        db.clear_all_data()
+        clear_all_data(db)
     with db.dbclient.context():
         yield db
 
@@ -66,7 +67,7 @@ def newuserpage(request,cdb):
     user,_ = cdb.user_login('email@email.com',fullname='first last',password='password1',lang=lang)
     bddl=boddle(path=f'/{lang}/content'
                 ,user = user
-                ,student = cdb.add_student()
+                ,student = cdb.add_student(['-']*5)
                 ,session = None
                 ,lang = lang
                 ,pagename = 'content'
@@ -103,7 +104,7 @@ def test_recursive_includes(newuserpage):
 
 def test_depth_1st(cdb):
     path = ['a', 'b', 'c', 'd', 'e']
-    student = cdb.add_student(path, user=None, color='#EEE')
+    student = cdb.add_student(path,None,'#EEE')
     problems_for(student,cdb)
     lst = list(cdb.depth_1st(path+[[]]))
     assert len(lst) >= 8
@@ -112,7 +113,7 @@ def test_depth_1st(cdb):
     assert cdb.kindof(lst[0]) == 'School'
     assert cdb.kindof(lst[5]) == 'Problem'
     path = ['a', 'b', 'c', 'x', 'e'] #note same name for student
-    student1 = cdb.add_student(path, user=None, color='#EEE')
+    student1 = cdb.add_student(path, None, '#EEE')
     problems_for(student1,cdb)
     path = ['a','b','c',[],[],[('query_string','=','r.u')]]
     lst = list(cdb.depth_1st(path))
@@ -140,7 +141,7 @@ def dbschool(request,db):
     models = list(db.models.values())[:6]
 
     with db.dbclient.context():
-        db.clear_all_data()
+        clear_all_data(db)
 
     def recursecreate(ient, thisent):
         res = {}

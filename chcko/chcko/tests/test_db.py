@@ -1,10 +1,10 @@
-
 import pytest
+from chcko.chcko.tests.boddle import clear_all_data
 
 @pytest.fixture()
 def cdb(db):
     with db.dbclient.context():
-        db.clear_all_data()
+        clear_all_data(db)
     with db.dbclient.context():
         yield db
 

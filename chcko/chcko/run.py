@@ -42,12 +42,14 @@ def main(**args):
             '--server',
             action='store',
             help='''run chcko server (default is gunicorn)''')
-        #args={'server':'gunicorn'}
-        args = list(filter(lambda x:print(x), parser.parse_args(args).__dict__.items()))
-    if not args or not args['server']:
+        args, left = parser.parse_known_args()
+        args = {k:v for k,v in args.__dict__.items() if v}
+        sys.argv = sys.argv[:1]+left
+    if not args:
         args['server'] = 'gunicorn'
     if 'server' in args:
         run_server(args.pop('server'))
+        return
     if 'init' in args:
         init = args.pop('init')
         if init:
@@ -55,5 +57,4 @@ def main(**args):
 
 if __name__ == '__main__':
     main()
-    os._exit(0)
 

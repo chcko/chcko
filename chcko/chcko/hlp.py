@@ -493,7 +493,7 @@ class db_mixin:
         self.copy_to_new_parent(self.Problem, oldparent, newparent)
         self.copy_to_new_parent(self.Assignment, oldparent, newparent)
 
-    def add_student(self, studentpath=[None]*5, user=None, color=None):
+    def add_student(self, studentpath, user=None, color=None):
         userkey = user and self.idof(user) or None
         school_, period_, teacher_, class_, student_ = studentpath
         to_save = []
@@ -598,16 +598,6 @@ class db_mixin:
             if self.done_assignment(anobj):
                 todelete.append(anobj.key)
         self.delete_keys(todelete)
-    def clear_all_data(self):
-        self.clear_index()
-        self.clear_assignments()
-        self.clear_problems()
-        self.delete_query(self.query(self.Student))
-        self.delete_query(self.query(self.Class))
-        self.delete_query(self.query(self.Teacher))
-        self.delete_query(self.query(self.Period))
-        self.delete_query(self.query(self.School))
-        self.add_student()
     def assignable(self, teacher, usr):
         for akey in self.depth_1st(keys=[teacher.key], kinds='Teacher Class Student'.split(),
                               userkey=usr and self.idof(usr)):
@@ -782,15 +772,11 @@ class db_mixin:
         request.query_string = filter_student(request.query_string)
         if ''.join(studentpath) != '':
             if usr:
-                # '-' means the parent is owned
-                nspr = [pe or '-'*len(pe) for i,pe in enumerate(studentpath)]
+                # '------' can be interpreted as parent is owned
+                nspr = [pe or '-'*len(studentplaces[i]) for i,pe in enumerate(studentpath)]
             else:
                 nspr = [pe or rndsp[i] for i,pe in enumerate(studentpath)]
-            student = self.add_student(
-                nspr
-                ,usr
-                ,color
-                )
+            student = self.add_student(nspr ,usr ,color)
         elif usr:
             student = self.current_student(usr)
         if not student:

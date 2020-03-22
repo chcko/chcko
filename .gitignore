@@ -6,6 +6,9 @@ chcko.sqlite
 README.html
 *.rest
 
+WEB-INF/
+env.yaml
+
 .doit.db
 .app.yaml
 

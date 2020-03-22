@@ -7,11 +7,12 @@ from webtest import TestApp as TA
 from chcko.chcko import bottle
 from chcko.chcko.languages import languages
 from chcko.chcko.hlp import problemplaces
+from chcko.chcko.tests.boddle import clear_all_data
 
 @pytest.fixture(scope='module')
 def chapp(request,db):
     with db.dbclient.context():
-        db.clear_all_data()
+        clear_all_data(db)
     with db.dbclient.context():
         db.init_db()
     from chcko.chcko.app import app
@@ -76,8 +77,10 @@ class TestRunthrough(object):
         assert url_lang(self.resp.request.url) in languages
 
     def test_wrong_content(self,chapp):
-        r = chapp.get('/en/?wrong', status=404)
-        assert '404' in r.status
+        #r = chapp.get('/en/?wrong', status=200)
+        #assert '404' in r.status
+        r = chapp.get('/en/?wrong')
+        assert r.status == '200 OK'
 
     def test_register(self,chapp):
         self._signup(chapp)
@@ -156,7 +159,6 @@ class TestRunthrough(object):
         self.resp.form[problemplaces[-2]] = 'U' #U belongs to teacher/class=tst/tst
         self.resp.form['color'] = '#BBB'
         self._store('resp', self.resp.form.submit())
-        self._store('resp', self.resp.form.submit())
         assert 'edits' in self.resp.request.url
         assert 'tst' in self.resp
         assert '#BBB' in self.resp
@@ -166,8 +168,9 @@ class TestRunthrough(object):
         #only one form is expected,
         #because this student and the teacher have different users
         #(the teacher has no user. see test_anonymous above)
-        self.resp.form[u'0000_0000'] = u'x'
-        self._store('resp', self.resp.form.submit())
+        form = self.resp.forms[0]
+        form[u'0000_0000'] = u'x'
+        self._store('resp', form.submit())
         assert '0P' in self.resp
 
     def test_no_permission(self):
@@ -175,19 +178,16 @@ class TestRunthrough(object):
         # tst does not belong to this user, therefore not listed
         cur = self.resp.lxml
         tds = cur.xpath('//td[contains(text(),"tst")]/text()')
-        assert len(tds) == 4
+        assert len(tds) == 1
         trs = cur.xpath('//tr')
-        assert len(trs) == 5
+        assert len(trs) == 6
 
     def test_roles(self):
         self._store('resp', self.resp.goto('/en/roles'))
         cur = self.resp.lxml
         curx = cur.xpath('//div[contains(text(),"School")]//text()')
         assert curx[1].strip() != self.curs
-        curh = cur.xpath(
-            '//a[contains(text(),"' +
-            self.curs +
-            '") and contains(@href,"todo")]/@href')[0]
+        curh = cur.xpath('//a[contains(text(),"'+self.curs+'") and contains(@href,"todo")]/@href')[0]
         self._store('resp', self.resp.goto(curh))
         cur = self.resp.lxml
         curx = cur.xpath('//div[contains(text(),"School")]/text()')
@@ -202,7 +202,7 @@ class TestRunthrough(object):
         assert 'msg=g' in self.resp.request.url
         cur = self.resp.lxml
         curx = cur.xpath('//div[contains(text(),"School")]//text()')
-        self._store('curs', curx[2].strip())
+        self._store('curs', curx[-1].strip())
         assert self.curs == 'tst'
 
     def test_change_color(self):
@@ -261,7 +261,8 @@ class TestRunthrough(object):
                     form[n] = '1'
             if 'submit' in allnames:
                 res = form.submit('submit')
-            assert "<form" not in res, prob
+            assert "Assign" in res
+            assert "Check" not in res
         self._store('resp', self.resp.goto('/en/todo'))
         curx = self.resp.lxml
         probs = curx.xpath('//a[contains(@href,"en/content?")]/@href')

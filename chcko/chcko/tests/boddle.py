@@ -84,3 +84,14 @@ class boddle(object):
                     pass
         setattr(bottle.BaseRequest, 'app', self.orig_app_reader)
 
+
+def clear_all_data(adb):
+    adb.clear_index()
+    adb.clear_assignments()
+    adb.clear_problems()
+    adb.delete_query(adb.query(adb.Student))
+    adb.delete_query(adb.query(adb.Class))
+    adb.delete_query(adb.query(adb.Teacher))
+    adb.delete_query(adb.query(adb.Period))
+    adb.delete_query(adb.query(adb.School))
+    adb.add_student(['-']*5)
