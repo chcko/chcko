@@ -6,6 +6,7 @@ from functools import lru_cache
 from hmac import compare_digest
 from random import choice
 from urllib.parse import urlunsplit
+from chcko.chcko import bottle
 
 def newurl(path=None,query=None,fragment=None):
     p = bottle.request.urlparts
@@ -81,7 +82,6 @@ if os.getenv('GAE_ENV', '').startswith('standard'):
 try:
   from social_core.strategy import BaseStrategy
   from social_core.storage import UserMixin, BaseStorage
-  from chcko.chcko import bottle
   from functools import wraps
   # secrets are not in the repo,
   # but included via `make deploy` from local ~/my/mam/chcko/environment.yaml
@@ -216,12 +216,12 @@ if with_email_verification:
         chcko.mail@gmail.com authorized manually,
         knowing that actually they are for the chcko app.
         The resulting token allows the chcko app to send emails.
-  
+
         >>> pickled = codecs.encode(pickle.dumps(atoken), "base64").decode()
         >>> #pickled=CHCKO_MAIL_CREDENTIAL
         >>> unpickled = pickle.loads(codecs.decode(pickled.encode(), "base64"))
         >>> atoken == unpickled
-  
+
         '''
         atoken = None
         if os.path.exists(token_file):
@@ -230,14 +230,13 @@ if with_email_verification:
         if not atoken or not atoken.valid:
             if atoken and atoken.expired and atoken.refresh_token:
                 atoken.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                  pth(secret_file),scopes)
+            elif os.path.exists(secret_file):
+                flow = InstalledAppFlow.from_client_secrets_file(secret_file,scopes)
                 atoken = flow.run_local_server(port=0)
-            with open(token_file, 'wb') as tokenf:
-                pickle.dump(atoken, tokenf)
+                with open(token_file, 'wb') as tokenf:
+                    pickle.dump(atoken, tokenf)
         return atoken
-  
+
     @lru_cache()
     def email_credential():
         try:
@@ -247,7 +246,7 @@ if with_email_verification:
         except:
             creds = get_credential()
         return creds
-  
+
     def send_mail(to, subject, message_text, sender=chcko_mail):
         '''
         >>> ( to, subject, message_text) = ('roland.puntaier@gmail.com','test 2','test second message text')

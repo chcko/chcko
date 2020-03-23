@@ -5,11 +5,9 @@ CHANGELOG
 TODO
 ====
 
-- Auto choose size.
+- Offline pdf creation
 
 - Add man file
-
-- rework meta content
 
 - Reach near 100% test coverage.
   Fix ndb tests: Currently ndb tests sometimes fail,
@@ -17,7 +15,14 @@ TODO
 
 - HTML modernize, dri
 
+- Auto-choose font size.
+
 - CSS use http://getbem.com/naming/?
+
+0.1.5-0.1.8
+===========
+
+- fixes
 
 0.1.4
 =====

@@ -107,6 +107,9 @@
 
     <script>
     $(document).ready(()=>window.sessionStorage.removeItem('chcko_selection'));
+    function newpage(url){
+        window.location.href=url;
+    }
     </script>
     % if with_problems and not problem.answered:
     <form action="" method="post">
@@ -140,7 +143,7 @@
     %end
 
     % if with_problems and problem.answered:
-        <button type="button" class="{{bottonwidth}}" onclick="windows.location.href='{{ alinks[2] }}';" id="nbutton"> {{tagain+pe2}} </button>
+        <button type="submit" class="{{bottonwidth}}" onclick="newpage('{{alinks[2]}}');" id="nbutton"> {{tagain+pe2}} </button>
     % end
     % if with_problems and not problem.answered:
         <input id="nbutton" class="{{bottonwidth}}" style="text-align:center" type="submit" name="submit" value="{{tcheck+pe2}}"/>

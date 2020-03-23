@@ -255,7 +255,7 @@ You can also run a server locally with::
 
     runchcko
 
-or if
+If
 `chcko <https://pypi.org/project/chcko/>`__
 is not installed::
 
@@ -270,20 +270,23 @@ Create a new content package with::
 
     runchcko --init chcko-<id>
 
-Then in the generated folder::
-
-    make render
+You run this command also to fill
+a repo you started on github and cloned.
 
 Add a new content item with::
 
     doit -kd. new
-    make render
+
+or::
+
+    doit -kd. rst
 
 Edit the problem text in ``en.html`` using a `text editor`_.
 See the example `above <#example>`_.
 
-Then::
+Then from the root of the content package::
 
+    doit initdb
     runchcko
 
 Tools

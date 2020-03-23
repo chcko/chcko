@@ -169,12 +169,12 @@ def author_next():
     # get author_id
     gitemail = check_output('git config --global --get user.email',shell=True).decode('utf-8').strip()
     with open(authors_file,'r') as f:
-        authors = yaml.load(f)
+        authors = yaml.full_load(f)
     author = [author for author in authors if author['gitemail'] == gitemail][0]
     author_id = author['author_id']
     # get next_id for author
     with open(nextid_file,'r') as f:
-        nextids = yaml.load(f)
+        nextids = yaml.full_load(f)
     next_id = nextids[0][author_id]
     newnext = int_to_base26(base26_to_int(next_id)+1)
     nextids[0][author_id] = newnext
@@ -186,38 +186,32 @@ def author_next():
             f.write(ln)
     return author, next_id
 
-init_starter = '''# -*- coding: utf-8 -*-
-
+init_starter = '''
 # # for a problem uncomment (non-problem texts need no code in __init__.py)
 # from chcko.chcko.hlp import Struct
 # # randomize numbers using e.g. sample and randrange
 # import random
-# 
 # def given():
 #     g = Struct()
 #     # fill g
 #     return g
-# 
 # def calc(g):
 #     res = []
 #     # fill res
 #     return res
-# 
-# # remove if default norm_rounded works fine
+# # #remove if default norm_rounded works fine
 # # def norm(answers):
 # #     return norm_rounded(answers)
-# 
-# # remove if default equal_eq works fine
+# # #remove if default equal_eq works fine
 # # def equal(a, r):
 # #     return equal_eq(a, r)
 '''
 
-lang_starter = '''%path = "path/goes/here"
-%kind = "kindgoeshere"
-%level = 0
-
-%# text here
-
+lang_starter = '''
+    %path = "path/goes/here"
+    %kind = kinda["<choose from languages.py/langnumkind[lang]>"]
+    %level = 0 # in school years
+    %# ``doit -kd. initdb`` after every change here
 '''
 
 def new_path():
@@ -237,11 +231,8 @@ def newproblem(init_starter=init_starter,lang_starter=lang_starter):
     except OSError:
         raise OSError('ID path exists.')
 
-rst_starter = '''.. raw:: html
-
-    %path = "path/goes/here"
-    %kind = kinda["<choose from languages.py/langnumkind[lang]>"]
-    %level = 0 # in school years
+rst_starter = f'''.. raw:: html
+{lang_starter}
     <!-- html -->
 
 .. role:: asis(raw)
@@ -282,7 +273,7 @@ def task_initdb():
     def make_initdb():
         authors_file = os.path.join(basedir,'authors.yaml')
         with open(authors_file,'r') as f:
-            authors = yaml.load(f)
+            authors = yaml.full_load(f)
 
         available_langs = set([])
         for author in authors:
