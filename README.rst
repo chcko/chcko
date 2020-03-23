@@ -428,7 +428,7 @@ Plan
 
 - A user role is identified by an ID path/hierarchy::
 
-  school 1-n period 1-n teacher 1-n class 1-n student
+    school 1-n period 1-n teacher 1-n class 1-n student
 
 - Via this hierarchy a teacher has fast access to the done problems
   of his classes and students via an URL query.
@@ -634,13 +634,13 @@ A logged-in user assumes ownership of non-owned roles.
 
 If you register and create instances of school, period, teacher, class and student,
 then they are associated to you as a user (owned).
-Then you can query all instances below your instance in the hierarchy
+Then you can query all instances below your instance in the hierarchy::
 
-| School
-|     n Periods
-|         n Teachers
-|             n Classes
-|                 n Students
+  School
+      n Periods
+          n Teachers
+              n Classes
+                  n Students
 
 
 E.g.
