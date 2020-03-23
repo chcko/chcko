@@ -18,11 +18,11 @@ def main():
     with io.open(readme_filename, encoding="utf-8") as readme_file:
         readme = readme_file.read()
     dependencies = [
-            'psutil',
             'numpy',
             'matplotlib',
             'lxml',
             'sympy',
+            'txdir','psutil' # helpers
     ]
     setuptools.setup(
         name="chcko",

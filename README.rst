@@ -19,7 +19,8 @@ usable by students with or without learn coaches around the world.
 ``chcko`` makes it easy to compose a problem set for students,
 it checks the answers and gives the results.
 
-The focus is on collecting content not about code or format.
+The focus is on collecting science problems
+not about code or format.
 
 The problem packages are python packages.
 the whole system can be installed locally too.
@@ -279,7 +280,7 @@ Add a new content item with::
     make render
 
 Edit the problem text in ``en.html`` using a `text editor`_.
-See the example `above <example>`_.
+See the example `above <#example>`_.
 
 Then::
 
@@ -294,12 +295,16 @@ But all the needed tools are also available for Windows and Mac.
 
 On your PC you will need
 
-- `git <https://rogerdudler.github.io/git-guide/>`_.
-  `Introduction <https://git-scm.com/book/en/Getting-Started-First-Time-Git-Setup>`_.
+- `git <https://git-scm.com/download/win>`_
+- `python >= 3.7 <https://python.org/download>`_
 
-- `python > 3.7 <https://python.org/download>`_
+Then in a CLI and folder of your choice::
 
-``pip install -r requirements_dev.txt``
+  git clone https://github.com/chcko/chcko
+  cd chcko
+  pip install -r requirements_dev.txt
+  pip install chcko
+
 installs the python packages for development.
 
 `Sphinx`_ is only needed if you use `RST`_.
