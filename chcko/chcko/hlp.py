@@ -76,14 +76,6 @@ def listable(f):
     return to_elems
 
 
-def last(obj):
-    @wraps(obj)
-    def memoizer(*args, **kwargs):
-        if len(args) + len(kwargs) != 0:
-            obj.last = obj(*args, **kwargs)
-        return obj.last
-    return memoizer
-
 
 @listable
 def equal_eq(a, r):
@@ -501,6 +493,9 @@ class db_mixin:
             if obj.userkey is None and userkey is not None:
                 obj.userkey = userkey
                 to_save.append(obj)
+            elif obj.userkey is not None and userkey != obj.userkey:
+                return False
+            return True
         school = self.School.get_or_insert(
             school_,
             userkey=userkey)
@@ -776,16 +771,20 @@ class db_mixin:
                 nspr = [pe or '-'*len(studentplaces[i]) for i,pe in enumerate(studentpath)]
             else:
                 nspr = [pe or rndsp[i] for i,pe in enumerate(studentpath)]
-            student = self.add_student(nspr ,usr ,color)
-        elif usr:
+            student = self.add_student(nspr, usr, color)
+        if not student and usr:
             student = self.current_student(usr)
         if not student:
             chckostudenturlsafe = self.get_cookie('chcko_cookie_studenturlsafe')
             if chckostudenturlsafe:
                 student = self.from_urlsafe(chckostudenturlsafe)
-                if student and usr:
-                    if student.userkey != self.idof(usr):
-                        student = None
+                if student:
+                    if usr:
+                        if student.userkey and student.userkey != self.idof(usr):
+                            student = None
+                    if not usr:
+                        if student.userkey:
+                            student = None
         if not student and usr:
             student = self.first(self.query(self.Student,[self.Student.userkey==self.idof(usr)]))
         if not student:  # generate
@@ -793,9 +792,13 @@ class db_mixin:
         if usr and student:
             if not usr.current_student or (usr.current_student != self.idof(student)):
                 usr.current_student = self.idof(student)
-                self.save(usr)
+                tosave = [usr]
+                if student.userkey is None:
+                    student.userkey = self.idof(usr)
+                    tosave.append(student)
+                self.save(tosave)
         if student:
-            self.set_cookie('chcko_cookie_studenturlsafe',self.urlsafe(student.key))
+            self.set_cookie('chcko_cookie_studenturlsafe', self.urlsafe(student.key))
             bottle.SimpleTemplate.defaults["rolecolor"] = student.color or '#EEE'
             request.student = student
 

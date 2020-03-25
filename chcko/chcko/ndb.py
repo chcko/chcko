@@ -23,6 +23,7 @@ class User(Model):
     token = ndb.StringProperty()
     current_student = ndb.KeyProperty(kind='Student')
     lang = ndb.StringProperty(required=False)
+    created = ndb.DateTimeProperty(auto_now_add=True)
 
 class Base(Model):
     userkey = ndb.KeyProperty(kind='User')

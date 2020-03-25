@@ -36,8 +36,8 @@
                     <a
                     style="background-color:{{studentkey.get().color}}"
                     href="/{{request.lang}}/{{request.pagename}}?{{! addqs(db.urlstring(studentkey)) }}">
-                        %cntxt = [not ownd and '<em>'+an.string_id()+'</em>' or an.string_id() for an,ownd in key_ownd_list]
-                        {{!' &nbsp;&nbsp; '.join(cntxt)}}
+                        %role = [not ownd and '<em>'+an.string_id()+'</em>' or an.string_id() for an,ownd in key_ownd_list]
+                        {{!' &nbsp;&nbsp; '.join(role)}}
                     </a>
                     <li>
                     %end
@@ -94,7 +94,7 @@
     </div> 
     </div>
 
-    % elif request.pagename not in ['login','forgot','verification','password']:
+    % else:
 
     <div class="footer" style="border-top:double;background-color:{{rolecolor}}">
     <div class="grid_10">

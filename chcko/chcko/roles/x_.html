@@ -1,11 +1,19 @@
-% for anc in db.userroles(request.user):
-    % cntxt = [not users and '<em>'+an.string_id()+'</em>' or an.string_id() for an,users in anc]
-
-    <p>
-    <a href="/{{ request.lang }}/todo?{{!db.urlstring(anc[-1][0])}}">
-        {{!' &nbsp;&nbsp; '.join(cntxt)}}
+% for key_ownd_list in db.userroles(request.user):
+    % studentkey = key_ownd_list[-1][0]
+    % urlstr = db.urlstring(studentkey)
+    % student = studentkey.get()
+    % goto = "edits content done todo roles".split()
+    % for i,(an,ownd) in enumerate(key_ownd_list):
+    % levelstr = an.string_id() if ownd else '<em>'+an.string_id()+'</em>'
+    <div
+       class="grid_2"
+       style="text-align:center; background-color:{{student.color}}; margin-bottom:3px; padding-bottom:6px"
+    >
+    <a href="/{{ request.lang }}/{{goto[i]}}?{{!urlstr}}">
+        {{!levelstr}}
     </a>
-    <p>
+    </div>
+    % end
 % end
 
 % include('chcko/main')

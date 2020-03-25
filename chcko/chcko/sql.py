@@ -182,6 +182,7 @@ class User(Model):
     token = C(String)
     current_student = C(ForeignKey('Student.urlkey',use_alter=True))
     lang = C(String)
+    created = C(DateTime,default=datetime.datetime.now)
 
 class School(Model):
     userkey = C(ForeignKey('User.urlkey'))

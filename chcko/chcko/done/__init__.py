@@ -4,16 +4,25 @@ import re
 import datetime
 from urllib.parse import parse_qsl
 from chcko.chcko.db import db
-from chcko.chcko.hlp import last, problemplaces
 from chcko.chcko.util import PageBase
+from functools import wraps
+
+def takelast(obj):
+    @wraps(obj)
+    def memoizer(*args, **kwargs):
+        if len(args) + len(kwargs) != 0:
+            obj.last = obj(*args, **kwargs)
+        return obj.last
+    return memoizer
 
 
 def prepare(
         qs  # url query_string (after ?)
-        , skey  # start key, filter is filled up with it.
-                # student key normally, but can be other, e.g. school, too.
-                # if a parent belongs to user then all children can be queried
-        , userkey
+        ,skey  # start key, filter is filled up with it.
+               # student key normally, but can be other, e.g. school, too.
+               # if a parent belongs to user then all children can be queried
+        ,userkey
+        ,extraplace = 'Problem'
 ):
     '''prepares the parameters for db.depth_1st
 
@@ -30,7 +39,7 @@ def prepare(
     >>> p = prepare(qs,skey,None)[0]
 
     '''
-    @last
+    @takelast
     def filters(x):
         '''convert to GAE filters from
         lst is ["<field><operator><value>",...]
@@ -62,13 +71,13 @@ def prepare(
                 if age:
                     value = datetime.datetime.now(
                     ) - datetime.timedelta(**{age: int(value)})
-                    name = 'answered'
+                    name = 'created'
                 filters.append((name, op, value))
         return filters
     #qs = ''
-    PR = problemplaces
+    PR = db.studentplaces+[extraplace]
     # q=query, qq=*->[], qqf=filter->gae filter (name,op,value)
-    q = filter(None, [k.strip() for k, v in parse_qsl(qs, True) if k not in PR])
+    q = filter(None, [k.strip() for k, v in parse_qsl(qs, True) if k not in db.studentplaces])
     qq = [[] if x == '*' else x for x in q]
     qqf = [filters() if filters(x) else x for x in qq]
     # fill up to len(PR)
@@ -93,7 +102,7 @@ class Page(PageBase):
         qs = self.request.query_string
         skey = self.request.student.key
         userkey = self.request.user and db.idof(self.request.user)
-        self.done_table = lambda: db.depth_1st(*prepare(qs,skey,userkey))
+        self.page_table = lambda: db.depth_1st(*prepare(qs,skey,userkey))
 
     def post_response(self):
         todelete = []

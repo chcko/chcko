@@ -34,11 +34,17 @@
 </table>
 
 % if first:
-<p> 
+<p>
 <a href="/{{request.lang}}/content">
     {{tnoassignment}}
 </a> 
 </p>
 % end
 
-% include('chcko/main')
+% if request.user:
+    <p>{{t_I_assigned}}:</p>
+    % #difference is page_table
+    % include('chcko/done')
+% else:
+    % include('chcko/main')
+% end

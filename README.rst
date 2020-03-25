@@ -13,8 +13,9 @@ with example content package
 
     https://github.com/chcko/chcko-r
 
-``chcko.eu`` wants to collect problems,
+``chcko`` wants to collect problems,
 usable by students with or without learn coaches around the world.
+An infrastructure.
 
 ``chcko`` makes it easy to compose a problem set for students,
 it checks the answers and gives the results.
@@ -46,7 +47,7 @@ Example URLs:
 | https://chcko.eu/en/edits?School=S&Period=P&Teacher=T&Class=C&Student=-------
 | https://chcko.eu/en/content?r.a&r.bu
 | https://chcko.eu/en/content?r.a&&r.bu
-| https://chcko.eu/en/done?C&*&*
+| https://chcko.eu/en/done?*&*
 
 With ``&&`` instead of one ``&`` as separator in a *content* query, is called a **course**, here.
 In a course only one problem at a time is shown.
@@ -70,7 +71,7 @@ With ``Edits`` one can choose names.
 One can choose names via the URL, too.
 For example:
 
-  https://chcko.eu/en/edits?School=noschool&Period=2020&Teacher=noteacher&Class=myclass&Student=me
+  https://chcko.eu/en/edits?School=noschool&Period=2020&Teacher=noteacher&Class=noclass&Student=me
 
 Without login these names, random or not, are not protected.
 Their ownership changes to a logged-in user when accessed,
@@ -81,36 +82,56 @@ Step-by-step try in class without logging in:
 - Agree on a common ID for School, Period, Teacher and Class and
   a scheme for the Student, e.g. ``FirstnameL[astname]``.
 
-  - *School* can be considered as *Namespace*
-  - *Teacher* can be considered as *Subject*
+- Teacher visits:
 
-- First the teacher, then the students do:
+    https://chcko.eu/en/content?School=noschool&Period=2020&Teacher=noteacher&Class=noclass&Student=-------
+
+  The teacher is a student, too, but I suggest ``-------`` for the student field.
+  This is the default for a logged in user.
+
+  Alternatively:
 
   - open https://chcko.eu
   - Go to ``Edits`` (top left)
   - Enter the IDs.
-    The teacher is a student, too, but I suggest ``-------`` for the student field.
   - Press [OK].
+  - Go to ``Content``.
 
-- All students do a problem (e.g. enter https://chcko.eu/en?r.bu in the address line).
+- Students visit a problem (here ``r.bu``) via:
+
+    https://chcko.eu/en/content?School=noschool&Period=2020&Teacher=noteacher&Class=noclass&Student=GabiB&r.bu
+    https://chcko.eu/en/content?School=noschool&Period=2020&Teacher=noteacher&Class=noclass&Student=LauraB&r.bu
+    https://chcko.eu/en/content?School=noschool&Period=2020&Teacher=noteacher&Class=noclass&Student=LiliB&r.bu
+    ...
+
+  Alternatively they can also do the steps through
+
+  - ``Edits`` on https://chcko.eu and
+  - visit the problem afterwards via https://chcko.eu/en?r.bu.
 
 - The teacher enters the URL ``.../en/done?<classId>&*&*``
   to see if everybody was successful.
+  Note, that ``Class=`` is about setting current student,
+  while ``classId`` refers to the data to be queried.
   From right to left this means:
 
   - any problem (``*``)
   - of any student (``*``)
   - of the class ``<classID>``. The actual class ID must be used.
 
-  Students can query the results of all, too, and possibly help each other.
+  https://chcko.eu/en/done?noclass&*&*
 
+  Students can query the results of all, too, and possibly help each other.
 
 Reserve a Name
 --------------
 
 Login in.
-Go to ``Edits`` and choose a name.
-Alternatively visit the URL, e.g.:
+
+Then
+
+- Go to ``Edits`` and choose a name.
+- Alternatively, after having logged in, visit an URL with the names of you choice, e.g.:
 
   https://chcko.eu/en/edits?School=noschool&Period=2020&Teacher=noteacher
 
@@ -123,9 +144,11 @@ to create a whole class with no owner (independent of logged in or not).
 Then send an email to the students,
 with the link to be filled with their name:
 
-  https://chcko.eu/en/todo?School=noschool&Period=2020&Teacher=noteacher&Class=myclass&Student=<name>
+  https://chcko.eu/en/todo?School=noschool&Period=2020&Teacher=noteacher&Class=noclass&Student=<name>
 
-If they log in, they take ownership of the role.
+Or send each student separately the full link.
+
+If the students log in, they take ownership of the role.
 
 Assign
 ------
@@ -141,23 +164,80 @@ or use an URL:
 At the end of the page you can choose classes or students to assign to.
 Assigning a course (with the ``&&``) assigns the problems individually.
 
+The students
+
+- log in
+- go to ``Todo``
+- solve the assigned problems
+
 Check Done
 ----------
 
 To check the done problems of others, you need to be logged in.
 
-Change to the teacher (= subject) / class role.
+Change to the teacher / class / Role.
 
 - Go to the ``done`` tab.
 - Add ``?*&*`` to the URL:
 
   https://chcko.eu/en/done?*&*
 
+``*`` can be replaced by ``%2A``
+when sending the link, because some programs drop the ``*``.
+
+  https://chcko.eu/en/done?%2A&%2A
+
 ``*&*`` means: don't take the default but any ``student`` and ``problem``.
 ``?<school>&<period>&<teacher>&<class>&<student>&<problem>``
 is *defaulted to the left* with the current role names *if omitted*.
 
 See `done`_ for details on queries.
+
+Remove an Assignment
+--------------------
+
+The ``todo`` page has the same query format as the ``done`` page.
+
+  https://chcko.eu/en/todo?*&*
+
+Shows the given (and not yet done) assignments and
+allows to delete them selectively.
+
+Assume Role
+-----------
+
+As a logged in user you can have more roles.
+These roles are listed in the ``Roles`` tab.
+
+You can quickly assume another role via the menu below ``Student``.
+
+Remove a Role
+-------------
+
+- Assume the role
+- Go to the ``Edits`` tab
+- Choose ``delete``
+- Confirm
+
+There should be no easier way,
+because you lose all the history of the role,
+by deleting it.
+
+Change a Role
+-------------
+
+Same as `Remove a Role`_,
+but choose ``change`` instead.
+
+This moves all the history associated with a role
+to the new role and deletes the previous one.
+
+``change`` is a way to
+
+- leave a ``class`` (``teacher``, ``period``, ``school``)
+- and join another one
+
+without loosing one's history.
 
 Content Packages
 ================
@@ -328,7 +408,7 @@ The main purpose:
 
 - Automatically correct problems
 
-- Infrastructure to organize teaching (school, period, teacher/subject, class, student)
+- Infrastructure to organize teaching (school, period, teacher, class, student)
 
 - allow teachers/coaches to quickly check the problems of students
 
@@ -462,7 +542,6 @@ The data model is::
 
 The first 5 are called a role.
 A user has more roles.
-You can have more **teacher=subject** roles.
 
 DB is there for answers to problems, not for the problem texts.
 
@@ -573,7 +652,8 @@ An entry has this format::
     ``points``, ``answers``, ``nr``.
 
 - ``op`` consists of ``~=!<>``, where ``~`` means ``=``.
-  For the age (``answered``) of the done problem these abbreviations can be used::
+  For the age of a problem (since ``created``)
+  these abbreviations can be used::
 
     d=days, H=hours, M=minutes, S=seconds
 
