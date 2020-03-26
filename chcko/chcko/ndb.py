@@ -132,7 +132,7 @@ class Ndb(db_mixin):
         try:
             ndb.delete_multi(keys)
         except:
-            logger.info("ndb.delete_multi() failled")
+            pass#logger.info("ndb.delete_multi() failled")
 
     def delete_query(self,query):
         keys = query.iter(keys_only=True)

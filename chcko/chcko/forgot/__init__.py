@@ -35,7 +35,7 @@ class Page(PageBase):
             chckotesting = False
 
         confirmation_url = newurl('/{self.request.lang}/verification',qry,'')
-        logger.info(confirmation_url)
+        #logger.info(confirmation_url)
         m = chcko_import('chcko.forgot.' + self.request.lang)
         if send_mail(
                 self.email,

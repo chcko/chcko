@@ -84,8 +84,7 @@ class TestRunthrough(object):
 
     def test_register(self,chapp):
         self._signup(chapp)
-        #'message?msg=j' then email with link to verification
-        # this is skipped via
+        # 'message?msg=j' then email with link to verification
         assert '/verification' in self.resp.request.url
 
     def test_logout(self):
@@ -151,8 +150,9 @@ class TestRunthrough(object):
 
     def test_edits(self):
         cur = self.resp.lxml
-        curx = cur.xpath('//div[contains(text(),"School")]/text()')
-        self._store('curs', curx[1].strip())
+        curx = cur.xpath('//div[contains(text(),"School")]//text()')
+        curx = [x for x in curx if x.strip()]
+        self._store('curs', curx[-1].strip())
         self._store('resp', self.resp.goto('/en/edits'))
         for p in problemplaces[:-1]:
             self.resp.form[p] = 'tst'
@@ -177,7 +177,7 @@ class TestRunthrough(object):
         self._store('resp', self.resp.goto('/en/done?tst&*&*'))
         # tst does not belong to this user, therefore not listed
         cur = self.resp.lxml
-        tds = cur.xpath('//td[contains(text(),"tst")]/text()')
+        tds = cur.xpath('//td[contains(text(),"tst")]//text()')
         assert len(tds) == 1
         trs = cur.xpath('//tr')
         assert len(trs) == 6
@@ -186,8 +186,9 @@ class TestRunthrough(object):
         self._store('resp', self.resp.goto('/en/roles'))
         cur = self.resp.lxml
         curx = cur.xpath('//div[contains(text(),"School")]//text()')
+        curx = [x for x in curx if x.strip()]
         assert curx[1].strip() != self.curs
-        curh = cur.xpath('//a[contains(text(),"'+self.curs+'") and contains(@href,"todo")]/@href')[0]
+        curh = next(x for x in cur.xpath('//a[contains(@href,"todo")]/@href') if self.curs in x)
         self._store('resp', self.resp.goto(curh))
         cur = self.resp.lxml
         curx = cur.xpath('//div[contains(text(),"School")]/text()')
@@ -312,16 +313,18 @@ class TestRunthrough(object):
             curx.xpath('//a[contains(text(),"r.bu")]/@href')[0])
         self._store('resp', self.resp.goto(self.rbuhref))
         assert '0P' in self.resp
+        u_student = [x for x in curx.xpath('//div/text()') if 'tst' in x]
+        assert len(u_student) == 4
 
     def test_check_done_outside(self):
         r = self.resp.goto('/en/logout')
         self._store('resp', r.follow())
-        self._store('resp', self.resp.goto(self.rbuhref))
-        assert '0P' in self.resp
+        self._store('resp', self.resp.goto(self.rbuhref, expect_errors=True))
+        assert 'No Access 6' in self.resp
         # self.resp.showbrowser()
 
     def test_list_done_from_parent(self):
         self._store('resp', self.resp.goto('/en/done?tst&*&*'))
         curx = self.resp.lxml
-        u_student = curx.xpath('//td[contains(text(),"tst")]/text()')
-        assert len(u_student) == 4
+        u_student = [x for x in curx.xpath('//div/text()') if 'tst' in x]
+        assert len(u_student) == 0

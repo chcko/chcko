@@ -63,7 +63,7 @@ class Page(PageBase):
             self.problem = db.from_urlsafe(urlsafe)
             if self.problem:  # else it was deleted
                 if not isinstance(self.problem,db.Problem):
-                    raise HTTPError(404, "No such problem")
+                    raise HTTPError(404,'404_5')
                 # query_string here is "key=..."
                 # replace query_show/query_string with that of the problem to load the problem in tpl_from_qs()
                 self.query_show = self.problem.query_string
@@ -75,12 +75,18 @@ class Page(PageBase):
 
         if self.problem:
             keyOK = self.problem.key.parent()
-            while keyOK and keyOK.get().userkey != self.request.student.userkey:
+            userkey = self.request.student.userkey
+            while keyOK:
+                thislev = keyOK.get()
+                if thislev.userkey == userkey:
+                    break
+                elif userkey == None and thislev.userkey != None:
+                    keyOK = None
+                    break
                 keyOK = keyOK.parent()
             if not keyOK:
-                logger.warning(
-                    "%s not for %s", db.urlstring(self.problem.key), db.urlstring(self.request.student.key))
-                raise HTTPError(400,'no permission')
+                #logger.warning("%s not for %s", db.urlstring(self.problem.key), db.urlstring(self.request.student.key))
+                raise HTTPError(403,'403_6')
             self.problem_set = db.problem_set(self.problem)
         elif problemkey is None:  # XXX: Make deleting empty a cron job
             # remove unanswered problems for this user
@@ -127,12 +133,11 @@ class Page(PageBase):
 
         def _zip(rsv):
             if not self.current or rsv.query_string != self.current.query_string:
-                ms = 'query string ' + rsv.query_string
-                ms += ' not in sync with database '
+                ms = rsv.query_string
                 if self.current:
-                    ms += self.current.query_string
-                logger.info(ms)
-                raise HTTPError(400,ms)
+                    ms += ' != ' + self.current.query_string
+                #logger.info(ms)
+                raise HTTPError(400,'400_7 '+ms)
             from_py = rsv.load()  # for the things not stored, like 'names'
             from_py.update(db.fieldsof(self.current))
             from_py.update({
@@ -168,7 +173,7 @@ class Page(PageBase):
             else:
                 rsv.templatename = langlookup(atpl)
             if not rsv.templatename and re_id.match(atpl):
-                raise HTTPError(404, '✘ '+atpl)
+                raise HTTPError(404, '404_8 ✘ '+atpl)
             yield rsv.templatename
             del _chain[-1]
             if _chain and isinstance(_chain[-1], dict):
@@ -199,7 +204,7 @@ class Page(PageBase):
                 except AttributeError:
                     c = self.current or self.problem
                     if c:
-                        logger.info('data does not fit to template ' + str(c.given))
+                        #logger.info('data does not fit to template ' + str(c.given))
                         db.delete_keys([c.key])
                     raise
                 if cleanup:
@@ -254,7 +259,7 @@ class Page(PageBase):
         qparsed = parse_qsl(qs, True)
 
         if set(''.join(x+y for x,y in qparsed))&codemarkers:
-            raise HTTPError(400,'Wrong characters in query.')
+            raise HTTPError(400,'400_9')
 
         if not qparsed:
             return qparsed

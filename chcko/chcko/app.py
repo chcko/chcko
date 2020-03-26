@@ -17,7 +17,7 @@ def no_null_requests(end_of_route):
     if end_of_route is None:
         return
     if end_of_route.endswith('null'): #XXX: why does this null happen?
-        raise bottle.HTTPError(404,'not found')
+        raise bottle.HTTPError(404,'404_1')
 
 def lang_pagename(lang=None,pagename=None):
     if lang is None:
@@ -66,7 +66,7 @@ def findstatic(filename):
 @bottle.route('/<filename>.html')
 def statichtml(filename):
     if len(filename.split(os.sep)) > 1:
-        return bottle.HTTPError(403, "Access denied.")
+        return bottle.HTTPError(403,'403_2')
     if not os.path.splitext(filename)[1]:
         filename = filename+'.html'
     return findstatic(pj('chcko',filename))
@@ -86,7 +86,7 @@ def serve_favicon():
 def serve_image(filename,lang='en'):
     no_null_requests(filename)
     if len(filename.split(os.sep)) > 1:
-        return bottle.HTTPError(403, "Access denied.")
+        return bottle.HTTPError(403,'403_3')
     if not os.path.splitext(filename)[1]:
         filename = filename+'.png'
     return findstatic(pj('chcko','_images',filename))
@@ -97,7 +97,7 @@ def serve_image(filename,lang='en'):
 def serve_static(filename):
     no_null_requests(filename)
     if len(filename.split(os.sep)) > 1:
-        return bottle.HTTPError(403, "Access denied.")
+        return bottle.HTTPError(403,'403_4')
     return findstatic(pj('chcko','chcko','static',filename))
 
 #social
@@ -195,4 +195,12 @@ def fullpath(lang,pagename):
     except:
         print_exc()
         raise
+
+@bottle.error(400)
+@bottle.error(403)
+@bottle.error(404)
+def no_permission(error):
+    mod = chcko_import('chcko.message')
+    page = mod.Page(mod)
+    return page.get_response(msg='',errormsg=error.body)
 

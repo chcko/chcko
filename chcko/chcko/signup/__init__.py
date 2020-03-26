@@ -29,7 +29,7 @@ class Page(PageBase):
         qry = f'type=v&email={email}&token={token}'
 
         confirmation_url = newurl(f'/{self.request.lang}/verification',qry,'')
-        logger.info(confirmation_url)
+        #logger.info(confirmation_url)
         m = chcko_import('chcko.signup.' + self.request.lang)
         if send_mail(
                 email,

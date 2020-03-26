@@ -1,5 +1,5 @@
 <p>
-% if defined('msg'):
+% if defined('msg') and msg:
 % if msg == 'a':
     Den Benutzer {{email}} gibt es schon.
 % elif msg == 'b':
@@ -28,7 +28,9 @@
     Dieser Server hat kein Email. Das Passwort kann somit nicht wieder her gestellt werden.
 % end
 % else:
-    Willkommen.
+    % if defined('errormsg'):
+        {{! errormsg.replace('400_','Falsche Anfrage ').replace('403_','Kein Zugriff ').replace('404_','Nicht gefunden ') }}
+    % end
 % end
 </p>
 
