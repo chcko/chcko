@@ -44,7 +44,7 @@ Pages are:
 
 Example URLs:
 
-| https://chcko.eu/en/edits?School=S&Period=P&Teacher=T&Class=C&Student=-------
+| https://chcko.eu/en/edits?School=S&Field=F&Teacher=T&Class=C&Role=-------
 | https://chcko.eu/en/content?r.a&r.bu
 | https://chcko.eu/en/content?r.a&&r.bu
 | https://chcko.eu/en/done?*&*
@@ -54,6 +54,15 @@ In a course only one problem at a time is shown.
 ``&&&`` marks the current position.
 For example, ``.../en/content?r.bd&&r.ba&&&r.a`` has ``r.a`` as current item in the course.
 
+
+The names ``School, Field, Teacher, Class, Role``
+form namespaces levels to describe a student *role*.
+What string is used in each level is up to the user.
+
+The namespaces are of organizational nature.
+The namepace names are taken from usual organizational structures.
+
+
 See `queries`_ for details.
 
 Use Cases
@@ -62,16 +71,16 @@ Use Cases
 No Login
 --------
 
-Without login a random ``Student`` is generated.
-One can revisit the ``Student`` later via the URL, for example
+Without login a random ``Role`` is generated.
+One can revisit the ``Role`` later via the URL, for example
 
-  https://chcko.eu/en/done?School=7f277b84&Period=8084&Teacher=5ab4&Class=87b5&Student=459671edc836
+  https://chcko.eu/en/done?School=7f277b84&Field=8084&Teacher=5ab4&Class=87b5&Role=459671edc836
 
 With ``Edits`` one can choose names.
 One can choose names via the URL, too.
 For example:
 
-  https://chcko.eu/en/edits?School=noschool&Period=2020&Teacher=noteacher&Class=noclass&Student=me
+  https://chcko.eu/en/edits?School=noschool&Field=2020&Teacher=noteacher&Class=noclass&Role=me
 
 Without login these names, random or not, are not protected.
 Their ownership changes to a logged-in user when accessed,
@@ -79,12 +88,12 @@ either via ``Edits`` or via URL.
 
 Step-by-step try in class without logging in:
 
-- Agree on a common ID for School, Period, Teacher and Class and
-  a scheme for the Student, e.g. ``FirstnameL[astname]``.
+- Agree on a common ID for School, Field, Teacher and Class and
+  a scheme for the Role, e.g. ``FirstnameL[astname]``.
 
 - Teacher visits:
 
-    https://chcko.eu/en/content?School=noschool&Period=2020&Teacher=noteacher&Class=noclass&Student=-------
+    https://chcko.eu/en/content?School=noschool&Field=2020&Teacher=noteacher&Class=noclass&Role=-------
 
   The teacher is a student, too, but I suggest ``-------`` for the student field.
   This is the default for a logged in user.
@@ -99,9 +108,9 @@ Step-by-step try in class without logging in:
 
 - Students visit a problem (here ``r.bu``) via:
 
-    https://chcko.eu/en/content?School=noschool&Period=2020&Teacher=noteacher&Class=noclass&Student=GabiB&r.bu
-    https://chcko.eu/en/content?School=noschool&Period=2020&Teacher=noteacher&Class=noclass&Student=LauraB&r.bu
-    https://chcko.eu/en/content?School=noschool&Period=2020&Teacher=noteacher&Class=noclass&Student=LiliB&r.bu
+    https://chcko.eu/en/content?School=noschool&Field=2020&Teacher=noteacher&Class=noclass&Role=GabiB&r.bu
+    https://chcko.eu/en/content?School=noschool&Field=2020&Teacher=noteacher&Class=noclass&Role=LauraB&r.bu
+    https://chcko.eu/en/content?School=noschool&Field=2020&Teacher=noteacher&Class=noclass&Role=LiliB&r.bu
     ...
 
   Alternatively they can also do the steps through
@@ -133,18 +142,18 @@ Then
 - Go to ``Edits`` and choose a name.
 - Alternatively, after having logged in, visit an URL with the names of you choice, e.g.:
 
-  https://chcko.eu/en/edits?School=noschool&Period=2020&Teacher=noteacher
+  https://chcko.eu/en/edits?School=noschool&Field=2020&Teacher=noteacher
 
 Create a Class
 --------------
 
 In the ``Edits`` tab,
-the ``Student`` input box uses the first of ``;,`` as a separator
+the ``Role`` input box uses the first of ``;,`` as a separator
 to create a whole class with no owner (independent of logged in or not).
 Then send an email to the students,
 with the link to be filled with their name:
 
-  https://chcko.eu/en/todo?School=noschool&Period=2020&Teacher=noteacher&Class=noclass&Student=<name>
+  https://chcko.eu/en/todo?School=noschool&Field=2020&Teacher=noteacher&Class=noclass&Role=<name>
 
 Or send each student separately the full link.
 
@@ -211,7 +220,7 @@ Assume Role
 As a logged in user you can have more roles.
 These roles are listed in the ``Roles`` tab.
 
-You can quickly assume another role via the menu below ``Student``.
+You can quickly assume another role via the menu below ``Role``.
 
 Remove a Role
 -------------
@@ -590,7 +599,7 @@ See `languages.py`_.
 
 ``<query>`` starts after the ``?`` and it is a ``&``-separated list.
 ``<query>`` can contain
-``School=<LLL>&Period=<DDD>&Teacher=<RRR>&Class=<SSS>&Student=<TTT>``
+``School=<LLL>&Field=<DDD>&Teacher=<RRR>&Class=<SSS>&Role=<TTT>``
 for all pages.
 
 content
@@ -605,7 +614,7 @@ an English content page with one ``r.a`` and two ``r.by`` problems.
 Use ``&&`` instead of ``&`` to show one problem at a time (**course**).
 
 For logged-in users it is possible
-to make **assignments** to class/students with the same School-Period-Teacher prefix.
+to make **assignments** to class/students with the same School-Field-Teacher prefix.
 You must have created the teacher role, before the others.
 
 Problems have more questions and every question has points associated (default 1).
@@ -650,8 +659,8 @@ An entry has this format::
 - ``name`` is the name of the record
 - ``field`` is a field of the record
 
-    All records have a name, ``userkey`` and ``created``. School, Period,
-    Teacher and Class have no other fields.  In addition Student has ``color``
+    All records have a name, ``userkey`` and ``created``. School, Field,
+    Teacher and Class have no other fields.  In addition Role has ``color``
     and Problem has ``query_string``, ``lang``, ``given``, ``created``,
     ``answered``, ``collection``, ``inputids``, ``results``, ``oks``,
     ``points``, ``answers``, ``nr``.
@@ -680,7 +689,7 @@ edits
 ^^^^^
 
 ``../<lang>/edits`` allows to add, change or delete IDs for
-School, Period, Teacher, Class and Student.
+School, Field, Teacher, Class and Role.
 For fields left empty 
 
 - ``-`` is used for logged in users
@@ -725,10 +734,10 @@ then they are associated to you as a user (owned).
 Then you can query all instances below your instance in the hierarchy::
 
   School
-      n Periods
+      n Fields
           n Teachers
               n Classes
-                  n Students
+                  n Roles
 
 
 E.g.
