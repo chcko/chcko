@@ -1,4 +1,4 @@
-% for key_ownd_list in db.userroles(request.user):
+% for key_ownd_list in db.userroles(self.request.user):
     % studentkey = key_ownd_list[-1][0]
     % urlstr = db.urlstring(studentkey)
     % student = studentkey.get()
@@ -9,7 +9,7 @@
        class="grid_2"
        style="text-align:center; background-color:{{student.color}}; margin-bottom:3px; padding-bottom:6px"
     >
-    <a href="/{{ request.lang }}/{{goto[i]}}?{{!urlstr}}">
+    <a href="/{{ self.request.lang }}/{{goto[i]}}?{{!urlstr}}">
         {{!levelstr}}
     </a>
     </div>

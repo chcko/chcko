@@ -34,8 +34,8 @@ function validate() {
 <br>
 </form>
 
-<a href="/{{request.lang}}/forgot" id="forgot">{{tforgot}}</a><br>
-<a href="/{{request.lang}}/signup" id="signup">{{tsignup}}</a>
+<a href="/{{self.request.lang}}/forgot" id="forgot">{{tforgot}}</a><br>
+<a href="/{{self.request.lang}}/signup" id="signup">{{tsignup}}</a>
 
 <script> 
     var emailinput = document.getElementById('email');
@@ -43,11 +43,11 @@ function validate() {
     forgot = document.getElementById('forgot');
     signup.onclick = function () {
         if (emailinput.value != "")
-            this.href = ('/{{request.lang}}/signup?email=')+emailinput.value;
+            this.href = ('/{{self.request.lang}}/signup?email=')+emailinput.value;
     };
     forgot.onclick = function () {
         if (emailinput.value != "")
-            this.href = ('/{{request.lang}}/forgot?email=')+emailinput.value;
+            this.href = ('/{{self.request.lang}}/forgot?email=')+emailinput.value;
     };
 </script>
 

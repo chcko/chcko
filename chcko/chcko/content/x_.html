@@ -43,20 +43,20 @@
     <p>{{texplain}}</p>
 
     % for knd, lnks in content:
-    <p><b><a href="/{{request.lang}}/content?kind={{knd}}">{{knd}}</a></b><br>
+    <p><b><a href="/{{self.request.lang}}/content?kind={{knd}}">{{knd}}</a></b><br>
        % for linktext,lnklvl,leaf,depth in lnks:
           % if not leaf:
-          <small>({{depth}})</small><em><a href="/{{request.lang}}/content?path={{linktext}}">{{linktext}}</a>:</em>
+          <small>({{depth}})</small><em><a href="/{{self.request.lang}}/content?path={{linktext}}">{{linktext}}</a>:</em>
           % else:
              % lnk,lvl = lnklvl
-             <small>({{depth}})</small><a href="/{{request.lang}}/content?{{lnk}}">{{linktext}}</a>
+             <small>({{depth}})</small><a href="/{{self.request.lang}}/content?{{lnk}}">{{linktext}}</a>
              <input type="checkbox" name="choice" value="{{lnk}}" autocomplete="off">
              % try:
              % authorid = lnk.split('.')[0]
-             (<a href="/{{request.lang}}/content?link={{authorid}}">{{authorid}}</a>)
+             (<a href="/{{self.request.lang}}/content?link={{authorid}}">{{authorid}}</a>)
              % except: pass
              %end
-             <a href="/{{request.lang}}/content?level={{lvl}}">{{lvl}}</a>
+             <a href="/{{self.request.lang}}/content?level={{lvl}}">{{lvl}}</a>
           % end
        % end
     % end
@@ -97,8 +97,8 @@
             //    else
             //        a[value]=a[value]+1;
             //}
-            //window.location.href="/{{request.lang}}/content?"+$.param(a)
-            window.location.assign("/{{request.lang}}/content?"+acomposed.val()) // keeps history to go back to previous location in course
+            //window.location.href="/{{self.request.lang}}/content?"+$.param(a)
+            window.location.assign("/{{self.request.lang}}/content?"+acomposed.val()) // keeps history to go back to previous location in course
         });
     </script>
 
@@ -126,7 +126,7 @@
 
     %cq = query_string
     %pe = course_labels(cq)
-    %alinks = ['/'+request.lang+'/content?'+x for x in [start_qs(cq),next_qs(cq,-1),cq,next_qs(cq),end_qs(cq)]]
+    %alinks = ['/'+self.request.lang+'/content?'+x for x in [start_qs(cq),next_qs(cq,-1),cq,next_qs(cq),end_qs(cq)]]
 
     %def qsnav(where,sign):
     <button class="grid_1" type="button" onclick="window.location.href='{{ alinks[where] }}';" id="nbutton">{{ sign }}</button>
@@ -162,12 +162,12 @@
     % end
 
     % # ASSIGN
-    % if request.user:
-        % teacher = request.student.key.parent().parent().get()
-        % if teacher.userkey == db.idof(request.user): # self assignment is possible
-            <form action="/{{request.lang}}/todo" method="post">
+    % if self.request.user:
+        % teacher = self.request.student.key.parent().parent().get()
+        % if teacher.userkey == db.idof(self.request.user): # self assignment is possible
+            <form action="/{{self.request.lang}}/todo" method="post">
                 % fieldset = False
-                % for ee in db.assignable(teacher,request.user):
+                % for ee in db.assignable(teacher,self.request.user):
                     % e = ee.key
                     % kind = e.kind()
                     % if kind =='Class':

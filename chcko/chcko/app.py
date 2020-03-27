@@ -44,8 +44,12 @@ def lang_pagename(lang=None,pagename=None):
     return lang,pagename
 
 @bottle.hook('before_request')
-def trailing_slash():
-    bottle.request.environ['PATH_INFO'] = bottle.request.environ['PATH_INFO'].rstrip('/')
+def normalize_url():
+    orgpath = bottle.request.environ['PATH_INFO']
+    pathent = orgpath.strip('/').split('/')
+    if len(pathent)> 2 and not '_images' in pathent and not 'auth' in pathent:
+        pass
+    bottle.request.environ['PATH_INFO'] = orgpath.rstrip('/')
 
 pj = os.path.join
 
@@ -55,13 +59,14 @@ ROOTS = [x for x in sys.path
 d = os.path.dirname
 ROOT = d(d(d(__file__)))
 def findstatic(filename):
+    res = bottle.HTTPError(404,'404_A '+filename)
     for r in ROOTS:
         res = bottle.static_file(filename,root=r)
         if not isinstance(res,bottle.HTTPError):
             return res
     return res
 
-#for google verification
+# for google verification
 # test: http://localhost:8080/google509fdbaf2f77476f.html
 @bottle.route('/<filename>.html')
 def statichtml(filename):
@@ -170,7 +175,7 @@ def logout(lang):
     bottle.redirect(f'/{lang}/content')
 
 @bottle.route('/<lang>/<pagename>',method=['GET','POST'])
-def fullpath(lang,pagename):
+def fullpath(lang,pagename,**kextra):
     no_null_requests(pagename)
     try:
         lang,pagename = lang_pagename(lang,pagename)
@@ -185,7 +190,7 @@ def fullpath(lang,pagename):
         mod = chcko_import('chcko.'+pagename)
         page = mod.Page(mod)
         if bottle.request.route.method == 'GET':
-            respns = page.get_response()
+            respns = page.get_response(**kextra)
         else:
             respns = page.post_response()
         return respns
@@ -200,7 +205,10 @@ def fullpath(lang,pagename):
 @bottle.error(403)
 @bottle.error(404)
 def no_permission(error):
-    mod = chcko_import('chcko.message')
-    page = mod.Page(mod)
-    return page.get_response(msg='',errormsg=error.body)
+    try:
+        return fullpath(None,'message',msg='',errormsg=error.body)
+    except:
+        mod = chcko_import('chcko.message')
+        page = mod.Page(mod)
+        return page.get_response(msg='',errormsg=error.body)
 

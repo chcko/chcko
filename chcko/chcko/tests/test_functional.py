@@ -59,6 +59,18 @@ class TestRunthrough(object):
         r = self.resp.form.submit(expect_errors=True)
         self._store('resp', r.follow())
 
+    def test_wrong_html(self,chapp):
+        r = chapp.get('/ldkjfow.html',expect_errors=True)
+        assert 'chcko' in r
+
+    def test_wrong_image(self,chapp):
+        r = chapp.get('/en/_images/jfj',expect_errors=True)
+        assert 'chcko' in r
+        r = chapp.get('/_images/jfj',expect_errors=True)
+        assert 'chcko' in r
+        r = chapp.get('/jfj.png',expect_errors=True)
+        assert 'chcko' in r
+
     def test_default_lang(self,chapp):
         r = chapp.get('/')
         assert r.status == '200 OK'
@@ -77,10 +89,34 @@ class TestRunthrough(object):
         assert url_lang(self.resp.request.url) in languages
 
     def test_wrong_content(self,chapp):
-        #r = chapp.get('/en/?wrong', status=200)
-        #assert '404' in r.status
         r = chapp.get('/en/?wrong')
         assert r.status == '200 OK'
+        r = chapp.get('/en/?odufs.wew',expect_errors=True)
+        assert 'chcko' in r
+        r = chapp.get('/en/?erljy.woeur&odufs.wew',expect_errors=True)
+        assert 'chcko' in r
+
+    def test_wrong_done(self,chapp):
+        r = chapp.get('/en/done/dfs',expect_errors=True)
+        assert 'chcko' in r
+        r = chapp.get('/en/done/*/',expect_errors=True)
+        assert 'chcko' in r
+        r = chapp.get('/en/done?kwuerlhg=9')
+        assert 'chcko' in r
+
+    def test_wrong_todo(self,chapp):
+        r = chapp.get('/en/todo/dfs',expect_errors=True)
+        assert 'chcko' in r
+        r = chapp.get('/en/todo/*/',expect_errors=True)
+        assert 'chcko' in r
+        r = chapp.get('/en/todo?kwuerlhg=9')
+        assert 'chcko' in r
+
+    def test_noroles(self,chapp):
+        r = chapp.get('/en/roles')
+        assert '302' in r.status
+        self._store('resp', r.follow())
+        assert 'login' in self.resp.request.url
 
     def test_register(self,chapp):
         self._signup(chapp)
@@ -147,6 +183,13 @@ class TestRunthrough(object):
         r = self.resp.form.submit()
         self._store('resp', r.follow())
         assert 'msg=d' in self.resp.request.url
+
+    def test_loginedwrong(self,chapp):
+        r = chapp.get('/en/?fdsr.bdfsu',expect_errors=True)
+        assert 'Logout' in r
+        breakpoint()
+        r = chapp.get('/en/done/*',expect_errors=True)
+        assert 'Logout' in r
 
     def test_edits(self):
         cur = self.resp.lxml

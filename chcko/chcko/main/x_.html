@@ -1,41 +1,70 @@
+<%
+if not defined('rolecolor'):
+    rolecolor = '#EEE'
+end
+if not defined('social_logins'):
+    social_logins = {}
+end
+try:
+    language = language
+except:
+    language = 'en'
+end
+try:
+    pagename = self.request.pagename
+except:
+    pagename = 'message'
+end
+try:
+    user = self.request.user
+except:
+    user = None
+end
+try:
+    key_ownd_path = db.key_ownd_path(self.request.student,user)
+except:
+    key_ownd_path = []
+end
+%>
+
 % if not defined('header'):
 % def header():
 
     %for page, txt in [('edits',tedit),('content',tcontent),('done',tdone),('todo',ttodo),('roles',troles)]:
     <div class="grid_2"
-        %if request.pagename == page:
+        %if pagename == page:
         style="text-align:center;border-bottom:1px solid;background-color:{{rolecolor}}"
         %else:
         style="text-align:center"
         %end
         >
-        %if request.user is None and page=='roles':
+        %if user is None and page=='roles':
             <p> &nbsp;</p>
         %else:
-            <p><a href="/{{request.lang}}/{{page}}">{{txt}}</a></p>
+            <p><a href="/{{language}}/{{page}}">{{txt}}</a></p>
         %end
     </div>
     %end
 
     <div class="header" style="background-color:{{rolecolor}}">
 
-    %if request.user:
-        %for key2prnt,is_users in db.key_ownd_path(request.student,request.user):
+    %if user:
+        %for key2prnt,is_users in key_ownd_path:
         <div class="grid_2">
             %if key2prnt.kind()=='Student':
             <ul id="nav">
                 {{util.translate(key2prnt.kind())}}<br>
                 <li>
-                %addqs = lambda x: request.query_string+'&'+x if request.query_string else x
-                <a href="/{{request.lang}}/{{request.pagename}}?{{! addqs(db.urlstring(key2prnt)) }}">
+                %addqs = lambda x: self.request.query_string+'&'+x if self.request.query_string else x
+                <a href="/{{language}}/{{pagename}}?{{! addqs(db.urlstring(key2prnt)) }}">
                     {{key2prnt.string_id()}} </a>
                 <ul style="text-align:right">
-                    %for key_ownd_list in db.userroles(request.user):
+                    %for key_ownd_list in db.userroles(user):
                     %studentkey = key_ownd_list[-1][0]
                     <li>
                     <a
                     style="background-color:{{studentkey.get().color}}"
-                    href="/{{request.lang}}/{{request.pagename}}?{{! addqs(db.urlstring(studentkey)) }}">
+                    href="/{{language}}/{{pagename}}?{{! addqs(db.urlstring(studentkey)) }}">
                         %role = [not ownd and '<em>'+an.string_id()+'</em>' or an.string_id() for an,ownd in key_ownd_list]
                         {{!' &nbsp;&nbsp; '.join(role)}}
                     </a>
@@ -55,7 +84,7 @@
         </div>
         %end
     %else:
-        %for key2prnt,is_users in db.key_ownd_path(request.student,None):
+        %for key2prnt,is_users in key_ownd_path:
             %if key2prnt.kind()=='Student':
             <div class="grid_2" style="text-align:right">
             %else:
@@ -67,7 +96,7 @@
             %else:
                 {{key2prnt.string_id()}}
             %end
-        </div>
+            </div>
         %end
     %end
 
@@ -80,16 +109,16 @@
 % if not defined('footer'):
 % def footer():
 
-    % if request.user:
+    % if user:
 
     <div class="footer" style="border-top:double;background-color:{{rolecolor}}">
     <div class="grid_10">
-        {{ db.user_name(request.user) }}
+        {{ db.user_name(user) }}
         &nbsp;
-        <a href="/{{request.lang}}/logout">{{ tlogout }} </a>
+        <a href="/{{language}}/logout">{{ tlogout }} </a>
         &nbsp;
-        %if not db.is_social_login(request.user):
-            <a href="/{{request.lang}}/password">{{ tchangepassword }} </a>
+        %if not db.is_social_login(user):
+            <a href="/{{language}}/password">{{ tchangepassword }} </a>
         %end
     </div> 
     </div>
@@ -104,7 +133,7 @@
 
     <div class="footer" style="background-color:{{rolecolor}}">
         <div class="grid_2">
-        <a href="/{{request.lang}}/login">chcko</a>
+        <a href="/{{language}}/login">chcko</a>
         %if len(social_logins)>0:
         {{ torvia }}
         </div> 
@@ -140,8 +169,8 @@
 
 % if not defined('title'):
 % def title():
-    % if request.user:
-        {{db.user_name(request.user)}}
+    % if user:
+        {{db.user_name(user)}}
     % else:
         chcko
     % end
@@ -178,7 +207,7 @@
     end
     %>
 
-    % if request.user:
+    % if user:
     <style>
     ul#nav {
         display: inline;

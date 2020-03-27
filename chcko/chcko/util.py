@@ -135,16 +135,19 @@ class PageBase:
         SimpleTemplate.defaults.update(from_py(mod))
         SimpleTemplate.defaults.update({
             'self': self,
-            'request': self.request,
-            'response': self.response,
             'util': self.util,
-            'kinda': langkindnum[self.request.lang],
-            'numkind': langnumkind[self.request.lang],
             'langs': langs,
             'db': db,
-            'logger': logger,
             'social_logins': social_logins,
+            'logger': logger
         })
+        try:
+            SimpleTemplate.defaults.update({
+                'kinda': langkindnum[self.request.lang],
+                'numkind': langnumkind[self.request.lang]
+            })
+        except:
+            pass
     def get_response(self):
         res = template('chcko.'+self.request.pagename,**self.request.params,
                 template_lookup=mklookup(self.request.lang))

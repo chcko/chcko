@@ -22,7 +22,7 @@
             % if te[-1]:
                 overdue:
             % end
-            <a href="/{{request.lang}}/content?{{ate[1]}}">{{ate[0]}}</a>
+            <a href="/{{self.request.lang}}/content?{{ate[1]}}">{{ate[0]}}</a>
         % else:
             {{ate}}
         % end
@@ -35,13 +35,13 @@
 
 % if first:
 <p>
-<a href="/{{request.lang}}/content">
+<a href="/{{self.request.lang}}/content">
     {{tnoassignment}}
 </a> 
 </p>
 % end
 
-% if request.user:
+% if self.request.user:
     <p>{{t_I_assigned}}:</p>
     % #difference is page_table
     % include('chcko/done')

@@ -22,12 +22,12 @@
 <h1>{{ ttitle }}</h1>
 
 <p>
-{{db.user_email(request.user)}}
+{{db.user_email(self.request.user)}}
 </p>
 
 <form method="POST" name=pwd onsubmit='return validate()'>
     <label>{{tselect}}</label><br>
-    <p><label for="fullname">{{tfullname}}</label>&nbsp;<input type="text" value="{{request.user.fullname}}" name="fullname"/></p>
+    <p><label for="fullname">{{tfullname}}</label>&nbsp;<input type="text" value="{{self.request.user.fullname}}" name="fullname"/></p>
     <p><label for="password">{{tpassword}}</label>&nbsp;<input type="password" name="password" /></p>
     <p><label for="confirmp">{{tconfirm}}*</label>&nbsp;<input type="password" name="confirmp" /></p>
     <p><input type="hidden" name="token" value="{{ defined('token') and token or ''}}" /></p>

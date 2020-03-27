@@ -269,6 +269,9 @@ Example content layout::
       ├── README.rst
       └── setup.py
 
+Image file names in ``_images`` are either random or
+otherwise unique by encoding author ID, problem ID, content and possibly language.
+
 ``__init__.py`` is always there.
 Altogether it is a `Python <https://docs.python.org>`__ package,
 with ``chcko`` `namespace <https://packaging.python.org/guides/packaging-namespace-packages/>`__
