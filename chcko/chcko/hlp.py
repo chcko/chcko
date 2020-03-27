@@ -20,7 +20,7 @@ from chcko.chcko.languages import langkindnum, langnumkind, kindint
 from chcko.chcko.auth import (
   gen_salt
   ,chckosecret
-  ,random_student_path
+  ,random_path
   ,generate_password_hash
   ,check_password_hash
 )
@@ -373,19 +373,19 @@ def normqs(qs):
         return qparsed[0][0]
     return qs
 
-studentplaces = ['School', 'Period', 'Teacher', 'Class', 'Student']
-problemplaces = studentplaces + ['Problem']
+pathlevels = ['School', 'Field', 'Teacher', 'Class', 'Role']
+problemplaces = pathlevels + ['Problem']
 
 def filter_student(querystring):
-    '''filter out studentplaces and color
-    >>> querystring = 'School=b&Period=3&Teacher=5e&Class=9&Student=0&color=#E&bm&ws>0,d~1&b.v=3'
+    '''filter out pathlevels and color
+    >>> querystring = 'School=b&Field=3&Teacher=5e&Class=9&Role=0&color=#E&bm&ws>0,d~1&b.v=3'
     >>> filter_student(querystring)
     'bm&ws>0,d~1&b.v=3'
 
     '''
     qfiltered = [x  for x in
             parse_qsl(querystring, True)
-            if x[0] not in studentplaces + ['color']]
+            if x[0] not in pathlevels + ['color']]
     qsfiltered = '&'.join([k + '=' + v if v else k for k, v in qfiltered])
     return qsfiltered
 
@@ -419,13 +419,13 @@ def key_value_leaf_id(p_ll):  # key_value_leaf_depth
 
 class db_mixin:
     def urlstring(self,key):
-        #'School=myschool&Period=myperiod&Teacher=myteacher&Class=myclass&Student=myself'
+        #'School=myschool&Field=myfield&Teacher=myteacher&Class=myclass&Role=myself'
         return '&'.join([r + '=' + str(v) for r, v in key.pairs()])
 
     def init_db(self):
         self.clear_index()
         self.available_langs = []
-        self.studentplaces = studentplaces
+        self.pathlevels = pathlevels
         chckopackages = set(os.path.basename(chckopath) for chckopath in AUTHORDIRS)
         chckopackages = chckopackages - set(['chcko'])
         all_problems = []
@@ -487,7 +487,7 @@ class db_mixin:
 
     def add_student(self, studentpath, user=None, color=None):
         userkey = user and self.idof(user) or None
-        school_, period_, teacher_, class_, student_ = studentpath
+        school_, field_, teacher_, class_, student_ = studentpath
         to_save = []
         def claim_ownership(obj):
             if obj.userkey is None and userkey is not None:
@@ -500,14 +500,14 @@ class db_mixin:
             school_,
             userkey=userkey)
         claim_ownership(school)
-        period = self.Period.get_or_insert(
-            period_,
+        field = self.Field.get_or_insert(
+            field_,
             parent=school.key,
             userkey=userkey)
-        claim_ownership(period)
+        claim_ownership(field)
         teacher = self.Teacher.get_or_insert(
             teacher_,
-            parent=period.key,
+            parent=field.key,
             userkey=userkey)
         claim_ownership(teacher)
         clss = self.Class.get_or_insert(
@@ -528,7 +528,7 @@ class db_mixin:
         else:
             ukey = userkey
         for student_ in filter(lambda x:x,students_):
-            stdnt = self.Student.get_or_insert(
+            stdnt = self.Role.get_or_insert(
                 student_,
                 parent=clss.key,
                 userkey=ukey,
@@ -594,15 +594,15 @@ class db_mixin:
                 todelete.append(anobj.key)
         self.delete_keys(todelete)
     def assignable(self, teacher, usr):
-        for akey in self.depth_1st(keys=[teacher.key], kinds='Teacher Class Student'.split(),
+        for akey in self.depth_1st(keys=[teacher.key], kinds='Teacher Class Role'.split(),
                               userkey=usr and self.idof(usr)):
             yield akey
     def assign_table(self,student, usr):
-        for e in self.depth_1st(keys=[student.key], kinds='Student Assignment'.split(),
+        for e in self.depth_1st(keys=[student.key], kinds='Role Assignment'.split(),
                            userkey=usr and self.idof(usr)):
             yield e
     def userroles(self, usr):
-        students = self.allof(self.query(self.Student,[self.Student.userkey==self.idof(usr)]))
+        students = self.allof(self.query(self.Role,[self.Role.userkey==self.idof(usr)]))
         for student in students:
             yield self.key_ownd_path(student, usr)
     def key_ownd_path(self, student, usr):
@@ -730,13 +730,13 @@ class db_mixin:
                 return [datefmt(e.answered), e.answers]
             else:
                 return [datefmt(e.answered), [bool(x) for x in e.oks] if e.oks else [], e.answers, e.results]
-        elif isinstance(e, self.Student):
+        elif isinstance(e, self.Role):
             return ['', '', '', '', e.key.string_id()]
         elif isinstance(e, self.Class):
             return ['', '', '', e.key.string_id()]
         elif isinstance(e, self.Teacher):
             return ['', '', e.key.string_id()]
-        elif isinstance(e, self.Period):
+        elif isinstance(e, self.Field):
             return ['', e.key.string_id()]
         elif isinstance(e, self.School):
             return [e.key.string_id()]
@@ -748,10 +748,10 @@ class db_mixin:
         #    return ['no such object or no permission']
         return []
     def student_by(self):
-        '''There is always a student role
+        '''There is always a student
 
-        - There is a student role per client without user
-        - There are more student roles for a user with one being current
+        - There is a student per client without user
+        - There are more students for a user with one being current
 
         '''
         request, response = bottle.request, bottle.response
@@ -761,14 +761,14 @@ class db_mixin:
             usr = None
         student = None
         studentpath = [request.params.get(plc,'') # or request.params.get(plc[:2],'')
-                       for plc in studentplaces]
-        rndsp = random_student_path(seed=request.remote_addr)
+                       for plc in pathlevels]
+        rndsp = random_path(seed=request.remote_addr)
         color = request.params.get('color','')
         request.query_string = filter_student(request.query_string)
         if ''.join(studentpath) != '':
             if usr:
                 # '------' can be interpreted as parent is owned
-                nspr = [pe or '-'*len(studentplaces[i]) for i,pe in enumerate(studentpath)]
+                nspr = [pe or '-'*len(pathlevels[i]) for i,pe in enumerate(studentpath)]
             else:
                 nspr = [pe or rndsp[i] for i,pe in enumerate(studentpath)]
             student = self.add_student(nspr, usr, color)
@@ -786,7 +786,7 @@ class db_mixin:
                         if student.userkey:
                             student = None
         if not student and usr:
-            student = self.first(self.query(self.Student,[self.Student.userkey==self.idof(usr)]))
+            student = self.first(self.query(self.Role,[self.Role.userkey==self.idof(usr)]))
         if not student:  # generate
             student = self.add_student(rndsp, usr, color)
         if usr and student:

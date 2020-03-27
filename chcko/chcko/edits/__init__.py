@@ -7,8 +7,8 @@ class Page(PageBase):
 
     def post_response(self):
         choice = self.request.forms.get('choice','')
-        oldpath = [self.request.forms.get('old' + x,'') for x in db.studentplaces]
-        newpath = [self.request.forms.get(x,'') for x in db.studentplaces]
+        oldpath = [self.request.forms.get('old' + x,'') for x in db.pathlevels]
+        newpath = [self.request.forms.get(x,'') for x in db.pathlevels]
         pathchanged = not all([x[0] == x[1] for x in zip(oldpath, newpath)])
         if choice != '0':  # not new
             oldstudent = db.key_from_path(oldpath).get()

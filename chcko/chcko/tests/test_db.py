@@ -13,29 +13,29 @@ def Student12345(cdb):
     s=cdb.School.get_or_insert("1")
     cdb.save(s)
     mkent = lambda t,i,o: t.get_or_insert(i,parent=o.key)
-    p=mkent(cdb.Period,"2",s)
+    p=mkent(cdb.Field,"2",s)
     cdb.save(p)
     t=mkent(cdb.Teacher,"3",p)
     cdb.save(t)
     c=mkent(cdb.Class,"4",t)
     cdb.save(c)
-    st=mkent(cdb.Student,"5",c)
+    st=mkent(cdb.Role,"5",c)
     cdb.save(st)
     return st
 
 def test_key(cdb):
-    k = cdb.Key('School', '1', 'Period', '2', 'Teacher', '3', 'Class', '4', 'Student', '5')
-    assert k.pairs()==(('School', '1'), ('Period', '2'), ('Teacher', '3'), ('Class', '4'), ('Student', '5'))
+    k = cdb.Key('School', '1', 'Field', '2', 'Teacher', '3', 'Class', '4', 'Role', '5')
+    assert k.pairs()==(('School', '1'), ('Field', '2'), ('Teacher', '3'), ('Class', '4'), ('Role', '5'))
     assert len(cdb.urlsafe(k)) > 30
     assert k.string_id()=="5"
-    assert k.kind()=='Student'
+    assert k.kind()=='Role'
 
 def test_skey(Student12345):
     kk=Student12345.key
-    assert kk.pairs()==(('School', '1'), ('Period', '2'), ('Teacher', '3'), ('Class', '4'), ('Student', '5'))
+    assert kk.pairs()==(('School', '1'), ('Field', '2'), ('Teacher', '3'), ('Class', '4'), ('Role', '5'))
     assert kk.get().key.string_id()=="5"
-    assert kk.kind()=="Student"
-    assert kk.parent().pairs()==(('School', '1'), ('Period', '2'), ('Teacher', '3'), ('Class', '4'))
+    assert kk.kind()=="Role"
+    assert kk.parent().pairs()==(('School', '1'), ('Field', '2'), ('Teacher', '3'), ('Class', '4'))
     assert kk.parent().get().key.string_id()=="4"
 
 def test_get_or_insert(cdb):

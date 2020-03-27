@@ -58,9 +58,9 @@ def chckosecret():
         secret = 'CHCKOSECRET'
     return secret
 
-def random_student_path(seed=None):
+def random_path(seed=None):
     ''' UUID parts are used as names
-    >>> #myschool,myperiod,myteacher,myclass,myself = random_student_path()
+    >>> #myschool,myperiod,myteacher,myclass,myself = random_path()
     '''
     if not seed:
         seed = datetime.datetime.now().isoformat()

@@ -4,11 +4,3 @@ def use(_db=None):
     if _db:
         db = _db
     return db
-    #globals().update(
-    #    {'School':db.School, 
-    #     'Period':db.Period,
-    #     'Teacher':db.Teacher,
-    #     'Class':db.Class,
-    #     'Student':db.Student,
-    #     'Problem':db.Problem
-    #     })

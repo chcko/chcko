@@ -180,7 +180,7 @@
                         <div><input type="checkbox" class="checkall">
                             {{util.translate(kind)}} {{e.string_id()}}
                         </div>
-                    % elif kind == 'Student':
+                    % elif kind == 'Role':
                         <div><input type="checkbox" name="assignee" value="{{db.urlsafe(e)}}">
                             {{e.string_id()}} </div>
                     % end

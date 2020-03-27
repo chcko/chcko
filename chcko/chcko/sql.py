@@ -180,33 +180,33 @@ class User(Model):
     pwhash = C(String)
     verified = C(Boolean)
     token = C(String)
-    current_student = C(ForeignKey('Student.urlkey',use_alter=True))
+    current_student = C(ForeignKey('Role.urlkey',use_alter=True))
     lang = C(String)
     created = C(DateTime,default=datetime.datetime.now)
 
 class School(Model):
     userkey = C(ForeignKey('User.urlkey'))
     created = C(DateTime,default=datetime.datetime.now)
-class Period(Model):
+class Field(Model):
     userkey = C(ForeignKey('User.urlkey'))
     created = C(DateTime,default=datetime.datetime.now)
     ofkey = C(ForeignKey('School.urlkey'))
 class Teacher(Model):
     userkey = C(ForeignKey('User.urlkey'))
     created = C(DateTime,default=datetime.datetime.now)
-    ofkey = C(ForeignKey('Period.urlkey'))
+    ofkey = C(ForeignKey('Field.urlkey'))
 class Class(Model):
     userkey = C(ForeignKey('User.urlkey'))
     created = C(DateTime,default=datetime.datetime.now)
     ofkey = C(ForeignKey('Teacher.urlkey'))
-class Student(Model):
+class Role(Model):
     userkey = C(ForeignKey('User.urlkey'))
     created = C(DateTime,default=datetime.datetime.now)
     ofkey = C(ForeignKey('Class.urlkey'))
     color = C(String)
 class Problem(Model):
     userkey = C(ForeignKey('User.urlkey'))
-    ofkey = C(ForeignKey('Student.urlkey'))
+    ofkey = C(ForeignKey('Role.urlkey'))
     query_string = C(String)
     lang = C(String)
     # the numbers randomly chosen, in python dict format
@@ -234,7 +234,7 @@ class Problem(Model):
 class Assignment(Model):
     userkey = C(ForeignKey('User.urlkey'))
     created = C(DateTime,default=datetime.datetime.now)
-    ofkey = C(ForeignKey('Student.urlkey'))
+    ofkey = C(ForeignKey('Role.urlkey'))
     query_string = C(String)
     due = C(DateTime)
 
@@ -259,7 +259,7 @@ class Sql(db_mixin):
         meta.create_all()
         self.inspector = inspect(self.engine)
         self.Key = Key
-        self.models = {x.__tablename__:x for x in [School,Period,Teacher,Class,Student,Problem,Assignment,Index,UserToken,User]}
+        self.models = {x.__tablename__:x for x in [School,Field,Teacher,Class,Role,Problem,Assignment,Index,UserToken,User]}
         for k,v in self.models.items():
             setattr(self,k,v)
         self.dbclient = Client()

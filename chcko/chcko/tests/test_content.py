@@ -121,14 +121,14 @@ def test_depth_1st(cdb):
     assert cdb.kindof(lst[0]) == 'School'
     assert cdb.kindof(lst[5]) == 'Problem'
     assert cdb.kindof(lst[6]) == 'Class'
-    assert cdb.kindof(lst[7]) == 'Student'
+    assert cdb.kindof(lst[7]) == 'Role'
     assert cdb.kindof(lst[8]) == 'Problem'
     lst = list(cdb.depth_1st(path,keys=cdb.keys_to_omit(path)))
     assert len(lst) == 6
     assert cdb.kindof(lst[0]) == 'Class'
     assert cdb.kindof(lst[2]) == 'Problem'
     assert cdb.kindof(lst[3]) == 'Class'
-    assert cdb.kindof(lst[4]) == 'Student'
+    assert cdb.kindof(lst[4]) == 'Role'
     assert cdb.kindof(lst[5]) == 'Problem'
     lst = list(cdb.depth_1st())
     assert lst == []
@@ -136,7 +136,7 @@ def test_depth_1st(cdb):
 @pytest.fixture
 def dbschool(request,db):
     '''returns
-    {'Sc0':(Sc0,{'Pe0':(...)} }
+    {'Sc0':(Sc0,{'Fi0':(...)} }
     '''
     models = list(db.models.values())[:6]
 
@@ -148,7 +148,7 @@ def dbschool(request,db):
         if ient < len(models) - 1:
             ent = models[ient]
             for i in range(2):
-                name = db.kindof(ent)[:2] + str(i) #Sc0,Pe0,...
+                name = db.kindof(ent)[:2] + str(i) #Sc0,Fi0,...
                 tent = ent.get_or_insert(name, parent=thisent and thisent.key)
                 res.setdefault(name, (tent, recursecreate(ient + 1, tent)))
         else:
@@ -191,30 +191,30 @@ def test_descendants(dbschool):
     if db.is_sql():
         pytest.skip("ancestor not available for SQL")
     #school = school(finrequest)
-    cla = db.key_from_path(['Sc1', 'Pe1', 'Te1', 'Cl1']).get()
+    cla = db.key_from_path(['Sc1', 'Fi1', 'Te1', 'Cl1']).get()
     tbl = list(db.keys_below(cla))
     assert kinddepth(tbl,db,lambda x:x.kind()) == [3, 4, 4]
     # compare latter to this
-    tbl = list(db.depth_1st(path=['Sc1', 'Pe1', 'Te1', 'Cl1']))
+    tbl = list(db.depth_1st(path=['Sc1', 'Fi1', 'Te1', 'Cl1']))
     assert kinddepth(tbl,db,lambda x:db.kindof(x)) == [0, 1, 2, 3, 4, 4]
 
 def test_find_identities(dbschool):
-    '''find all students with name St1'''
+    '''find all students with name Ro1'''
     db,school=dbschool
     #school = school(finrequest)
-    _students = lambda tbl: [t for t in tbl if db.kindof(t) == 'Student']
-    tbl = list(db.depth_1st(path=['Sc1', 'Pe1', [], [], 'St1']))
+    _students = lambda tbl: [t for t in tbl if db.kindof(t) == 'Role']
+    tbl = list(db.depth_1st(path=['Sc1', 'Fi1', [], [], 'Ro1']))
     assert kinddepth(tbl,db,lambda x:db.kindof(x)) == [0, 1, 2, 3, 4, 3, 4, 2, 3, 4, 3, 4]
     stset = set([':'.join(e.key.flat()) for e in _students(tbl)])
-    goodstset = set(['School:Sc1:Period:Pe1:Teacher:Te1:Class:Cl1:Student:St1',
-                     'School:Sc1:Period:Pe1:Teacher:Te0:Class:Cl1:Student:St1',
-                     'School:Sc1:Period:Pe1:Teacher:Te0:Class:Cl0:Student:St1',
-                     'School:Sc1:Period:Pe1:Teacher:Te1:Class:Cl0:Student:St1'])
+    goodstset = set(['School:Sc1:Field:Fi1:Teacher:Te1:Class:Cl1:Role:Ro1',
+                     'School:Sc1:Field:Fi1:Teacher:Te0:Class:Cl1:Role:Ro1',
+                     'School:Sc1:Field:Fi1:Teacher:Te0:Class:Cl0:Role:Ro1',
+                     'School:Sc1:Field:Fi1:Teacher:Te1:Class:Cl0:Role:Ro1'])
     assert stset == goodstset
 
 def test_assign_student(dbschool):
     db,school=dbschool
-    stu = db.key_from_path(['Sc1', 'Pe1', 'Te1', 'Cl1', 'St1'])
+    stu = db.key_from_path(['Sc1', 'Fi1', 'Te1', 'Cl1', 'Ro1'])
     db.assign_to_student(db.urlsafe(stu), 'r.i&r.u', 1)
     asses = list(db.assign_table(stu.get(), None))
     assert asses
@@ -224,10 +224,10 @@ def test_assign_student(dbschool):
 def test_assign_to_class(dbschool):
     db,school=dbschool
     #school = school(finrequest)
-    classkey = db.key_from_path(['Sc0', 'Pe0', 'Te0', 'Cl0'])
+    classkey = db.key_from_path(['Sc0', 'Fi0', 'Te0', 'Cl0'])
     query_string = 'r.a&r.b'
     duedays = '2'
-    for st in db.depth_1st(keys=[classkey], kinds='Class Student'.split()):
+    for st in db.depth_1st(keys=[classkey], kinds='Class Role'.split()):
         stk = st.key
         assert stk.parent().string_id() == 'Cl0'
         db.assign_to_student(stk.urlsafe(), query_string, duedays)

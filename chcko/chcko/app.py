@@ -46,9 +46,6 @@ def lang_pagename(lang=None,pagename=None):
 @bottle.hook('before_request')
 def normalize_url():
     orgpath = bottle.request.environ['PATH_INFO']
-    pathent = orgpath.strip('/').split('/')
-    if len(pathent)> 2 and not '_images' in pathent and not 'auth' in pathent:
-        pass
     bottle.request.environ['PATH_INFO'] = orgpath.rstrip('/')
 
 pj = os.path.join

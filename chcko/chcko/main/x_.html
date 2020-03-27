@@ -49,15 +49,16 @@ end
     <div class="header" style="background-color:{{rolecolor}}">
 
     %if user:
-        %for key2prnt,is_users in key_ownd_path:
+        %for level, (key2prnt,is_users) in enumerate(key_ownd_path):
         <div class="grid_2">
-            %if key2prnt.kind()=='Student':
+            %if key2prnt.kind()=='Role':
             <ul id="nav">
                 {{util.translate(key2prnt.kind())}}<br>
                 <li>
                 %addqs = lambda x: self.request.query_string+'&'+x if self.request.query_string else x
                 <a href="/{{language}}/{{pagename}}?{{! addqs(db.urlstring(key2prnt)) }}">
-                    {{key2prnt.string_id()}} </a>
+                    {{key2prnt.string_id()}} 
+                </a>
                 <ul style="text-align:right">
                     %for key_ownd_list in db.userroles(user):
                     %studentkey = key_ownd_list[-1][0]
@@ -75,7 +76,11 @@ end
             </ul>
             %else:
                 {{util.translate(key2prnt.kind())}}<br>
-                %if not is_users:
+                %if pagename in ['done','todo'] and level<4:
+                    <a href="/{{language}}/{{! pagename+'?'+'&'.join('*'*(5-level))}}">
+                        {{key2prnt.string_id()}} 
+                    </a>
+                %elif not is_users:
                     <em>{{key2prnt.string_id()}}</em>
                 %else:
                     {{key2prnt.string_id()}}
@@ -85,7 +90,7 @@ end
         %end
     %else:
         %for key2prnt,is_users in key_ownd_path:
-            %if key2prnt.kind()=='Student':
+            %if key2prnt.kind()=='Role':
             <div class="grid_2" style="text-align:right">
             %else:
             <div class="grid_2">

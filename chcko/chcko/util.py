@@ -37,7 +37,7 @@ class Util:
         return [
             d[0] if not d[1] else d for d in parse_qsl(
                 self.request.query_string,
-                True) if d[0] not in db.studentplaces]
+                True) if d[0] not in db.pathlevels]
 
     def a(self, alnk):
         return '<a href="#" onclick="a_content('+alnk+');return false;">'+alnk+'</a>'
@@ -68,7 +68,7 @@ class Util:
 
     def translate(self, word):
         try:
-            idx = db.studentplaces.index(word)
+            idx = db.pathlevels.index(word)
             res = role_strings[self.request.lang][idx]
             return res
         except:

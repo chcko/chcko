@@ -76,12 +76,12 @@ def kindint(knd, numkind):
 
 role_strings = {
     # these are listed on the page
-    'en': ['School', 'Period', 'Teacher', 'Class', 'Student']
-    ,'de': ['Schule', 'Periode', 'Lehrer', 'Klasse', 'Student']
+    'en': ['School', 'Field', 'Teacher', 'Class', 'Role']
+    ,'de': ['Schule', 'Bereich', 'Lehrer', 'Klasse', 'Rolle']
     # ... add more if some translations exist (defaults to en)
-    #,'it': ['Scuola', 'Periodo', 'Prof', 'Classe', 'Studente']
-    #,'fr': ['École', 'Période', 'Prof', 'Classe', 'Etudiant']
-    #,'es': ['Escuola', 'Periodo', 'Prof', 'Clase', 'Estudiante']
+    #,'it': ['Scuola', 'Campo', 'Prof', 'Classe', 'Ruolo']
+    #,'fr': ['École', 'Domaine', 'Prof', 'Classe', 'Rôle']
+    #,'es': ['Escuola', 'Esfera', 'Prof', 'Clase', 'Rol']
 
 }
 

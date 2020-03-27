@@ -187,8 +187,9 @@ class TestRunthrough(object):
     def test_loginedwrong(self,chapp):
         r = chapp.get('/en/?fdsr.bdfsu',expect_errors=True)
         assert 'Logout' in r
-        breakpoint()
         r = chapp.get('/en/done/*',expect_errors=True)
+        assert 'Logout' in r
+        r = chapp.get('/en/todo/*',expect_errors=True)
         assert 'Logout' in r
 
     def test_edits(self):
@@ -234,8 +235,9 @@ class TestRunthrough(object):
         curh = next(x for x in cur.xpath('//a[contains(@href,"todo")]/@href') if self.curs in x)
         self._store('resp', self.resp.goto(curh))
         cur = self.resp.lxml
-        curx = cur.xpath('//div[contains(text(),"School")]/text()')
-        assert curx[1].strip() == self.curs
+        selfcurs = self.curs
+        curx = [x for x in cur.xpath('//div[contains(text(),"School")]//text()') if selfcurs in x]
+        assert len(curx)==1
         # self.resp.showbrowser()
 
     def test_delete(self):
@@ -356,8 +358,8 @@ class TestRunthrough(object):
             curx.xpath('//a[contains(text(),"r.bu")]/@href')[0])
         self._store('resp', self.resp.goto(self.rbuhref))
         assert '0P' in self.resp
-        u_student = [x for x in curx.xpath('//div/text()') if 'tst' in x]
-        assert len(u_student) == 4
+        u_student = [x for x in curx.xpath('//div//text()') if 'tst' in x]
+        assert len(u_student) == 5
 
     def test_check_done_outside(self):
         r = self.resp.goto('/en/logout')

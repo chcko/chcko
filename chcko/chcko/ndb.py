@@ -21,7 +21,7 @@ class User(Model):
     pwhash = ndb.StringProperty(required=False)
     verified = ndb.IntegerProperty()
     token = ndb.StringProperty()
-    current_student = ndb.KeyProperty(kind='Student')
+    current_student = ndb.KeyProperty(kind='Role')
     lang = ndb.StringProperty(required=False)
     created = ndb.DateTimeProperty(auto_now_add=True)
 
@@ -31,18 +31,18 @@ class Base(Model):
 
 class School(Base):
     'root'
-class Period(Base):
+class Field(Base):
     'parent:School'
 class Teacher(Base):
-    'parent:Period'
+    'parent:Field'
 class Class(Base):
     'parent: Teacher'
-class Student(Base):
+class Role(Base):
     'parent: Class'
     color = ndb.StringProperty()
 
 class Problem(Base):
-    'parent: Student'
+    'parent: Role'
     query_string = ndb.StringProperty()
     lang = ndb.StringProperty()
     # the numbers randomly chosen, in python dict format
@@ -64,7 +64,7 @@ class Problem(Base):
 
 
 class Assignment(Base):
-    'parent: Student'
+    'parent: Role'
     query_string = ndb.StringProperty()
     due = ndb.DateTimeProperty()
 
@@ -79,7 +79,7 @@ class Ndb(db_mixin):
     def __init__(self):
         self.dbclient = ndb.Client()
         self.Key = ndb.Key
-        self.models = {x._get_kind():x for x in [School,Period,Teacher,Class,Student,Problem,Assignment,Index,UserToken,User]}
+        self.models = {x._get_kind():x for x in [School,Field,Teacher,Class,Role,Problem,Assignment,Index,UserToken,User]}
         for k,v in self.models.items():
             setattr(self,k,v)
 

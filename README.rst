@@ -182,6 +182,8 @@ Change to the teacher / class / Role.
 
   https://chcko.eu/en/done?*&*
 
+Clicking on the names for class, teacher, ... forwards to these URLs.
+
 ``*`` can be replaced by ``%2A``
 when sending the link, because some programs drop the ``*``.
 

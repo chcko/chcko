@@ -75,9 +75,9 @@ def prepare(
                 filters.append((name, op, value))
         return filters
     #qs = ''
-    PR = db.studentplaces+[extraplace]
+    PR = db.pathlevels+[extraplace]
     # q=query, qq=*->[], qqf=filter->gae filter (name,op,value)
-    q = filter(None, [k.strip() for k, v in parse_qsl(qs, True) if k not in db.studentplaces])
+    q = filter(None, [k.strip() for k, v in parse_qsl(qs, True) if k not in db.pathlevels])
     qq = [[] if x == '*' else x for x in q]
     qqf = [filters() if filters(x) else x for x in qq]
     # fill up to len(PR)
