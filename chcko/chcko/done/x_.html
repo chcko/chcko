@@ -41,8 +41,8 @@
             </td>
             % end
             % if isinstance(ee,db.Problem):
-            <td><a href="/{{ee.lang}}/content?key={{!db.urlsafe(e)}}">{{ee.query_string}}</a></td>
-            <td><a href="/{{ee.lang}}/content?{{ee.query_string}}">{{tagain}}</a></td>
+            <td><a href="/{{ee.lang}}/contents?key={{!db.urlsafe(e)}}">{{ee.query_string}}</a></td>
+            <td><a href="/{{ee.lang}}/contents?{{ee.query_string}}">{{tagain}}</a></td>
             % end
         </tr>
     % end

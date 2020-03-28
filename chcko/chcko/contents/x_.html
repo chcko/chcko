@@ -7,7 +7,7 @@
         //alnk='r.a';
         //alnk='r.bd';
         //alnk='r.b';
-        //href='http://localhost:8080/en/content?r.bd&r.ba&&r.a';
+        //href='http://localhost:8080/en/contents?r.bd&r.ba&&r.a';
 
         href = window.location.href;
         url = new URL(href);
@@ -43,20 +43,20 @@
     <p>{{texplain}}</p>
 
     % for knd, lnks in content:
-    <p><b><a href="/{{self.request.lang}}/content?kind={{knd}}">{{knd}}</a></b><br>
+    <p><b><a href="/{{self.request.lang}}/contents?kind={{knd}}">{{knd}}</a></b><br>
        % for linktext,lnklvl,leaf,depth in lnks:
           % if not leaf:
-          <small>({{depth}})</small><em><a href="/{{self.request.lang}}/content?path={{linktext}}">{{linktext}}</a>:</em>
+          <small>({{depth}})</small><em><a href="/{{self.request.lang}}/contents?path={{linktext}}">{{linktext}}</a>:</em>
           % else:
              % lnk,lvl = lnklvl
-             <small>({{depth}})</small><a href="/{{self.request.lang}}/content?{{lnk}}">{{linktext}}</a>
+             <small>({{depth}})</small><a href="/{{self.request.lang}}/contents?{{lnk}}">{{linktext}}</a>
              <input type="checkbox" name="choice" value="{{lnk}}" autocomplete="off">
              % try:
              % authorid = lnk.split('.')[0]
-             (<a href="/{{self.request.lang}}/content?link={{authorid}}">{{authorid}}</a>)
+             (<a href="/{{self.request.lang}}/contents?link={{authorid}}">{{authorid}}</a>)
              % except: pass
              %end
-             <a href="/{{self.request.lang}}/content?level={{lvl}}">{{lvl}}</a>
+             <a href="/{{self.request.lang}}/contents?level={{lvl}}">{{lvl}}</a>
           % end
        % end
     % end
@@ -97,8 +97,8 @@
             //    else
             //        a[value]=a[value]+1;
             //}
-            //window.location.href="/{{self.request.lang}}/content?"+$.param(a)
-            window.location.assign("/{{self.request.lang}}/content?"+acomposed.val()) // keeps history to go back to previous location in course
+            //window.location.href="/{{self.request.lang}}/contents?"+$.param(a)
+            window.location.assign("/{{self.request.lang}}/contents?"+acomposed.val()) // keeps history to go back to previous location in course
         });
     </script>
 
@@ -126,7 +126,7 @@
 
     %cq = query_string
     %pe = course_labels(cq)
-    %alinks = ['/'+self.request.lang+'/content?'+x for x in [start_qs(cq),next_qs(cq,-1),cq,next_qs(cq),end_qs(cq)]]
+    %alinks = ['/'+self.request.lang+'/contents?'+x for x in [start_qs(cq),next_qs(cq,-1),cq,next_qs(cq),end_qs(cq)]]
 
     %def qsnav(where,sign):
     <button class="grid_1" type="button" onclick="window.location.href='{{ alinks[where] }}';" id="nbutton">{{ sign }}</button>

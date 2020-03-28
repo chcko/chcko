@@ -26,8 +26,8 @@ def chapp(request,db):
     ,'/de'
     ,'/en/?r.b'
     ,'/de?r.b'
-    ,'/de/content?r.b'
-    ,'/en/content/?r.a=2&r.b=3'
+    ,'/de/contents?r.b'
+    ,'/en/contents/?r.a=2&r.b=3'
 ])
 def test_paths(chapp,path):
     chapp.get(path)
@@ -112,12 +112,6 @@ class TestRunthrough(object):
         r = chapp.get('/en/todo?kwuerlhg=9')
         assert 'chcko' in r
 
-    def test_noroles(self,chapp):
-        r = chapp.get('/en/roles')
-        assert '302' in r.status
-        self._store('resp', r.follow())
-        assert 'login' in self.resp.request.url
-
     def test_register(self,chapp):
         self._signup(chapp)
         # 'message?msg=j' then email with link to verification
@@ -134,7 +128,7 @@ class TestRunthrough(object):
         assert 'msg=a' in self.resp.request.url
 
     def test_anonymous(self):
-        self._store('resp', self.resp.goto('/en/edits'))
+        self._store('resp', self.resp.goto('/en/org'))
         for p in problemplaces[:-1]:
             self.resp.form[p] = 'tst'
         # later we will check access permission
@@ -197,13 +191,13 @@ class TestRunthrough(object):
         curx = cur.xpath('//div[contains(text(),"School")]//text()')
         curx = [x for x in curx if x.strip()]
         self._store('curs', curx[-1].strip())
-        self._store('resp', self.resp.goto('/en/edits'))
+        self._store('resp', self.resp.goto('/en/org'))
         for p in problemplaces[:-1]:
             self.resp.form[p] = 'tst'
         self.resp.form[problemplaces[-2]] = 'U' #U belongs to teacher/class=tst/tst
         self.resp.form['color'] = '#BBB'
         self._store('resp', self.resp.form.submit())
-        assert 'edits' in self.resp.request.url
+        assert 'org' in self.resp.request.url
         assert 'tst' in self.resp
         assert '#BBB' in self.resp
 
@@ -226,22 +220,8 @@ class TestRunthrough(object):
         trs = cur.xpath('//tr')
         assert len(trs) == 6
 
-    def test_roles(self):
-        self._store('resp', self.resp.goto('/en/roles'))
-        cur = self.resp.lxml
-        curx = cur.xpath('//div[contains(text(),"School")]//text()')
-        curx = [x for x in curx if x.strip()]
-        assert curx[1].strip() != self.curs
-        curh = next(x for x in cur.xpath('//a[contains(@href,"todo")]/@href') if self.curs in x)
-        self._store('resp', self.resp.goto(curh))
-        cur = self.resp.lxml
-        selfcurs = self.curs
-        curx = [x for x in cur.xpath('//div[contains(text(),"School")]//text()') if selfcurs in x]
-        assert len(curx)==1
-        # self.resp.showbrowser()
-
     def test_delete(self):
-        self._store('resp', self.resp.goto('/en/edits'))
+        self._store('resp', self.resp.goto('/en/org'))
         self.resp.form['choice'] = '2'
         r = self.resp.form.submit()
         self._store('resp', r.follow())
@@ -252,16 +232,16 @@ class TestRunthrough(object):
         assert self.curs == 'tst'
 
     def test_change_color(self):
-        self._store('resp', self.resp.goto('/en/edits'))
+        self._store('resp', self.resp.goto('/en/org'))
         self.resp.form['choice'] = '1'
         self.resp.form['color'] = '#CDE'  # only color
         self._store('resp', self.resp.form.submit())
-        assert 'edits' in self.resp.request.url
+        assert 'org' in self.resp.request.url
         assert '#CDE' in self.resp
         # self.resp.showbrowser()
 
     def test_change_path(self):
-        self._store('resp', self.resp.goto('/en/edits'))
+        self._store('resp', self.resp.goto('/en/org'))
         self.resp.form['Teacher'] = self.resp.form['Teacher'].value + 'x'
         self.resp.form['choice'] = '1'
         r = self.resp.form.submit()
@@ -269,13 +249,13 @@ class TestRunthrough(object):
         assert 'msg=h' in self.resp.request.url
 
     def test_assign(self):
-        self._store('resp', self.resp.goto('/en/content'))
+        self._store('resp', self.resp.goto('/en/contents'))
         assert "problems" in self.resp
         curx = self.resp.lxml
-        probs = curx.xpath('//a[contains(@href,"en/content?r.b")]/@href')
+        probs = curx.xpath('//a[contains(@href,"en/contents?r.b")]/@href')
         assert probs
         for prob in probs:
-            #prob = '/en/content?r.bu'
+            #prob = '/en/contents?r.bu'
             self._store('resp', self.resp.goto(prob))
             if len(self.resp.forms) > 1:
                 form = self.resp.forms[1]  # assign
@@ -289,10 +269,10 @@ class TestRunthrough(object):
     def test_todo(self):
         self._store('resp', self.resp.goto('/en/todo'))
         curx = self.resp.lxml
-        probs = curx.xpath('//a[contains(@href,"en/content?")]/@href')
+        probs = curx.xpath('//a[contains(@href,"en/contents?")]/@href')
         assert probs
         for prob in probs:
-            #prob = '/en/content?r.bc'
+            #prob = '/en/contents?r.bc'
             self._store('resp', self.resp.goto(prob))
             form = self.resp.forms[0]
             inps = form.fields.values()
@@ -311,14 +291,14 @@ class TestRunthrough(object):
             assert "Check" not in res
         self._store('resp', self.resp.goto('/en/todo'))
         curx = self.resp.lxml
-        probs = curx.xpath('//a[contains(@href,"en/content?")]/@href')
+        probs = curx.xpath('//a[contains(@href,"en/contents?")]/@href')
         assert probs == []
 
     def test_done_delone(self):
         self._store('resp', self.resp.goto('/en/done'))
         # self.resp.showbrowser()
         curx = self.resp.lxml
-        delone = curx.xpath('//a[contains(@href,"en/content?r.bb")]/../..//input')
+        delone = curx.xpath('//a[contains(@href,"en/contents?r.bb")]/../..//input')
         value = ''
         if 'value' in delone[0].keys():
             value = dict(delone[0].items())['value']
@@ -331,7 +311,7 @@ class TestRunthrough(object):
                 d.checked = True
         self._store('resp', form.submit('submit'))
         curx = self.resp.lxml
-        delone = curx.xpath('//a[contains(@href,"en/content?r.bb")]/../..//input')
+        delone = curx.xpath('//a[contains(@href,"en/contents?r.bb")]/../..//input')
         assert delone == []  # deleted
 
     def test_done_delall(self):

@@ -40,7 +40,7 @@ def lang_pagename(lang=None,pagename=None):
         else:
             lang = 'en'
     if pagename is None:
-        pagename = 'content'
+        pagename = 'contents'
     return lang,pagename
 
 @bottle.hook('before_request')
@@ -169,7 +169,7 @@ def logout(lang):
     if t:
         db.token_delete(t)
         bottle.response.delete_cookie('chcko_cookie_usertoken')
-    bottle.redirect(f'/{lang}/content')
+    bottle.redirect(f'/{lang}/contents')
 
 @bottle.route('/<lang>/<pagename>',method=['GET','POST'])
 def fullpath(lang,pagename,**kextra):

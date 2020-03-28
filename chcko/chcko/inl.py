@@ -66,8 +66,7 @@ def depart_inline_node(self, node):
 
 
 class lnk(nodes.Inline, nodes.Element):
-    '''usage :lnk:`r.cp`
-    to reference content or excercises'''
+    '''usage :lnk:`r.cp`'''
     pass
 
 

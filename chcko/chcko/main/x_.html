@@ -37,9 +37,9 @@ addqs = lambda x: self.request.query_string+'&'+x if self.request.query_string e
     id="langnav">
     <p>☰ {{ language }}</p>
     </div>
-    %for page, txt in [('edits',tedit),('content',tcontent),('done',tdone),('todo',ttodo),(None,None)]:
+    %for page, txt in [('org',torg),('contents',tcontents),('done',tdone),('todo',ttodo),(None,None)]:
     <div
-        %if page == 'edits':
+        %if page == 'org':
             class="grid_1"
         %else:
             class="grid_2"
@@ -159,7 +159,7 @@ addqs = lambda x: self.request.query_string+'&'+x if self.request.query_string e
         % studentkey = key_ownd_list[-1][0]
         % urlstr = db.urlstring(studentkey)
         % student = studentkey.get()
-        % goto = [f"/{language}/{x}?{urlstr}" for x in "edits content done todo".split()]+[pagename+'?'+addqs(urlstr)]
+        % goto = [f"/{language}/{x}?{urlstr}" for x in "org contents done todo".split()]+[pagename+'?'+addqs(urlstr)]
         <li>
         % for i,(an,ownd) in enumerate(key_ownd_list):
             % levelstr = an.string_id() if ownd else '<em>'+an.string_id()+'</em>'

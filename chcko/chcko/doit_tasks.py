@@ -156,7 +156,6 @@ def task_html():
 
 
 ### create new problem / content
-# for content delete the __init__.py
 
 from chcko.chcko.hlp import int_to_base26, base26_to_int, mklookup
 import yaml

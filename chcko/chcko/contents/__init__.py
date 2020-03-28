@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-The content page is the default, if no page specified.
+The contents page is the default, if no page specified.
 
-With content IDs::
+With contents IDs::
 
-    /<lang>/[content][?(<author>.<id>[=<cnt>])&...]
+    /<lang>/[contents][?(<author>.<id>[=<cnt>])&...]
 
     /en/?r.a=2&r.bu
 
-Without content IDs it is an index page, which can be filter::
+Without contents IDs it is an index page, which can be filter::
 
-    /<lang>/content[?<filter>=<value>&...]
+    /<lang>/contents[?<filter>=<value>&...]
 
-    /en/content?level=10&kind=1&path=maths&link=r
+    /en/contents?level=10&kind=1&path=maths&link=r
 
 See ``filtered_index`` for that.
 
@@ -96,7 +96,7 @@ class Page(PageBase):
             db.del_stale_open_problems(self.request.student,age)
 
     def load_content(self
-                     , layout='chcko/content'
+                     , layout='chcko/contents'
                      , rebase=True
                      ):
         ''' evaluates the templates with includes therein and zips them to database entries

@@ -63,14 +63,14 @@ def allcontent():
 def newuserpage(request,cdb):
     query_string,lang,tst = request.param
     bottle.SimpleTemplate.defaults["rolecolor"] = '#EEE'
-    from chcko.chcko import content
+    from chcko.chcko import contents
     user,_ = cdb.user_login('email@email.com',fullname='first last',password='password1',lang=lang)
-    bddl=boddle(path=f'/{lang}/content'
+    bddl=boddle(path=f'/{lang}/contents'
                 ,user = user
                 ,student = cdb.add_student(['-']*5)
                 ,session = None
                 ,lang = lang
-                ,pagename = 'content'
+                ,pagename = 'contents'
                 ,environ = {'QUERY_STRING':f'{query_string}'}
                 ,query=None
                 )
@@ -78,7 +78,7 @@ def newuserpage(request,cdb):
     with bddl:
         assert bottle.request.user is not None
         assert bottle.request.student is not None
-        newuserpage = cdb,content.Page(content),tst,query_string
+        newuserpage = cdb,contents.Page(contents),tst,query_string
         yield newuserpage
 
 def test_recursive_includes(newuserpage):
@@ -89,7 +89,7 @@ def test_recursive_includes(newuserpage):
         )  # via _new ...
     assert tst(rr1)
     assert self.problem is not None
-    rr = self.load_content('chcko.tests.layout' if 'tests' in q else 'chcko.content')  # and reload via _zip
+    rr = self.load_content('chcko.tests.layout' if 'tests' in q else 'chcko.contents')  # and reload via _zip
     rrr = ''.join(rr)
     subs = q.split('&')
     if len(subs)>1:
