@@ -2,12 +2,12 @@
     //These are just solutions to exercises...
     //The user can, but does not have to make a strong password
     function validate() {
-        var password = document.pwd.password.value;
+        var password = document.passwordform.password.value;
         if (password == "") {
             alert("{{tpassword}}");
             return false;
         }
-        var confirmp = document.pwd.confirmp.value;
+        var confirmp = document.passwordform.confirmp.value;
         if (confirmp == "") {
             alert("{{tconfirm}}");
             return false;
@@ -25,14 +25,24 @@
 {{db.user_email(self.request.user)}}
 </p>
 
-<form method="POST" name=pwd onsubmit='return validate()'>
+%if not db.is_social_login(self.request.user):
+<form method="POST" name=passwordform onsubmit='return validate()'>
     <label>{{tselect}}</label><br>
-    <p><label for="fullname">{{tfullname}}</label>&nbsp;<input type="text" value="{{self.request.user.fullname}}" name="fullname"/></p>
-    <p><label for="password">{{tpassword}}</label>&nbsp;<input type="password" name="password" /></p>
-    <p><label for="confirmp">{{tconfirm}}*</label>&nbsp;<input type="password" name="confirmp" /></p>
+    <p><label for="fullname">{{tfullname}}</label>&nbsp;
+    <input type="text" value="{{self.request.user.fullname}}" name="fullname"/></p>
+    <p><label for="password">{{tpassword}}</label>&nbsp;
+    <input type="password" name="password" /></p>
+    <p><label for="confirmp">{{tconfirm}}*</label>&nbsp;
+    <input type="password" name="confirmp" /></p>
     <p><input type="hidden" name="token" value="{{ defined('token') and token or ''}}" /></p>
     <p><input id="nbutton" class="grid_10" style="text-align:center" type="submit" value="{{ tupdate }}" /></p>
     <br>
 </form>
+%else:
+    <p>
+        <label for="fullname">{{tfullname}}</label>&nbsp;
+        <label type="text" value="{{self.request.user.fullname}}" name="fullname" readonly/>
+    </p>
+%end
 
 % include('chcko/main')

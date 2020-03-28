@@ -6,7 +6,7 @@ if not defined('social_logins'):
     social_logins = {}
 end
 try:
-    language = language
+    language = self.request.lang
 except:
     language = 'en'
 end
@@ -25,84 +25,87 @@ try:
 except:
     key_ownd_path = []
 end
+
+addqs = lambda x: self.request.query_string+'&'+x if self.request.query_string else x
 %>
 
 % if not defined('header'):
 % def header():
 
-    %for page, txt in [('edits',tedit),('content',tcontent),('done',tdone),('todo',ttodo),('roles',troles)]:
-    <div class="grid_2"
-        %if pagename == page:
+    <div class="grid_1"
+    style="text-align:center" 
+    id="langnav">
+    <p>☰ {{ language }}</p>
+    </div>
+    %for page, txt in [('edits',tedit),('content',tcontent),('done',tdone),('todo',ttodo),(None,None)]:
+    <div
+        %if page == 'edits':
+            class="grid_1"
+        %else:
+            class="grid_2"
+        %end
+        %if not page:
+        id="usernav"
+        style="text-align:center"
+        %elif pagename == page:
         style="text-align:center;border-bottom:1px solid;background-color:{{rolecolor}}"
         %else:
         style="text-align:center"
         %end
         >
-        %if user is None and page=='roles':
-            <p> &nbsp;</p>
-        %else:
+        %if page and txt:
             <p><a href="/{{language}}/{{page}}">{{txt}}</a></p>
+        %else:
+            %if user:
+                <p> {{ db.user_name(user) }} ☰ </p>
+                <nav class="grid_2" id="usermenu">
+                <div><a href="/{{language}}/password">{{ tprofile }} </a></div>
+                <div><a href="/{{language}}/logout">{{ tlogout }} </a></div>
+                </nav>
+            %else:
+                <p> {{ tlogin }} ☰</p>
+                <nav class="grid_2" id="usermenu">
+                <div><a href="/{{language}}/login">chcko</a></div>
+                %for social in social_logins.keys():
+                <div><a href="/auth/{{ social }}">{{ social }}</a></div>
+                %end
+                </nav>
+            %end
         %end
     </div>
     %end
+    <nav class="grid_1" id="langmenu">
+        %for lng in langs:
+        <div>{{!util.newlang(lng)}}</div>
+        %end
+    </nav>
 
     <div class="header" style="background-color:{{rolecolor}}">
 
-    %if user:
-        %for level, (key2prnt,is_users) in enumerate(key_ownd_path):
-        <div class="grid_2">
-            %if key2prnt.kind()=='Role':
-            <ul id="nav">
-                {{util.translate(key2prnt.kind())}}<br>
-                <li>
-                %addqs = lambda x: self.request.query_string+'&'+x if self.request.query_string else x
-                <a href="/{{language}}/{{pagename}}?{{! addqs(db.urlstring(key2prnt)) }}">
-                    {{key2prnt.string_id()}} 
-                </a>
-                <ul style="text-align:right">
-                    %for key_ownd_list in db.userroles(user):
-                    %studentkey = key_ownd_list[-1][0]
-                    <li>
-                    <a
-                    style="background-color:{{studentkey.get().color}}"
-                    href="/{{language}}/{{pagename}}?{{! addqs(db.urlstring(studentkey)) }}">
-                        %role = [not ownd and '<em>'+an.string_id()+'</em>' or an.string_id() for an,ownd in key_ownd_list]
-                        {{!' &nbsp;&nbsp; '.join(role)}}
-                    </a>
-                    <li>
-                    %end
-                </ul></li>
-                </li>
-            </ul>
-            %else:
-                {{util.translate(key2prnt.kind())}}<br>
-                %if pagename in ['done','todo'] and level<4:
-                    <a href="/{{language}}/{{! pagename+'?'+'&'.join('*'*(5-level))}}">
-                        {{key2prnt.string_id()}} 
-                    </a>
-                %elif not is_users:
-                    <em>{{key2prnt.string_id()}}</em>
-                %else:
-                    {{key2prnt.string_id()}}
-                %end
-            %end
-        </div>
+    %for level, (key2prnt,is_users) in enumerate(key_ownd_path):
+    <div class="grid_2 levels__name"
+        %if user and key2prnt.kind()=='Role':
+        id="rolenav"
         %end
-    %else:
-        %for key2prnt,is_users in key_ownd_path:
-            %if key2prnt.kind()=='Role':
-            <div class="grid_2" style="text-align:right">
-            %else:
-            <div class="grid_2">
-            %end
-            {{util.translate(key2prnt.kind())}}<br>
-            %if not is_users:
-                <em>{{key2prnt.string_id()}}</em>
-            %else:
-                {{key2prnt.string_id()}}
-            %end
-            </div>
+    >
+        %if user and key2prnt.kind()=='Role':
+        <span style="float:right">☰</span>
         %end
+        {{util.translate(key2prnt.kind())}}<br>
+        %if key2prnt.kind()=='Role':
+            <a href="/{{language}}/{{pagename}}?{{! addqs(db.urlstring(key2prnt)) }}">
+                {{key2prnt.string_id()}} 
+            </a>
+        %elif pagename in ['done','todo'] and level<4:
+            <a href="/{{language}}/{{! pagename+'?'+'&'.join('*'*(5-level))}}">
+                {{key2prnt.string_id()}} 
+            </a>
+        %elif not is_users:
+            <em>{{key2prnt.string_id()}}</em>
+        %else:
+            {{key2prnt.string_id()}}
+        %end
+    </div>
     %end
 
     <div class='clear'>&nbsp;</div>
@@ -114,48 +117,11 @@ end
 % if not defined('footer'):
 % def footer():
 
-    % if user:
-
     <div class="footer" style="border-top:double;background-color:{{rolecolor}}">
-    <div class="grid_10">
-        {{ db.user_name(user) }}
-        &nbsp;
-        <a href="/{{language}}/logout">{{ tlogout }} </a>
-        &nbsp;
-        %if not db.is_social_login(user):
-            <a href="/{{language}}/password">{{ tchangepassword }} </a>
-        %end
-    </div> 
+    &nbsp;
     </div>
 
-    % else:
-
-    <div class="footer" style="border-top:double;background-color:{{rolecolor}}">
-    <div class="grid_10">
-        {{ tloginat }}
-    </div> 
-    </div>
-
-    <div class="footer" style="background-color:{{rolecolor}}">
-        <div class="grid_2">
-        <a href="/{{language}}/login">chcko</a>
-        %if len(social_logins)>0:
-        {{ torvia }}
-        </div> 
-            %for social in social_logins.keys():
-        <div class="grid_2"> 
-        <a href="/auth/{{ social }}">{{ social }}</a>
-        </div> 
-            %end
-        %end
-    </div>
-
-    %end
-
-
-    <div class="footer" style="background-color:{{rolecolor}}"> &nbsp; </div>
-
-    <div class="grid_10">
+    <div class="grid_10 footer">
         {{tdevelopment}} <a href="https://github.com/chcko/chcko">Github</a>
     </div>
 
@@ -181,6 +147,37 @@ end
     % end
 % end
 % end
+
+% if not defined('rolemenu'):
+% def rolemenu():
+    %if not user:
+    %    return
+    %end
+    <div id="rolemenu">
+    <table>
+    % for key_ownd_list in db.userroles(user):
+        % studentkey = key_ownd_list[-1][0]
+        % urlstr = db.urlstring(studentkey)
+        % student = studentkey.get()
+        % goto = [f"/{language}/{x}?{urlstr}" for x in "edits content done todo".split()]+[pagename+'?'+addqs(urlstr)]
+        <li>
+        % for i,(an,ownd) in enumerate(key_ownd_list):
+            % levelstr = an.string_id() if ownd else '<em>'+an.string_id()+'</em>'
+            <div
+               class="grid_2"
+               style="text-align:center; background-color:{{student.color}}; margin-bottom:6px; padding:6px 0px 6px"
+            >
+            <a href="{{! goto[i] }}">
+                {{!levelstr}}
+            </a>
+            </div>
+        % end
+        </li>
+    % end
+    </table>
+    </div>
+%end
+%end
 
 <!doctype html>
 <html>
@@ -212,73 +209,77 @@ end
     end
     %>
 
-    % if user:
     <style>
-    ul#nav {
-        display: inline;
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        width:auto;
-        float:right;
-    }
-    ul#nav>li {
-        position: relative;
-        width:auto;
-        float:left;
-        clear:left;
-    }
-    ul#nav>li>ul {
-        display: none;
-        list-style: none;
-        position: absolute;
-        top: 0;
-        min-height:0;
-    }
-    ul#nav li a {
+    ul.levels__name a {
         display:block;
-        text-decoration: none;
         line-height:2em;
-        height:2em;	
-        padding:0 5px;
-        width:290%;
-        border: 1px solid;
+        padding:5px 5px 5px 20px;
         margin-top:-1px;
         background-color: {{rolecolor}};
     }
-    ul#nav>li>a {
-        line-height:auto;
-        height:auto;	
-        padding:0;
-        width:auto;
-        border:none;
+    div#rolemenu {
+        display:none;
     }
-    ul#nav li a:hover { 
-        text-decoration: underline;
+    div#rolemenu>li {
+        list-style:none;
+    }
+    div#usernav:hover{
+        background-color: {{rolecolor}};
+    }
+    div.active#usernav{
+        background-color: {{rolecolor}};
+    }
+    div#langnav:hover{
+        background-color: {{rolecolor}};
+    }
+    div.active#langnav{
+        background-color: {{rolecolor}};
+    }
+    nav#usermenu {
+        display:none;
+        position:fixed;
+        background-color: {{rolecolor}};
+        z-index:1;
+        margin-left:0px;
+    }
+    nav#usermenu>div {
+        padding:15px 10px 15px 10px;
+    }
+    nav#langmenu{
+        display:none;
+        position:fixed;
+        background-color: {{rolecolor}};
+        z-index:1;
+        margin:3em 0px 0px 0px;
+        text-align:center;
+    }
+    nav#langmenu>div{
+        padding:15px 10px 15px 10px;
     }
 
-    ul#nav>li:hover>ul{
-        margin-top:2em;
-        display: block;
-        width:auto;
-        z-index:999;
-    } 
     </style>
-
     <script>
-    sizemenu = function(){
-            var vwidth = $(".container_10").width();
-            $("#nav>li>ul>li>a").width(vwidth);
-            $("#nav>li>ul").css("margin-left",0.5*$("#nav>li>a").width()-vwidth+"px");
-            }
-    $(document).ready(sizemenu);
-    $(window).bind("resize",sizemenu);
-    //FIXME:
-    //content on back button previously checked checkbox will be checked. don't know how to avoid this
-    //does not work: window.onbeforeunload = function() { $("input:checked").removeAttr("checked");};
+    %if user:
+    $(document).ready(function($){
+        $("#rolenav").on("click", function(){
+            $("#rolemenu").slideToggle();
+            $(this).toggleClass("active");
+        });
+    });
+    %end
+    $(document).ready(function($){
+        $("#usernav").on("click", function(){
+            $("#usermenu").toggle();
+            $(this).toggleClass("active");
+        });
+    });
+    $(document).ready(function($){
+        $("#langnav").on("click", function(){
+            $("#langmenu").toggle();
+            $(this).toggleClass("active");
+        });
+    });
     </script>
-
-    % end
 
     <title> 
         % title()
@@ -291,6 +292,7 @@ end
     % header()
 
     <div class="grid_10" style="padding-top:1em;">
+    % rolemenu()
     {{!base}}
     <p>&nbsp;</p>
     </div>
