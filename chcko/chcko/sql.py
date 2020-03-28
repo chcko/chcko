@@ -345,7 +345,8 @@ class Sql(db_mixin):
         tosave = []
         for entry in allentries:
             edict = dict(self.itemsof(entry))
-            edict['oks'] = [bool(x) for x in edict['oks']]
+            oks = edict['oks'] or [False]
+            edict['oks'] = [bool(x) for x in oks]
             cpy = anentity.create(name=entry.key.string_id(), parent=newparent.key, **edict)
             tosave.append(cpy)
         self.save(tosave)
