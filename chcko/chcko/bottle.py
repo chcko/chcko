@@ -4019,8 +4019,7 @@ class SimpleTemplate(BaseTemplate):
             env = tpl.execute(env['_stdout'], env)
         except StopIteration:#from get_tpl
             pass
-        retenv = {k:v for k,v in env.items() if k!='include'}
-        return retenv
+        return env
 
     def execute(self, _stdout, kwargs):
         env = self.defaults.copy()
@@ -4029,26 +4028,30 @@ class SimpleTemplate(BaseTemplate):
         env.update({
             '_stdout': _stdout,
             '_printlist': _stdout.extend,
-            'include': functools.partial(self._include, env),
-            'rebase': functools.partial(self._rebase, env),
             '_rebase': None,
             '_str': self._str,
             '_escape': self._escape,
+        })
+        local = {
+            'include': functools.partial(self._include, env),
+            'rebase': functools.partial(self._rebase, env),
             'get': env.get,
             'setdefault': env.setdefault,
             'defined': env.__contains__
-        })
+        }
+        env.update(local)
         exec(self.co, env)
         if env.get('_rebase'):
             subtpl, rargs = env.pop('_rebase')
             rargs['base'] = ''.join(_stdout)  #copy stdout
             del _stdout[:]  # clear stdout
-            env = self._include(env, subtpl, **rargs)
+            return self._include(env, subtpl, **rargs)
         if self.cleanup:
             try: #to do second part of lookup with yield
                 next(self.cleanup)
             except StopIteration: pass
-        return env
+        retenv = {k:v for k,v in env.items() if k not in local}
+        return retenv
 
     def render(self, *args, **kwargs):
         """ Render the template using keyword arguments as local variables. """
