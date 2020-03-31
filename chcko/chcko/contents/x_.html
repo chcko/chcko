@@ -161,6 +161,7 @@
     </form>
     % end
 
+    % if with_problems:
     % # ASSIGN
     % if self.request.user:
         % teacher = self.request.student.key.parent().parent().get()
@@ -220,7 +221,7 @@
             </script>
         % end
     % end
-
+    % end
 % end
 
 <style>
@@ -229,27 +230,6 @@
     border-style:dotted;
     padding: 1em;
     margin: 1em 0em 0em -1em;
-}
-.nbutton {
-    padding-top: 0px;
-    padding-bottom: 0px;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    height: 2em;
-    font-weight: bold;
-}
-.right {
-    color:green;
-}
-.wrong {
-    color:red;
-}
-.divleft {
-    float: left;
-    width: 50%;
-}
-.divright {
-    margin-left: 50%;
 }
 .problem_id {
   padding: 2px;

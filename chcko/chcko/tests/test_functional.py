@@ -257,14 +257,16 @@ class TestRunthrough(object):
         for prob in probs:
             #prob = '/en/contents?r.bu'
             self._store('resp', self.resp.goto(prob))
-            if len(self.resp.forms) > 1:
-                form = self.resp.forms[1]  # assign
-                assignees = form.fields.get('assignee')
-                if assignees:
-                    for a in assignees:
-                        a.checked = True
-                    res = form.submit('assign')
-                    assert 'todo' in res.request.url
+            try:
+                form = self.resp.forms[1]
+            except:
+                pass #non-problems cannot be assigned
+            assignees = form.fields.get('assignee')
+            if assignees:
+                for a in assignees:
+                    a.checked = True
+                res = form.submit('assign')
+                assert 'todo' in res.request.url
 
     def test_todo(self):
         self._store('resp', self.resp.goto('/en/todo'))
