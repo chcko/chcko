@@ -142,10 +142,7 @@ class Page(PageBase):
                 raise HTTPError(400,'400_7 '+ms)
             from_py = rsv.load()  # for the things not stored, like 'names'
             from_py.update(db.fieldsof(self.current))
-            from_py.update({
-                'lang': self.request.lang,
-                'g': self.current.given,
-                'request': self.request})
+            from_py['g'] = self.current.given
             if self.current.points:
                 next(problems_cntr)
             if self.current.answered:
@@ -281,7 +278,7 @@ class Page(PageBase):
             except ValueError:
                 pass
         if cnt > 1:
-            tpllns = ["%globals().update(include('chcko/chelper'))"]
+            tpllns = ["%globals().update(include('chcko/chelper'),withnr=False)"]
             inr = Util.counter()
             for prob, istr in name_val:
                 if not istr:

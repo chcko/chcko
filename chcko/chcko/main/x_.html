@@ -84,7 +84,7 @@ addqs = lambda x: self.request.query_string+'&'+x if self.request.query_string e
     <div class="header" style="background-color:{{rolecolor}}">
 
     %for level, (key2prnt,is_users) in enumerate(key_ownd_path):
-    <div class="grid_2 levels__name"
+    <div class="grid_2 levels_name"
         %if user and key2prnt.kind()=='Role':
         id="rolenav"
         %end
@@ -211,7 +211,7 @@ addqs = lambda x: self.request.query_string+'&'+x if self.request.query_string e
     %>
 
     <style>
-    ul.levels__name a {
+    ul.levels_name a {
         display:block;
         line-height:2em;
         padding:5px 5px 5px 20px;
@@ -297,7 +297,6 @@ addqs = lambda x: self.request.query_string+'&'+x if self.request.query_string e
     <div class="grid_10" style="padding-left:1em; margin:1em 0em 1em;">
     {{!base}}
     </div>
-
 
     % footer()
     </div>

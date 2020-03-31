@@ -1,3 +1,10 @@
+<style>
+.org_field {
+    width: 100%;
+    margin: 0.5em;
+}
+</style>
+
 % ancestors = self.request.student.key.pairs()
 
 <script>
@@ -32,26 +39,46 @@ $("input.newinput#Role").on("input paste", function(e){
 
 <form action="" method="post" name='org'>
 % for i, a in enumerate(ancestors):
-    <div class="grid_2" style="text-align:right">
-        %langkind = util.translate(a[0])
-        <label for="{{langkind}}">{{langkind}}:</label>
+    %langkind = util.translate(a[0])
+    <div class="grid_2"
+    % if i<4:
+	style="margin:0.5em; text-align:right;padding-top:5px;"
+    % else:
+	style="margin:0.5em 0em 0em 1.5em; text-align:left; padding-top:5px;"
+    % end
+    >
+        <label for="{{a[0]}}">{{langkind}}{{' [;*]' if i==4 else ''}}:</label>
     </div>
     % if i<4:
-    <div class="grid_2">
+    <div class="grid_5">
     % else:
-    <div class="grid_6">
+    <div class="grid_10">
     % end
-        <input style="display:table-cell; width:100%" type="text" class="newinput" name="{{a[0]}}" value="{{str(a[1])}}" autocomplete="off" tabindex={{i}} id="{{a[0]}}"/>
-        <input style="display:table-cell; width:100%" type="hidden" class="oldinput" readonly="readonly" name="old{{a[0]}}" value="{{str(a[1])}}" tabindex={{i+5}} id="{{a[0]}}"/>
+        <input type="text"
+	    class="org_field newinput"
+	    name="{{a[0]}}"
+	    value="{{str(a[1])}}"
+	    autocomplete="off"
+	    tabindex={{i}}
+	    id="{{a[0]}}"
+	    />
+        <input type="hidden"
+	    class="org_field oldinput"
+	    readonly="readonly"
+	    name="old{{a[0]}}"
+	    value="{{str(a[1])}}"
+	    tabindex="{{i+5}}"
+	    id="{{a[0]}}"
+	    />
     </div>
-    <div class='grid_2'>&nbsp;</div>
-    % if i < len(trequests):
-    <div class="grid_2">
-        <input type="radio" name="choice" value="{{str(i)}}" autocomplete="off" id="radionewchangedelete{{i}}"
-        %if i==0:
+    <div class='grid_1'>&nbsp;</div>
+    % if i>0 and i < len(trequests)+1:
+    <div class="grid_2" style="margin-top:0.5em">
+        <input type="radio" name="choice" value="{{str(i-1)}}" autocomplete="off" id="radionewchangedelete{{i-1}}"
+        %if i==1:
             checked
         %end
-        tabindex={{i+10}}/>{{trequests[i]}}
+        tabindex={{i+9}}/>{{trequests[i-1]}}
     </div>
     % end
     <div class='clear'>&nbsp;</div>

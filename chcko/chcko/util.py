@@ -13,7 +13,7 @@ from urllib.parse import parse_qsl
 from chcko.chcko import bottle
 from chcko.chcko.bottle import SimpleTemplate, template
 
-from chcko.chcko.hlp import listable, mklookup, logger, from_py
+from chcko.chcko.hlp import listable, mklookup, from_py
 from chcko.chcko.languages import langkindnum, langnumkind, role_strings
 from chcko.chcko.db import db
 
@@ -127,7 +127,8 @@ class PageBase:
         self.request = bottle.request
         self.response = bottle.response
         self.util = Util(self.request)
-        SimpleTemplate.defaults.update(self.request.params)
+        SimpleTemplate.defaults.clear()
+        SimpleTemplate.defaults['rolecolor'] = self.request.student.color
         SimpleTemplate.defaults.update(from_py(mod))
         SimpleTemplate.defaults.update({
             'self': self,
@@ -135,7 +136,9 @@ class PageBase:
             'langs': langs,
             'db': db,
             'social_logins': social_logins,
-            'logger': logger
+            #as default if no problem ...
+            'query_string': self.request.query_string,
+            'lang': self.request.lang,
         })
         try:
             SimpleTemplate.defaults.update({

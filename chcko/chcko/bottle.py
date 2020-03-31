@@ -3994,6 +3994,10 @@ class SimpleTemplate(BaseTemplate):
         if not source:
             with open(self.filename, 'rb') as f:
                 source = f.read()
+                if (not self.filename.endswith('chelper.html') and
+                        sum(x=='' for x in self.filename.split(os.sep+'chcko'))==0
+                        ):
+                    source = b"%globals().update(include('chcko/chelper'))\n"+source
         try:
             source, encoding = touni(source), 'utf8'
         except UnicodeError:
@@ -4011,10 +4015,12 @@ class SimpleTemplate(BaseTemplate):
         env.update(kwargs)
         try:
             tpl = get_tpl(_name, template_adapter=self.__class__, template_lookup=self.lookup)
+            env['__name__'] = _name
             env = tpl.execute(env['_stdout'], env)
         except StopIteration:#from get_tpl
             pass
-        return env
+        retenv = {k:v for k,v in env.items() if k!='include'}
+        return retenv
 
     def execute(self, _stdout, kwargs):
         env = self.defaults.copy()

@@ -560,6 +560,21 @@ class db_mixin:
     def problem_from_resolver(self, rsv, nr, student):
         d = rsv.load()
         g = d.given()
+        for gfield in g:
+            if gfield in bottle.request.params:
+                gfv = bottle.request.params[gfield]
+                try:
+                    #not using S here, because that would call eval
+                    try:
+                        gfvi = int(gfv)
+                    except:
+                        gfv = float(gfv)
+                    gfv = float(gfv)
+                    if float(gfvi)==gfv:
+                        gfv = gfvi
+                except:
+                    pass
+                setattr(g,gfield,gfv)
         r = d.norm(d.calc(g))
         points = d.points or [1] * len(r or [])
         d.update(dict(
@@ -791,7 +806,6 @@ class db_mixin:
                 self.save(tosave)
         if student:
             self.set_cookie('chcko_cookie_studenturlsafe', self.urlsafe(student.key))
-            bottle.SimpleTemplate.defaults["rolecolor"] = student.color or '#EEE'
             request.student = student
 
     def set_cookie(self,cookie,value):

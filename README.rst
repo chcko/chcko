@@ -173,6 +173,8 @@ or use an URL:
 At the end of the page you can choose classes or students to assign to.
 Assigning a course (with the ``&&``) assigns the problems individually.
 
+URLs without problems cannot be assigned.
+
 The students
 
 - log in
@@ -286,8 +288,10 @@ otherwise unique by encoding author ID, problem ID, content and possibly languag
 ``__init__.py`` is always there.
 Altogether it is a `Python <https://docs.python.org>`__ package,
 with ``chcko`` `namespace <https://packaging.python.org/guides/packaging-namespace-packages/>`__
+
 For problems, ``given()`` in ``__init__.py`` provides random numbers
 and ``calc()`` solves the problem.
+The parameters from ``given()`` can be overridden via the URL parameters.
 
 Generated files start with ``_`` (``_<language_id>.html``).
 ``<language_id>.rst`` can contain `tikz <https://github.com/pgf-tikz/pgf>`__ images

@@ -76,6 +76,10 @@ class TestRunthrough(object):
         assert r.status == '200 OK'
         assert 'problems' in r #engish index page
 
+    def test_with_param(self,chapp):
+        r = chapp.get('?a=123.45&r.bu=2')
+        assert '123.45' in r
+
     def test_wrong_lang(self,chapp):
         r = chapp.get('/wrong',expect_errors=True)
         assert '302' in r.status
