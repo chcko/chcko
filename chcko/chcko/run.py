@@ -178,10 +178,11 @@ chcko-{author_id}/chcko/{author_id}/a/en.html
     %path = "maths/linear equation/with integers"
     %kind = kinda["problems"]
     %level = 9
+    %globals().update(include('chcko/chelper'))
     \[{{g.a}} x {{util.sgn(g.b)}} {{abs(g.b)}} = {{g.c}} x\]
     <br>
     x=
-    %include('chcko/getorshow')
+    %chanswer()
 """
 def gitget(what,get='--global'):
     try:

@@ -252,13 +252,6 @@ def base_to_int(s, base, lenb):
     return num
 
 
-def counter():
-    cnt = -1
-    while True:
-        cnt += 1
-        yield cnt
-
-
 class Struct(dict):
     '''Access dict entries as attributes.
     >>> ad = Struct(a=1,b=2); ad
@@ -297,7 +290,6 @@ def from_py(mod):
                points=getattr(mod, 'points', None))
     d.update(mod.__dict__)
     return d
-
 
 def template_from_path(qspath, lang):
     for t in [lang, '_' + lang, 'x_', '_x_', 'en', '_en']:

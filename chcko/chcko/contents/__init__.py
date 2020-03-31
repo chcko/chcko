@@ -27,7 +27,6 @@ from chcko.chcko.hlp import (
         Struct,
         resolver,
         mklookup,
-        counter,
         logger
 )
 
@@ -109,11 +108,14 @@ class Page(PageBase):
         tplid = self.tpl_from_qs()
         _chain = []
         withempty, noempty = self.make_summary()
-        nrs = counter()
-        problems_cntr = counter()
+        nrs = Util.counter()
+        problems_cntr = Util.counter()
         SimpleTemplate.overrides = {}
         problem_set_iter = [None]
         langlookup = mklookup(self.request.lang)
+
+        env = {}
+        stdout = []
 
         def _new(rsv):
             nr = next(nrs)
@@ -179,9 +181,6 @@ class Page(PageBase):
             if _chain and isinstance(_chain[-1], dict):
                 SimpleTemplate.overrides = _chain[-1].copy()
 
-        env = {}
-        stdout = []
-
         if tplid and isinstance(tplid, str) or self.problem:
             def prebase(to_do):
                 'template creation for either _new or _zip'
@@ -196,11 +195,10 @@ class Page(PageBase):
                     cleanup = lookup(self.query_show, to_do)
                     try: next(cleanup)
                     except StopIteration:pass
-                tpl = get_tpl(
-                    tplid,
+                tpl = get_tpl(tplid,
                     template_lookup=lambda n: lookup(n, to_do))
                 try:
-                    tpl.execute(stdout, env)
+                    tpl.execute(stdout,env)
                 except AttributeError:
                     c = self.current or self.problem
                     if c:
@@ -256,45 +254,49 @@ class Page(PageBase):
     def tpl_from_qs(self):
         qs = self.query_show
 
-        qparsed = parse_qsl(qs, True)
+        #qs='r.a&r.b=1'
+        name_val = parse_qsl(qs, True)
 
-        if set(''.join(x+y for x,y in qparsed))&codemarkers:
+        if set(''.join(x+y for x,y in name_val))&codemarkers:
             raise HTTPError(400,'400_9')
 
-        if not qparsed:
-            return qparsed
+        if not name_val:
+            return name_val
 
-        indexquery = [(qa, qb) for qa, qb in qparsed if qa in
+        indexquery = [(qa, qb) for qa, qb in name_val if qa in
                 ['level','kind','path','link']]
         if indexquery:
             return indexquery
 
         ## ignore top level entries in query
-        # qparsed=[('a',2),('b.c',3)]
-        qparsed = [(qa,qb) for qa,qb in qparsed if '.' in qa]
+        # name_val=[('a','2'),('b.c','')]
+        name_val = [(qa,qb) for qa,qb in name_val if '.' in qa]
 
-        cnt = len(qparsed)
+        cnt = len(name_val)
         if cnt == 0:
             return
-        if (cnt > 1 or
-                (cnt == 1 and
-                 len(qparsed[0]) == 2 and
-                 qparsed[0][1] and
-                 int(qparsed[0][1]) > 1)):
-            res = []
-            icnt = counter()
-            for q, i in qparsed:
-                if not i:
-                    i = '1'
-                try:
-                    ii = int(i)
-                except ValueError:
+        if cnt == 1 and len(name_val[0]) == 2 and name_val[0][1]:
+            try:
+                cnt = int(name_val[0][1])
+            except ValueError:
+                pass
+        if cnt > 1:
+            tpllns = ["%globals().update(include('chcko/chelper'))"]
+            inr = Util.counter()
+            for prob, istr in name_val:
+                if not istr:
                     ii = 1
+                else:
+                    try:
+                        ii = int(istr)
+                    except ValueError:
+                        ii = 1
                 for _ in range(ii):
-                    res.append(Util.inc(q, icnt))
-            return '\n'.join(res)
+                    nr = next(inr)+1
+                    tpllns.append(f"%chinc('{prob}',{nr})")
+            return '\n'.join(tpllns)
         else:
-            return qparsed[0][0]
+            return name_val[0][0]
 
     def get_response(self):
         self._get_problem()

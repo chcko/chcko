@@ -37,7 +37,7 @@
     <br>
     <div class="grid_1"><label for="course">{{tcourse}}</label><input id="course" name="course" type="checkbox"></div>
     <input class="grid_8" name="acomposed" id="acomposed"/>
-    <input id="nbutton" style="text-align:center" type="submit" name="compose" value="{{tgo}}"/>
+    <input class="nbutton" style="text-align:center" type="submit" name="compose" value="{{tgo}}"/>
     <br>
 
     <p>{{texplain}}</p>
@@ -55,7 +55,7 @@
              % authorid = lnk.split('.')[0]
              (<a href="/{{self.request.lang}}/contents?link={{authorid}}">{{authorid}}</a>)
              % except: pass
-             %end
+             % end
              <a href="/{{self.request.lang}}/contents?level={{lvl}}">{{lvl}}</a>
           % end
        % end
@@ -129,7 +129,7 @@
     %alinks = ['/'+self.request.lang+'/contents?'+x for x in [start_qs(cq),next_qs(cq,-1),cq,next_qs(cq),end_qs(cq)]]
 
     %def qsnav(where,sign):
-    <button class="grid_1" type="button" onclick="window.location.href='{{ alinks[where] }}';" id="nbutton">{{ sign }}</button>
+    <button class="grid_1 nbutton" type="button" onclick="window.location.href='{{ alinks[where] }}';">{{ sign }}</button>
     %end
 
     <p>
@@ -143,10 +143,10 @@
     %end
 
     % if with_problems and problem.answered:
-        <button type="submit" class="{{bottonwidth}}" onclick="newpage('{{alinks[2]}}');" id="nbutton"> {{tagain+pe2}} </button>
+        <button type="submit" class="{{bottonwidth}} nbutton" onclick="newpage('{{alinks[2]}}');"> {{tagain+pe2}} </button>
     % end
     % if with_problems and not problem.answered:
-        <input id="nbutton" class="{{bottonwidth}}" style="text-align:center" type="submit" name="submit" value="{{tcheck+pe2}}"/>
+        <input class="{{bottonwidth}} nbutton" style="text-align:center" type="submit" name="submit" value="{{tcheck+pe2}}"/>
         <input type="hidden" name="problemkey" value="{{problemkey}}">
     %end
 
@@ -165,7 +165,7 @@
     % if self.request.user:
         % teacher = self.request.student.key.parent().parent().get()
         % if teacher.userkey == db.idof(self.request.user): # self assignment is possible
-            <form action="/{{self.request.lang}}/todo" method="post">
+            <form class="grid_10" id="assignform" action="/{{self.request.lang}}/todo" method="post">
                 % fieldset = False
                 % for ee in db.assignable(teacher,self.request.user):
                     % e = ee.key
@@ -209,7 +209,7 @@
                     onclick="javascript: subtractduedays();" value="&mdash;"
                     style="border-radius:0px;border:solid 1px;width:2em;font-weight:bold;background:#EEE"/>
                 </fieldset>
-                <p><input id="nbutton" class="grid_10" style="text-align:center" type="submit" name="assign" value="{{tassign}}"></p>
+                <p><input class="nbutton grid_10" style="text-align:center" type="submit" name="assign" value="{{tassign}}"></p>
                 <br>
             </form>
 
@@ -222,5 +222,54 @@
     % end
 
 % end
+
+<style>
+#assignform {
+    background-color: {{rolecolor}};
+    border-style:dotted;
+    padding: 1em;
+    margin: 1em 0em 0em -1em;
+}
+.nbutton {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    height: 2em;
+    font-weight: bold;
+}
+.right {
+    color:green;
+}
+.wrong {
+    color:red;
+}
+.divleft {
+    float: left;
+    width: 50%;
+}
+.divright {
+    margin-left: 50%;
+}
+.problem_id {
+  padding: 2px;
+  border: solid 1px;
+  padding: 0.5em;
+  margin: 0.5em;
+  background-color: {{rolecolor}};
+}
+.subproblem0 {
+  margin-top: 1em;
+  padding: 1em 0em 0.5em 0.5em;
+}
+.subproblem1 {
+  margin-top: 1em;
+  padding: 1em 0em 0.5em 0.5em;
+  //background-color: {{rolecolor}};
+}
+.inlined {
+  //background-color: {{rolecolor}};
+}
+</style>
 
 % include('chcko/main')

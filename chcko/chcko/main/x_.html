@@ -1,4 +1,5 @@
 <%
+
 if not defined('rolecolor'):
     rolecolor = '#EEE'
 end
@@ -291,11 +292,12 @@ addqs = lambda x: self.request.query_string+'&'+x if self.request.query_string e
 
     % header()
 
-    <div class="grid_10" style="padding-top:1em;">
     % rolemenu()
+
+    <div class="grid_10" style="padding-left:1em; margin:1em 0em 1em;">
     {{!base}}
-    <p>&nbsp;</p>
     </div>
+
 
     % footer()
     </div>

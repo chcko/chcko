@@ -2,45 +2,20 @@
 second part from docutils */
 
 body {
-  font-family: monospace;
+    font-family: monospace;
 }
 
 table {
-	border-width: 1px;
-	border-collapse: collapse;
+    border-width: 1px;
+    border-collapse: collapse;
 }
 
 th, td {
-	border-width: 1px;
-	padding: 0.5em;
-	border-style: solid;
+    border-width: 1px;
+    padding: 0.5em;
+    border-style: solid;
 }
-
-.right {
-    color:green;
-}
-
-.wrong {
-    color:red;
-}
-
-.divleft {
-    float: left;
-    width: 50%;
-}
-
-.divright {
-    margin-left: 50%;
-}
-
-.problem_id {
-  font-weight:bold;
-  padding: 0.5em;
-  margin-right:0.5em;
-}
-
-
-#nbutton {
+.nbutton {
     padding-top: 0px;
     padding-bottom: 0px;
     margin-top: 0px;
@@ -48,22 +23,19 @@ th, td {
     height: 2em;
     font-weight: bold;
 }
-
-.subproblem0 {
-  margin-top: 1em;
-  padding-top: 1em;
+.right {
+    color:green;
 }
-
-.subproblem1 {
-  margin-top: 1em;
-  padding-top: 1em;
-  background-color: {{rolecolor}};
+.wrong {
+    color:red;
 }
-
-.inlined {
-    background-color: {{rolecolor}};
+.divleft {
+    float: left;
+    width: 50%;
 }
-
+.divright {
+    margin-left: 50%;
+}
 
 
 /*From docutils

@@ -13,7 +13,7 @@ from urllib.parse import parse_qsl
 from chcko.chcko import bottle
 from chcko.chcko.bottle import SimpleTemplate, template
 
-from chcko.chcko.hlp import listable, mklookup, counter, logger, from_py
+from chcko.chcko.hlp import listable, mklookup, logger, from_py
 from chcko.chcko.languages import langkindnum, langnumkind, role_strings
 from chcko.chcko.db import db
 
@@ -56,15 +56,11 @@ class Util:
         return '<a href="' + newlnk + '">' + lng + '</a>'
 
     @staticmethod
-    def inc(lnk, cntr=counter(), stack=[]):
-        n = next(cntr) + 1
-        nn = '/'.join([str(n)] + stack + [lnk])
-        res = []
-        res.append('''<div class="subproblem{}">
-            <span class="problem_id">{} )</span>'''.format((n - 1) % 2, nn))
-        res.append("% include('" + lnk + "')")
-        res.append('</div>')
-        return '\n'.join(res)
+    def counter():
+        cnt = -1
+        while True:
+            cnt += 1
+            yield cnt
 
     def translate(self, word):
         try:

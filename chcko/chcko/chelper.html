@@ -1,0 +1,93 @@
+%#to use, do# %globals().update(include('chcko/chelper'))
+
+%def chok(ok):
+%    if ok: #✔
+    <span class='right'>&#x2714;</span>\\
+%    else: #✘
+    <span class='wrong'>&#x2718;</span>\\
+%    end
+%end
+
+%def chanswer(
+%        idx=None
+%        ,examples=None
+%        ,names=None
+%        ,choices=None
+%        ):
+%    if idx is None:
+%        idxs = range(len(results))
+%    else:
+%        idxs = [idx]
+%    end
+%    for idx in idxs:
+%        try:
+%            name = names[idx]
+         <br>{{name}}
+%        except:
+%            pass
+%        end
+%        try:
+%            example = examples[idx]
+%        except:
+%            example = ''
+%        end
+%        try:
+%            choice = choices[idx]
+%        except:
+%            choice = ''
+%        end
+%        if choice:
+%            for i,val in enumerate(choice):
+            {{str(i+1)}}. <input type="radio" \\
+%                if answered and norm(i+1)==results[idx]:
+                checked \\
+%                end
+%                if answered:
+                disabled \\
+%                end
+                name="{{inputids[idx]}}" value="{{str(i+1)}}"/>{{val}}<br>
+%            end
+%        else:
+%            if not answered:
+                <input type="text" name="{{inputids[idx]}}" size="8" autocomplete="off"> {{example}}
+%                if points[idx] > 0:
+                    [{{points[idx]}}P]\\
+%                end
+%            else:
+%                if defined('show'):
+                {{!show(results[idx])}}\\
+%                else:
+                {{!results[idx]}}\\
+%                end
+%            end
+%        end
+%        if answered:
+%            if answers[idx].strip() != '':
+                ({{answers[idx]}} \\
+%                chok(bool(oks[idx]))
+                )
+%            end
+%            if oks[idx]:
+                <span class='right'>[{{points[idx]}}P]</span>
+%            else:
+                <span class='wrong'>[0P]</span>
+%            end
+%        end
+%    end
+%end
+
+%def chinc(lnk, nr):
+%    sn = str(nr)
+<div class="subproblem{{(nr-1)%2}}">
+<div class="problem_id">
+    <span class="problem_nr">
+        {{sn}}
+    </span>
+    <span class="problem_name">
+        {{lnk}}
+    </span>
+</div>
+% include(lnk)
+</div>
+%end
+

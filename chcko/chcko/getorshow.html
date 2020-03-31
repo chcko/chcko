@@ -1,3 +1,7 @@
+%# deprecated: instead use
+%# globals().update(include('chcko/chelper'))
+%# %chanswer()
+
 %def oneidx(idx,example=''):
     %if defined('choices') and idx in choices:
         %for i,val in enumerate(choices[idx]):
