@@ -306,7 +306,7 @@ HTML files are actually `stpl <https://github.com/rpuntaie/stpl>`__ template sni
 for example ``r/a/en.html``::
 
     %path = "maths/trigonometry/sss"
-    %kind = kinda["problems"]
+    %kind = 0 #problems (see languages.py)
     %level = 11 # school year starting from elementary
 
     The sides of a triangle are
@@ -314,11 +314,28 @@ for example ``r/a/en.html``::
     b={{ g.b }},
     c={{ g.c }}.
     How big are the angles (in degrees).
-    %include('chcko/getorshow',examples=['e.g.'+e for e in ['23.3','100','56.7']])
+    %chanswer(examples=['e.g.'+e for e in ['23.3','100','56.7']])
 
-| ``kinda`` id defined in `languages.py`_.
-| ``getorshow`` creates the input field or shows the result.
-| ``level`` must be last and means years starting from elementary school (1, 2, ...)
+``chanswer`` creates the input field or shows the result
+according the output of ``calc()``.
+``g`` is returned by ``given()`` in ``__init__.py``:
+
+.. code:: python
+
+    import random
+    import math as m
+    from chcko.chcko.hlp import Struct
+    def angle_deg(i, g):
+        d = dict(zip('abc', ([g.a, g.b, g.c]*2)[i:]))
+        return eval('180*acos((a*a+b*b-c*c)/2/a/b)/pi', {**d,'acos':m.acos,'pi':m.pi})
+    def given():
+        random.seed()
+        a, b = random.sample(range(1, 10), 2)
+        c = random.randrange(max(a - b + 1, b - a + 1), a + b)
+        return Struct(a=a, b=b, c=c)
+    def calc(g):
+        return [angle_deg(i, g) for i in range(3)]
+    names = [r'\(\alpha=\)', r'\(\beta=\)', r'\(\gamma=\)']
 
 Non-problem texts are OK, too, but should be *minimal* and *context-free*,
 as they are composed to a page via the URL query string::

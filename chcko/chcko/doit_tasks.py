@@ -208,9 +208,10 @@ init_starter = '''
 
 lang_starter = '''
     %path = "path/goes/here"
-    %kind = kinda["<choose from languages.py/langnumkind[lang]>"]
+    %kind = 0 #problems
     %level = 0 # in school years
     %# ``doit -kd. initdb`` after every change here
+
 '''
 
 def new_path():

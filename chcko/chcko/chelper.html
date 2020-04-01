@@ -1,3 +1,8 @@
+%try:
+%    eval(f'from {__name__} import *')
+%except:
+%    pass
+%end
 
 %def chok(ok):
 %    if ok: #✔
@@ -9,9 +14,9 @@
 
 %def chanswer(
 %        idx=None
-%        ,examples=None
-%        ,names=None
-%        ,choices=None
+%        ,examples=get('example',None)
+%        ,names=get('names',None)
+%        ,choices=get('choices',None)
 %        ):
 %    if idx is None:
 %        idxs = range(len(results))
@@ -37,7 +42,7 @@
 %        end
 %        if choice:
 %            for i,val in enumerate(choice):
-            {{str(i+1)}}. <input type="radio" \\
+            {{str(i+1)}}. <input type="radio" class="chanswer"\\
 %                if answered and norm(i+1)==results[idx]:
                 checked \\
 %                end
@@ -48,7 +53,7 @@
 %            end
 %        else:
 %            if not answered:
-                <input type="text" name="{{inputids[idx]}}" size="8" autocomplete="off"> {{example}}
+                <input type="text" class="chanswer" name="{{inputids[idx]}}" size="8" autocomplete="off"> {{example}}
 %                if points[idx] > 0:
                     [{{points[idx]}}P]\\
 %                end

@@ -40,13 +40,12 @@ chcko-{author_id}/MANIFEST.in
     global-exclude *.log
     global-exclude *.db
 chcko-{author_id}/Makefile
-    .PHONY: check render dist up
+    .PHONY: check html dist up
 
     check:
     	restview --long-description --strict
 
-    render:
-    	cd chcko/{author_id}
+    html:
     	doit -kd. html
     	doit -kd. initdb
 
@@ -56,10 +55,32 @@ chcko-{author_id}/Makefile
     up:
     	twine upload dist/`ls dist -rt | tail -1`
 chcko-{author_id}/README.rst
-    chko-{author_id}
+    chcko-{author_id}
     ================
 
-    TODO
+    After::
+
+        runchcko -i {author_id}
+
+    Track changes with git::
+
+        cd chcko-{author_id}
+        git init
+        git add .
+        git commit -m "started chcko-{author_id}"
+
+    Add new problem (there is one example you should edit first, though)::
+
+        doit new
+        #or: doit rst
+        git status
+        #open generated files and edit
+
+    Run the server with::
+
+        make html
+        runchcko -s wsgiref
+
 chcko-{author_id}/dodo.py
     import sys
     import os
@@ -176,7 +197,7 @@ chcko-{author_id}/chcko/{author_id}/a/__init__.py
         return [res]
 chcko-{author_id}/chcko/{author_id}/a/en.html
     %path = "maths/linear equation/with integers"
-    %kind = kinda["problems"]
+    %kind = 0 #"problems"
     %level = 9
     \[{{g.a}} x {{util.sgn(g.b)}} {{abs(g.b)}} = {{g.c}} x\]
     <br>
