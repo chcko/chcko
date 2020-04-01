@@ -9,6 +9,7 @@ from sympy.parsing.sympy_parser import parse_expr
 from sympy import Poly, latex
 from sympy.abc import x
 from urllib.parse import parse_qsl
+from itertools import count
 
 from chcko.chcko import bottle
 from chcko.chcko.bottle import SimpleTemplate, template
@@ -54,13 +55,6 @@ class Util:
             newp = lng+'/'+oldp
         newlnk = newurl('/'+newp)
         return '<a href="' + newlnk + '">' + lng + '</a>'
-
-    @staticmethod
-    def counter():
-        cnt = -1
-        while True:
-            cnt += 1
-            yield cnt
 
     def translate(self, word):
         try:

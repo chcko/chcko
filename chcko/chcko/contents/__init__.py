@@ -20,6 +20,7 @@ See ``filtered_index`` for that.
 
 import re
 import datetime
+from itertools import count
 
 from urllib.parse import parse_qsl
 from chcko.chcko.bottle import SimpleTemplate, StplParser, get_tpl, HTTPError
@@ -108,8 +109,8 @@ class Page(PageBase):
         tplid = self.tpl_from_qs()
         _chain = []
         withempty, noempty = self.make_summary()
-        nrs = Util.counter()
-        problems_cntr = Util.counter()
+        nrs = count()
+        problems_cntr = count()
         SimpleTemplate.overrides = {}
         problem_set_iter = [None]
         langlookup = mklookup(self.request.lang)
@@ -224,8 +225,6 @@ class Page(PageBase):
         else:
             content = db.filtered_index(self.request.lang, tplid)
 
-        nrs.close()
-
         if rebase:
             SimpleTemplate.overrides = {}
             del stdout[:]  # the script functions will write into this
@@ -243,7 +242,6 @@ class Page(PageBase):
                     with_problems=with_problems,
                     request=self.request))
             tpl.execute(stdout, env)
-            problems_cntr.close()
             return ''.join(stdout)
         else:
             return content
@@ -279,7 +277,7 @@ class Page(PageBase):
                 pass
         if cnt > 1:
             tpllns = ["%globals().update(include('chcko/chelper'),withnr=False)"]
-            inr = Util.counter()
+            inr = count()
             for prob, istr in name_val:
                 if not istr:
                     ii = 1

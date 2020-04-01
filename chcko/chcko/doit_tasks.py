@@ -35,6 +35,8 @@ import re
 import fnmatch
 import shutil
 import codecs
+from itertools import count
+from numpy import base_repr
 
 import pytest
 
@@ -48,13 +50,25 @@ from doit.task import clean_targets
 basedir = None
 thisdir = None
 sphinxbase = None
+authorbase = None
+author_id = None
+authorbase = None
 def set_base(dodofile):
     global basedir
     global thisdir
     global sphinxbase
+    global author_id
+    global authorbase
+    # basedir = os.path.expanduser('~/mine/chcko-r')
     basedir = os.path.dirname(dodofile)
+    author_id = basedir.rsplit('-',1)[-1]
     thisdir = os.getcwd()
     sphinxbase = os.path.join(basedir,'chcko')
+    authorbase = os.path.join(basedir,'chcko',author_id)
+
+authorids = lambda: set(x for x in os.listdir(authorbase)
+    if not any(u in x for u in '._') and os.path.isdir(os.path.join(authorbase,x)))
+
 
 def recursive_glob(pattern):
     matches = []
@@ -156,34 +170,17 @@ def task_html():
 
 
 ### create new problem / content
-
-from chcko.chcko.hlp import int_to_base26, base26_to_int, mklookup
-import yaml
-
+nostartnum = re.compile('^\d+.*$')
 def author_next():
-    #basedir = os.path.expanduser('~/mine/chcko-r')
-    nextid_file = os.path.join(basedir,'nextids.yaml')
-    authors_file = os.path.join(basedir,'authors.yaml')
-
-    # get author_id
-    gitemail = check_output('git config --global --get user.email',shell=True).decode('utf-8').strip()
-    with open(authors_file,'r') as f:
-        authors = yaml.full_load(f)
-    author = [author for author in authors if author['gitemail'] == gitemail][0]
-    author_id = author['author_id']
-    # get next_id for author
-    with open(nextid_file,'r') as f:
-        nextids = yaml.full_load(f)
-    next_id = nextids[0][author_id]
-    newnext = int_to_base26(base26_to_int(next_id)+1)
-    nextids[0][author_id] = newnext
-    with open(nextid_file,'w') as f:
-        f.write('- \n')
-        for k,v in nextids[0].items():
-            # k,v = nextids[0].items()[0]
-            ln = '  {0}:  "{1}"\n'.format(k,v)
-            f.write(ln)
-    return author, next_id
+    ids = authorids()
+    idcount = count()
+    for testid in idcount:
+        next_id = base_repr(testid,36).lower()
+        if nostartnum.match(next_id):
+            continue
+        if next_id not in ids:
+            break
+    return author_id, next_id
 
 init_starter = '''
 # # for a problem uncomment (non-problem texts need no code in __init__.py)
@@ -215,8 +212,8 @@ lang_starter = '''
 '''
 
 def new_path():
-    author, next_id = author_next()
-    path = os.path.join(basedir,'chcko',author['author_id'],next_id)
+    author_id, next_id = author_next()
+    path = os.path.join(basedir,'chcko',author_id,next_id)
     os.makedirs(path)
     return path
 
@@ -225,7 +222,7 @@ def newproblem(init_starter=init_starter,lang_starter=lang_starter):
         path = new_path()
         with open(os.path.join(path,'__init__.py'),'a') as f:
             f.write(init_starter)
-        with open(os.path.join(path,'en'+'.html'),'a') as f: # author['default_lang']+'.html'),'a') as f:
+        with open(os.path.join(path,'en'+'.html'),'a') as f:
             f.write(lang_starter)
         return path
     except OSError:
@@ -248,7 +245,7 @@ def newrst(rst_starter=rst_starter):
         path = new_path()
         with open(os.path.join(path,'__init__.py'),'a') as f:
             f.write(init_starter)
-        with open(os.path.join(path,'en.rst'),'a') as f:# author['default_lang']+'.rst'),'a') as f:
+        with open(os.path.join(path,'en.rst'),'a') as f:
             f.write(rst_starter)
         return path
     except OSError:
@@ -271,67 +268,54 @@ def task_initdb():
     import pprint
 
     def make_initdb():
-        authors_file = os.path.join(basedir,'authors.yaml')
-        with open(authors_file,'r') as f:
-            authors = yaml.full_load(f)
-
         available_langs = set([])
-        for author in authors:
-            inits = ['# -*- coding: utf-8 -*-',
-                     '# generate via ``doit -kd. initdb``',
-                     'def populate_index(index_add):']
-
-            # author = authors[0]
-            authorid = author['author_id']
-            authordir = os.path.join(sphinxbase,authorid)
-            allauthorIDs = [d for d in os.listdir(authordir) if not d.startswith('_')
-                    and os.path.isdir(os.path.join(authordir,d))]
-            for anid in allauthorIDs:
-                # anid = allauthorIDs[1]
-                def langcode(x):
-                    # x = '_de.html'
-                    # x = '__pycache__'
-                    lng_ext = x.split('.')
-                    if len(lng_ext) == 2:
-                        lng,ext = lng_ext
-                        return ext == 'html' and lng.strip('_')
-                problemdir = os.path.join(authordir,anid)
-                langfiles = [fl for fl in os.listdir(problemdir)
-                        if langcode(fl) in languages.languages]
-                for langfile in langfiles:
-                    # langfile = langfiles[0]
-                    full = os.path.join(problemdir,langfile)
-                    with open(full,'rb') as ff:
-                        src = codecs.decode(ff.read(),'utf-8')
-                    defines = []
-                    for ln in src.splitlines():
-                        # ln = src.splitlines()[0]
-                        lnstr = ln.strip()
-                        if lnstr:
-                            if not lnstr.startswith('%'):
-                                break
-                            lnstr1 = lnstr[1:]
-                            defines.append(lnstr1)
-                            if lnstr1.strip().startswith('level'):
-                                break # level must be last define
-                    deftext = u'\n'.join(defines)
-                    lang = langcode(langfile)
-                    available_langs.add(lang)
-                    defs = {'kinda':languages.langkindnum[lang]}
-                    try:
-                        exec(deftext, defs)
-                    except KeyError:
-                        print(full)
-                        raise
-                    inits.append('    index_add("{0}", "{1}", "{2}", "{3}",\n        "{4}")'.format(
-                        authorid+'.'+anid
-                        ,lang
-                        ,defs['kind']
-                        ,defs['level']
-                        ,defs['path']))
-
-            #per author
-            initdb = os.path.join(sphinxbase,authordir,'initdb.py')
+        inits = ['# -*- coding: utf-8 -*-',
+                 '# generate via ``doit -kd. initdb``',
+                 'def populate_index(index_add):']
+        ids = authorids()
+        for anid in ids:
+            def langcode(x):
+                # x = '_de.html'
+                # x = '__pycache__'
+                lng_ext = x.split('.')
+                if len(lng_ext) == 2:
+                    lng,ext = lng_ext
+                    return ext == 'html' and lng.strip('_')
+            problemdir = os.path.join(authorbase,anid)
+            langfiles = [fl for fl in os.listdir(problemdir)
+                    if langcode(fl) in languages.languages]
+            for langfile in langfiles:
+                # langfile = langfiles[0]
+                full = os.path.join(problemdir,langfile)
+                with open(full,'rb') as ff:
+                    src = codecs.decode(ff.read(),'utf-8')
+                defines = []
+                for ln in src.splitlines():
+                    # ln = src.splitlines()[0]
+                    lnstr = ln.strip()
+                    if lnstr:
+                        if not lnstr.startswith('%'):
+                            break
+                        lnstr1 = lnstr[1:]
+                        defines.append(lnstr1)
+                        if lnstr1.strip().startswith('level'):
+                            break # level must be last define
+                deftext = u'\n'.join(defines)
+                lang = langcode(langfile)
+                available_langs.add(lang)
+                defs = {'kinda':languages.langkindnum[lang]}
+                try:
+                    exec(deftext, defs)
+                except KeyError:
+                    print(full)
+                    raise
+                inits.append('    index_add("{0}", "{1}", "{2}", "{3}",\n        "{4}")'.format(
+                    author_id+'.'+anid
+                    ,lang
+                    ,defs['kind']
+                    ,defs['level']
+                    ,defs['path']))
+            initdb = os.path.join(authorbase,'initdb.py')
             with open(initdb, 'w') as f:
                 f.write('\n'.join(inits))
                 f.write('\n\n')

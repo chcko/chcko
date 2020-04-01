@@ -28,7 +28,7 @@ def _problems(authordir):
     for p,d,f in os.walk(authordir):
         authorid = os.path.basename(authordir)
         for problemid in d:
-            if not problemid.startswith('_'):
+            if not problemid.startswith('_') and os.path.exists(os.path.join(p,problemid,'__init__.py')):
                 yield '.'.join([authorid,problemid])
         del d[:]
 
