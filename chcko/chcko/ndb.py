@@ -21,7 +21,7 @@ class User(Model):
     pwhash = ndb.StringProperty(required=False)
     verified = ndb.IntegerProperty()
     token = ndb.StringProperty()
-    current_student = ndb.KeyProperty(kind='Role')
+    current_role = ndb.KeyProperty(kind='Role')
     lang = ndb.StringProperty(required=False)
     created = ndb.DateTimeProperty(auto_now_add=True)
 
@@ -103,8 +103,8 @@ class Ndb(db_mixin):
         return {s: v.__get__(entity) for s,v in entity._properties.items()}
     def add_to_set(self,problem,other):
         problem.collection = other.key
-    def current_student(self,user):
-        res = user.current_student and user.current_student.get()
+    def current_role(self,user):
+        res = user.current_role and user.current_role.get()
         return res
 
     def urlsafe(self,key):
@@ -132,7 +132,7 @@ class Ndb(db_mixin):
         try:
             ndb.delete_multi(keys)
         except:
-            pass#logger.info("ndb.delete_multi() failled")
+            pass #logger.info("ndb.delete_multi() failled")
 
     def delete_query(self,query):
         keys = query.iter(keys_only=True)

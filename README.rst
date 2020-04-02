@@ -35,24 +35,23 @@ Pages are requested with this URL format::
 
 Pages are:
 
-- ``edits``: add roles and choose a color
-- ``content``: specific content items or overview if no ``query``
+- ``org``: add roles and choose a color
+- ``contents``: specific content items or overview if no ``query``
 - ``done``: done problems
 - ``todo``: assigned problems
-- ``roles``: roles, only if user is logged in
 - some additional helper pages
 
 Example URLs:
 
-| https://chcko.eu/en/edits?School=S&Field=F&Teacher=T&Class=C&Role=-------
-| https://chcko.eu/en/content?r.a&r.bu
-| https://chcko.eu/en/content?r.a&&r.bu
+| https://chcko.eu/en/org?School=S&Field=F&Teacher=T&Class=C&Role=-------
+| https://chcko.eu/en/contents?r.a&r.bu
+| https://chcko.eu/en/contents?r.a&&r.bu
 | https://chcko.eu/en/done?*&*
 
-With ``&&`` instead of one ``&`` as separator in a *content* query, is called a **course**, here.
+With ``&&`` instead of one ``&`` as separator in a *contents* query, is called a **course**, here.
 In a course only one problem at a time is shown.
 ``&&&`` marks the current position.
-For example, ``.../en/content?r.bd&&r.ba&&&r.a`` has ``r.a`` as current item in the course.
+For example, ``.../en/contents?r.bd&&r.ba&&&r.a`` has ``r.a`` as current item in the course.
 
 
 The names ``School, Field, Teacher, Class, Role``
@@ -76,15 +75,15 @@ One can revisit the ``Role`` later via the URL, for example
 
   https://chcko.eu/en/done?School=7f277b84&Field=8084&Teacher=5ab4&Class=87b5&Role=459671edc836
 
-With ``Edits`` one can choose names.
+With ``Org`` one can choose names.
 One can choose names via the URL, too.
 For example:
 
-  https://chcko.eu/en/edits?School=noschool&Field=2020&Teacher=noteacher&Class=noclass&Role=me
+  https://chcko.eu/en/org?School=noschool&Field=2020&Teacher=noteacher&Class=noclass&Role=me
 
 Without login these names, random or not, are not protected.
 Their ownership changes to a logged-in user when accessed,
-either via ``Edits`` or via URL.
+either via ``Org`` or via URL.
 
 Step-by-step try in class without logging in:
 
@@ -93,7 +92,7 @@ Step-by-step try in class without logging in:
 
 - Teacher visits:
 
-    https://chcko.eu/en/content?School=noschool&Field=2020&Teacher=noteacher&Class=noclass&Role=-------
+    https://chcko.eu/en/contents?School=noschool&Field=2020&Teacher=noteacher&Class=noclass&Role=-------
 
   The teacher is a student, too, but I suggest ``-------`` for the student field.
   This is the default for a logged in user.
@@ -101,21 +100,21 @@ Step-by-step try in class without logging in:
   Alternatively:
 
   - open https://chcko.eu
-  - Go to ``Edits`` (top left)
+  - Go to ``Org`` (top left)
   - Enter the IDs.
   - Press [OK].
-  - Go to ``Content``.
+  - Go to ``Contents``.
 
 - Students visit a problem (here ``r.bu``) via:
 
-    https://chcko.eu/en/content?School=noschool&Field=2020&Teacher=noteacher&Class=noclass&Role=GabiB&r.bu
-    https://chcko.eu/en/content?School=noschool&Field=2020&Teacher=noteacher&Class=noclass&Role=LauraB&r.bu
-    https://chcko.eu/en/content?School=noschool&Field=2020&Teacher=noteacher&Class=noclass&Role=LiliB&r.bu
+    https://chcko.eu/en/contents?School=noschool&Field=2020&Teacher=noteacher&Class=noclass&Role=GabiB&r.bu
+    https://chcko.eu/en/contents?School=noschool&Field=2020&Teacher=noteacher&Class=noclass&Role=LauraB&r.bu
+    https://chcko.eu/en/contents?School=noschool&Field=2020&Teacher=noteacher&Class=noclass&Role=LiliB&r.bu
     ...
 
   Alternatively they can also do the steps through
 
-  - ``Edits`` on https://chcko.eu and
+  - ``Org`` on https://chcko.eu and
   - visit the problem afterwards via https://chcko.eu/en?r.bu.
 
 - The teacher enters the URL ``.../en/done?<classId>&*&*``
@@ -139,15 +138,15 @@ Login in.
 
 Then
 
-- Go to ``Edits`` and choose a name.
+- Go to ``Org`` and choose a name.
 - Alternatively, after having logged in, visit an URL with the names of you choice, e.g.:
 
-  https://chcko.eu/en/edits?School=noschool&Field=2020&Teacher=noteacher
+  https://chcko.eu/en/org?School=noschool&Field=2020&Teacher=noteacher
 
 Create a Class
 --------------
 
-In the ``Edits`` tab,
+In the ``Org`` tab,
 the ``Role`` input box uses the first of ``;,`` as a separator
 to create a whole class with no owner (independent of logged in or not).
 Then send an email to the students,
@@ -164,11 +163,11 @@ Assign
 
 To assign to others, you need to be logged in.
 
-In the ``content`` tab choose the problems
+In the ``contents`` tab choose the problems
 or use an URL:
 
-| https://chcko.eu/en/content?r.a&r.ck or
-| https://chcko.eu/en/content?r.a&&r.ck
+| https://chcko.eu/en/contents?r.a&r.ck or
+| https://chcko.eu/en/contents?r.a&&r.ck
 
 At the end of the page you can choose classes or students to assign to.
 Assigning a course (with the ``&&``) assigns the problems individually.
@@ -220,15 +219,16 @@ Assume Role
 -----------
 
 As a logged in user you can have more roles.
-These roles are listed in the ``Roles`` tab.
-
-You can quickly assume another role via the menu below ``Role``.
+These roles are listed by clicking in the role field
+on the ☰,
+not on the link to the current role.
+Click on an entry to assume another role.
 
 Remove a Role
 -------------
 
 - Assume the role
-- Go to the ``Edits`` tab
+- Go to the ``Org`` tab
 - Choose ``delete``
 - Confirm
 
@@ -340,11 +340,11 @@ according the output of ``calc()``.
 Non-problem texts are OK, too, but should be *minimal* and *context-free*,
 as they are composed to a page via the URL query string::
 
-    https://chcko.eu/en/content?r.a&r.by
+    https://chcko.eu/en/contents?r.a&r.by
 
 Replace the ``&`` with ``&&`` to make a *course*::
 
-    https://chcko.eu/en/content?r.a&&r.by
+    https://chcko.eu/en/contents?r.a&&r.by
 
 In the URL
 
@@ -535,7 +535,7 @@ Plan
 - Human language context paths to problems and keywords are language dependent and are
   therefore in the language files.
 
-- More problems can be combined in one URL / http request (*content* query)
+- More problems can be combined in one URL / http request (*contents* query)
   e.g. to make a larger assignment.
 
 - Problem/Content pages can reference other content or inline it
@@ -556,17 +556,16 @@ Plan
 - Teachers see what their classes/students have done so far (*done* query)
 
 - Users initially get a generated role (generated random strings for each),
-  which they can change, though (*edits* query).
+  which they can change, though (*org* query).
   There users can choose a color to help then see in which role they are.
 
-- Registered users can have more roles (*roles* query).
+- Registered users can have more roles.
   Registration can also be done via Google, Twitter, Facebook or LinkedIn.
 
 Design
 ======
 
-The code tries to stay minimal.
-
+The code tries to stay minimal:
 Python 3 with `bottle`_ and a DB for the roles and problems.
 
 Database:
@@ -603,34 +602,32 @@ The URL format is::
   URL = "https://"domain"/"lang"/"page"
   domain = "chcko.eu"
   lang = "en"|"de"|...
-  page = ["content"]["?"{author"."problem["="count]"&"}]
+  page = ["contents"]["?"{author"."problem["="count]"&"}]
          | "done"[rlinc]
          | "todo"
-         | "edits"
-         | "roles"
+         | "org"
   rlinc = [[[[[school&]period&]teacher&]class&]student&]("*"|query)
   query = {field("~"|"="|"!"|"<"|">")value","}
 
 If ``<lang>`` is dropped, the last language or the browser setting is used.
 See `languages.py`_.
 
-``<page>`` is one of ``content``, ``done``, ``todo``, ``edits`` and ``roles``.
-``roles`` requires a logged-in user, who can have more roles.
-``content`` is default, if dropped.
+``<page>`` is one of ``contents``, ``done``, ``todo``, ``org``.
+``contents`` is default, if dropped.
 
 ``<query>`` starts after the ``?`` and it is a ``&``-separated list.
 ``<query>`` can contain
 ``School=<LLL>&Field=<DDD>&Teacher=<RRR>&Class=<SSS>&Role=<TTT>``
 for all pages.
 
-content
-^^^^^^^
+contents
+^^^^^^^^
 
-With ``../<lang>/content`` all current contents are listed. One can select more entries here.
+With ``../<lang>/contents`` all current contents are listed. One can select more entries here.
 
-``../en/content?r.a&r.by=2`` (``r.a`` is equivalent to ``r.a=1``) would create
+``../en/contents?r.a&r.by=2`` (``r.a`` is equivalent to ``r.a=1``) would create
 an English content page with one ``r.a`` and two ``r.by`` problems.
-``../en/?r.a&r.by=2`` is the same, i.e. ``content`` is the default page.
+``../en/?r.a&r.by=2`` is the same, i.e. ``contents`` is the default page.
 
 Use ``&&`` instead of ``&`` to show one problem at a time (**course**).
 
@@ -642,14 +639,14 @@ Problems have more questions and every question has points associated (default 1
 After checking the entered values at the top there will be a summary of achieved
 points/total points twice, once not counting fields left empty.
 
-The ``content`` index can be limited with:
+The ``contents`` index can be limited with:
 
 - ``link``: the author id
 - ``level``: corresponds to school year starting from elemntary (1, 2, ...)
 - ``kind``: problems texts courses examples summaries formal fragments remarks
   citations definitions theorems corollaries lemmas propositions axioms
   conjectures claims identities paradoxes meta
-- ``path``: as given in the header of the content
+- ``path``: as given in the header of the content sources
 
 done
 ^^^^
@@ -706,10 +703,10 @@ todo
 
 ``../<lang>/todo`` lists the assignments with date/time given and date/time due.
 
-edits
-^^^^^
+org
+^^^
 
-``../<lang>/edits`` allows to add, change or delete IDs for
+``../<lang>/org`` allows to add, change or delete IDs for
 School, Field, Teacher, Class and Role.
 For fields left empty 
 
@@ -728,14 +725,6 @@ i.e. all the problems done will be copied over.
 ``delete`` will delete the role and all its done problems.
 
 A **color** can be chosen to more easily see in which role one is.
-
-roles
-^^^^^
-
-``../<lang>/roles`` lists all roles of the currently logged-in user.
-
-These roles can also be accessed via a drop down menu when hovering over the student ID.
-Then the currently open page will be reopened with the new role.
 
 Permissions
 -----------

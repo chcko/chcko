@@ -4016,8 +4016,9 @@ class SimpleTemplate(BaseTemplate):
         try:
             tpl = get_tpl(_name, template_adapter=self.__class__, template_lookup=self.lookup)
             env['__name__'] = _name
+            env['__file__'] = tpl.filename
             env = tpl.execute(env['_stdout'], env)
-        except StopIteration:#from get_tpl
+        except StopIteration: # from get_tpl
             pass
         return env
 
@@ -4115,7 +4116,7 @@ class StplParser(object):
     # Match the start tokens of code areas in a template
     _re_split = r'''(?m)^[ \t]*(\\?)((%(line_start)s)|(%(block_start)s))'''
     # Match inline statements (may contain python strings)
-    _re_inl = r'''%%(inline_start)s((?:%s|[^'"\n]+?)*?)%%(inline_end)s''' % _re_inl
+    _re_inl = r'''%%(inline_start)s((?:%s|[^'"\n])*?)%%(inline_end)s''' % _re_inl
 
     # add the flag in front of the regexp to avoid Deprecation warning (see Issue #949)
     # verbose and dot-matches-newline mode

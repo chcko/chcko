@@ -24,4 +24,5 @@ deploy:
 	cat app.yaml > .app.yaml
 	cat ~/my/mam/chcko/environment.yaml >> .app.yaml
 	# gcloud app deploy .app.yaml --project chcko-262117
+	gcloud app deploy index.yaml
 	gcloud app deploy .app.yaml --project mamchecker

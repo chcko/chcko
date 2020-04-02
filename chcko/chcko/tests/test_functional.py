@@ -120,12 +120,19 @@ class TestRunthrough(object):
         self._signup(chapp)
         # 'message?msg=j' then email with link to verification
         assert '/verification' in self.resp.request.url
+        self._store('usertoken', chapp.cookies.get('chcko_cookie_usertoken'))
 
     def test_logout(self):
         r = self.resp.goto('/en/logout')
         self._store('resp', r.follow())
         assert 'Login' in self.resp
         # self.resp.showbrowser()
+
+    #def test_wrong_cookie(self,chapp):
+    #    chapp.set_cookie('chcko_cookie_usertoken','A'*len(self.usertoken))
+    #    r = chapp.get('/en')
+    #    assert '200' in r.status
+    #    del chapp.cookies['chcko_cookie_usertoken']
 
     def test_registersame(self,chapp):
         self._signup(chapp,pw='different')

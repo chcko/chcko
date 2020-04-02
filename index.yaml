@@ -76,7 +76,7 @@ indexes:
   - name: query_string
   - name: created
 
-- kind: Student
+- kind: Role
   ancestor: yes
   properties:
   - name: created

@@ -780,7 +780,7 @@ class db_mixin:
                 nspr = [pe or rndsp[i] for i,pe in enumerate(studentpath)]
             student = self.add_student(nspr, usr, color)
         if not student and usr:
-            student = self.current_student(usr)
+            student = self.current_role(usr)
         if not student:
             chckostudenturlsafe = self.get_cookie('chcko_cookie_studenturlsafe')
             if chckostudenturlsafe:
@@ -797,8 +797,8 @@ class db_mixin:
         if not student:  # generate
             student = self.add_student(rndsp, usr, color)
         if usr and student:
-            if not usr.current_student or (usr.current_student != self.idof(student)):
-                usr.current_student = self.idof(student)
+            if not usr.current_role or (usr.current_role != self.idof(student)):
+                usr.current_role = self.idof(student)
                 tosave = [usr]
                 if student.userkey is None:
                     student.userkey = self.idof(usr)

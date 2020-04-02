@@ -180,7 +180,7 @@ class User(Model):
     pwhash = C(String)
     verified = C(Boolean)
     token = C(String)
-    current_student = C(ForeignKey('Role.urlkey',use_alter=True))
+    current_role = C(ForeignKey('Role.urlkey',use_alter=True))
     lang = C(String)
     created = C(DateTime,default=datetime.datetime.now)
 
@@ -287,8 +287,8 @@ class Sql(db_mixin):
         return {clmnm: getattr(obj,clmnm) for clmnm in self.columnsof(obj)}
     def add_to_set(self,problem,other):
         problem.collection = other.urlkey
-    def current_student(self,user):
-        res = user.current_student and self.Key(urlsafe=user.current_student).get()
+    def current_role(self,user):
+        res = user.current_role and self.Key(urlsafe=user.current_role).get()
         return res
 
     def urlsafe(self,key):
