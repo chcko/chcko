@@ -14,42 +14,73 @@
 
 %def chanswer(
 %        idx=None
-%        ,examples=get('example',None)
-%        ,names=get('names',None)
-%        ,choices=get('choices',None)
+%        ,htmlbr='<br>' # html delimiter if no idx =/ more idx
+%        # #the following can be defined in either __init__.py or in the language html
+%        # ,chames=get('chames',None)     # input names (per idx a html/tex string, e.g. r"\(\alpha\)")
+%        # ,champles=get('champles',None) # input examples ( " )
+%        # ,chadios=get('chadios',None)   # texts for radio buttons (a tuple per idx)
+%        # ,checkos=get('checkos',None)   # texts for check boxes (a tuble per idx)
 %        ):
 %    if idx is None:
 %        idxs = range(len(results))
 %    else:
-%        idxs = [idx]
+%        try:
+%           idxs = [int(i) for i in idx]
+%        except:
+%           idxs = range(len(results))
+%           htmlbr = idx
+%        end
 %    end
 %    for idx in idxs:
+         {{! htmlbr}}
 %        try:
-%            name = names[idx]
-         <br>{{name}}
+%            chame = env.get('chames')[idx]
+             {{! chame}}
 %        except:
 %            pass
 %        end
 %        try:
-%            example = examples[idx]
+%            example = env.get('champles')[idx]
 %        except:
 %            example = ''
 %        end
 %        try:
-%            choice = choices[idx]
+%            choice = env.get('chadios')[idx]
 %        except:
 %            choice = ''
 %        end
+%        try:
+%            checks = env.get('checkos')[idx]
+%        except:
+%            checks = ''
+%        end
 %        if choice:
 %            for i,val in enumerate(choice):
-            {{str(i+1)}}. <input type="radio" class="chanswer"\\
+%               answ = str(i+1)
+%            # mention answ in val to link to saved value of answer (1. 2. )
+%            # have a <br> at the end of ``val`` for vertical alignment
+             <label><input type="radio" class="chanswer"\\
+%                # radio box index (starting from 1)
 %                if answered and norm(i+1)==results[idx]:
                 checked \\
 %                end
 %                if answered:
                 disabled \\
 %                end
-                name="{{inputids[idx]}}" value="{{str(i+1)}}"/>{{val}}<br>
+                name="{{inputids[idx]}}" value="{{answ}}"/>{{! val}}</label>
+%            end
+%        elif checks:
+%            for i,val in enumerate(checks):
+%               answ = str(i+1)
+             <label><input type="checkbox" class="chanswer"\\
+%                # checkbox indices (starting from 1) comma separated (see norm_set)
+%                if answered and norm(i+1) in set(results[idx].split(',')):
+                checked \\
+%                end
+%                if answered:
+                disabled \\
+%                end
+                name="{{inputids[idx]}}" value="{{answ}}"/>{{! val}}</label>
 %            end
 %        else:
 %            if not answered:

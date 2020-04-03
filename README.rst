@@ -292,6 +292,7 @@ with ``chcko`` `namespace <https://packaging.python.org/guides/packaging-namespa
 For problems, ``given()`` in ``__init__.py`` provides random numbers
 and ``calc()`` solves the problem.
 The parameters from ``given()`` can be overridden via the URL parameters.
+``cheader`` URL parameter is text placed at the beginning of a page with problems.
 
 Generated files start with ``_`` (``_<language_id>.html``).
 ``<language_id>.rst`` can contain `tikz <https://github.com/pgf-tikz/pgf>`__ images

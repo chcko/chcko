@@ -4015,29 +4015,31 @@ class SimpleTemplate(BaseTemplate):
         env.update(kwargs)
         try:
             tpl = get_tpl(_name, template_adapter=self.__class__, template_lookup=self.lookup)
-            env['__name__'] = _name
-            env['__file__'] = tpl.filename
+            local = {
+                'env': _env,
+                '__name__': _name,
+                '__file__': tpl.filename,
+            }
+            env.update(local)
             env = tpl.execute(env['_stdout'], env)
         except StopIteration: # from get_tpl
-            pass
-        return env
+            return {}
+        return {k:v for k,v in env.items() if k not in local}
 
     def execute(self, _stdout, kwargs):
         env = self.defaults.copy()
         env.update(kwargs)
         env.update(self.overrides)
-        env.update({
+        local = {
             '_stdout': _stdout,
             '_printlist': _stdout.extend,
             '_rebase': None,
             '_str': self._str,
             '_escape': self._escape,
-        })
-        local = {
             'include': functools.partial(self._include, env),
             'rebase': functools.partial(self._rebase, env),
-            'get': env.get,
             'setdefault': env.setdefault,
+            'get': env.get,
             'defined': env.__contains__
         }
         env.update(local)
@@ -4051,8 +4053,7 @@ class SimpleTemplate(BaseTemplate):
             try: #to do second part of lookup with yield
                 next(self.cleanup)
             except StopIteration: pass
-        retenv = {k:v for k,v in env.items() if k not in local}
-        return retenv
+        return {k:v for k,v in env.items() if k not in local}
 
     def render(self, *args, **kwargs):
         """ Render the template using keyword arguments as local variables. """

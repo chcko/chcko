@@ -106,6 +106,12 @@
 
 % else: # specific content
 
+    %if 'cheader' in self.request.params:
+    <p>
+        {{! self.request.params['cheader'] }}
+    </p>
+    %end
+
     <script>
     $(document).ready(()=>window.sessionStorage.removeItem('chcko_selection'));
     function newpage(url){
