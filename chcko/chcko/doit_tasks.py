@@ -40,6 +40,9 @@ from numpy import base_repr
 
 import pytest
 
+import chcko.chcko.languages as languages
+import pprint
+
 is_win = (sys.platform == 'win32')
 PY3 = sys.version_info[0] == 3
 def iteritems(d, **kw):
@@ -66,7 +69,7 @@ def set_base(dodofile):
     sphinxbase = os.path.join(basedir,'chcko')
     authorbase = os.path.join(basedir,'chcko',author_id)
 
-authorids = lambda: set(x for x in os.listdir(authorbase)
+problemids = lambda: set(x for x in os.listdir(authorbase)
     if not any(u in x for u in '._') and os.path.isdir(os.path.join(authorbase,x)))
 
 
@@ -172,7 +175,7 @@ def task_html():
 ### create new problem / content
 nostartnum = re.compile('^\d+.*$')
 def author_next():
-    ids = authorids()
+    ids = problemids()
     idcount = count()
     for testid in idcount:
         next_id = base_repr(testid,36).lower()
@@ -207,7 +210,7 @@ lang_starter = '''
     %path = "path/goes/here"
     %kind = 0 #problems
     %level = 0 # in school years
-    %# ``doit -kd. initdb`` after every change here
+    <!-- html -->
 
 '''
 
@@ -230,14 +233,6 @@ def newproblem(init_starter=init_starter,lang_starter=lang_starter):
 
 rst_starter = f'''.. raw:: html
 {lang_starter}
-    <!-- html -->
-
-.. role:: asis(raw)
-    :format: html latex
-
-.. contents::
-
-.. content here
 '''
 
 def newrst(rst_starter=rst_starter):
@@ -264,19 +259,14 @@ def task_rst():
 
 def task_initdb():
 
-    import chcko.chcko.languages as languages
-    import pprint
-
     def make_initdb():
         available_langs = set([])
         inits = ['# -*- coding: utf-8 -*-',
                  '# generate via ``doit -kd. initdb``',
                  'def populate_index(index_add):']
-        ids = authorids()
+        ids = problemids()
         for anid in ids:
             def langcode(x):
-                # x = '_de.html'
-                # x = '__pycache__'
                 lng_ext = x.split('.')
                 if len(lng_ext) == 2:
                     lng,ext = lng_ext
@@ -285,13 +275,11 @@ def task_initdb():
             langfiles = [fl for fl in os.listdir(problemdir)
                     if langcode(fl) in languages.languages]
             for langfile in langfiles:
-                # langfile = langfiles[0]
                 full = os.path.join(problemdir,langfile)
                 with open(full,'rb') as ff:
                     src = codecs.decode(ff.read(),'utf-8')
                 defines = []
                 for ln in src.splitlines():
-                    # ln = src.splitlines()[0]
                     lnstr = ln.strip()
                     if lnstr:
                         if not lnstr.startswith('%'):

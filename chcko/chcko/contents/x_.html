@@ -2,6 +2,7 @@
     function a_lnk(alnk)
     {
         %# use like: <a href="#" onclick="a_lnk('{{alnk}}');return false;">{{alnk}}</a>
+        %# or {{!util.a('r.f')}}
         // see Util.a
         // // keep for testing
         //alnk='r.a';
@@ -13,7 +14,7 @@
         url = new URL(href);
         qs = url.search.replace('?','');
         seqs = qs.split('&&').filter(x=>x).map(x => x[0]=='&'? x.substring(1) : x)
-        console.log(seqs)
+        //console.log(seqs)
         iseqs = seqs.findIndex(x=>x.split('&').filter(x=>x).find(i=>i==alnk));
         if (iseqs >= 0) {
             if (iseqs > 0) {
@@ -23,8 +24,8 @@
         } else {
             newqs = alnk;
         }
-        target = url.origin+url.pathname+'?'+newqs;
-        console.log(target)
+        target = url.origin+url.pathname+'?'+newqs+'#'+alnk;
+        //console.log(target)
         window.location.assign(target) // keeps history to go back to previous location in course
     }
 </script>
@@ -259,7 +260,7 @@
 .inlined {
     //background-color: {{rolecolor}};
 }
-.chanswer {
+.chq {
     margin: 1px 0px 1px 0px;
 }
 </style>

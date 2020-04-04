@@ -281,7 +281,6 @@ def chcko_import(name):
     mod = importlib.import_module('chcko.'+name)
     return mod
 
-
 def from_py(mod):
     d = Struct(given=getattr(mod, 'given', lambda: Struct()),
                calc=getattr(mod, 'calc', lambda g: []),

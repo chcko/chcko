@@ -309,16 +309,25 @@ for example ``r/a/en.html``::
     %path = "maths/trigonometry/sss"
     %kind = 0 #problems (see languages.py)
     %level = 11 # school year starting from elementary
-
     The sides of a triangle are
     a={{ g.a }},
     b={{ g.b }},
     c={{ g.c }}.
     How big are the angles (in degrees).
-    %chanswer(examples=['e.g.'+e for e in ['23.3','100','56.7']])
+    %champles=['e.g.'+e for e in ['23.3','100','56.7']]
+    %chq()
 
-``chanswer`` creates the input field or shows the result
-according the output of ``calc()``.
+``chq`` (defined in 
+`chelper.html <https://github.com/chcko/chcko/blob/master/chcko/chcko/chelper.html>`__
+) creates the input field or shows the result,
+all according the output of ``calc()`` if no ``idx`` specified.
+``chq`` optionally uses (if defined):
+
+- ``chames``: as input names (per idx a html/tex string, e.g. r"\(\alpha\)")
+- ``champles``: input examples ( " )
+- ``chadios``: texts for **radio buttons** (a tuple per idx)
+- ``checkos``: texts for **check boxes** (a tuble per idx)
+
 ``g`` is returned by ``given()`` in ``__init__.py``:
 
 .. code:: python
@@ -338,7 +347,7 @@ according the output of ``calc()``.
         return [angle_deg(i, g) for i in range(3)]
     names = [r'\(\alpha=\)', r'\(\beta=\)', r'\(\gamma=\)']
 
-Non-problem texts are OK, too, but should be *minimal* and *context-free*,
+Non-problem texts are OK, too, but should *context-free*,
 as they are composed to a page via the URL query string::
 
     https://chcko.eu/en/contents?r.a&r.by

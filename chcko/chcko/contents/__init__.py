@@ -120,7 +120,7 @@ class Page(PageBase):
 
         def _new(rsv):
             nr = next(nrs)
-            problem, from_py = db.problem_from_resolver(
+            problem, pydict = db.problem_from_resolver(
                 rsv, nr, self.request.student)
             if not self.problem:
                 self.problem = problem
@@ -131,7 +131,7 @@ class Page(PageBase):
                 next(problems_cntr)
             db.save(problem)
             if not rsv.composed:
-                SimpleTemplate.overrides.update(from_py)
+                SimpleTemplate.overrides.update(pydict)
                 _chain[-1] = SimpleTemplate.overrides.copy()
 
         def _zip(rsv):
@@ -141,18 +141,18 @@ class Page(PageBase):
                     ms += ' != ' + self.current.query_string
                 #logger.info(ms)
                 raise HTTPError(400,'400_7 '+ms)
-            from_py = rsv.load()  # for the things not stored, like 'names'
-            from_py.update(db.fieldsof(self.current))
-            from_py['g'] = self.current.given
+            pydict = rsv.load()  # for the things not stored, like 'names'
+            pydict.update(db.fieldsof(self.current))
+            pydict['g'] = self.current.given
             if self.current.points:
                 next(problems_cntr)
             if self.current.answered:
                 sw, sn = self.make_summary(self.current)
-                from_py.update({'summary': (sw, sn)})
+                pydict.update({'summary': (sw, sn)})
                 withempty.__iadd__(sw)
                 noempty.__iadd__(sn)
             if not rsv.composed:
-                SimpleTemplate.overrides.update(from_py)
+                SimpleTemplate.overrides.update(pydict)
                 _chain[-1] = SimpleTemplate.overrides.copy()
             try:
                 self.current = next(problem_set_iter[0])

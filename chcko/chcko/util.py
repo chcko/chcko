@@ -14,7 +14,7 @@ from itertools import count
 from chcko.chcko import bottle
 from chcko.chcko.bottle import SimpleTemplate, template
 
-from chcko.chcko.hlp import listable, mklookup, from_py
+from chcko.chcko.hlp import listable, mklookup
 from chcko.chcko.languages import langkindnum, langnumkind, role_strings
 from chcko.chcko.db import db
 
@@ -41,12 +41,12 @@ class Util:
                 True) if d[0] not in db.pathlevels]
 
     def a(self, alnk):
-        return '<a href="#" onclick="a_content('+alnk+');return false;">'+alnk+'</a>'
+        return """<a href="#" onclick="a_lnk('"""+alnk+"""');return false;">"""+alnk+'</a>'
 
     def newlang(self, lng):
         oldp = self.request.urlparts.path.strip('/')
         try:
-            curlng = next(x for x in langs if oldp==x or oldp.startswith(x+'/'))
+            curlng = next(l for l in langs if oldp==l or oldp.startswith(l+'/'))
         except StopIteration:
             curlng = ''
         if curlng:
@@ -71,31 +71,24 @@ class Util:
         return s
 
     @staticmethod
-    def tex(term):
-        try:
-            e = parse_expr(term)
-        except:
-            e = term
+    def TX(term):
+        if isinstance(term,list):
+            e = Poly(term, x, domain='ZZ').as_expr()
+        else:
+            try:
+                e = parse_expr(term)
+            except:
+                e = term
         ltx = latex(e)
         return ltx
 
     @staticmethod
-    def tex_poly(gc, domain='ZZ'):
-        p = Poly(gc, x, domain='ZZ')
-        ltx = latex(p.as_expr())
-        return ltx
+    def tx(term):
+       return r'\('+Util.TX(term)+r'\)'
 
     @staticmethod
-    def tx(fun):
-        return lambda term: r'\(' + fun(term) + r'\)'
-
-    @staticmethod
-    def Tx(fun):
-        return lambda term: r'\[' + fun(term) + r'\]'
-
-    @staticmethod
-    def J(*args):
-        return ''.join([str(x) for x in args])
+    def Tx(term):
+        return r'\['+Util.TX(term)+r'\]'
 
     @staticmethod
     def sgn(v):
@@ -123,7 +116,7 @@ class PageBase:
         self.util = Util(self.request)
         SimpleTemplate.defaults.clear()
         SimpleTemplate.defaults['rolecolor'] = self.request.student.color
-        SimpleTemplate.defaults.update(from_py(mod))
+        SimpleTemplate.defaults.update(mod.__dict__)
         SimpleTemplate.defaults.update({
             'self': self,
             'util': self.util,

@@ -12,14 +12,16 @@
 %    end
 %end
 
-%def chanswer(
-%        idx=None
+%def chq(
+%        idx=None #either not there or a (list of) number or the same as ``htmlbr``
 %        ,htmlbr='<br>' # html delimiter if no idx =/ more idx
-%        # #the following can be defined in either __init__.py or in the language html
-%        # ,chames=get('chames',None)     # input names (per idx a html/tex string, e.g. r"\(\alpha\)")
-%        # ,champles=get('champles',None) # input examples ( " )
-%        # ,chadios=get('chadios',None)   # texts for radio buttons (a tuple per idx)
-%        # ,checkos=get('checkos',None)   # texts for check boxes (a tuble per idx)
+%        # #the following can also be defined in either __init__.py or in the language html
+%        ,**ka
+%        # ,chames    # input names (per idx a html/tex string, e.g. r"\(\alpha\)")
+%        # ,champles  # input examples ( " )
+%        # ,chadios   # texts for radio buttons (a tuple per idx)
+%        # ,checkos   # texts for check boxes (a tuble per idx)
+%        # ,chow      # a function to show the result (e.g. util.tx)
 %        ):
 %    if idx is None:
 %        idxs = range(len(results))
@@ -27,39 +29,48 @@
 %        try:
 %           idxs = [int(i) for i in idx]
 %        except:
-%           idxs = range(len(results))
-%           htmlbr = idx
+%           try:
+%               idxs = [int(idx)]
+%           except:
+%               idxs = range(len(results))
+%               htmlbr = idx
+%           end
 %        end
 %    end
+%    more_idx = len(idxs) > 1
+%    def _getidx(n,i):
+%        if n in ka:
+%            nv = ka.get(n,'')
+%        else:
+%            nv = env.get(n,'')
+%        end
+%        try:
+%            if isinstance(nv,list) or isinstance(nv,dict):
+%                return nv[i]
+%            elif not more_idx: # use tuple for chadios and checkos
+%                return nv
+%            end
+%        except:
+%            return ''
+%        end
+%    end
+
 %    for idx in idxs:
+%        if more_idx:
          {{! htmlbr}}
-%        try:
-%            chame = env.get('chames')[idx]
-             {{! chame}}
-%        except:
-%            pass
 %        end
-%        try:
-%            example = env.get('champles')[idx]
-%        except:
-%            example = ''
-%        end
-%        try:
-%            choice = env.get('chadios')[idx]
-%        except:
-%            choice = ''
-%        end
-%        try:
-%            checks = env.get('checkos')[idx]
-%        except:
-%            checks = ''
-%        end
+%        chame = _getidx('chames',idx)
+         {{! chame}}
+%        chample = _getidx('champles',idx)
+%        choice = _getidx('chadios',idx)
+%        checks = _getidx('checkos',idx)
+%        chowfun = _getidx('chow',idx)
 %        if choice:
 %            for i,val in enumerate(choice):
 %               answ = str(i+1)
 %            # mention answ in val to link to saved value of answer (1. 2. )
 %            # have a <br> at the end of ``val`` for vertical alignment
-             <label><input type="radio" class="chanswer"\\
+             <label><input type="radio" class="chq"\\
 %                # radio box index (starting from 1)
 %                if answered and norm(i+1)==results[idx]:
                 checked \\
@@ -72,7 +83,7 @@
 %        elif checks:
 %            for i,val in enumerate(checks):
 %               answ = str(i+1)
-             <label><input type="checkbox" class="chanswer"\\
+             <label><input type="checkbox" class="chq"\\
 %                # checkbox indices (starting from 1) comma separated (see norm_set)
 %                if answered and norm(i+1) in set(results[idx].split(',')):
                 checked \\
@@ -84,13 +95,13 @@
 %            end
 %        else:
 %            if not answered:
-                <input type="text" class="chanswer" name="{{inputids[idx]}}" size="8" autocomplete="off"> {{example}}
+                <input type="text" class="chq" name="{{inputids[idx]}}" size={{ka.get('size','8')}}" autocomplete="off"> {{! chample}}
 %                if points[idx] > 0:
                     [{{points[idx]}}P]\\
 %                end
 %            else:
-%                if defined('show'):
-                {{!show(results[idx])}}\\
+%                if chowfun:
+                {{!chowfun(results[idx])}}\\
 %                else:
                 {{!results[idx]}}\\
 %                end
@@ -113,7 +124,7 @@
 
 %def chinc(lnk, nr):
 %    withnr = str(nr)
-<div class="subproblem{{(nr-1)%2}}">
+<div class="subproblem{{(nr-1)%2}}" id="{{lnk}}">
 % include(lnk,withnr=withnr)
 </div>
 %end
@@ -121,6 +132,7 @@
 %if defined('withnr') and withnr:
 %if not __name__.endswith('chcko/chelper'):
 %    nm = __name__.replace('chcko.','')
+%    if '.' in nm:
 <div class="problem_id">
     <span class="problem_nr">
         {{withnr}}
@@ -134,5 +146,6 @@
 %       end
     </span>
 </div>
+    %end
 %end
 %end

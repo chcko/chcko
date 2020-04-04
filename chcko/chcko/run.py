@@ -202,7 +202,7 @@ chcko-{author_id}/chcko/{author_id}/a/en.html
     \[{{g.a}} x {{util.sgn(g.b)}} {{abs(g.b)}} = {{g.c}} x\]
     <br>
     x=
-    %chanswer()
+    %chq()
 """
 def gitget(what,get='--global'):
     try:
