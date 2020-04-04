@@ -57,7 +57,7 @@ def allcontent():
     ('chcko.tests.t_1','en',
         lambda x:x==u'Here t_1.\nt_1 gets t_2:\nHere t_2.\nt_2 gets t_1:\nAfter.\nt_1 gets t_3:\nHere t_3.\nt_3 gets none.\n\n')
     ,('chcko.tests.t_3=3', 'en', lambda x:len(x.split('Here t_3.\nt_3 gets none.'))==4)
-    ,('r.a&r.b', 'en', lambda x:True) # mix problem and non-problem
+    ,('r.a&r.a1', 'en', lambda x:True) # mix problem and non-problem
     ,('r.b=2', 'en', lambda x:True) # more non-problems
 ]+list(allcontent()))
 def newuserpage(request,cdb):
