@@ -69,7 +69,7 @@ def set_base(dodofile):
     sphinxbase = os.path.join(basedir,'chcko')
     authorbase = os.path.join(basedir,'chcko',author_id)
 
-problemids = lambda: set(x for x in os.listdir(authorbase)
+problemids = lambda: list(x for x in os.listdir(authorbase)
     if not any(u in x for u in '._') and os.path.isdir(os.path.join(authorbase,x)))
 
 
