@@ -43,12 +43,14 @@ import pytest
 import chcko.chcko.languages as languages
 import pprint
 
+from doit.task import clean_targets
+
 is_win = (sys.platform == 'win32')
 PY3 = sys.version_info[0] == 3
 def iteritems(d, **kw):
     return iter(getattr(d, "items" if PY3 else "iteritems")(**kw))
 
-from doit.task import clean_targets
+listdir = lambda x: sorted(os.listdir(x))
 
 basedir = None
 thisdir = None
@@ -69,7 +71,7 @@ def set_base(dodofile):
     sphinxbase = os.path.join(basedir,'chcko')
     authorbase = os.path.join(basedir,'chcko',author_id)
 
-problemids = lambda: list(x for x in os.listdir(authorbase)
+problemids = lambda: list(x for x in listdir(authorbase)
     if not any(u in x for u in '._') and os.path.isdir(os.path.join(authorbase,x)))
 
 
@@ -140,7 +142,7 @@ def task_html():
     def move_images_if_any(build):
         try:
             imagepath = os.path.join(build, '_images')
-            images = os.listdir(imagepath)
+            images = listdir(imagepath)
             imagedest = os.path.join(sphinxbase, '_images')
             if not os.path.exists(imagedest):
                 os.makedirs(imagedest)
@@ -272,7 +274,7 @@ def task_initdb():
                     lng,ext = lng_ext
                     return ext == 'html' and lng.strip('_')
             problemdir = os.path.join(authorbase,anid)
-            langfiles = [fl for fl in os.listdir(problemdir)
+            langfiles = [fl for fl in listdir(problemdir)
                     if langcode(fl) in languages.languages]
             for langfile in langfiles:
                 full = os.path.join(problemdir,langfile)
