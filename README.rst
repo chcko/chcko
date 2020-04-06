@@ -320,13 +320,16 @@ for example ``r/a/en.html``::
 ``chq`` (defined in 
 `chelper.html <https://github.com/chcko/chcko/blob/master/chcko/chcko/chelper.html>`__
 ) creates the input field or shows the result,
-all according the output of ``calc()`` if no ``idx`` specified.
+according the output of ``calc()`` (normally a list of numbers),
+if no ``idx`` is specified.
 ``chq`` optionally uses (if defined):
 
 - ``chames``: as input names (per idx a html/tex string, e.g. r"\(\alpha\)")
 - ``champles``: input examples ( " )
-- ``chadios``: texts for **radio buttons** (a tuple per idx)
-- ``checkos``: texts for **check boxes** (a tuble per idx)
+- ``chadios``: texts for **radio buttons** (a tuple per idx).
+  ``calc()`` returns index number.
+- ``checkos``: texts for **check boxes** (a tuble per idx).
+  ``calc()`` returns list of indices as string of capital letters e.g. `AC` (``chr(65+i)``).
 
 ``g`` is returned by ``given()`` in ``__init__.py``:
 

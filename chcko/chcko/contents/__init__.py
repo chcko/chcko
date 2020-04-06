@@ -303,7 +303,12 @@ class Page(PageBase):
         d = rsv.load()
         problem.answered = datetime.datetime.now()
         if problem.results:
-            db.set_answer(problem,[self.request.forms.get(q,'') for q in problem.inputids])
+            indict = {q:self.request.forms.get(q,'') for q in self.request.forms.keys()
+                 if any(q.startswith(x) for x in problem.inputids)}
+            fromindict = lambda q: indict[q] if q in indict else ''.join([
+                    k.split('_')[-1] for k,v in indict.items() if k.startswith(q+'_') and v != '0'])
+            answ = [fromindict(q) for q in problem.inputids]
+            db.set_answer(problem,answ)
             na = d.norm(problem.answers)
             problem.oks = d.equal(na, problem.results)
         db.save(problem)

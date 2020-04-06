@@ -82,16 +82,16 @@
 %            end
 %        elif checks:
 %            for i,val in enumerate(checks):
-%               answ = str(i+1)
+%               answ = chr(65+i)
+             <input type="hidden" name="{{inputids[idx]+'_'+answ}}" value="0" />
              <label><input type="checkbox" class="chq"\\
-%                # checkbox indices (starting from 1) comma separated (see norm_set)
-%                if answered and norm(i+1) in set(results[idx].split(',')):
+%                if answered and answ in results[idx]:
                 checked \\
 %                end
 %                if answered:
                 disabled \\
 %                end
-                name="{{inputids[idx]}}" value="{{answ}}"/>{{! val}}</label>
+                name="{{inputids[idx]+'_'+answ}}" value="1"/>{{! val}}</label>
 %            end
 %        else:
 %            if not answered:
