@@ -276,7 +276,7 @@ class Page(PageBase):
             except ValueError:
                 pass
         if cnt > 1:
-            tpllns = ["%globals().update(include('chcko/chelper'),withnr=False)"]
+            tpllns = ["%globals().update(include('chcko/chelper',withnr=get('withnr',False)))"]
             inr = count()
             for prob, istr in name_val:
                 if not istr:

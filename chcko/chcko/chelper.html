@@ -123,14 +123,12 @@
 %end
 
 %def chinc(lnk, nr):
-%    withnr = str(nr)
 <div class="subproblem{{(nr-1)%2}}" id="{{lnk}}">
-% include(lnk,withnr=withnr)
+% include(lnk,withnr=str(nr))
 </div>
 %end
 
 %if defined('withnr') and withnr:
-%if not __name__.endswith('chcko/chelper'):
 %    nm = __name__.replace('chcko.','')
 %    if '.' in nm:
 <div class="problem_id">
@@ -147,5 +145,4 @@
     </span>
 </div>
     %end
-%end
 %end

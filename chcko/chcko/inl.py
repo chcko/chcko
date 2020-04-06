@@ -31,7 +31,7 @@ def inl_role(role, rawtext, text, lineno, inliner, option={}, content=[]):
 def visit_inl_node(self, node):
     self.body.append(self.starttag(
         node, 'span', CLASS=('inlined')))
-    self.body.append("% include('{}',withnr=False)\n".format(node['text']))
+    self.body.append("% include('{}')\n".format(node['text']))
 
 
 def depart_inl_node(self, node):
@@ -58,7 +58,7 @@ def inline_role(
 def visit_inline_node(self, node):
     self.body.append(self.starttag(
         node, 'div', CLASS=('subproblem1')))
-    self.body.append("% include('{}',withnr=False)\n".format(node['text']))
+    self.body.append("% include('{}')\n".format(node['text']))
 
 
 def depart_inline_node(self, node):

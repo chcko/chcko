@@ -3841,7 +3841,7 @@ class BaseTemplate(object):
         self.settings.update(settings)  # Apply
         self.cleanup = None
         if not self.source and self.name:
-            try: #whether callable
+            try: # whether callable
                 self.filename = self.lookup(self.name)
             except TypeError:
                 self.filename = self.search(self.name, self.lookup)
@@ -3997,7 +3997,7 @@ class SimpleTemplate(BaseTemplate):
                 if (not self.filename.endswith('chelper.html') and
                         sum(x=='' for x in self.filename.split(os.sep+'chcko'))==0
                         ):
-                    source = b"%globals().update(include('chcko/chelper'))\n"+source
+                    source = b"%globals().update(include('chcko/chelper',withnr=get('withnr',False)))\n"+source
         try:
             source, encoding = touni(source), 'utf8'
         except UnicodeError:
@@ -4011,7 +4011,7 @@ class SimpleTemplate(BaseTemplate):
         _env['_rebase'] = (_name, kwargs)
 
     def _include(self, _env, _name=None, **kwargs):
-        env = _env.copy()
+        env = {k:v for k,v in _env.items() if k!="withnr"}
         env.update(kwargs)
         try:
             tpl = get_tpl(_name, template_adapter=self.__class__, template_lookup=self.lookup)
@@ -4036,7 +4036,7 @@ class SimpleTemplate(BaseTemplate):
             '_rebase': None,
             '_str': self._str,
             '_escape': self._escape,
-            'include': functools.partial(self._include, env),
+            'include': functools.partial(self._include,env),
             'rebase': functools.partial(self._rebase, env),
             'setdefault': env.setdefault,
             'get': env.get,
