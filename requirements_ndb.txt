@@ -25,4 +25,4 @@ lxml
 sympy
 
 #content
-chcko-r>=0.2.1
+chcko-r==0.2.2
