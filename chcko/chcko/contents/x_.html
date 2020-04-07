@@ -140,6 +140,12 @@
     <button class="grid_1 nbutton" type="button" onclick="window.location.href='{{ alinks[where] }}';">{{ sign }}</button>
     %end
 
+    % if not pe and ('bare' in self.request.params):
+    % bhidden='display:none;'
+    % else:
+    % bhidden=''
+    % end
+
     <p>
     % bottonwidth = 'grid_10'
     %pe2=''
@@ -151,11 +157,14 @@
     %end
 
     % if with_problems and problem.answered:
-        <button type="submit" class="{{bottonwidth}} nbutton" onclick="newpage('{{alinks[2]}}');"> {{tagain+pe2}} </button>
+    <button type="submit" class="{{bottonwidth}} nbutton"
+        style="text-align:center;{{bhidden}}"
+        onclick="newpage('{{alinks[2]}}');"> {{tagain+pe2}} </button>
     % end
     % if with_problems and not problem.answered:
-        <input class="{{bottonwidth}} nbutton" style="text-align:center" type="submit" name="submit" value="{{tcheck+pe2}}"/>
-        <input type="hidden" name="problemkey" value="{{problemkey}}">
+    <input class="{{bottonwidth}} nbutton" style="text-align:center;{{bhidden}}"
+               type="submit" name="submit" value="{{tcheck+pe2}}"/>
+    <input type="hidden" name="problemkey" value="{{problemkey}}">
     %end
 
     %if pe:

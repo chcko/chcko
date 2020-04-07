@@ -53,14 +53,12 @@ In a course only one problem at a time is shown.
 ``&&&`` marks the current position.
 For example, ``.../en/contents?r.bd&&r.ba&&&r.a`` has ``r.a`` as current item in the course.
 
-
 The names ``School, Field, Teacher, Class, Role``
 form namespaces levels to describe a student *role*.
 What string is used in each level is up to the user.
 
 The namespaces are of organizational nature.
 The namepace names are taken from usual organizational structures.
-
 
 See `queries`_ for details.
 
@@ -179,6 +177,31 @@ The students
 - log in
 - go to ``Todo``
 - solve the assigned problems
+
+Find problems
+-------------
+
+There is no full text search engine yet.
+To find a problem, there are these alternatives:
+
+- use the index page https://chcko.eu/en/contents
+- clone author packages and use local text search (grep, ...)
+
+Create Printout
+---------------
+
+If you add ``bare`` to the query string of the contents URL,
+header and footer is dropped.
+There is a printer symbol 🖶  at the bottom right, which does that.
+Then you can
+
+- save and open the file with a MS Word or Libre Office
+- print from within your browser (possibly to a pdf file)
+- use the command line with ``chrome`` or ``chromium`` to create a PDF
+
+::
+
+    chrome --enable-logging --headless --disable-gpu --print-to-pdf=/full/path/to.pdf http://chcko.eu/en/contents?r.bk&r.c&r.i&cheader=Homework&bare
 
 Check Done
 ----------

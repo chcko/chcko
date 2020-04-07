@@ -22,13 +22,28 @@ except:
     user = None
 end
 try:
+    query_string = self.request.query_string
+except:
+    query_string = ''
+end
+try:
     key_ownd_path = db.key_ownd_path(self.request.student,user)
 except:
     key_ownd_path = []
 end
 
 addqs = lambda x: self.request.query_string+'&'+x if self.request.query_string else x
+
+if 'bare' in self.request.params:
+def header():
+    pass
+end
+def footer():
+    pass
+end
+end
 %>
+
 
 % if not defined('header'):
 % def header():
@@ -122,16 +137,26 @@ addqs = lambda x: self.request.query_string+'&'+x if self.request.query_string e
     &nbsp;
     </div>
 
-    <div class="grid_10 footer">
-        {{tdevelopment}} <a href="https://github.com/chcko/chcko">Github</a>
-    </div>
-
-    <div class="footer" style="background-color:{{rolecolor}}"> &nbsp; </div>
-
-    <div class="grid_10">
+    % wp = pagename == 'contents' and query_string
+    <div class="{{'grid_9' if wp else 'grid_10'}}">
         %for lng in langs:
         {{!util.newlang(lng)}} &nbsp;
         %end
+    </div>
+    % if wp:
+    <div class="grid_1" id="printer">
+        <span style="float:right">
+            🖶
+        </span>
+    </div>
+    %end
+
+    <div class="footer" style="background-color:{{rolecolor}}"> &nbsp; </div>
+
+    <div class="grid_10 footer">
+        Github:
+        <a href="https://github.com/chcko/chcko">chcko</a>
+        <a href="https://github.com/chcko/chcko-r">chcko-r</a>
     </div>
 
     </div>
@@ -280,9 +305,21 @@ addqs = lambda x: self.request.query_string+'&'+x if self.request.query_string e
             $(this).toggleClass("active");
         });
     });
+    $(document).ready(function($){
+        $("#printer").on("click", function(){
+            href = window.location.href;
+            url = new URL(href);
+            qs = url.search.replace('?','');
+            seqs = qs.split('&&')
+            if (seqs.length == 1 && seqs[0].length>0) {
+                target = url.origin+url.pathname+'?'+qs+'&bare';
+                window.location.assign(target)
+            }
+        });
+    });
     </script>
 
-    <title> 
+    <title>
         % title()
     </title>
 </head>
