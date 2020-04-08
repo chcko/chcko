@@ -196,7 +196,12 @@ def fullpath(lang,pagename,**kextra):
         bottle.redirect(f'/{lang}')
     except:
         print_exc()
-        raise
+        pagename = "message"
+        bottle.request.pagename = pagename
+        mod = chcko_import('chcko.'+pagename)
+        page = mod.Page(mod)
+        respns = page.get_response()
+        return respns
 
 @bottle.error(400)
 @bottle.error(403)

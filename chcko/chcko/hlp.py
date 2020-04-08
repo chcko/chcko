@@ -24,6 +24,7 @@ from chcko.chcko.auth import (
   ,generate_password_hash
   ,check_password_hash
 )
+from chcko.chcko.bottle import SimpleTemplate
 
 from sympy import sstr, Rational as R, S, E
 
@@ -290,11 +291,19 @@ def from_py(mod):
     d.update(mod.__dict__)
     return d
 
-def template_from_path(qspath, lang):
+def stpl_from_path(qspath, lang):
     for t in [lang, '_' + lang, 'x_', '_x_', 'en', '_en']:
-        templatename = os.path.join(qspath, t + '.html')
-        if os.path.exists(templatename):
-            return templatename
+        stplpath = os.path.join(qspath, t + '.html')
+        if os.path.exists(stplpath):
+            dlng = t.strip('_')
+            if dlng != bottle.request.lang:
+                dlng = dlng if dlng!='x' else 'en'
+                SimpleTemplate.overrides.update({
+                    'lang': dlng,
+                    'kinda': langkindnum[dlng],
+                    'numkind': langnumkind[dlng]
+                })
+            return stplpath
     return ''
 
 class resolver:
@@ -302,7 +311,7 @@ class resolver:
         self.lang = lang
         self.query_string = query_string
         self.composed = any([ch in self.query_string for ch in '&=%$\n'])
-        self.templatename = ''
+        self.stplpath = ''
         self.modulename = ''
     def load(self):
         if not self.composed:
@@ -311,8 +320,8 @@ class resolver:
                 m = chcko_import(self.modulename)
                 qspath = list(m.__path__)
                 for qsp in qspath:
-                    self.templatename = template_from_path(qsp,self.lang)
-                    if self.templatename:
+                    self.stplpath = stpl_from_path(qsp,self.lang)
+                    if self.stplpath:
                         break
             except ModuleNotFoundError:
                 self.modulename = ''
@@ -323,22 +332,22 @@ class resolver:
         return d
 
 def mklookup(lang):
-    def get_templatename(n):
-        templatename = ''
+    def get_stplpath(n):
+        stplpath = ''
         for pkgdir in chcko.__path__:
             npath = os.path.join(pkgdir,n.replace('.',os.sep))
             if os.path.isdir(npath):
-                templatename = template_from_path(npath,lang)
+                stplpath = stpl_from_path(npath,lang)
             else:
-                templatename = npath + '.html'
-                if not os.path.exists(templatename):
-                    templatename = ''
-            if templatename:
-                return templatename
+                stplpath = npath + '.html'
+                if not os.path.exists(stplpath):
+                    stplpath = ''
+            if stplpath:
+                return stplpath
         rsv = resolver(n, lang)
         rsv.load()
-        return rsv.templatename
-    return get_templatename
+        return rsv.stplpath
+    return get_stplpath
 
 datefmt = lambda dt: dt.isoformat(' ').split('.')[0]
 

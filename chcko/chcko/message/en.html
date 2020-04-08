@@ -28,6 +28,8 @@
 % else:
     % if defined('errormsg'):
         {{! errormsg.replace('400_','Bad Request ').replace('403_','No Access ').replace('404_','Not Found ') }}
+    %else:
+        Unknown Error.
     % end
 % end
 </p>

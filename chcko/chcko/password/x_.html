@@ -29,13 +29,13 @@
 <form method="POST" name=passwordform onsubmit='return validate()'>
     <label>{{tselect}}</label><br>
     <p><label for="fullname">{{tfullname}}</label>&nbsp;
-    <input type="text" value="{{self.request.user.fullname}}" name="fullname"/></p>
+    <input class="chq" type="text" value="{{self.request.user.fullname}}" name="fullname"/></p>
     <p><label for="password">{{tpassword}}</label>&nbsp;
-    <input type="password" name="password" /></p>
+    <input class="chq" type="password" name="password" /></p>
     <p><label for="confirmp">{{tconfirm}}*</label>&nbsp;
-    <input type="password" name="confirmp" /></p>
+    <input class="chq" type="password" name="confirmp" /></p>
     <p><input type="hidden" name="token" value="{{ defined('token') and token or ''}}" /></p>
-    <p><input id="nbutton" class="grid_10" style="text-align:center" type="submit" value="{{ tupdate }}" /></p>
+    <p><input class="nbutton chq grid_10" style="text-align:center" type="submit" value="{{ tupdate }}" /></p>
     <br>
 </form>
 %else:

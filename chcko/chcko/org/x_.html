@@ -55,7 +55,7 @@ $("input.newinput#Role").on("input paste", function(e){
     <div class="grid_10">
     % end
         <input type="text"
-	    class="org_field newinput"
+	    class="chq org_field newinput"
 	    name="{{a[0]}}"
 	    value="{{str(a[1])}}"
 	    autocomplete="off"
@@ -63,7 +63,7 @@ $("input.newinput#Role").on("input paste", function(e){
 	    id="{{a[0]}}"
 	    />
         <input type="hidden"
-	    class="org_field oldinput"
+	    class="chq org_field oldinput"
 	    readonly="readonly"
 	    name="old{{a[0]}}"
 	    value="{{str(a[1])}}"
@@ -74,7 +74,7 @@ $("input.newinput#Role").on("input paste", function(e){
     <div class='grid_1'>&nbsp;</div>
     % if i>0 and i < len(trequests)+1:
     <div class="grid_2" style="margin-top:0.5em">
-        <input type="radio" name="choice" value="{{str(i-1)}}" autocomplete="off" id="radionewchangedelete{{i-1}}"
+        <input class="chq" type="radio" name="choice" value="{{str(i-1)}}" autocomplete="off" id="radionewchangedelete{{i-1}}"
         %if i==1:
             checked
         %end
@@ -97,12 +97,12 @@ $("input.newinput#Role").on("input paste", function(e){
 <canvas style="display: block;margin-left:auto;margin-right:auto;" height="100" id="chosen"></canvas>
 <p>
 <div style="text-align:center;">
-    <input type="text" id="hex" value="{{rolecolor}}" name="color" tabindex=14/>
+    <input class="chq" type="text" id="hex" value="{{rolecolor}}" name="color" tabindex=14/>
 </div>
 </p>
 </div>
 
-<p><input id="nbutton" class="grid_10" style="text-align:center" type="submit" name="submit" value="{{tsubmit}}" tabindex=15/></p>
+<p><input class="nbutton chq grid_10" style="text-align:center" type="submit" name="submit" value="{{tsubmit}}" tabindex=15/></p>
 <br>
 </form>
 

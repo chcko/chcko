@@ -125,10 +125,10 @@ class PageBase:
             'social_logins': social_logins,
             #as default if no problem ...
             'query_string': self.request.query_string,
-            'lang': self.request.lang,
         })
         try:
             SimpleTemplate.defaults.update({
+                'lang': self.request.lang,
                 'kinda': langkindnum[self.request.lang],
                 'numkind': langnumkind[self.request.lang]
             })

@@ -36,12 +36,12 @@
     <form action="" method="get">
 
     <br>
-    <div class="grid_1"><label for="course">{{tcourse}}</label><input id="course" name="course" type="checkbox"></div>
-    <input class="grid_8" name="acomposed" id="acomposed"/>
-    <input class="nbutton" style="text-align:center" type="submit" name="compose" value="{{tgo}}"/>
+    <div class="grid_1"><label for="course"><input class="chq" id="course" name="course" type="checkbox">&amp;&amp;</label></div>
+    <input class="grid_8 chq" name="acomposed" id="acomposed"/>
+    <input class="nbutton chq" style="text-align:center" type="submit" name="compose" value="{{tgo}}"/>
     <br>
 
-    <p>{{texplain}}</p>
+    <div class="grid_10"><p><span style="font-size:smaller;">{{texplain}}</span></p><div>
 
     % for knd, lnks in content:
     <p><b><a href="/{{self.request.lang}}/contents?kind={{knd}}">{{knd}}</a></b><br>
@@ -51,7 +51,7 @@
           % else:
              % lnk,lvl = lnklvl
              <small>({{depth}})</small><a href="/{{self.request.lang}}/contents?{{lnk}}">{{linktext}}</a>
-             <input type="checkbox" name="choice" value="{{lnk}}" autocomplete="off">
+             <input class="chq" type="checkbox" name="choice" value="{{lnk}}" autocomplete="off">
              % try:
              % authorid = lnk.split('.')[0]
              (<a href="/{{self.request.lang}}/contents?link={{authorid}}">{{authorid}}</a>)
@@ -137,7 +137,7 @@
     %alinks = ['/'+self.request.lang+'/contents?'+x for x in [start_qs(cq),next_qs(cq,-1),cq,next_qs(cq),end_qs(cq)]]
 
     %def qsnav(where,sign):
-    <button class="grid_1 nbutton" type="button" onclick="window.location.href='{{ alinks[where] }}';">{{ sign }}</button>
+    <button class="grid_1 nbutton chq" type="button" onclick="window.location.href='{{ alinks[where] }}';">{{ sign }}</button>
     %end
 
     % if not pe and ('bare' in self.request.params):
@@ -157,12 +157,12 @@
     %end
 
     % if with_problems and problem.answered:
-    <button type="submit" class="{{bottonwidth}} nbutton"
+    <button type="submit" class="{{bottonwidth}} nbutton chq"
         style="text-align:center;{{bhidden}}"
         onclick="newpage('{{alinks[2]}}');"> {{tagain+pe2}} </button>
     % end
     % if with_problems and not problem.answered:
-    <input class="{{bottonwidth}} nbutton" style="text-align:center;{{bhidden}}"
+    <input class="{{bottonwidth}} nbutton chq" style="text-align:center;{{bhidden}}"
                type="submit" name="submit" value="{{tcheck+pe2}}"/>
     <input type="hidden" name="problemkey" value="{{problemkey}}">
     %end
@@ -195,11 +195,11 @@
                         <fieldset>
                         % fieldset = True
                         <input type="hidden" name="query_string" value="{{query_string}}">
-                        <div><input type="checkbox" class="checkall">
+                        <div><input type="checkbox" class="chq checkall">
                             {{util.translate(kind)}} {{e.string_id()}}
                         </div>
                     % elif kind == 'Role':
-                        <div><input type="checkbox" name="assignee" value="{{db.urlsafe(e)}}">
+                        <div><input class="chq" type="checkbox" name="assignee" value="{{db.urlsafe(e)}}">
                             {{e.string_id()}} </div>
                     % end
                 % end
@@ -216,16 +216,16 @@
                     }
                 </script>
                 {{tdue}}
-                <input type="text" name="duedays" id="duedays" value="2"
+                <input class="chq" type="text" name="duedays" id="duedays" value="2"
                     onchange="javascript:if (document.getElementById('duedays').value >= 1);
                         else document.getElementById('duedays').value = 1;"
                 />
-                <input type="button" class="nbutton" name="add"
+                <input type="button" class="nbutton chq" name="add"
                      onclick="javascript: document.getElementById('duedays').value++;" value="+"/>
-                <input type="button" class="nbutton" name="subtract"
+                <input type="button" class="nbutton chq" name="subtract"
                      onclick="javascript: subtractduedays();" value="-" />
                 </fieldset>
-                <p><input class="nbutton grid_10" style="text-align:center" type="submit" name="assign" value="{{tassign}}"></p>
+                <p><input class="nbutton grid_10 chq" style="text-align:center" type="submit" name="assign" value="{{tassign}}"></p>
                 <br>
             </form>
 

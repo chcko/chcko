@@ -171,10 +171,10 @@ class Page(PageBase):
             if to_do and '.' in atpl:#. -> not for scripts
                 to_do(rsv)
             else:
-                rsv.templatename = langlookup(atpl)
-            if not rsv.templatename and re_id.match(atpl):
+                rsv.stplpath = langlookup(atpl)
+            if not rsv.stplpath and re_id.match(atpl):
                 raise HTTPError(404, '404_8 ✘ '+atpl)
-            yield rsv.templatename
+            yield rsv.stplpath
             del _chain[-1]
             if _chain and isinstance(_chain[-1], dict):
                 SimpleTemplate.overrides = _chain[-1].copy()

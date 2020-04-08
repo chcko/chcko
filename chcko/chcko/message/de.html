@@ -30,6 +30,8 @@
 % else:
     % if defined('errormsg'):
         {{! errormsg.replace('400_','Falsche Anfrage ').replace('403_','Kein Zugriff ').replace('404_','Nicht gefunden ') }}
+    % else:
+        Unbekannter Fehler
     % end
 % end
 </p>

@@ -236,9 +236,91 @@ end
     %>
 
     <style>
+    /*
+    body {
+        font-family: monospace;
+        //font-family: sans-serif;
+        //font-size: 30px;
+    }
+    body {
+      font-size: 16px;
+    }
+
+    @media (min-width:600px) {
+      body {
+        font-size: 18px;
+      }
+    }
+
+    @media (min-width:800px) {
+      body {
+        font-size: 20px;
+      }
+    }
+
+    @media (min-width:1000px) {
+      body {
+        font-size: 32px;
+      }
+    }
+    body {
+      //font-size: calc(14px + (26 - 14) * ((100vw - 300px) / (1600 - 300)));
+      //14px min at 300px, 26px max at 1600px
+      font-size: calc(14px + (26 - 14) * ((100vw - 300px) / (1600 - 300)));
+    }
+    */
+    % fntmin = 18
+    % fntmax = 30
+    body {
+        //font-family: monospace;
+        //font-family: sans-serif;
+        font-size: calc({{fntmin}}px + ({{fntmax}} - {{fntmin}}) * ((100vw - 300px) / (1600 - 300)));
+        //line-height: calc(1.3rem + (1.5 - 1.2) * ((100vw - 300px)/(1600 - 300)));
+    }
+
+
+    table {
+        border-width: 1px;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border-width: 1px;
+        padding: 0.5rem;
+        border-style: solid;
+    }
+    .chq {
+        font-weight: bold;
+        font-size: calc({{fntmin}}px + ({{fntmax}} - {{fntmin}}) * ((100vw - 300px) / (1600 - 300)));
+    }
+    .nbutton {
+        padding-top: 0px;
+        padding-bottom: 0px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        height: 1.5rem;
+        font-weight: bold;
+    }
+    .right {
+        color:green;
+    }
+    .wrong {
+        color:red;
+    }
+    .divleft {
+        float: left;
+        width: 50%;
+    }
+    .divright {
+        margin-left: 50%;
+    }
+
+
+
+
     ul.levels_name a {
         display:block;
-        line-height:2em;
+        line-height:2rem;
         padding:5px 5px 5px 20px;
         margin-top:-1px;
         background-color: {{rolecolor}};
@@ -276,7 +358,7 @@ end
         position:fixed;
         background-color: {{rolecolor}};
         z-index:1;
-        margin:3em 0px 0px 0px;
+        margin:3rem 0px 0px 0px;
         text-align:center;
     }
     nav#langmenu>div{
@@ -331,7 +413,7 @@ end
 
     % rolemenu()
 
-    <div class="grid_10" style="padding-left:1em; margin:1em 0em 1em;">
+    <div class="grid_10" style="padding-left:1rem; margin:1rem 0rem 1rem;">
     {{!base}}
     </div>
 
