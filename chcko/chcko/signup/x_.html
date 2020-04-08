@@ -28,22 +28,40 @@
 </script>
 
 <form method="POST" name=signup onsubmit='return validate()'>
-<label for="email">{{temail}}*
-%from chcko.chcko.auth import with_email_verification
-%if not with_email_verification:
-{{tnotverified}}
-%end
-</label>
-<input class="chq" type="email" name="email"
-%if 'email' in self.request.params:
-    value="{{self.request.params['email']}}"
-%end
-/>
-<p><label for="password">{{tpassword}}*</label>&nbsp;<input class="chq" type="password" name="password" /></p>
-<p><label for="confirmp">{{tconfirm}}*</label>&nbsp;<input class="chq" type="password" name="confirmp"/></p>
-<p><label for="fullname">{{tfullname}}</label>&nbsp;<input class="chq" type="text" name="fullname" /></p>
-<p><input class="nbutton chq grid_10" style="text-align:center" type="submit" value="{{tcreate}}" /></p>
-<br>
+    <div class="grid_10" style="margin:0.5em 0.5em;">
+    <div class="grid_4">
+    <label for="email">{{temail}}*
+    %from chcko.chcko.auth import with_email_verification
+    %if not with_email_verification:
+    {{tnotverified}}
+    %end
+    </label>
+    </div>
+    <input class="grid_5 chq" type="email" name="email"
+    %if 'email' in self.request.params:
+        value="{{self.request.params['email']}}"
+    %end
+    />
+</div>
+<div class="grid_10" style="margin:0.5em 0.5em;">
+    <div class="grid_4">
+    <label for="password">{{tpassword}}*</label>
+    </div>
+    <input class="grid_5 chq" type="password" name="password" />
+</div>
+<div class="grid_10" style="margin:0.5em 0.5em;">
+    <div class="grid_4">
+    <label for="confirmp">{{tconfirm}}*</label>
+    </div>
+    <input class="grid_5 chq" type="password" name="confirmp"/>
+</div>
+<div class="grid_10" style="margin:0.5em 0.5em;">
+    <div class="grid_4">
+    <label for="fullname">{{tfullname}}</label>
+    </div>
+    <input class="grid_5 chq" type="text" name="fullname" />
+</div>
+<input class="nbutton chq grid_10" style="text-align:center;margin:0.5em 0.5em;" type="submit" value="{{tcreate}}" />
 </form>
 
 <script>

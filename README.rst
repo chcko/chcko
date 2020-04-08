@@ -353,6 +353,9 @@ if no ``idx`` is specified.
   ``calc()`` returns index number.
 - ``checkos``: texts for **check boxes** (a tuble per idx).
   ``calc()`` returns list of indices as string of capital letters e.g. `AC` (``chr(65+i)``).
+- ``chow``: function that shows the result, e.g. ``util.tx``
+
+If ``chq()`` is called for one ``idx`` only, the wrapping in a list can be dropped.
 
 ``g`` is returned by ``given()`` in ``__init__.py``:
 
@@ -373,8 +376,38 @@ if no ``idx`` is specified.
         return [angle_deg(i, g) for i in range(3)]
     names = [r'\(\alpha=\)', r'\(\beta=\)', r'\(\gamma=\)']
 
-Non-problem texts are OK, too, but should *context-free*,
-as they are composed to a page via the URL query string::
+`r.i <https://github.com/chcko/chcko-r/blob/master/chcko/r/i/en.html>`__
+does ``%include('r/i/coord')``, which has js script per problem number ``nr``
+resulting `r.i <https://chcko.eu/en?r.i`__.
+
+.. code:: javascript
+
+    %def script():
+        <script type="text/javascript" src="/static/graph.js">
+        </script>
+    %end
+    %scripts['graph.js']=script
+
+    %def script():
+        <script type="text/javascript">
+        %for i,f in enumerate(g.funcs):
+          function fun{{nr}}{{i}}(x) { {{f[1]}}; }
+        %end
+        function drawall{{nr}}() {
+            var cs = createCS("{{nr}}","cs_div{{nr}}");
+            cs.context.font = "20px sans-serif";
+            % for i,f in enumerate(g.funcs):
+                lastpos = cs.show(fun{{nr}}{{i}},{{i}},2);
+                cs.context.strokeText("{{str(i+1)}}",lastpos[0],lastpos[1]);
+            %end
+        }
+        document.addEventListener("DOMContentLoaded",function(){drawall{{nr}}();})
+        </script>
+    %end
+    %scripts['funcs'+str(nr)]=script
+
+Non-problem texts are OK, too, but should be *context-free*,
+as they are combined with other texts/problems to a page via the URL query string::
 
     https://chcko.eu/en/contents?r.a&r.by
 

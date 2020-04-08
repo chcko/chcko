@@ -19,23 +19,33 @@ function validate() {
 </script>
 
 <form method="POST" name=login onsubmit='return validate()'>
-<p>
-<label for="email">{{temail}}</label>
-<input type="email" name="email" id="email" class="chq"
-%if 'email' in self.request.params:
-     value="{{self.request.params['email']}}"
-%end
-/>
-</p>
-<p><label for="password">{{tpassword}}</label>&nbsp;<input class="chq" type="password" name="password"/></p>
-<p>
-<input class="nbutton chq grid_10" style="text-align:center" type="submit" value="{{tlogin}}"/>
-</p>
-<br>
+<div class="grid_10" style="margin:0.5em 0.5em">
+    <div class="grid_2">
+    <label for="email">{{temail}}</label>
+    </div>
+    <input class="grid_7 chq" type="email" name="email" id="email" class="chq"
+    %if 'email' in self.request.params:
+         value="{{self.request.params['email']}}"
+    %end
+    />
+</div>
+<div class="grid_10" style="margin:0.5em 0.5em">
+    <div class="grid_2">
+    <label for="password">{{tpassword}}</label>
+    </div>
+    <input class="grid_7 chq" type="password" name="password"/>
+</div>
+<input class="nbutton chq grid_10" style="text-align:center;margin:0.5em 0.5em;" type="submit" value="{{tlogin}}"/>
 </form>
 
+<div class="grid_10" style="margin:1em 1em;">
+<div class="grid_5" style="margin-left:-0.5em;">
 <a href="/{{self.request.lang}}/forgot" id="forgot">{{tforgot}}</a><br>
+</div>
+<div class="grid_5" style="text-align:right;">
 <a href="/{{self.request.lang}}/signup" id="signup">{{tsignup}}</a>
+</div>
+</div>
 
 <script> 
     var emailinput = document.getElementById('email');

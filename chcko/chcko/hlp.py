@@ -291,18 +291,20 @@ def from_py(mod):
     d.update(mod.__dict__)
     return d
 
+resetnames = "chames champles chadios checkos chow".split() # used in chelper.html
 def stpl_from_path(qspath, lang):
+    for rn in resetnames:
+        SimpleTemplate.overrides.pop(rn,"just delete")
     for t in [lang, '_' + lang, 'x_', '_x_', 'en', '_en']:
         stplpath = os.path.join(qspath, t + '.html')
         if os.path.exists(stplpath):
             dlng = t.strip('_')
-            if dlng != bottle.request.lang:
-                dlng = dlng if dlng!='x' else 'en'
-                SimpleTemplate.overrides.update({
-                    'lang': dlng,
-                    'kinda': langkindnum[dlng],
-                    'numkind': langnumkind[dlng]
-                })
+            dlng = dlng if dlng!='x' else 'en'
+            SimpleTemplate.overrides.update({
+                'lang': dlng,
+                'kinda': langkindnum[dlng],
+                'numkind': langnumkind[dlng]
+            })
             return stplpath
     return ''
 

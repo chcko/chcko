@@ -194,6 +194,10 @@ def fullpath(lang,pagename,**kextra):
     except (ImportError, AttributeError, IOError, NameError) as e:
         print_exc()
         bottle.redirect(f'/{lang}')
+    except bottle.HTTPError:
+        raise
+    except bottle.HTTPResponse:
+        raise
     except:
         print_exc()
         pagename = "message"

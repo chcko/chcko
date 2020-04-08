@@ -236,39 +236,7 @@ end
     %>
 
     <style>
-    /*
-    body {
-        font-family: monospace;
-        //font-family: sans-serif;
-        //font-size: 30px;
-    }
-    body {
-      font-size: 16px;
-    }
-
-    @media (min-width:600px) {
-      body {
-        font-size: 18px;
-      }
-    }
-
-    @media (min-width:800px) {
-      body {
-        font-size: 20px;
-      }
-    }
-
-    @media (min-width:1000px) {
-      body {
-        font-size: 32px;
-      }
-    }
-    body {
-      //font-size: calc(14px + (26 - 14) * ((100vw - 300px) / (1600 - 300)));
-      //14px min at 300px, 26px max at 1600px
-      font-size: calc(14px + (26 - 14) * ((100vw - 300px) / (1600 - 300)));
-    }
-    */
+    % if 'bare' not in self.request.params:
     % fntmin = 18
     % fntmax = 30
     body {
@@ -277,6 +245,7 @@ end
         font-size: calc({{fntmin}}px + ({{fntmax}} - {{fntmin}}) * ((100vw - 300px) / (1600 - 300)));
         //line-height: calc(1.3rem + (1.5 - 1.2) * ((100vw - 300px)/(1600 - 300)));
     }
+    %end
 
 
     table {
@@ -291,7 +260,9 @@ end
     }
     .chq {
         font-weight: bold;
+        % if 'bare' not in self.request.params:
         font-size: calc({{fntmin}}px + ({{fntmax}} - {{fntmin}}) * ((100vw - 300px) / (1600 - 300)));
+        %end
     }
     .nbutton {
         padding-top: 0px;

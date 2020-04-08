@@ -38,19 +38,27 @@ $("input.newinput#Role").on("input paste", function(e){
 </script>
 
 <form action="" method="post" name='org'>
+    <div class="grid_10" style="margin:0.5em 0.5em">
+    <div class="grid_3">&nbsp;</div>
+% for i in range(3):
+    <label class="grid_2">
+    <input class="chq" type="radio" name="choice" value="{{str(i)}}" autocomplete="off" id="radionewchangedelete{{i}}"
+        %if i==0:
+            checked
+        %end
+        tabindex={{i+10}}/>{{trequests[i]}}
+    </label>
+% end
+    </div>
 % for i, a in enumerate(ancestors):
     %langkind = util.translate(a[0])
     <div class="grid_2"
-    % if i<4:
-	style="margin:0.5em; text-align:right;padding-top:5px;"
-    % else:
-	style="margin:0.5em 0em 0em 1.5em; text-align:left; padding-top:5px;"
-    % end
+	style="text-align:left; padding-top:5px;"
     >
         <label for="{{a[0]}}">{{langkind}}{{' [;*]' if i==4 else ''}}:</label>
     </div>
     % if i<4:
-    <div class="grid_5">
+    <div class="grid_8">
     % else:
     <div class="grid_10">
     % end
@@ -71,16 +79,6 @@ $("input.newinput#Role").on("input paste", function(e){
 	    id="{{a[0]}}"
 	    />
     </div>
-    <div class='grid_1'>&nbsp;</div>
-    % if i>0 and i < len(trequests)+1:
-    <div class="grid_2" style="margin-top:0.5em">
-        <input class="chq" type="radio" name="choice" value="{{str(i-1)}}" autocomplete="off" id="radionewchangedelete{{i-1}}"
-        %if i==1:
-            checked
-        %end
-        tabindex={{i+9}}/>{{trequests[i-1]}}
-    </div>
-    % end
     <div class='clear'>&nbsp;</div>
 % end
 
