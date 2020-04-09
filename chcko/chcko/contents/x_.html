@@ -178,9 +178,10 @@
     </form>
     % end
 
-    % if with_problems:
     % # ASSIGN
+    % if with_problems:
     % if self.request.user:
+    % if 'bare' not in self.request.params:
         % teacher = self.request.student.key.parent().parent().get()
         % if teacher.userkey == db.idof(self.request.user): # self assignment is possible
             <form class="grid_10" id="assignform" action="/{{self.request.lang}}/todo" method="post">
@@ -235,6 +236,7 @@
             });
             </script>
         % end
+    % end
     % end
     % end
 % end

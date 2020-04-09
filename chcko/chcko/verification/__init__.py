@@ -5,7 +5,7 @@ from chcko.chcko.db import db
 
 class Page(PageBase):
 
-    def get_response(self):
+    def get_response(self,**kextra):
         token = self.request.params.get('token')
         user = self.request.user
         if not user:

@@ -25,24 +25,30 @@
 {{db.user_email(self.request.user)}}
 </p>
 
+%def fieldme(tme,what,wvalue,wtype='text',extra=''):
+<div class="grid_10" style="margin:0.5em 0.5em;">
+    <div class="grid_3">
+        <label for="{{what}}">{{tme}}</label>
+    </div>
+    <input class="grid_6 chq" type="{{wtype}}"
+        %if wvalue:
+        value="{{ wvalue }}"
+        %end
+        name="{{what}}"/>
+</div>
+%end
+
 %if not db.is_social_login(self.request.user):
 <form method="POST" name=passwordform onsubmit='return validate()'>
-    <label>{{tselect}}</label><br>
-    <p><label for="fullname">{{tfullname}}</label>&nbsp;
-    <input class="chq" type="text" value="{{self.request.user.fullname}}" name="fullname"/></p>
-    <p><label for="password">{{tpassword}}</label>&nbsp;
-    <input class="chq" type="password" name="password" /></p>
-    <p><label for="confirmp">{{tconfirm}}*</label>&nbsp;
-    <input class="chq" type="password" name="confirmp" /></p>
-    <p><input type="hidden" name="token" value="{{ defined('token') and token or ''}}" /></p>
-    <p><input class="nbutton chq grid_10" style="text-align:center" type="submit" value="{{ tupdate }}" /></p>
-    <br>
+    %fieldme(tfullname,'fullname',self.request.user.fullname)
+    %fieldme(tpassword,'password','','password')
+    %fieldme(tconfirm,'confirmp','','password')
+
+    <input type="hidden" name="token" value="{{ defined('token') and token or ''}}" />
+    <input class="nbutton chq grid_10" style="text-align:center" type="submit" value="{{ tupdate }}" />
 </form>
 %else:
-    <p>
-        <label for="fullname">{{tfullname}}</label>&nbsp;
-        <label type="text" value="{{self.request.user.fullname}}" name="fullname" readonly/>
-    </p>
+    %fieldme(tfullname,'fullname',self.request.user.fullname,extra='readonly')
 %end
 
 % include('chcko/main')

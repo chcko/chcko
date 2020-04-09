@@ -777,7 +777,7 @@ class db_mixin:
         except:
             usr = None
         student = None
-        studentpath = [request.params.get(plc,'') # or request.params.get(plc[:2],'')
+        studentpath = [request.params.get(plc,'') # or request.params.get(plc[0],'')
                        for plc in pathlevels]
         rndsp = random_path(seed=request.remote_addr)
         color = request.params.get('color','')

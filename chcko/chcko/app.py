@@ -187,7 +187,7 @@ def fullpath(lang,pagename,**kextra):
         mod = chcko_import('chcko.'+pagename)
         page = mod.Page(mod)
         if bottle.request.route.method == 'GET':
-            respns = page.get_response(**kextra)
+            respns = page.get_response(**(kextra if kextra else bottle.request.params))
         else:
             respns = page.post_response()
         return respns

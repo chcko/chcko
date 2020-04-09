@@ -15,11 +15,15 @@
 % end
 
 <form method="POST" name="forgot" onsubmit="return validate()">
-    <p>
-    <label for="email">{{temail}}*</label>&nbsp;<input class="chq" type="email" value="{{ email }}" name="email"/>
-    </p>
-    <p><input class="nbutton chq grid_10" style="text-align:center" type="submit" value="{{tsend}}"/></p>
-    <br>
+
+<div class="grid_10" style="margin:0.5em 0.5em;">
+    <div class="grid_2">
+    <label for="email">{{temail}}*</label>
+    </div>
+    <input class="grid_7 chq" type="email" value="{{ email }}" name="email"/>
+</div>
+<input class="nbutton chq grid_10" style="text-align:center" type="submit"
+value="{{tsignup if not_found else tsend}}"/></p>
 </form>
 
 % include('chcko/main')

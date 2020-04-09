@@ -108,7 +108,7 @@ end
         <span style="float:right">☰</span>
         %end
         {{util.translate(key2prnt.kind())}}<br>
-        %if key2prnt.kind()=='Role':
+        %if not user and key2prnt.kind()=='Role':
             <a href="/{{language}}/{{pagename}}?{{! addqs(db.urlstring(key2prnt)) }}">
                 {{key2prnt.string_id()}} 
             </a>
@@ -146,7 +146,7 @@ end
     % if wp:
     <div class="grid_1" id="printer">
         <span style="float:right">
-            🖶
+            ☰
         </span>
     </div>
     %end
@@ -335,28 +335,37 @@ end
         padding:15px 10px 15px 10px;
     }
 
+% def mkmenu(idmenu,idnav):
+%   idmenuarea = idmenu+'area'
+    var {{idmenuarea}} = false;
+    $(document).ready(function($){
+        $("#{{idnav}}").click(function(){
+            $("#{{idmenu}}").slideToggle();
+        });
+        $("#{{idmenu}}").hover(function(){
+            {{idmenuarea}} = true;
+        }, function(){
+            {{idmenuarea}} = false;
+        });
+        $("#{{idnav}}").hover(function(){
+            {{idmenuarea}} = true;
+        }, function(){
+            {{idmenuarea}} = false;
+        });
+    });
+    $(document).mouseup(function (){
+        if (! {{idmenuarea}})
+            $("#{{idmenu}}").hide();
+    });
+%end
+
     </style>
     <script>
     %if user:
-    $(document).ready(function($){
-        $("#rolenav").on("click", function(){
-            $("#rolemenu").slideToggle();
-            $(this).toggleClass("active");
-        });
-    });
+        % mkmenu('rolemenu','rolenav')
     %end
-    $(document).ready(function($){
-        $("#usernav").on("click", function(){
-            $("#usermenu").toggle();
-            $(this).toggleClass("active");
-        });
-    });
-    $(document).ready(function($){
-        $("#langnav").on("click", function(){
-            $("#langmenu").toggle();
-            $(this).toggleClass("active");
-        });
-    });
+    % mkmenu('usermenu', 'usernav')
+    % mkmenu('langmenu', 'langnav')
     $(document).ready(function($){
         $("#printer").on("click", function(){
             href = window.location.href;

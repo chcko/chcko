@@ -293,7 +293,7 @@ class Page(PageBase):
         else:
             return name_val[0][0]
 
-    def get_response(self):
+    def get_response(self,**kextra):
         self._get_problem()
         res = self.load_content()
         return res

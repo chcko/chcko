@@ -6,8 +6,8 @@ from chcko.chcko.db import db
 class Page(PageBase):
 
     @user_required
-    def get_response(self):
-        return super().get_response()
+    def get_response(self,**kextra):
+        return super().get_response(**kextra)
 
     @user_required
     def post_response(self):

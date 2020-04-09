@@ -134,8 +134,8 @@ class PageBase:
             })
         except:
             pass
-    def get_response(self):
-        res = template('chcko.'+self.request.pagename,**self.request.params,
+    def get_response(self,**kextra):
+        res = template('chcko.'+self.request.pagename,**kextra,
                 template_lookup=mklookup(self.request.lang))
         return res
     def redirect(self, afterlang):

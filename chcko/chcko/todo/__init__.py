@@ -21,9 +21,9 @@ class Page(PageBase):
         userkey = self.request.user and db.idof(self.request.user)
         yield from db.depth_1st(*prepare(qs,skey,userkey,extraplace="Assignment"))
 
-    def get_response(self):
+    def get_response(self,**kextra):
         db.clear_done_assignments(self.request.student, self.request.user)
-        return super().get_response()
+        return super().get_response(**kextra)
 
     def post_response(self):
         for studentkeyurlsafe in self.request.forms.getall('assignee'):
