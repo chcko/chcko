@@ -378,7 +378,7 @@ If ``chq()`` is called for one ``idx`` only, the wrapping in a list can be dropp
 
 `r.i <https://github.com/chcko/chcko-r/blob/master/chcko/r/i/en.html>`__
 does ``%include('r/i/coord')``, which has js script per problem number ``nr``
-resulting `r.i <https://chcko.eu/en?r.i`__.
+resulting `r.i <https://chcko.eu/en?r.i>`__.
 
 .. code:: javascript
 
