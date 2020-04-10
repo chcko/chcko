@@ -56,18 +56,18 @@ class Page(PageBase):
     def _get_problem(self, problemkey=None):
         '''init the problem from database if it exists
         '''
-        urlsafe = problemkey or self.query_string.startswith(
-            'key=') and self.query_string[4:]
+        urlsafe = problemkey or self.query_show.startswith(
+            'key=') and self.query_show[4:].split('&')[0]
 
         if urlsafe:
             self.problem = db.from_urlsafe(urlsafe)
             if self.problem:  # else it was deleted
                 if not isinstance(self.problem,db.Problem):
                     raise HTTPError(404,'404_5')
-                # query_string here is "key=..."
-                # replace query_show/query_string with that of the problem to load the problem in tpl_from_qs()
+                # query_show here is "key=..."
+                # replace query_show with that of the problem to load the problem in tpl_from_qs()
                 self.query_show = self.problem.query_string
-        else:  # get existing unanswered if query_string is same
+        else:  # get existing unanswered if problem.query_string==query_show
             self.problem = db.problem_by_query_string(
                 self.query_show,
                 self.request.lang,
@@ -184,10 +184,7 @@ class Page(PageBase):
                 'template creation for either _new or _zip'
                 del _chain[:]
                 env.clear()
-                env.update({
-                    'query_string': self.query_string,
-                    'lang': self.request.lang,
-                    'scripts': {}})
+                env.update({'scripts': {}})
                 cleanup = None
                 if '\n' in tplid:
                     cleanup = lookup(self.query_show, to_do)
@@ -229,7 +226,7 @@ class Page(PageBase):
             SimpleTemplate.overrides = {}
             del stdout[:]  # the script functions will write into this
             tpl = get_tpl(layout, template_lookup=langlookup)
-            problemurlsafe = self.problem and db.urlsafe(self.problem.key)
+            problemkey = self.problem and db.urlsafe(self.problem.key)
             with_problems = next(problems_cntr) > 0
             env.update(
                 dict(
@@ -238,7 +235,7 @@ class Page(PageBase):
                         withempty,
                         noempty),
                     problem=self.problem,
-                    problemkey=problemurlsafe,
+                    problemkey=problemkey,
                     with_problems=with_problems,
                     request=self.request))
             tpl.execute(stdout, env)
@@ -352,6 +349,8 @@ class Page(PageBase):
 
 
 # course
+
+nokey = lambda x: re.sub('key=[^&]+&','',x)
 
 def course_labels(qs):
     """
@@ -499,7 +498,7 @@ def next_qs(qs,direction=1):
         if qi >= 0 and qi < qslen:
             qs[qi] = '&'+qs[qi]
         qs = '&&'.join(qs)
-    return qs.strip('&')
+    return nokey(qs.strip('&'))
 
 def start_qs(qs):
     """
@@ -514,7 +513,7 @@ def start_qs(qs):
     ''
 
     """
-    return '&&'.join([x.strip('&') for x in qs.strip('&').split('&&') if x])
+    return nokey('&&'.join([x.strip('&') for x in qs.strip('&').split('&&') if x]))
 
 def end_qs(qs):
     """
@@ -534,5 +533,5 @@ def end_qs(qs):
         res = '&&'.join(qss[:-1]+['&'+qss[-1]])
     except:
         res = ''
-    return res.strip('&')
+    return nokey(res.strip('&'))
 

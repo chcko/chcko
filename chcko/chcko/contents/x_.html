@@ -65,11 +65,27 @@
     </form>
 
     <script>
+    remove_course_storage = function(){
+        var n = window.sessionStorage.length;
+        while(n--) {
+           let key = window.sessionStorage.key(n);
+           if (key.includes('&&'))
+               window.sessionStorage.removeItem(key);
+        }
+    };
     var acomposed;
+    var course;
     $(document).ready(()=>{
+        remove_course_storage();
         acomposed = $("#acomposed");
+        course = $("#course");
+        if (window.sessionStorage.getItem('chcko_delim')=='&&')
+            course.prop('checked',true);
+        else
+            course.prop('checked',false);
         acomposed.val(window.sessionStorage.getItem('chcko_selection'));
         acomposed.focusout(()=>window.sessionStorage.setItem('chcko_selection',acomposed.val()));
+        course.focusout(()=>window.sessionStorage.setItem('chcko_delim',course.is(':checked')?'&&':'&'));
         });
     $("form").on({click:function(ee){
             var e = ee.currentTarget;
@@ -113,12 +129,47 @@
     </p>
     %end
 
+    %cq = self.query_string
+    %pe = course_labels(cq)
+    %alinks = ['/'+self.request.lang+'/contents?'+x for x in [start_qs(cq),next_qs(cq,-1),cq,next_qs(cq),end_qs(cq)]]
+
     <script>
-    $(document).ready(()=>window.sessionStorage.removeItem('chcko_selection'));
+    $(document).ready(()=>{
+        window.sessionStorage.removeItem('chcko_selection');
+        window.sessionStorage.removeItem('chcko_delim');
+        %# if pe and with_problems and problem.answered:
+        % if pe and with_problems and problemkey:
+            %import re
+            %lnk2save = re.sub('key=[^&]+&','',alinks[2].split("?")[1])
+            window.sessionStorage.setItem('{{! lnk2save}}','{{problemkey}}');
+        % end
+    });
     function newpage(url){
-        window.location.href=url;
+        uqs=url.split('?');
+        uqs1 = uqs[1].replace(/key=[^&]+&/g,'');
+        if (window.sessionStorage.getItem(uqs1))
+        {
+            newurl = url.replace('&&&','&&&key='+window.sessionStorage.getItem(uqs1)+'&');
+            if (newurl == url)
+                newurl = uqs[0]+'?key='+window.sessionStorage.getItem(uqs1)+'&'+uqs1;
+            window.location.href=newurl;
+        } else {
+            window.location.href=url;
+        }
+    }
+    function againpage(url){
+        uqs=url.split('?');
+        uqs1 = uqs[1].replace(/key=[^&]+&/g,'');
+        window.sessionStorage.removeItem(uqs1);
+        window.location.href=uqs[0]+'?'+uqs1;
     }
     </script>
+
+    %def qsnav(where,sign):
+    <button class="grid_2 nbutton chq" type="button" onclick="newpage('{{! alinks[where]}}');">{{ sign }}</button>
+    %end
+
+
     % if with_problems and not problem.answered:
     <form action="" method="post">
     % end
@@ -132,14 +183,6 @@
 
     {{! content }}
 
-    %cq = query_string
-    %pe = course_labels(cq)
-    %alinks = ['/'+self.request.lang+'/contents?'+x for x in [start_qs(cq),next_qs(cq,-1),cq,next_qs(cq),end_qs(cq)]]
-
-    %def qsnav(where,sign):
-    <button class="grid_1 nbutton chq" type="button" onclick="window.location.href='{{ alinks[where] }}';">{{ sign }}</button>
-    %end
-
     % if not pe and ('bare' in self.request.params):
     % bhidden='display:none;'
     % else:
@@ -150,16 +193,16 @@
     % bottonwidth = 'grid_10'
     %pe2=''
     %if pe:
-        % bottonwidth = 'grid_6'
-        %qsnav(0,'⯈')
-        %qsnav(1,pe[1]+'⯇')
+        % bottonwidth = 'grid_2'
+        %qsnav(0,'1 <<')
+        %qsnav(1,pe[1]+' <')
         %pe2=' '+pe[2]
     %end
 
     % if with_problems and problem.answered:
-    <button type="submit" class="{{bottonwidth}} nbutton chq"
-        style="text-align:center;{{bhidden}}"
-        onclick="newpage('{{alinks[2]}}');"> {{tagain+pe2}} </button>
+    <button class="{{bottonwidth}} nbutton chq" style="text-align:center;{{bhidden}}"
+        type="submit"
+        onclick="againpage('{{! alinks[2]}}');"> {{tagain+pe2}} </button>
     % end
     % if with_problems and not problem.answered:
     <input class="{{bottonwidth}} nbutton chq" style="text-align:center;{{bhidden}}"
@@ -168,8 +211,8 @@
     %end
 
     %if pe:
-        %qsnav(3,'⯈'+pe[3])
-        %qsnav(4,'⯇'+pe[4])
+        %qsnav(3,'> '+pe[3])
+        %qsnav(4,'>> '+pe[4])
     %end
     </p>
     <br>
@@ -195,7 +238,7 @@
                         % end
                         <fieldset>
                         % fieldset = True
-                        <input type="hidden" name="query_string" value="{{query_string}}">
+                        <input type="hidden" name="query_string" value="{{self.query_string}}">
                         <div><input type="checkbox" class="chq checkall">
                             {{util.translate(kind)}} {{e.string_id()}}
                         </div>

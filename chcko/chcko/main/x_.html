@@ -137,7 +137,7 @@ end
     &nbsp;
     </div>
 
-    % wp = pagename == 'contents' and query_string
+    % wp = pagename == 'contents' and query_string and '&&' not in query_string
     <div class="{{'grid_9' if wp else 'grid_10'}}">
         %for lng in langs:
         {{!util.newlang(lng)}} &nbsp;
@@ -145,9 +145,7 @@ end
     </div>
     % if wp:
     <div class="grid_1" id="printer">
-        <span style="float:right">
-            ☰
-        </span>
+        <span style="float:right"> ☰ </span>
     </div>
     %end
 
