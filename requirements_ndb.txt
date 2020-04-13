@@ -21,8 +21,8 @@ psutil
 
 numpy
 matplotlib
-lxml
+scipy
 sympy
 
 #content
-chcko-r==0.2.3
+chcko-r==0.2.4

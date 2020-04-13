@@ -20,13 +20,13 @@ def main():
     dependencies = [
             'numpy',
             'matplotlib',
+            'scipy',
             'sympy',
-            # 'lxml',
             'txdir','psutil' # helpers
     ]
     setuptools.setup(
         name="chcko",
-        version = "1.0.4",
+        version = "1.0.5",
         description="chcko randomly parameterized exercises automatically checked (formerly mamchecker)",
         long_description=readme,
         long_description_content_type="text/x-rst",

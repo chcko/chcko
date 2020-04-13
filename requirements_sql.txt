@@ -8,6 +8,6 @@ social-auth-core
 
 numpy
 matplotlib
-lxml
+scipy
 sympy
 

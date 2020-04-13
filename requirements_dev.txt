@@ -27,6 +27,6 @@ google-cloud-storage
 
 numpy
 matplotlib
-lxml
+scipy
 sympy
 
