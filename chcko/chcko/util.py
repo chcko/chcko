@@ -5,6 +5,7 @@ Utility
 
 '''
 
+import re
 from sympy.parsing.sympy_parser import parse_expr
 from sympy import Poly, latex
 from sympy.abc import x
@@ -15,7 +16,7 @@ from chcko.chcko import bottle
 from chcko.chcko.bottle import SimpleTemplate, template
 
 from chcko.chcko.hlp import listable, mklookup
-from chcko.chcko.languages import langkindnum, langnumkind, role_strings
+import chcko.chcko.languages as chlang
 from chcko.chcko.db import db
 
 from chcko.chcko.auth import newurl
@@ -25,7 +26,7 @@ try:
 except:
     social_logins = {}
 
-langs = list(role_strings.keys())
+langs = list(chlang.role_strings.keys())
 
 class Util:
     ''' A Util instance named ``util`` is available in html files.
@@ -43,6 +44,22 @@ class Util:
     def a(self, alnk):
         return """<a href="#" onclick="a_lnk('"""+alnk+"""');return false;">"""+alnk+'</a>'
 
+    @staticmethod
+    def query_without_key(url):
+        return re.sub('key=[^&]+&','',url.split("?")[1])
+
+    def maintopic(self, depth,linktext, prevmaintopic):
+        dm = re.match('\d',depth)
+        if dm and dm[0]=='1':
+            newmaintopic = chlang.maintopic_to_english[self.request.lang][linktext]
+            #try:
+            #    newmaintopic = maintopic_to_english[self.request.lang][linktext]
+            #except:
+            #    newmaintopic = None
+            if newmaintopic != prevmaintopic:
+                return newmaintopic
+        return None
+
     def newlang(self, lng):
         oldp = self.request.urlparts.path.strip('/')
         try:
@@ -59,7 +76,7 @@ class Util:
     def translate(self, word):
         try:
             idx = db.pathlevels.index(word)
-            res = role_strings[self.request.lang][idx]
+            res = chlang.role_strings[self.request.lang][idx]
             return res
         except:
             return word
@@ -129,8 +146,8 @@ class PageBase:
         try:
             SimpleTemplate.defaults.update({
                 'lang': self.request.lang,
-                'kinda': langkindnum[self.request.lang],
-                'numkind': langnumkind[self.request.lang]
+                'kinda': chlang.langkindnum[self.request.lang],
+                'numkind': chlang.langnumkind[self.request.lang]
             })
         except:
             pass

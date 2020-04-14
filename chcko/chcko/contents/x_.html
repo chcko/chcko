@@ -32,7 +32,6 @@
 
 % if isinstance(content, list): #no specific content: therefore index
 
-
     <form action="" method="get">
 
     <br>
@@ -41,25 +40,33 @@
     <input class="nbutton chq" style="text-align:center" type="submit" name="compose" value="{{tgo}}"/>
     <br>
 
-    <!--
-        <div class="grid_10"><p><span style="font-size:smaller;">{{texplain}}</span></p><div>
-    -->
-
+    % maintopic = None
     % for knd, lnks in content:
     <p><b><a href="/{{self.request.lang}}/contents?kind={{knd}}">{{knd}}</a></b><br>
        % for linktext,lnklvl,leaf,depth in lnks:
+          % maintopic = util.maintopic(depth,linktext.lower(),maintopic) or maintopic
           % if not leaf:
-          <small>({{depth}})</small><em><a href="/{{self.request.lang}}/contents?path={{linktext}}">{{linktext}}</a>:</em>
+              <span class="content_{{maintopic}}">{{depth}}</span>
+             <span class="content_subindex content_{{maintopic}}">
+             <a href="/{{self.request.lang}}/contents?path={{linktext}}">{{linktext}}</a>
+             </span>
           % else:
              % lnk,lvl = lnklvl
-             <small>({{depth}})</small><a href="/{{self.request.lang}}/contents?{{lnk}}">{{linktext}}</a>
-             <input class="chq" type="checkbox" name="choice" value="{{lnk}}" autocomplete="off">
+             <span class="content_item content_depth content_{{maintopic}}"
+                 onclick="on_content_item('{{lnk}}');return false;">{{depth}}</span>
+             <span class="content_{{maintopic}}">
+             <a href="/{{self.request.lang}}/contents?{{lnk}}">{{linktext}}</a>
+             </span>
+             <span class="content_{{maintopic}}">
+                 <a href="/{{self.request.lang}}/contents?level={{lvl}}">{{lvl}}</a>
+             </span>
              % try:
              % authorid = lnk.split('.')[0]
-             (<a href="/{{self.request.lang}}/contents?link={{authorid}}">{{authorid}}</a>)
+             <span class="content_{{maintopic}}">
+                 <a href="/{{self.request.lang}}/contents?link={{authorid}}">{{authorid}}</a>
+             </span>
              % except: pass
              % end
-             <a href="/{{self.request.lang}}/contents?level={{lvl}}">{{lvl}}</a>
           % end
        % end
     % end
@@ -77,10 +84,12 @@
     };
     var acomposed;
     var course;
+    var delim;
     $(document).ready(()=>{
         remove_course_storage();
         acomposed = $("#acomposed");
         course = $("#course");
+        delim = course.is(":checked")?'&&':'&';
         if (window.sessionStorage.getItem('chcko_delim')=='&&')
             course.prop('checked',true);
         else
@@ -89,36 +98,15 @@
         acomposed.focusout(()=>window.sessionStorage.setItem('chcko_selection',acomposed.val()));
         course.focusout(()=>window.sessionStorage.setItem('chcko_delim',course.is(':checked')?'&&':'&'));
         });
-    $("form").on({click:function(ee){
-            var e = ee.currentTarget;
-            if (e.name=='course')
-                return true;
-            var delim = $("#course").is(":checked")?'&&':'&';
-            if (e.checked) {
-                $(this).before($('<input>',{type:"checkbox", name:"choice", value:e.value}));
-                let newval = (acomposed.val()?acomposed.val()+delim:'')+e.value;
-                acomposed.val(newval);
-                window.sessionStorage.setItem('chcko_selection',newval);
-            } else {
-                e.remove();
-                }
-            }}, "input[type='checkbox']"
-        );
+    function on_content_item(itm){
+        let newval = (acomposed.val()?acomposed.val()+delim:'')+itm;
+        acomposed.val(newval);
+        window.sessionStorage.setItem('chcko_selection',newval);
+    }
     $("form").on("submit",function(e){
             e.preventDefault();
-            ////// used to collect from checked checkboxes
-            //var allchecked = $("input[type='checkbox']:checked");
-            //var a = {};
-            //for (var ch=0; ch!=allchecked.length; ch++)
-            //{
-            //    var value = allchecked[ch].value;
-            //    if (a[value] === undefined)
-            //        a[value]=1;
-            //    else
-            //        a[value]=a[value]+1;
-            //}
-            //window.location.href="/{{self.request.lang}}/contents?"+$.param(a)
-            window.location.assign("/{{self.request.lang}}/contents?"+acomposed.val()) // keeps history to go back to previous location in course
+            // keeps history to go back to previous location in course
+            window.location.assign("/{{self.request.lang}}/contents?"+acomposed.val())
         });
     </script>
 
@@ -141,8 +129,7 @@
         window.sessionStorage.removeItem('chcko_delim');
         %# if pe and with_problems and problem.answered:
         % if pe and with_problems and problemkey:
-            %import re
-            %lnk2save = re.sub('key=[^&]+&','',alinks[2].split("?")[1])
+            %lnk2save = util.query_without_key(alinks[2])
             window.sessionStorage.setItem('{{! lnk2save}}','{{problemkey}}');
         % end
     });
@@ -292,6 +279,24 @@
     border-style:dotted;
     padding: 1em;
     margin: 1em 0em 0em -1em;
+}
+.content_item {
+    font-weight: bold;
+}
+.content_subindex {
+    font-style: italic;
+}
+.content_maths {
+    background-color: #FFFFD1; // yellow
+}
+.content_electronics {
+    background-color: #FFCBC1; // orange
+}
+.content_physics {
+    background-color: #E7FFAC; // green
+}
+.content_chemistry {
+    background-color: #FBE4FF; // pink
 }
 .problem_id {
     border: solid 1px;

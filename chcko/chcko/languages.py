@@ -27,7 +27,8 @@ langnumkind = {
         16:'claims',
         17:'identities',
         18:'paradoxes',
-        19:'meta'},
+        19:'meta'
+     },
     'de':
     {   0:'Übungen',
         1:'Texte',
@@ -48,7 +49,8 @@ langnumkind = {
         16:'Behauptungen',
         17:'Identitäten',
         18:'Paradoxien',
-        19:'Meta'},
+        19:'Meta'
+     },
 }
 
 langkindnum = {lng:{v: k for k, v in langnumkind[lng].items()} for lng in langnumkind}
@@ -73,7 +75,6 @@ def kindint(knd, numkind):
                     return numkind[k]
             return -1
 
-
 role_strings = {
     # these are listed on the page
     'en': ['School', 'Field', 'Teacher', 'Class', 'Role']
@@ -82,7 +83,21 @@ role_strings = {
     #,'it': ['Scuola', 'Campo', 'Prof', 'Classe', 'Ruolo']
     #,'fr': ['École', 'Domaine', 'Prof', 'Classe', 'Rôle']
     #,'es': ['Escuola', 'Esfera', 'Prof', 'Clase', 'Rol']
+}
 
+maintopic_to_english = {
+    'en': {
+        'maths':'maths'
+        ,'physics': 'physics'
+        ,'electronics': 'electronics'
+        ,'chemistry': 'chemistry'
+    }
+    ,'de': {
+        'Mathematik':'maths'
+        ,'Physik': 'physics'
+        ,'Elektronik': 'electronics'
+        ,'Chemie': 'chemistry'
+    }
 }
 
 languages = {'ab': 'Abkhazian',
