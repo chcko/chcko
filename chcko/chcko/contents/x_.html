@@ -32,46 +32,53 @@
 
 % if isinstance(content, list): #no specific content: therefore index
 
+    <div class="alpha grid_10 content_form">
     <form action="" method="get">
+        <div class="grid_1">
+            <label for="course">
+                <input class="chq" id="course" name="course" type="checkbox">&amp;&amp;
+            </label></div>
+        <input class="grid_8 chq" name="acomposed" id="acomposed"/>
+        <input class="nbutton chq grid_1" style="text-align:center;float:right" type="submit" name="compose" value="{{tgo}}"/>
+    </form>
+    </div>
 
-    <br>
-    <div class="grid_1"><label for="course"><input class="chq" id="course" name="course" type="checkbox">&amp;&amp;</label></div>
-    <input class="grid_8 chq" name="acomposed" id="acomposed"/>
-    <input class="nbutton chq" style="text-align:center" type="submit" name="compose" value="{{tgo}}"/>
-    <br>
-
-    % maintopic = None
+    % maintopic = []
     % for knd, lnks in content:
-    <p><b><a href="/{{self.request.lang}}/contents?kind={{knd}}">{{knd}}</a></b><br>
+    % topicdiv = False
+    <div class="alpha grid_10 content_kind">
+        <a href="/{{self.request.lang}}/contents?kind={{knd}}">{{knd}}</a>
+    </div>
        % for linktext,lnklvl,leaf,depth in lnks:
-          % maintopic = util.maintopic(depth,linktext.lower(),maintopic) or maintopic
+          % if util.maintopic(depth,linktext.lower(),maintopic) and maintopic:
+              % if topicdiv:
+              </div>
+              % end
+          <div class="alpha grid_10 content_{{maintopic[-1]}}">
+          % topicdiv = True
+          % end
           % if not leaf:
-              <span class="content_{{maintopic}}">{{depth}}</span>
-             <span class="content_subindex content_{{maintopic}}">
+             <span class="content_subindex">
              <a href="/{{self.request.lang}}/contents?path={{linktext}}">{{linktext}}</a>
              </span>
           % else:
              % lnk,lvl = lnklvl
-             <span class="content_item content_depth content_{{maintopic}}"
-                 onclick="on_content_item('{{lnk}}');return false;">{{depth}}</span>
-             <span class="content_{{maintopic}}">
+             <span class="content_item"
+                 onclick="on_content_item('{{lnk}}');return false;">{{lnk}}</span>
              <a href="/{{self.request.lang}}/contents?{{lnk}}">{{linktext}}</a>
-             </span>
-             <span class="content_{{maintopic}}">
-                 <a href="/{{self.request.lang}}/contents?level={{lvl}}">{{lvl}}</a>
-             </span>
+             <a href="/{{self.request.lang}}/contents?level={{lvl}}">{{lvl}}</a>
              % try:
              % authorid = lnk.split('.')[0]
-             <span class="content_{{maintopic}}">
-                 <a href="/{{self.request.lang}}/contents?link={{authorid}}">{{authorid}}</a>
-             </span>
+             <a href="/{{self.request.lang}}/contents?link={{authorid}}">{{authorid}}</a>
              % except: pass
              % end
           % end
        % end
+       % if topicdiv:
+       </div>
+       % end
     % end
 
-    </form>
 
     <script>
     remove_course_storage = function(){
@@ -280,6 +287,17 @@
     padding: 1em;
     margin: 1em 0em 0em -1em;
 }
+.content_form {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+.content_kind {
+    border: solid 1px;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    background-color: {{rolecolor}};
+    text-align:center;
+}
 .content_item {
     font-weight: bold;
 }
@@ -287,16 +305,25 @@
     font-style: italic;
 }
 .content_maths {
-    background-color: #FFFFD1; // yellow
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    background-color: #FFFFBA; // yellow
 }
 .content_electronics {
-    background-color: #FFCBC1; // orange
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    background-color: #FFDFBA; // orange
 }
 .content_physics {
-    background-color: #E7FFAC; // green
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    background-color: #BAFFC9; // green
 }
 .content_chemistry {
-    background-color: #FBE4FF; // pink
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    background-color: #FFB3BA; // pink
+    // background-color: #BAE1FF; // blue
 }
 .problem_id {
     border: solid 1px;
