@@ -50,7 +50,7 @@
         <a href="/{{self.request.lang}}/contents?kind={{knd}}">{{knd}}</a>
     </div>
        % for linktext,lnklvl,leaf,depth in lnks:
-          % if util.maintopic(depth,linktext.lower(),maintopic) and maintopic:
+          % if util.maintopic(depth,linktext.lower(),maintopic,lnklvl) and maintopic:
               % if topicdiv:
               </div>
               % end

@@ -93,10 +93,10 @@ maintopic_to_english = {
         ,'chemistry': 'chemistry'
     }
     ,'de': {
-        'Mathematik':'maths'
-        ,'Physik': 'physics'
-        ,'Elektronik': 'electronics'
-        ,'Chemie': 'chemistry'
+        'mathematik':'maths'
+        ,'physik': 'physics'
+        ,'elektronik': 'electronics'
+        ,'chemie': 'chemistry'
     }
 }
 
