@@ -7,6 +7,7 @@ pytest-cov
 
 psutil
 pyyaml
+
 sphinx
 sphinxcontrib.tikz
 sphinxcontrib.texfigure
@@ -29,4 +30,5 @@ numpy
 matplotlib
 scipy
 sympy
+
 

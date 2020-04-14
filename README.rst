@@ -13,18 +13,13 @@ with example content package
 
     https://github.com/chcko/chcko-r
 
-``chcko`` wants to collect problems,
-usable by students with or without learn coaches around the world.
-An infrastructure.
+``chcko`` wants to collect science problems,
+usable by students with or without learn coaches around the world,
+as an infrastructure.
 
-``chcko`` makes it easy to compose a problem set for students,
-it checks the answers and gives the results.
+The content packages are python packages.
 
-The focus is on collecting science problems
-not about code or format.
-
-The problem packages are python packages.
-the whole system can be installed locally too.
+``chcko`` can be installed locally, too.
 
 URL
 ===
@@ -43,24 +38,23 @@ Pages are:
 
 Example URLs:
 
-| https://chcko.eu/en/org?School=S&Field=F&Teacher=T&Class=C&Role=-------
+| https://chcko.eu/en/org?School=S&Field=F&Teacher=T&Class=C&Role=R
 | https://chcko.eu/en/contents?r.a&r.bu
 | https://chcko.eu/en/contents?r.a&&r.bu
 | https://chcko.eu/en/done?*&*
 
-With ``&&`` instead of one ``&`` as separator in a *contents* query, is called a **course**, here.
-In a course only one problem at a time is shown.
+With ``&&`` instead of one ``&`` as separator in a *contents* query (**course**),
+only one problem at a time is shown.
 ``&&&`` marks the current position.
 For example, ``.../en/contents?r.bd&&r.ba&&&r.a`` has ``r.a`` as current item in the course.
 
 The names ``School, Field, Teacher, Class, Role``
-form namespaces levels to describe a student *role*.
-What string is used in each level is up to the user.
-
+form namespace levels to describe a student *role*.
 The namespaces are of organizational nature.
 The namepace names are taken from usual organizational structures.
+What string is used in each level is up to the user.
 
-See `queries`_ for details.
+See also `queries`_.
 
 Use Cases
 =========
@@ -92,7 +86,7 @@ Step-by-step try in class without logging in:
 
     https://chcko.eu/en/contents?School=noschool&Field=2020&Teacher=noteacher&Class=noclass&Role=-------
 
-  The teacher is a student, too, but I suggest ``-------`` for the student field.
+  The teacher is a student, too.
   This is the default for a logged in user.
 
   Alternatively:
@@ -115,11 +109,9 @@ Step-by-step try in class without logging in:
   - ``Org`` on https://chcko.eu and
   - visit the problem afterwards via https://chcko.eu/en?r.bu.
 
-- The teacher enters the URL ``.../en/done?<classId>&*&*``
+- After the students have solved the problems,
+  the teacher enters the URL ``.../en/done?<classId>&*&*``
   to see if everybody was successful.
-  Note, that ``Class=`` is about setting current student,
-  while ``classId`` refers to the data to be queried.
-  From right to left this means:
 
   - any problem (``*``)
   - of any student (``*``)
@@ -127,7 +119,8 @@ Step-by-step try in class without logging in:
 
   https://chcko.eu/en/done?noclass&*&*
 
-  Students can query the results of all, too, and possibly help each other.
+  Students can query the results, too,
+  if the class namespace is not owned by a logged in user.
 
 Reserve a Name
 --------------
@@ -147,14 +140,14 @@ Create a Class
 In the ``Org`` tab,
 the ``Role`` input box uses the first of ``;,`` as a separator
 to create a whole class with no owner (independent of logged in or not).
-Then send an email to the students,
-with the link to be filled with their name:
 
-  https://chcko.eu/en/todo?School=noschool&Field=2020&Teacher=noteacher&Class=noclass&Role=<name>
+Then send a link to each student (e.g. via email):
 
-Or send each student separately the full link.
+  https://chcko.eu/en/todo?School=noschool&Field=2020&Teacher=noteacher&Class=noclass&Role=StudentName
 
-If the students log in, they take ownership of the role.
+Or send the same link to all students and let them add their ``StudentName``.
+
+If the students log in, before visiting the URL, they take ownership of the role.
 
 Assign
 ------
@@ -164,18 +157,18 @@ To assign to others, you need to be logged in.
 In the ``contents`` tab choose the problems
 or use an URL:
 
-| https://chcko.eu/en/contents?r.a&r.ck or
-| https://chcko.eu/en/contents?r.a&&r.ck
+https://chcko.eu/en/contents?r.a&r.ck
 
 At the end of the page you can choose classes or students to assign to.
-Assigning a course (with the ``&&``) assigns the problems individually.
+Assigning a course (with the ``&&`` instead of ``&``),
+assigns the problems individually.
 
 URLs without problems cannot be assigned.
 
 The students
 
 - log in
-- go to ``Todo``
+- go to the ``Todo`` tab
 - solve the assigned problems
 
 Find problems
@@ -184,15 +177,15 @@ Find problems
 There is no full text search engine yet.
 To find a problem, there are these alternatives:
 
-- use the index page https://chcko.eu/en/contents
-- clone author packages and use local text search (grep, ...)
+- Use the index page https://chcko.eu/en/contents
+- Clone content packages and use local text search (grep, ...)
 
 Create Printout
 ---------------
 
-If you add ``bare`` to the query string of the contents URL,
+If you add ``bare`` to the query string of the problem URL,
 header and footer is dropped.
-There is a printer symbol 🖶  at the bottom right, which does that.
+There is a printer symbol at the bottom right, which does that.
 Then you can
 
 - save and open the file with a MS Word or Libre Office
@@ -206,7 +199,10 @@ Then you can
 Check Done
 ----------
 
-To check the done problems of others, you need to be logged in.
+You can check the done problems below a namespace level like class
+
+- if you own the level and you are logged in
+- if the level is not owned
 
 Change to the teacher / class / Role.
 
@@ -226,7 +222,7 @@ when sending the link, because some programs drop the ``*``.
 ``?<school>&<period>&<teacher>&<class>&<student>&<problem>``
 is *defaulted to the left* with the current role names *if omitted*.
 
-See `done`_ for details on queries.
+See also `done`_.
 
 Remove an Assignment
 --------------------
@@ -243,8 +239,7 @@ Assume Role
 
 As a logged in user you can have more roles.
 These roles are listed by clicking in the role field
-on the ☰,
-not on the link to the current role.
+around the ☰.
 Click on an entry to assume another role.
 
 Remove a Role
@@ -278,7 +273,12 @@ without loosing one's history.
 Content Packages
 ================
 
-Example content layout::
+In a content package
+
+- content items ``<package_id>.<content_id>`` of the URL query
+- correspond to the folder ``chcko-<package_id>/chcko/<package_id>/<content_id>/``
+
+Example content package layout::
 
     chcko-r
       ├── chcko
@@ -306,7 +306,7 @@ Example content layout::
       └── setup.py
 
 Image file names in ``_images`` are either random or
-otherwise unique by encoding author ID, problem ID, content and possibly language.
+otherwise unique by encoding package ID, problem ID, content and possibly language.
 
 ``__init__.py`` is always there.
 Altogether it is a `Python <https://docs.python.org>`__ package,
@@ -321,7 +321,12 @@ Generated files start with ``_`` (``_<language_id>.html``).
 ``<language_id>.rst`` can contain `tikz <https://github.com/pgf-tikz/pgf>`__ images
 and are statically converted to ``_<language_id>.html`` with::
 
-  doit -kd. html
+    doit -kd. html
+
+``initdb.py`` fills the database with content items. It is generated using::
+
+    doit -kd. initdb
+
 
 .. _`example`:
 
@@ -377,8 +382,8 @@ If ``chq()`` is called for one ``idx`` only, the wrapping in a list can be dropp
     names = [r'\(\alpha=\)', r'\(\beta=\)', r'\(\gamma=\)']
 
 `r.i <https://github.com/chcko/chcko-r/blob/master/chcko/r/i/en.html>`__
-does ``%include('r/i/coord')``, which has js script per problem number ``nr``
-resulting `r.i <https://chcko.eu/en?r.i>`__.
+does ``%include('r/i/coord')``, which has a js script per problem number ``nr``
+(see the result: `r.i <https://chcko.eu/en?r.i>`__).
 
 .. code:: javascript
 
@@ -407,29 +412,21 @@ resulting `r.i <https://chcko.eu/en?r.i>`__.
     %scripts['funcs'+str(nr)]=script
 
 Non-problem texts are OK, too, but should be *context-free*,
-as they are combined with other texts/problems to a page via the URL query string::
+as they are combined with other texts/problems to a page via an URL query string.
 
-    https://chcko.eu/en/contents?r.a&r.by
+Create a Content Package
+------------------------
 
-Replace the ``&`` with ``&&`` to make a *course*::
+Look at the example content package for guidance
 
-    https://chcko.eu/en/contents?r.a&&r.by
-
-In the URL
-
-- content items are ``<author_id>.<content_id>``
-- corresponding to the folder ``chcko/<author_id>/<content_id>/``
-
-``initdb.py`` fills the database with content items. It is generated using::
-
-    doit -kd. initdb
+    https://github.com/chcko/chcko-r
 
 To add a new content package on https://chcko.eu:
 
-- name it ``chcko-<author_id>``
-  `not existing yet on pypi <https://pypi.org/search/?q=chcko>`__ (.e.g. ``r`` is already taken)
-- test it locally
-- upload it to `pypi`_
+- Name it ``chcko-<package_id>`` such that
+  `it does not exist yet on pypi <https://pypi.org/search/?q=chcko>`__ (.e.g. ``r`` is already taken)
+- Test it locally
+- Upload it to `pypi`_
 - add it to `requirements_ndb.txt <https://github.com/chcko/chcko/blob/master/requirements_ndb.txt>`__
   with a pull request
 
@@ -443,12 +440,15 @@ If
 `chcko <https://pypi.org/project/chcko/>`__
 is not installed::
 
-    runchcko_with_sql.py
+    ./runchcko_with_sql.py -s wsgiref
+    #prepend ``python3`` if your default python is python2
 
 Not installed content packages must be parallel to the main ``chcko`` folder.
 
-New Package
------------
+With installed ``chcko``::
+
+    pip install --user chcko
+    #use pip3 if your default python is python2
 
 Create a new content package with::
 
@@ -468,36 +468,70 @@ or::
 Edit the problem text in ``en.html`` using a `text editor`_.
 See the example `above <#example>`_.
 
-Then from the root of the content package::
+Then, from the root of the content package::
 
-    doit initdb
-    runchcko
+    doit -kd. html
+    doit -kd. initdb
 
-Tools
------
+or::
 
-If your are familiar with Linux, use it, possibly on a virtual machine
+    make html
+
+To test, run the server with::
+
+    runchcko [-s wsgiref]
+
+Platforms
+=========
+
+If you are familiar with Linux, use it, possibly on a virtual machine
 like `virtualbox <https://www.virtualbox.org/wiki/Downloads>`_.
-But all the needed tools are also available for Windows and Mac.
+But all the needed tools are also available for Windows and MacOS.
 
-On your PC you will need
+You will need
 
-- `git <https://git-scm.com/download/win>`_
+- `git <https://git-scm.com/download>`_
 - `python >= 3.7 <https://python.org/download>`_
 
-Then in a CLI and folder of your choice::
+On MacOS the developer command line tools are offered for install,
+when you type ``git`` in the terminal.
+``Python3`` will also be available, then.
+
+To install the python packages for development,
+in a terminal in a folder of your choice::
 
   git clone https://github.com/chcko/chcko
   cd chcko
-  pip install -r requirements_dev.txt
-  pip install chcko
-
-installs the python packages for development.
+  pip install --user -r requirements_dev.txt
+  #use pip3 if your default python is python2 (e.g. MacOS)
+  cd ..
+  git clone https://github.com/chcko/chcko-r
 
 `Sphinx`_ is only needed if you use `RST`_.
-And `Latex`_ is only needed if you use Sphinx plugins
+`Latex`_ is needed, if you use Sphinx plugins
 (`sphinxcontrib.tikz <https://bitbucket.org/philexander/tikz>`__,
 `sphinxcontrib.texfigure <https://github.com/prometheusresearch/sphinxcontrib-texfigure>`__).
+
+Content packages can have their own python dependencies.
+Installing them, makes sure these are there.
+Otherwise an install is not needed,
+if the content packages are parallel to ``chcko``.
+
+To run the server without installing::
+
+    cd chcko
+    ./runchcko_with_sql.py -s wsgiref
+    #prepend ``python3`` if your default python is python2
+
+To install::
+
+    pip install --user chcko
+    pip install --user chcko-r
+    #use pip3 if your default python is python2
+
+To run the server with installed packages::
+
+    runchcko
 
 Development
 ===========
@@ -573,6 +607,7 @@ Plan
 
 - Every content has a unique ID = ID_author.ID_content.
   This way no ID coordination is necessary once the author has an ID.
+  ID_author is the same as package_id in ``chcko-<package_id>``.
 
 - Every ID is also a folder
 
