@@ -1,0 +1,9 @@
+User-agent: *
+Sitemap: https://chcko.eu/en/contents
+Sitemap: https://chcko.eu/de/contents
+Disallow: /
+Allow: /en/contents
+Allow: /de/contents
+Allow: /en/contents?*
+Allow: /de/contents?*
+
