@@ -43,18 +43,17 @@
     </form>
     </div>
 
-    % maintopic = []
     % for knd, lnks in content:
     % topicdiv = False
     <div class="alpha grid_10 content_kind">
         <a href="/{{self.request.lang}}/contents?kind={{knd}}">{{knd}}</a>
     </div>
        % for linktext,lnklvl,leaf,depth in lnks:
-          % if util.maintopic(depth,linktext.lower(),maintopic,lnklvl) and maintopic:
+          % if util.maintopic(depth,linktext):
               % if topicdiv:
               </div>
               % end
-          <div class="alpha grid_10 content_{{maintopic[-1]}}">
+          <div class="alpha grid_10 content_field">
           % topicdiv = True
           % end
           % if not leaf:
@@ -304,26 +303,9 @@
 .content_subindex {
     font-style: italic;
 }
-.content_maths {
+.content_field {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
-    background-color: #FFFFBA; // yellow
-}
-.content_electronics {
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-    background-color: #FFDFBA; // orange
-}
-.content_physics {
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-    background-color: #BAFFC9; // green
-}
-.content_chemistry {
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-    background-color: #FFB3BA; // pink
-    // background-color: #BAE1FF; // blue
 }
 .problem_id {
     border: solid 1px;

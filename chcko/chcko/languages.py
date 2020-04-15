@@ -85,21 +85,6 @@ role_strings = {
     #,'es': ['Escuola', 'Esfera', 'Prof', 'Clase', 'Rol']
 }
 
-maintopic_to_english = {
-    'en': {
-        'maths':'maths'
-        ,'physics': 'physics'
-        ,'electronics': 'electronics'
-        ,'chemistry': 'chemistry'
-    }
-    ,'de': {
-        'mathematik':'maths'
-        ,'physik': 'physics'
-        ,'elektronik': 'electronics'
-        ,'chemie': 'chemistry'
-    }
-}
-
 languages = {'ab': 'Abkhazian',
              'aa': 'Afar',
              'af': 'Afrikaans',

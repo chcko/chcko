@@ -48,20 +48,11 @@ class Util:
     def query_without_key(url):
         return re.sub('key=[^&]+&','',url.split("?")[1])
 
-    def maintopic(self, depth, linktext, maintopic, lnklvl):
+    def maintopic(self, depth, linktext):
         dm = re.match('\d',depth)
         if dm and dm[0]=='1':
-            try:
-                newmaintopic = chlang.maintopic_to_english[self.request.lang][linktext]
-            except Exception as ex:
-                print('Warnging',ex,lnklvl)
-                return False
-            if maintopic and maintopic[-1] != newmaintopic:
-                maintopic[-1] = newmaintopic
-            else:
-                maintopic.append(newmaintopic)
-            return True
-        return False
+            return linktext
+        return None
 
     def newlang(self, lng):
         oldp = self.request.urlparts.path.strip('/')
