@@ -25,4 +25,4 @@ scipy
 sympy
 
 #content
-chcko-r==0.2.5
+chcko-r==0.2.6
