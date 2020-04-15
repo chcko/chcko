@@ -20,9 +20,8 @@ class Page(PageBase):
             db.student_by()
             self.redirect('todo')
         except (ValueError, AttributeError):
-            self.request.params.update({
-                'email': email,
-                'failed': True
-            })
-            return self.get_response()
+            return self.get_response(
+                email =  email,
+                failed = True
+            )
 

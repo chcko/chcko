@@ -13,20 +13,20 @@
         % end
     <tr>
         % for ate in te[:-1]:
-        % if te[-1]:
-            <td style="border-color:DarkRed;"> 
-        % else:
-            <td> 
-        % end
-        % if isinstance(ate,tuple):
             % if te[-1]:
-                overdue:
+                <td style="border-color:DarkRed;"> 
+            % else:
+                <td>
             % end
-            <a href="/{{self.request.lang}}/contents?{{ate[1]}}">{{ate[0]}}</a>
-        % else:
-            {{ate}}
-        % end
-        </td>
+            % if isinstance(ate,tuple):
+                % if te[-1]:
+                    overdue:
+                % end
+                <a href="/{{self.request.lang}}/contents?{{ate[1]}}">{{ate[0]}}</a>
+            % else:
+                {{! ate}}
+            % end
+                </td>
         % end
     </tr>
     % end

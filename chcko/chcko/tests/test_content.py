@@ -108,7 +108,7 @@ def test_depth_1st(cdb):
     lst = list(cdb.depth_1st(path+[[]]))
     assert len(lst) >= 8
     lst = list(cdb.depth_1st(path+[[('query_string','=','r.u')]]))
-    assert len(lst) == 6
+    assert len(lst) == 7
     assert cdb.kindof(lst[0]) == 'School'
     assert cdb.kindof(lst[5]) == 'Problem'
     path = ['a', 'b', 'c', 'x', 'e'] #note same name for student
@@ -116,19 +116,9 @@ def test_depth_1st(cdb):
     problems_for(student1,cdb)
     path = ['a','b','c',[],[],[('query_string','=','r.u')]]
     lst = list(cdb.depth_1st(path))
-    assert len(lst) == 9
-    assert cdb.kindof(lst[0]) == 'School'
-    assert cdb.kindof(lst[5]) == 'Problem'
-    assert cdb.kindof(lst[6]) == 'Class'
-    assert cdb.kindof(lst[7]) == 'Role'
-    assert cdb.kindof(lst[8]) == 'Problem'
+    assert len(lst) == 11
     lst = list(cdb.depth_1st(path,keys=cdb.keys_to_omit(path)))
-    assert len(lst) == 6
-    assert cdb.kindof(lst[0]) == 'Class'
-    assert cdb.kindof(lst[2]) == 'Problem'
-    assert cdb.kindof(lst[3]) == 'Class'
-    assert cdb.kindof(lst[4]) == 'Role'
-    assert cdb.kindof(lst[5]) == 'Problem'
+    assert len(lst) == 8
     lst = list(cdb.depth_1st())
     assert lst == []
 

@@ -760,7 +760,8 @@ class db_mixin:
         elif isinstance(e, self.Assignment):
             now = datetime.datetime.now()
             overdue = now > e.due
-            return [(datefmt(e.created), e.query_string), datefmt(e.due), overdue]
+            return [f'{datefmt(e.created)} <a href="/{bottle.request.lang}/contents?{e.query_string}">{e.query_string}</a>'
+                    , datefmt(e.due), overdue]
         # elif e is None:
         #    return ['no such object or no permission']
         return []

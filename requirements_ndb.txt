@@ -23,6 +23,7 @@ numpy
 matplotlib
 scipy
 sympy
+lxml
 
 #content
 chcko-r==0.2.6

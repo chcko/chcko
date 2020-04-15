@@ -30,5 +30,6 @@ numpy
 matplotlib
 scipy
 sympy
+lxml
 
 

@@ -312,9 +312,11 @@ class TestRunthrough(object):
         # self.resp.showbrowser()
         curx = self.resp.lxml
         delone = curx.xpath('//a[contains(@href,"en/contents?r.bb")]/../..//input')
+        lenbefore = len(delone)
         value = ''
         if 'value' in delone[0].keys():
             value = dict(delone[0].items())['value']
+
         if value:
             form = self.resp.form
             deletees = form.fields.get('deletee')
@@ -325,7 +327,7 @@ class TestRunthrough(object):
         self._store('resp', form.submit('submit'))
         curx = self.resp.lxml
         delone = curx.xpath('//a[contains(@href,"en/contents?r.bb")]/../..//input')
-        assert delone == []  # deleted
+        assert len(delone) == lenbefore-1
 
     def test_done_delall(self):
         self._store('resp', self.resp.goto('/en/done'))

@@ -10,4 +10,6 @@ numpy
 matplotlib
 scipy
 sympy
+lxml
 
+chcko-r==0.2.6
