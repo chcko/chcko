@@ -220,7 +220,7 @@ class Page(PageBase):
                     prebase(_new)
             content = ''.join(stdout)
         else:
-            content = db.filtered_index(self.request.lang, tplid)
+            content = db.filtered_index(self.request.lang, tuple(tplid))
 
         if rebase:
             SimpleTemplate.overrides = {}

@@ -48,11 +48,10 @@ class Util:
     def query_without_key(url):
         return re.sub('key=[^&]+&','',url.split("?")[1])
 
-    def maintopic(self, depth, linktext):
-        dm = re.match('\d',depth)
-        if dm and dm[0]=='1':
-            return linktext
-        return None
+    def topic_depth(self, depth):
+        tds = re.match('\d',depth)
+        if tds:
+            return int(tds[0])-1
 
     def newlang(self, lng):
         oldp = self.request.urlparts.path.strip('/')

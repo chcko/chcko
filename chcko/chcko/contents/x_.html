@@ -30,6 +30,7 @@
     }
 </script>
 
+% depth_colors = "#FFABAB #E7FFAC #AFF8DB #FBE4FF #DCD3FF #AFCBFF #FFB5E8 #D5AAFF #FF9CEE".split()
 % if isinstance(content, list): #no specific content: therefore index
 
     <div class="alpha grid_10 content_form">
@@ -48,8 +49,9 @@
     <div class="alpha grid_10 content_kind">
         <a href="/{{self.request.lang}}/contents?kind={{knd}}">{{knd}}</a>
     </div>
-       % for linktext,lnklvl,leaf,depth in lnks:
-          % if util.maintopic(depth,linktext):
+       % for linktext,lnklvl,leaf,depth_a in lnks:
+          % td = util.topic_depth(depth_a)
+          % if td == 0:
               % if topicdiv:
               </div>
               % end
@@ -57,7 +59,7 @@
           % topicdiv = True
           % end
           % if not leaf:
-             <span class="content_subindex">
+             <span class="content_{{td}}">
              <a href="/{{self.request.lang}}/contents?path={{linktext}}">{{linktext}}</a>
              </span>
           % else:
@@ -300,9 +302,14 @@
 .content_item {
     font-weight: bold;
 }
-.content_subindex {
+.content_0 {
     font-style: italic;
 }
+%for d in range(1,10):
+.content_{{d}} {
+    background-color: {{depth_colors[d-1]}};
+}
+%end
 .content_field {
     margin-top: 0.5em;
     margin-bottom: 0.5em;

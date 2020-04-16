@@ -12,7 +12,7 @@ try:
 except:
     from itertools import zip_longest
 from collections.abc import Iterable
-from functools import wraps
+from functools import wraps, lru_cache
 
 import chcko
 from chcko.chcko import bottle
@@ -694,8 +694,8 @@ class db_mixin:
                     for e in self.depth_1st(path, keys, kinds, permission):
                         yield e
                     del keys[-1]
-        # else:
-        # yield None #no permission or no such object
+    #XXX: https://stackoverflow.com/questions/33672412/python-functools-lru-cache-with-class-methods-release-object
+    @lru_cache()
     def filtered_index(self, lang, opt):
         ''' filters the index by lang and optional by
 
@@ -735,10 +735,10 @@ class db_mixin:
                             if 'link' not in optd or optd['link'] in link:
                                 lpl = knd_pathlnklvl.setdefault(e.knd, [])
                                 lpl.append((e.path, (link, e.level)))
-                                lpl.sort()
+        for lpl in knd_pathlnklvl.values():
+            lpl.sort()
         s_pl = sorted(knd_pathlnklvl.items())
-        knd_pl = [(numkind[k], key_value_leaf_id(v)) for k, v in s_pl]
-        #[('Problems', <generator>), ('Content', <generator>),... ]
+        knd_pl = [(numkind[k], tuple(key_value_leaf_id(v))) for k, v in s_pl]
         return knd_pl
     def table_entry(self, e):
         'what of entity e is used to render html tables'
