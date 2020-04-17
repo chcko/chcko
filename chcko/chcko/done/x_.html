@@ -4,13 +4,13 @@
 %intable = False
 
 <form action="" method="post">
-<input type="checkbox" class="chq checkall" autocomplete="off">{{tall+' '+str(util.parsedquerystring())}}</input>
-%for ee in self.page_table():
+<input type="checkbox" class="chq checkall" autocomplete="off">{{tall+' '+str(chutil.parsedquerystring())}}</input>
+%for ee in chelf.page_table():
     %e = ee.key
-    %te = db.table_entry(ee)
+    %te = chdb.table_entry(ee)
     %if te:
         %newgroup = not lastee or (len(lastee.key.pairs()) > len(e.pairs()))
-        %newgroup = newgroup or isinstance(lastee,db.Problem) and lastee.collection and lastee.collection != ee.collection
+        %newgroup = newgroup or isinstance(lastee,chdb.Problem) and lastee.collection and lastee.collection != ee.collection
         %if newgroup:
             %if intable:
                 </table>
@@ -21,7 +21,7 @@
         %end
         %lastee = ee
         <tr>
-            <td><input class="chq" type="checkbox" name="deletee" value="{{db.urlsafe(e)}}" autocomplete="off"></input></td>
+            <td><input class="chq" type="checkbox" name="deletee" value="{{chdb.urlsafe(e)}}" autocomplete="off"></input></td>
             % for ate in te:
             <td>
                 % if isinstance(ate,list):
@@ -42,9 +42,9 @@
                 % end
             </td>
             % end
-            % if isinstance(ee,db.Problem):
-            <td><a href="/{{ee.lang}}/contents?key={{!db.urlsafe(e)}}">{{ee.query_string}}</a></td>
-            <td><a href="/{{ee.lang}}/contents?{{ee.query_string}}">{{tagain}}</a></td>
+            % if isinstance(ee,chdb.Problem):
+            <td><a href="/{{ee.chlang}}/contents?key={{!chdb.urlsafe(e)}}">{{ee.chuery}}</a></td>
+            <td><a href="/{{ee.chlang}}/contents?{{ee.chuery}}">{{tagain}}</a></td>
             % end
         </tr>
     % end

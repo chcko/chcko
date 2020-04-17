@@ -28,8 +28,8 @@
 </script>
 
 %from chcko.chcko.auth import with_email_verification
-%if 'email' in self.request.params:
-%    emailval=self.request.params['email']
+%if 'email' in chelf.request.params:
+%    emailval=chelf.request.params['email']
 %else:
 %    emailval=''
 %end

@@ -173,7 +173,7 @@ class Model(object):
         return acls
 class UserToken(Model):
     email = C(String)
-    created = C(DateTime,default=datetime.datetime.now)
+    chreated = C(DateTime,default=datetime.datetime.now)
     updated = C(DateTime,default=datetime.datetime.now)
 class User(Model):
     fullname = C(String)
@@ -181,65 +181,63 @@ class User(Model):
     verified = C(Boolean)
     token = C(String)
     current_role = C(ForeignKey('Role.urlkey',use_alter=True))
-    lang = C(String)
-    created = C(DateTime,default=datetime.datetime.now)
+    chlang = C(String)
+    chreated = C(DateTime,default=datetime.datetime.now)
 
 class School(Model):
     userkey = C(ForeignKey('User.urlkey'))
-    created = C(DateTime,default=datetime.datetime.now)
+    chreated = C(DateTime,default=datetime.datetime.now)
 class Field(Model):
     userkey = C(ForeignKey('User.urlkey'))
-    created = C(DateTime,default=datetime.datetime.now)
+    chreated = C(DateTime,default=datetime.datetime.now)
     ofkey = C(ForeignKey('School.urlkey'))
 class Teacher(Model):
     userkey = C(ForeignKey('User.urlkey'))
-    created = C(DateTime,default=datetime.datetime.now)
+    chreated = C(DateTime,default=datetime.datetime.now)
     ofkey = C(ForeignKey('Field.urlkey'))
 class Class(Model):
     userkey = C(ForeignKey('User.urlkey'))
-    created = C(DateTime,default=datetime.datetime.now)
+    chreated = C(DateTime,default=datetime.datetime.now)
     ofkey = C(ForeignKey('Teacher.urlkey'))
 class Role(Model):
     userkey = C(ForeignKey('User.urlkey'))
-    created = C(DateTime,default=datetime.datetime.now)
+    chreated = C(DateTime,default=datetime.datetime.now)
     ofkey = C(ForeignKey('Class.urlkey'))
     color = C(String)
 class Problem(Model):
     userkey = C(ForeignKey('User.urlkey'))
     ofkey = C(ForeignKey('Role.urlkey'))
-    query_string = C(String)
-    lang = C(String)
+    chuery = C(String)
+    chlang = C(String)
     # the numbers randomly chosen, in python dict format
-    given = C(PickleType)
-    created = C(DateTime,default=datetime.datetime.now)
-    answered = C(DateTime)
+    chiven = C(PickleType)
+    chreated = C(DateTime,default=datetime.datetime.now)
+    chanswered = C(DateTime)
     # links to a collection: 1-n, p.problem_set.get()!
     collection = C(ForeignKey('Problem.urlkey'))
 
-
     # a list of names given to the questions (e.g '1','2')
-    inputids = C(PickleType)
-    # calculated from given, then standard formatted to strings
-    results = C(PickleType)
-    oks = C(PickleType)
-    points = C(PickleType)
+    chinputids = C(PickleType)
+    chesults = C(PickleType)
+    choks = C(PickleType)
+    choints = C(PickleType)
     # standard formatted from input
-    answers = C(PickleType)
-    nr = C(Integer)  # needed to restore order
+    chanswers = C(PickleType)
+    chumber = C(Integer)  # needed to restore order
 
-    concatanswers=C(String) #concat duplicate of answers
+    concatanswers=C(String) #concat duplicate of chanswers
     #a separate Answers table would be an alternative:
     #https://stackoverflow.com/questions/23360666/sqlalchemy-filter-query-by-pickletype-contents
 
 class Assignment(Model):
     userkey = C(ForeignKey('User.urlkey'))
-    created = C(DateTime,default=datetime.datetime.now)
+    chreated = C(DateTime,default=datetime.datetime.now)
     ofkey = C(ForeignKey('Role.urlkey'))
-    query_string = C(String)
+    chuery = C(String)
     due = C(DateTime)
 
 class Index(Model):
-    #id=problemid + ':' + lang
+    #id=problemid + ':' + chlang
     path = C(String)
     knd = C(Integer)
     level = C(Integer)
@@ -332,8 +330,8 @@ class Sql(db_mixin):
 
     def done_assignment(self,assignm):
         q = self.query(self.Problem, [self.Problem.ofkey == assignm.ofkey,
-                                 self.Problem.query_string == normqs(assignm.query_string),
-                                 self.Problem.answered > assignm.created])
+                                 self.Problem.chuery == normqs(assignm.chuery),
+                                 self.Problem.chanswered > assignm.chreated])
         if q.count() > 0:
             return True
         else:
@@ -345,8 +343,8 @@ class Sql(db_mixin):
         tosave = []
         for entry in allentries:
             edict = dict(self.itemsof(entry))
-            oks = edict['oks'] or [False]
-            edict['oks'] = [bool(x) for x in oks]
+            choks = edict['choks'] or [False]
+            edict['choks'] = [bool(x) for x in choks]
             cpy = anentity.create(name=entry.key.string_id(), parent=newparent.key, **edict)
             tosave.append(cpy)
         self.save(tosave)

@@ -277,52 +277,51 @@ class Struct(dict):
                     for x in self})
         return self
 
-
 def chcko_import(name):
     mod = importlib.import_module('chcko.'+name)
     return mod
 
 def from_py(mod):
-    d = Struct(given=getattr(mod, 'given', lambda: Struct()),
-               calc=getattr(mod, 'calc', lambda g: []),
-               norm=getattr(mod, 'norm', norm_rounded),
-               equal=getattr(mod, 'equal', equal_eq),
-               points=getattr(mod, 'points', None))
+    d = Struct(chiven=getattr(mod, 'chiven', lambda: Struct()),
+               chalc=getattr(mod, 'chalc', lambda g: []),
+               chorm=getattr(mod, 'chorm', norm_rounded),
+               chequal=getattr(mod, 'chequal', equal_eq),
+               choints=getattr(mod, 'choints', None))
     d.update(mod.__dict__)
     return d
 
 resetnames = "chames champles chadios checkos chow".split() # used in chelper.html
-def stpl_from_path(qspath, lang):
+def stpl_from_path(qspath, chlang):
     for rn in resetnames:
         SimpleTemplate.overrides.pop(rn,"just delete")
-    for t in [lang, '_' + lang, 'x_', '_x_', 'en', '_en']:
+    for t in [chlang, '_' + chlang, 'x_', '_x_', 'en', '_en']:
         stplpath = os.path.join(qspath, t + '.html')
         if os.path.exists(stplpath):
             dlng = t.strip('_')
             dlng = dlng if dlng!='x' else 'en'
             SimpleTemplate.overrides.update({
-                'lang': dlng,
-                'kinda': langkindnum[dlng],
-                'numkind': langnumkind[dlng]
+                'chlang': dlng,
+                'chindnum': langkindnum[dlng],
+                'chumkind': langnumkind[dlng]
             })
             return stplpath
     return ''
 
 class resolver:
-    def __init__(self, query_string, lang):
-        self.lang = lang
-        self.query_string = query_string
-        self.composed = any([ch in self.query_string for ch in '&=%$\n'])
+    def __init__(self, chuery, chlang):
+        self.chlang = chlang
+        self.chuery = chuery
+        self.composed = any([ch in self.chuery for ch in '&=%$\n'])
         self.stplpath = ''
         self.modulename = ''
     def load(self):
         if not self.composed:
-            self.modulename = self.query_string
+            self.modulename = self.chuery
             try:
                 m = chcko_import(self.modulename)
                 qspath = list(m.__path__)
                 for qsp in qspath:
-                    self.stplpath = stpl_from_path(qsp,self.lang)
+                    self.stplpath = stpl_from_path(qsp,self.chlang)
                     if self.stplpath:
                         break
             except ModuleNotFoundError:
@@ -333,20 +332,20 @@ class resolver:
         d = from_py(m)
         return d
 
-def mklookup(lang):
+def mklookup(chlang):
     def get_stplpath(n):
         stplpath = ''
         for pkgdir in chcko.__path__:
             npath = os.path.join(pkgdir,n.replace('.',os.sep))
             if os.path.isdir(npath):
-                stplpath = stpl_from_path(npath,lang)
+                stplpath = stpl_from_path(npath,chlang)
             else:
                 stplpath = npath + '.html'
                 if not os.path.exists(stplpath):
                     stplpath = ''
             if stplpath:
                 return stplpath
-        rsv = resolver(n, lang)
+        rsv = resolver(n, chlang)
         rsv.load()
         return rsv.stplpath
     return get_stplpath
@@ -391,8 +390,6 @@ def filter_student(querystring):
     qsfiltered = '&'.join([k + '=' + v if v else k for k, v in qfiltered])
     return qsfiltered
 
-
-
 def key_value_leaf_id(p_ll):  # key_value_leaf_depth
     '''
     >>> p_ll = [('a/b','ab'),('n/b','nb'),('A/c','ac')]
@@ -436,8 +433,8 @@ class db_mixin:
             initdb = chcko_import(initdbmod)
             self.available_langs.extend(initdb.available_langs)
             initdb.populate_index(
-                lambda problemid, lang, kind, level, path: all_problems.append(self.Index.create(
-                        id=problemid + ':' + lang,
+                lambda problemid, chlang, kind, level, path: all_problems.append(self.Index.create(
+                        id=problemid + ':' + chlang,
                         knd=int(kind),
                         level=int(level),
                         path=path))
@@ -449,35 +446,35 @@ class db_mixin:
         return self.Problem.create(parent=student.key,
                   **{s: pkwargs[s] for s in self.columnsof(self.Problem) if s in pkwargs})
     def problem_set(self,problem):
-        return self.allof(self.query(self.Problem,[self.Problem.collection==self.idof(problem)],self.Problem.nr))
-    def problem_by_query_string(self,query_string,lang,student):
+        return self.allof(self.query(self.Problem,[self.Problem.collection==self.idof(problem)],self.Problem.chumber))
+    def problem_by_chuery(self,chuery,chlang,student):
         res = self.first(self.query(
-            self.Problem,[self.Problem.query_string==query_string,
-                      self.Problem.lang==lang,
-                      self.Problem.answers==None], parent=self.idof(student)))
+            self.Problem,[self.Problem.chuery==chuery,
+                      self.Problem.chlang==chlang,
+                      self.Problem.chanswers==None], parent=self.idof(student)))
         return res
     def clear_student_problems(self,student):
         self.delete_query(self.query(self.Problem,parent=self.idof(student)))
     def student_assignments(self,student):
         return self.query(self.Assignment,parent=self.idof(student))
     def del_stale_open_problems(self,student,age):
-        self.delete_query(self.query(self.Problem,[self.Problem.answered==None,
-                                         self.Problem.created<age],parent=self.idof(student)))
+        self.delete_query(self.query(self.Problem,[self.Problem.chanswered==None,
+                                         self.Problem.chreated<age],parent=self.idof(student)))
         self.delete_query(self.query(self.Problem,[self.Problem.concatanswers=='',
-                                         self.Problem.answered!=None],parent=self.idof(student)))
+                                         self.Problem.chanswered!=None],parent=self.idof(student)))
     #def clear_unanswered_problems(self):
-    #    self.delete_query(self.query(self.Problem,[self.Problem.answers==None]))
-    def assign_to_student(self, studentkeyurlsafe, query_string, duedays):
+    #    self.delete_query(self.query(self.Problem,[self.Problem.chanswers==None]))
+    def assign_to_student(self, studentkeyurlsafe, chuery, duedays):
         studentkey = self.Key(urlsafe=studentkeyurlsafe)
-        #query_string = 'a.x=1&&&b.y=2'
-        #query_string = 'a.x=1&b.y=2'
-        qusi = [normqs(x.strip('&')) for x in query_string.split('&&')]
+        #chuery = 'a.x=1&&&b.y=2'
+        #chuery = 'a.x=1&b.y=2'
+        qusi = [normqs(x.strip('&')) for x in chuery.split('&&')]
         assgn = []
         for qsi in qusi:
             now = datetime.datetime.now()
             due=now+datetime.timedelta(days=int(duedays))
             assgn.append(self.Assignment.create(parent=studentkey
-                       ,query_string=qsi
+                       ,chuery=qsi
                        ,due=due))
         self.save(assgn)
     def del_collection(self,problem):
@@ -542,7 +539,7 @@ class db_mixin:
             elif ukey is not None:
                 if stdnt.userkey is not None:
                     # student role belongs to other user
-                    bottle.redirect(f'/{bottle.request.lang}/message?msg=e')
+                    bottle.redirect(f'/{bottle.request.chlang}/message?msg=e')
                 # else claim ownership of this role (I assume my coach made it for me)
                 stdnt.userkey = ukey
                 to_save.append(stdnt)
@@ -567,9 +564,9 @@ class db_mixin:
         self.delete_query(self.query(self.Index))
     def clear_problems(self):
         self.delete_query(self.query(self.Problem))
-    def problem_from_resolver(self, rsv, nr, student):
+    def problem_from_resolver(self, rsv, chumber, student):
         d = rsv.load()
-        g = d.given()
+        g = d.chiven()
         for gfield in g:
             if gfield in bottle.request.params:
                 gfv = bottle.request.params[gfield]
@@ -585,18 +582,17 @@ class db_mixin:
                 except:
                     pass
                 setattr(g,gfield,gfv)
-        r = d.norm(d.calc(g))
-        points = d.points or [1] * len(r or [])
+        r = d.chorm(d.chalc(g))
+        choints = d.choints or [1] * len(r or [])
         d.update(dict(
-            g=g,
-            answered=None,
-            lang=rsv.lang,
-            query_string=rsv.query_string,
-            nr=nr,
-            results=r,
-            given=g,
-            inputids=["{:0=4x}".format(nr) + "_{:0=4x}".format(a) for a in range(len(r))],
-            points=points
+            chanswered=None,
+            chlang=rsv.chlang,
+            chuery=rsv.chuery,
+            chumber=chumber,
+            chesults=r,
+            chiven=g,
+            choints=choints,
+            chinputids=["{:0=4x}".format(chumber) + "_{:0=4x}".format(a) for a in range(len(r))]
         ))
         problem = self.problem_create(student,**d)
         return problem, d
@@ -682,9 +678,9 @@ class db_mixin:
             filt = [self.filter_expression(ap, op, av) for ap, op, av in pathi if ap in modliprops]
             ordr = None
             if modli == self.Problem:
-                ordr = self.Problem.answered
-            elif 'created' in modliprops:
-                ordr = modli.created
+                ordr = self.Problem.chanswered
+            elif 'chreated' in modliprops:
+                ordr = modli.chreated
             allrecs = self.allof(self.query(modli,filt,ordr,parent=self.idof(parentobj)))
             for obj in allrecs:
                 k = obj.key
@@ -696,8 +692,8 @@ class db_mixin:
                     del keys[-1]
     #XXX: https://stackoverflow.com/questions/33672412/python-functools-lru-cache-with-class-methods-release-object
     @lru_cache()
-    def filtered_index(self, lang, opt):
-        ''' filters the index by lang and optional by
+    def filtered_index(self, chlang, opt):
+        ''' filters the index by chlang and optional by
 
             - level
             - kind
@@ -705,11 +701,11 @@ class db_mixin:
             - link (e.g. 'r.a')
 
         >>> from chcko.chcko.db import db
-        >>> lang = 'en'
+        >>> chlang = 'en'
         >>> opt1 = [] #[('level', '2'), ('kind', 'exercise')]
-        >>> cnt1 = sum([len(list(gen[1])) for gen in db.filtered_index(lang, opt1)])
+        >>> cnt1 = sum([len(list(gen[1])) for gen in db.filtered_index(chlang, opt1)])
         >>> opt2 = [('level', '10'),('kind','1'),('path','maths'),('link','r')]
-        >>> cnt2 = sum([len(list(gen[1])) for gen in db.filtered_index(lang, opt2)])
+        >>> cnt2 = sum([len(list(gen[1])) for gen in db.filtered_index(chlang, opt2)])
         >>> cnt1 != 0 and cnt2 != 0 and cnt1 > cnt2
         True
 
@@ -719,8 +715,8 @@ class db_mixin:
                 return int(s)
             except:
                 return -1
-        kindnum = langkindnum[lang]
-        numkind = langnumkind[lang]
+        chindnum = langkindnum[chlang]
+        chumkind = langnumkind[chlang]
         optd = opt and dict(opt) or {}
         knd_pathlnklvl = {}
         idx = self.allof(self.query(self.Index))
@@ -728,9 +724,9 @@ class db_mixin:
             # e=itr.next()
             # knd_pathlnklvl
             link, lng = e.key.string_id().split(':')
-            if lng == lang:
+            if lng == chlang:
                 if 'level' not in optd or safeint(optd['level']) == e.level:
-                    if 'kind' not in optd or kindint(optd['kind'],kindnum) == e.knd:
+                    if 'kind' not in optd or kindint(optd['kind'],chindnum) == e.knd:
                         if 'path' not in optd or optd['path'] in e.path:
                             if 'link' not in optd or optd['link'] in link:
                                 lpl = knd_pathlnklvl.setdefault(e.knd, [])
@@ -738,15 +734,15 @@ class db_mixin:
         for lpl in knd_pathlnklvl.values():
             lpl.sort()
         s_pl = sorted(knd_pathlnklvl.items())
-        knd_pl = [(numkind[k], tuple(key_value_leaf_id(v))) for k, v in s_pl]
+        knd_pl = [(chumkind[k], tuple(key_value_leaf_id(v))) for k, v in s_pl]
         return knd_pl
     def table_entry(self, e):
         'what of entity e is used to render html tables'
-        if isinstance(e, self.Problem) and e.answered:
+        if isinstance(e, self.Problem) and e.chanswered:
             if len(self.problem_set(e)):
-                return [datefmt(e.answered), e.answers]
+                return [datefmt(e.chanswered), e.chanswers]
             else:
-                return [datefmt(e.answered), [bool(x) for x in e.oks] if e.oks else [], e.answers, e.results]
+                return [datefmt(e.chanswered), [bool(x) for x in e.choks] if e.choks else [], e.chanswers, e.chesults]
         elif isinstance(e, self.Role):
             return ['', '', '', '', e.key.string_id()]
         elif isinstance(e, self.Class):
@@ -760,7 +756,7 @@ class db_mixin:
         elif isinstance(e, self.Assignment):
             now = datetime.datetime.now()
             overdue = now > e.due
-            return [f'{datefmt(e.created)} <a href="/{bottle.request.lang}/contents?{e.query_string}">{e.query_string}</a>'
+            return [f'{datefmt(e.chreated)} <a href="/{bottle.request.chlang}/contents?{e.chuery}">{e.chuery}</a>'
                     , datefmt(e.due), overdue]
         # elif e is None:
         #    return ['no such object or no permission']
@@ -867,8 +863,8 @@ class db_mixin:
         self.save(usr)
     def is_social_login(self,usr):
         return usr.pwhash == ''
-    def user_login(self, email, fullname=None, password=None, token=None, lang=None, verified=True):
-        lang = lang or 'en'
+    def user_login(self, email, fullname=None, password=None, token=None, chlang=None, verified=True):
+        chlang = chlang or 'en'
         usr = self.Key(self.User,email).get()
         if usr:
             if password is not None and token is None:
@@ -881,7 +877,7 @@ class db_mixin:
                 usr.pwhash = ''
                 usr.token = token
                 usr.verified = verified
-                usr.lang = lang
+                usr.chlang = chlang
                 self.save(usr)
             token = usr.token
         else:
@@ -891,20 +887,20 @@ class db_mixin:
                     raise ValueError(f"User {email} not registered")
                 token = self.token_create(email)
                 usr = self.User.get_or_insert(email, pwhash=generate_password_hash(password),
-                                              fullname=fullname, token=token, verified=verified, lang=lang)
+                                              fullname=fullname, token=token, verified=verified, chlang=chlang)
             elif token is not None:
                 #token comes from token_create(), which is called before user_login()
                 usr = self.User.get_or_insert(email, pwhash='',
-                                              fullname=fullname, token=token, verified=verified, lang=lang)
+                                              fullname=fullname, token=token, verified=verified, chlang=chlang)
         return usr,token
     def set_answer(self,problem,answers):
-        problem.answers = answers
+        problem.chanswers = answers
         problem.concatanswers = ''.join(answers)
 
 rindex = lambda al,a: len(al) - al[-1::-1].index(a)-1
 def check_test_answers(m=None, norm_inputs=None):
-    '''Call ``given()``, ``calc()`` and ``norm()`` once.
-    Then apply norm to different test inputs.
+    '''Call ``chiven()``, ``chalc()`` and ``chorm()`` once.
+    Then apply chorm to different test inputs.
     This verifies that none raises an exception.
 
     m can be module or __file__ or None
@@ -930,9 +926,9 @@ def check_test_answers(m=None, norm_inputs=None):
         pyprob = os.path.join(*auth_prob).replace(os.sep, '.')
         m = chcko_import(pyprob)
     d = from_py(m)
-    g = d.given()
-    norm_results = d.norm(d.calc(g))
+    g = d.chiven()
+    norm_results = d.chorm(d.chalc(g))
     if norm_inputs:
         for t in norm_inputs:
-            d.norm(t)
+            d.chorm(t)
 

@@ -17,7 +17,7 @@ def takelast(obj):
 
 
 def prepare(
-        qs  # url query_string (after ?)
+        qs  # url query_string = chuery (after ?)
         ,skey  # start key, filter is filled up with it.
                # student key normally, but can be other, e.g. school, too.
                # if a parent belongs to user then all children can be queried
@@ -31,7 +31,7 @@ def prepare(
     >>> #qs= "Sc0&*&*&*&*&*"
     >>> qs= "q~r.be"
     >>> prepare(qs,skey,None)[0]
-    ['Sc1', 'Pe1', 'Te1', 'Cl1', 'St1', [('query_string', '=', 'r.be')]]
+    ['Sc1', 'Pe1', 'Te1', 'Cl1', 'St1', [('chuery', '=', 'r.be')]]
     >>> qs= '  '
     >>> prepare(qs,skey,None)[0]
     ['Sc1', 'Pe1', 'Te1', 'Cl1', 'St1', []]
@@ -44,12 +44,12 @@ def prepare(
         '''convert to GAE filters from
         lst is ["<field><operator><value>",...]
         ~ -> =
-        q = query_string
+        q = chuery
         age fields: H = hours, S = seconds, M = minutes, d = days
 
         '''
         AGES = {'d': 'days', 'H': 'hours', 'M': 'minutes', 'S': 'seconds'}
-        ABBR = {'q': 'query_string'}
+        ABBR = {'q': 'chuery'}
         filters = []
         if not isinstance(x, str):
             return
@@ -71,7 +71,7 @@ def prepare(
                 if age:
                     value = datetime.datetime.now(
                     ) - datetime.timedelta(**{age: int(value)})
-                    name = 'created'
+                    name = 'chreated'
                 filters.append((name, op, value))
         return filters
     #qs = ''

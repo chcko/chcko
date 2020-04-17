@@ -82,10 +82,10 @@ def serve_favicon():
 # http://localhost:8080/en/_images/r_dg_c1.png
 # http://localhost:8080/_images/r_dg_c1.png
 # http://localhost:8080/r_dg_c1.png
-@bottle.route('/<lang>/_images/<filename>')
+@bottle.route('/<chlang>/_images/<filename>')
 @bottle.route('/_images/<filename>')
 @bottle.route('/<filename>.png')
-def serve_image(filename,lang='en'):
+def serve_image(filename,chlang='en'):
     no_null_requests(filename)
     if len(filename.split(os.sep)) > 1:
         return bottle.HTTPError(403,'403_3')
@@ -131,16 +131,16 @@ try:
         fullname = f'{info["fullname"]} ({sln})'
         jwt = kwargs['response']
         try:
-            lang = jwt['locale']
+            chlang = jwt['locale']
         except:
-            lang = 'en'
+            chlang = 'en'
         email = info['email']
         verified = True
         if not email:
             email = fullname
             verified = False
         token = db.token_create(email)
-        user, token = db.user_login(email,fullname=fullname,token=token,lang=lang,verified=verified)
+        user, token = db.user_login(email,fullname=fullname,token=token,chlang=chlang,verified=verified)
         bottle.request.user = user
         #statisfy social_core:
         class AttributeDict(dict): 
@@ -158,28 +158,28 @@ except:
 def nopath():
     return fullpath(None,None)
 
-@bottle.route('/<lang>',method=['GET','POST'])
-def langonly(lang):
-    no_null_requests(lang)
-    return fullpath(lang,None)
+@bottle.route('/<chlang>',method=['GET','POST'])
+def langonly(chlang):
+    no_null_requests(chlang)
+    return fullpath(chlang,None)
 
-@bottle.route('/<lang>/logout')
-def logout(lang):
+@bottle.route('/<chlang>/logout')
+def logout(chlang):
     t = db.get_cookie('chcko_cookie_usertoken')
     if t:
         db.token_delete(t)
         bottle.response.delete_cookie('chcko_cookie_usertoken')
-    bottle.redirect(f'/{lang}/contents')
+    bottle.redirect(f'/{chlang}/contents')
 
-@bottle.route('/<lang>/<pagename>',method=['GET','POST'])
-def fullpath(lang,pagename,**kextra):
+@bottle.route('/<chlang>/<pagename>',method=['GET','POST'])
+def fullpath(chlang,pagename,**kextra):
     no_null_requests(pagename)
     try:
-        lang,pagename = lang_pagename(lang,pagename)
+        chlang,pagename = lang_pagename(chlang,pagename)
     except ValueError:
         return ""
-    db.set_cookie('chcko_cookie_lang',lang)
-    bottle.request.lang = lang
+    db.set_cookie('chcko_cookie_lang',chlang)
+    bottle.request.chlang = chlang
     bottle.request.pagename = pagename
     db.user_by_cookie()
     db.student_by()
@@ -193,7 +193,7 @@ def fullpath(lang,pagename,**kextra):
         return respns
     except (ImportError, AttributeError, IOError, NameError) as e:
         print_exc()
-        bottle.redirect(f'/{lang}')
+        bottle.redirect(f'/{chlang}')
     except bottle.HTTPError:
         raise
     except bottle.HTTPResponse:

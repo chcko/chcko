@@ -13,75 +13,75 @@ indexes:
 - kind: Assignment
   ancestor: yes
   properties:
-  - name: created
+  - name: chreated
 
 - kind: Class
   ancestor: yes
   properties:
-  - name: answered
+  - name: chanswered
 
 - kind: Class
   ancestor: yes
   properties:
-  - name: created
+  - name: chreated
 
 - kind: Period
   ancestor: yes
   properties:
-  - name: created
+  - name: chreated
 
 - kind: Problem
   properties:
   - name: collection
-  - name: nr
+  - name: chumber
 
 - kind: Problem
   ancestor: yes
   properties:
   - name: allempty
-  - name: answered
+  - name: chanswered
 
 - kind: Problem
   ancestor: yes
   properties:
-  - name: answered
+  - name: chanswered
 
 - kind: Problem
   ancestor: yes
   properties:
-  - name: answered
-  - name: created
+  - name: chanswered
+  - name: chreated
 
 - kind: Problem
   ancestor: yes
   properties:
-  - name: created
+  - name: chreated
 
 - kind: Problem
   ancestor: yes
   properties:
   - name: noanswer
-  - name: query_string
-  - name: answered
+  - name: chuery
+  - name: chanswered
 
 - kind: Problem
   ancestor: yes
   properties:
-  - name: query_string
-  - name: answered
+  - name: chuery
+  - name: chanswered
 
 - kind: Problem
   ancestor: yes
   properties:
-  - name: query_string
-  - name: created
+  - name: chuery
+  - name: chreated
 
 - kind: Role
   ancestor: yes
   properties:
-  - name: created
+  - name: chreated
 
 - kind: Teacher
   ancestor: yes
   properties:
-  - name: created
+  - name: chreated

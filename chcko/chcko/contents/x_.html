@@ -2,8 +2,8 @@
     function a_lnk(alnk)
     {
         %# use like: <a href="#" onclick="a_lnk('{{alnk}}');return false;">{{alnk}}</a>
-        %# or {{!util.a('r.f')}}
-        // see Util.a
+        %# or {{!chutil.a('r.f')}}
+        // see chutil.a
         // // keep for testing
         //alnk='r.a';
         //alnk='r.bd';
@@ -31,7 +31,7 @@
 </script>
 
 % depth_colors = "#FFABAB #E7FFAC #AFF8DB #FBE4FF #DCD3FF #AFCBFF #FFB5E8 #D5AAFF #FF9CEE".split()
-% if isinstance(content, list): #no specific content: therefore index
+% if isinstance(chontent, list): #no specific content: therefore index
 
     <div class="alpha grid_10 content_form">
     <form action="" method="get">
@@ -44,13 +44,13 @@
     </form>
     </div>
 
-    % for knd, lnks in content:
+    % for knd, lnks in chontent:
     % topicdiv = False
     <div class="alpha grid_10 content_kind">
-        <a href="/{{self.request.lang}}/contents?kind={{knd}}">{{knd}}</a>
+        <a href="/{{chelf.request.chlang}}/contents?kind={{knd}}">{{knd}}</a>
     </div>
        % for linktext,lnklvl,leaf,depth_a in lnks:
-          % td = util.topic_depth(depth_a)
+          % td = chutil.topic_depth(depth_a)
           % if td == 0:
               % if topicdiv:
               </div>
@@ -60,17 +60,17 @@
           % end
           % if not leaf:
              <span class="content_{{td}}">
-             <a href="/{{self.request.lang}}/contents?path={{linktext}}">{{linktext}}</a>
+             <a href="/{{chelf.request.chlang}}/contents?path={{linktext}}">{{linktext}}</a>
              </span>
           % else:
              % lnk,lvl = lnklvl
              <span class="content_item"
                  onclick="on_content_item('{{lnk}}');return false;">{{lnk}}</span>
-             <a href="/{{self.request.lang}}/contents?{{lnk}}">{{linktext}}</a>
-             <a href="/{{self.request.lang}}/contents?level={{lvl}}">{{lvl}}</a>
+             <a href="/{{chelf.request.chlang}}/contents?{{lnk}}">{{linktext}}</a>
+             <a href="/{{chelf.request.chlang}}/contents?level={{lvl}}">{{lvl}}</a>
              % try:
              % authorid = lnk.split('.')[0]
-             <a href="/{{self.request.lang}}/contents?link={{authorid}}">{{authorid}}</a>
+             <a href="/{{chelf.request.chlang}}/contents?link={{authorid}}">{{authorid}}</a>
              % except: pass
              % end
           % end
@@ -114,31 +114,31 @@
     $("form").on("submit",function(e){
             e.preventDefault();
             // keeps history to go back to previous location in course
-            window.location.assign("/{{self.request.lang}}/contents?"+acomposed.val())
+            window.location.assign("/{{chelf.request.chlang}}/contents?"+acomposed.val())
         });
     </script>
 
 
 % else: # specific content
 
-    %if 'cheader' in self.request.params:
+    %if 'cheader' in chelf.request.params:
     <p>
-        {{! self.request.params['cheader'] }}
+        {{! chelf.request.params['cheader'] }}
     </p>
     %end
 
-    %cq = self.query_string
+    %cq = chelf.chuery
     %pe = course_labels(cq)
-    %alinks = ['/'+self.request.lang+'/contents?'+x for x in [start_qs(cq),next_qs(cq,-1),cq,next_qs(cq),end_qs(cq)]]
+    %alinks = ['/'+chelf.request.chlang+'/contents?'+x for x in [start_qs(cq),next_qs(cq,-1),cq,next_qs(cq),end_qs(cq)]]
 
     <script>
     $(document).ready(()=>{
         window.sessionStorage.removeItem('chcko_selection');
         window.sessionStorage.removeItem('chcko_delim');
-        %# if pe and with_problems and problem.answered:
-        % if pe and with_problems and problemkey:
-            %lnk2save = util.query_without_key(alinks[2])
-            window.sessionStorage.setItem('{{! lnk2save}}','{{problemkey}}');
+        %# if pe and choblems and choblem.chanswered:
+        % if pe and choblems and choblemkey:
+            %lnk2save = chutil.query_without_key(alinks[2])
+            window.sessionStorage.setItem('{{! lnk2save}}','{{choblemkey}}');
         % end
     });
     function newpage(url){
@@ -167,20 +167,20 @@
     %end
 
 
-    % if with_problems and not problem.answered:
+    % if choblems and not choblem.chanswered:
     <form action="" method="post">
     % end
 
-    % if with_problems and problem.answered and summary[0].counted > 2:
+    % if choblems and choblem.chanswered and chummary[0].counted > 2:
         <p> {{tsummary}}
-        {{util.summary(*summary)}}
+        {{chutil.summary(*chummary)}}
         </p>
     % end
 
 
-    {{! content }}
+    {{! chontent }}
 
-    % if not pe and ('bare' in self.request.params):
+    % if not pe and ('bare' in chelf.request.params):
     % bhidden='display:none;'
     % else:
     % bhidden=''
@@ -196,15 +196,15 @@
         %pe2=' '+pe[2]
     %end
 
-    % if with_problems and problem.answered:
+    % if choblems and choblem.chanswered:
     <button class="{{bottonwidth}} nbutton chq" style="text-align:center;{{bhidden}}"
         type="submit"
         onclick="againpage('{{! alinks[2]}}');"> {{tagain+pe2}} </button>
     % end
-    % if with_problems and not problem.answered:
+    % if choblems and not choblem.chanswered:
     <input class="{{bottonwidth}} nbutton chq" style="text-align:center;{{bhidden}}"
                type="submit" name="submit" value="{{tcheck+pe2}}"/>
-    <input type="hidden" name="problemkey" value="{{problemkey}}">
+    <input type="hidden" name="choblemkey" value="{{choblemkey}}">
     %end
 
     %if pe:
@@ -214,19 +214,19 @@
     </p>
     <br>
 
-    % if with_problems and not problem.answered:
+    % if choblems and not choblem.chanswered:
     </form>
     % end
 
     % # ASSIGN
-    % if with_problems:
-    % if self.request.user:
-    % if 'bare' not in self.request.params:
-        % teacher = self.request.student.key.parent().parent().get()
-        % if teacher.userkey == db.idof(self.request.user): # self assignment is possible
-            <form class="grid_10" id="assignform" action="/{{self.request.lang}}/todo" method="post">
+    % if choblems:
+    % if chelf.request.user:
+    % if 'bare' not in chelf.request.params:
+        % teacher = chelf.request.student.key.parent().parent().get()
+        % if teacher.userkey == chdb.idof(chelf.request.user): # chelf assignment is possible
+            <form class="grid_10" id="assignform" action="/{{chelf.request.chlang}}/todo" method="post">
                 % fieldset = False
-                % for ee in db.assignable(teacher,self.request.user):
+                % for ee in chdb.assignable(teacher,chelf.request.user):
                     % e = ee.key
                     % kind = e.kind()
                     % if kind =='Class':
@@ -235,12 +235,12 @@
                         % end
                         <fieldset>
                         % fieldset = True
-                        <input type="hidden" name="query_string" value="{{self.query_string}}">
+                        <input type="hidden" name="chuery" value="{{chelf.chuery}}">
                         <div><input type="checkbox" class="chq checkall">
-                            {{util.translate(kind)}} {{e.string_id()}}
+                            {{chutil.translate(kind)}} {{e.string_id()}}
                         </div>
                     % elif kind == 'Role':
-                        <div><input class="chq" type="checkbox" name="assignee" value="{{db.urlsafe(e)}}">
+                        <div><input class="chq" type="checkbox" name="assignee" value="{{chdb.urlsafe(e)}}">
                             {{e.string_id()}} </div>
                     % end
                 % end

@@ -22,7 +22,7 @@
 <h1>{{ ttitle }}</h1>
 
 <p>
-{{db.user_email(self.request.user)}}
+{{chdb.user_email(chelf.request.user)}}
 </p>
 
 %def fieldme(tme,what,wvalue,wtype='text',extra=''):
@@ -38,9 +38,9 @@
 </div>
 %end
 
-%if not db.is_social_login(self.request.user):
+%if not chdb.is_social_login(chelf.request.user):
 <form method="POST" name=passwordform onsubmit='return validate()'>
-    %fieldme(tfullname,'fullname',self.request.user.fullname)
+    %fieldme(tfullname,'fullname',chelf.request.user.fullname)
     %fieldme(tpassword,'password','','password')
     %fieldme(tconfirm,'confirmp','','password')
 
@@ -48,7 +48,7 @@
     <input class="nbutton chq grid_10" style="text-align:center" type="submit" value="{{ tupdate }}" />
 </form>
 %else:
-    %fieldme(tfullname,'fullname',self.request.user.fullname,extra='readonly')
+    %fieldme(tfullname,'fullname',chelf.request.user.fullname,extra='readonly')
 %end
 
 % include('chcko/main')

@@ -15,7 +15,7 @@ function axis(scale,po)
     };
 }
 
-function CS2dims(nr,divname)
+function CS2dims(chumber,divname)
 {
     this.colors = [
         "rgb(0,153,0)",
@@ -29,7 +29,7 @@ function CS2dims(nr,divname)
         return;
     }
     this.canvas = document.createElement("canvas");
-    this.canvas.id = "canvas"+nr;
+    this.canvas.id = "canvas"+chumber;
     this.canvas.width = 402;
     this.canvas.height = 402;
     contentdiv.appendChild(this.canvas);
@@ -137,9 +137,9 @@ function CS2dims(nr,divname)
 var thiscF;
 var thisCS;
 
-function createCS(nr,divname)
+function createCS(chumber,divname)
 {
-    thisCS = new CS2dims(nr,divname);
+    thisCS = new CS2dims(chumber,divname);
     thisCS.showAxes();
     return thisCS;
 }

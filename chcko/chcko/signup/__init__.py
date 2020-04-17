@@ -21,16 +21,16 @@ class Page(PageBase):
 
         try:
             user,token = db.user_login(email,fullname=f"{fullname}"
-                                       ,password=password,lang=self.request.lang,verified=False)
+                                       ,password=password,chlang=self.request.chlang,verified=False)
         except ValueError:
             # if user exists and has different password
             self.redirect(f'message?msg=a&email={email}')
 
         qry = f'type=v&email={email}&token={token}'
 
-        confirmation_url = newurl(f'/{self.request.lang}/verification',qry,'')
+        confirmation_url = newurl(f'/{self.request.chlang}/verification',qry,'')
         #logger.info(confirmation_url)
-        m = chcko_import('chcko.signup.' + self.request.lang)
+        m = chcko_import('chcko.signup.' + self.request.chlang)
         if send_mail(
                 email,
                 m.subject,

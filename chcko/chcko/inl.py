@@ -75,7 +75,7 @@ def lnk_role(role, rawtext, text, lineno, lnkiner, option={}, content=[]):
 
 
 def visit_lnk_node(self, node):
-    self.body.append('{{{{!util.a("{0}")}}}}'.format(node['text']))
+    self.body.append('{{{{!chutil.a("{0}")}}}}'.format(node['text']))
 
 
 def depart_lnk_node(self, node):

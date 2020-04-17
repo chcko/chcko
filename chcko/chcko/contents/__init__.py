@@ -4,13 +4,13 @@ The contents page is the default, if no page specified.
 
 With contents IDs::
 
-    /<lang>/[contents][?(<author>.<id>[=<cnt>])&...]
+    /<chlang>/[contents][?(<author>.<id>[=<cnt>])&...]
 
     /en/?r.a=2&r.bu
 
 Without contents IDs it is an index page, which can be filter::
 
-    /<lang>/contents[?<filter>=<value>&...]
+    /<chlang>/contents[?<filter>=<value>&...]
 
     /en/contents?level=10&kind=1&path=maths&link=r
 
@@ -50,13 +50,13 @@ class Page(PageBase):
         super().__init__(mod)
         self.problem = None
         self.problem_set = []
-        self.query_string = self.request.query_string.replace(';','&')
-        self.query_show = show_qs(self.query_string)
+        self.chuery = self.request.query_string.replace(';','&')
+        self.query_show = show_qs(self.chuery)
 
-    def _get_problem(self, problemkey=None):
+    def _get_problem(self, choblemkey=None):
         '''init the problem from database if it exists
         '''
-        urlsafe = problemkey or self.query_show.startswith(
+        urlsafe = choblemkey or self.query_show.startswith(
             'key=') and self.query_show[4:].split('&')[0]
 
         if urlsafe:
@@ -66,11 +66,11 @@ class Page(PageBase):
                     raise HTTPError(404,'404_5')
                 # query_show here is "key=..."
                 # replace query_show with that of the problem to load the problem in tpl_from_qs()
-                self.query_show = self.problem.query_string
-        else:  # get existing unanswered if problem.query_string==query_show
-            self.problem = db.problem_by_query_string(
+                self.query_show = self.problem.chuery
+        else:  # get existing unanswered if problem.chuery==query_show
+            self.problem = db.problem_by_chuery(
                 self.query_show,
-                self.request.lang,
+                self.request.chlang,
                 self.request.student)
 
         if self.problem:
@@ -88,7 +88,7 @@ class Page(PageBase):
                 #logger.warning("%s not for %s", db.urlstring(self.problem.key), db.urlstring(self.request.student.key))
                 raise HTTPError(403,'403_6')
             self.problem_set = db.problem_set(self.problem)
-        elif problemkey is None:  # XXX: Make deleting empty a cron job
+        elif choblemkey is None:  # XXX: Make deleting empty a cron job
             # remove unanswered problems for this user
             # timedelta to have the same problem after returning from a
             # followed link
@@ -113,21 +113,21 @@ class Page(PageBase):
         problems_cntr = count()
         SimpleTemplate.overrides = {}
         problem_set_iter = [None]
-        langlookup = mklookup(self.request.lang)
+        langlookup = mklookup(self.request.chlang)
 
         env = {}
         stdout = []
 
         def _new(rsv):
-            nr = next(nrs)
+            chumber = next(nrs)
             problem, pydict = db.problem_from_resolver(
-                rsv, nr, self.request.student)
+                rsv, chumber, self.request.student)
             if not self.problem:
                 self.problem = problem
                 self.current = self.problem
             else:
                 db.add_to_set(problem,self.problem)
-            if problem.points:
+            if problem.choints:
                 next(problems_cntr)
             db.save(problem)
             if not rsv.composed:
@@ -135,20 +135,20 @@ class Page(PageBase):
                 _chain[-1] = SimpleTemplate.overrides.copy()
 
         def _zip(rsv):
-            if not self.current or rsv.query_string != self.current.query_string:
-                ms = rsv.query_string
+            if not self.current or rsv.chuery != self.current.chuery:
+                ms = rsv.chuery
                 if self.current:
-                    ms += ' != ' + self.current.query_string
+                    ms += ' != ' + self.current.chuery
                 #logger.info(ms)
                 raise HTTPError(400,'400_7 '+ms)
             pydict = rsv.load()  # for the things not stored, like 'names'
             pydict.update(db.fieldsof(self.current))
-            pydict['g'] = self.current.given
-            if self.current.points:
+            pydict['g'] = self.current.chiven
+            if self.current.choints:
                 next(problems_cntr)
-            if self.current.answered:
+            if self.current.chanswered:
                 sw, sn = self.make_summary(self.current)
-                pydict.update({'summary': (sw, sn)})
+                pydict.update({'chummary': (sw, sn)})
                 withempty.__iadd__(sw)
                 noempty.__iadd__(sn)
             if not rsv.composed:
@@ -163,10 +163,10 @@ class Page(PageBase):
             'Template lookup. This is an extension to bottle SimpleTemplate'
             if atpl in _chain:
                 return
-            if any([dc['query_string'] == atpl
+            if any([dc['chuery'] == atpl
                 for dc in _chain if isinstance(dc, dict)]):
                 return
-            rsv = resolver(atpl, self.request.lang)
+            rsv = resolver(atpl, self.request.chlang)
             _chain.append(atpl)
             if to_do and '.' in atpl:#. -> not for scripts
                 to_do(rsv)
@@ -184,7 +184,7 @@ class Page(PageBase):
                 'template creation for either _new or _zip'
                 del _chain[:]
                 env.clear()
-                env.update({'scripts': {}})
+                env.update({'chripts': {}})
                 cleanup = None
                 if '\n' in tplid:
                     cleanup = lookup(self.query_show, to_do)
@@ -197,7 +197,7 @@ class Page(PageBase):
                 except AttributeError:
                     c = self.current or self.problem
                     if c:
-                        #logger.info('data does not fit to template ' + str(c.given))
+                        #logger.info('data does not fit to template ' + str(c.chiven))
                         db.delete_keys([c.key])
                     raise
                 if cleanup:
@@ -218,30 +218,34 @@ class Page(PageBase):
                     db.del_collection(self.problem)
                     self.problem = None
                     prebase(_new)
-            content = ''.join(stdout)
+            chontent = ''.join(stdout)
         else:
-            content = db.filtered_index(self.request.lang, tuple(tplid))
+            try:
+                urlopt = tuple(tplid)
+            except:
+                urlopt = tuple()
+            chontent = db.filtered_index(self.request.chlang, urlopt)
 
         if rebase:
             SimpleTemplate.overrides = {}
             del stdout[:]  # the script functions will write into this
             tpl = get_tpl(layout, template_lookup=langlookup)
-            problemkey = self.problem and db.urlsafe(self.problem.key)
-            with_problems = next(problems_cntr) > 0
+            choblemkey = self.problem and db.urlsafe(self.problem.key)
+            choblems = next(problems_cntr) > 0
             env.update(
                 dict(
-                    content=content,
-                    summary=(
+                    chontent=chontent,
+                    chummary=(
                         withempty,
                         noempty),
-                    problem=self.problem,
-                    problemkey=problemkey,
-                    with_problems=with_problems,
-                    request=self.request))
+                    choblem=self.problem,
+                    choblemkey=choblemkey,
+                    choblems=choblems,
+                    ))
             tpl.execute(stdout, env)
             return ''.join(stdout)
         else:
-            return content
+            return chontent
 
     def tpl_from_qs(self):
         qs = self.query_show
@@ -284,8 +288,8 @@ class Page(PageBase):
                     except ValueError:
                         ii = 1
                 for _ in range(ii):
-                    nr = next(inr)+1
-                    tpllns.append(f"%chinc('{prob}',{nr})")
+                    chumber = next(inr)+1
+                    tpllns.append(f"%chinc('{prob}',{chumber})")
             return '\n'.join(tpllns)
         else:
             return name_val[0][0]
@@ -296,26 +300,26 @@ class Page(PageBase):
         return res
 
     def check_answers(self, problem):
-        rsv = resolver(problem.query_string, problem.lang)
+        rsv = resolver(problem.chuery, problem.chlang)
         d = rsv.load()
-        problem.answered = datetime.datetime.now()
-        if problem.results:
+        problem.chanswered = datetime.datetime.now()
+        if problem.chesults:
             indict = {q:self.request.forms.get(q,'') for q in self.request.forms.keys()
-                 if any(q.startswith(x) for x in problem.inputids)}
+                 if any(q.startswith(x) for x in problem.chinputids)}
             fromindict = lambda q: indict[q] if q in indict else ''.join([
                     k.split('_')[-1] for k,v in indict.items() if k.startswith(q+'_') and v != '0'])
-            answ = [fromindict(q) for q in problem.inputids]
+            answ = [fromindict(q) for q in problem.chinputids]
             db.set_answer(problem,answ)
-            na = d.norm(problem.answers)
-            problem.oks = d.equal(na, problem.results)
+            na = d.chorm(problem.chanswers)
+            problem.choks = d.chequal(na, problem.chesults)
         db.save(problem)
 
     def post_response(self):
         'answers a POST request'
-        problemkey = self.request.forms.get('problemkey','') or (
+        choblemkey = self.request.forms.get('choblemkey','') or (
             self.problem and db.urlsafe(self.problem.key))
-        self._get_problem(problemkey)
-        if self.problem and not self.problem.answered:
+        self._get_problem(choblemkey)
+        if self.problem and not self.problem.chanswered:
             withempty, noempty = Page.make_summary()
             for p in self.problem_set:
                 self.check_answers(p)
@@ -333,19 +337,19 @@ class Page(PageBase):
         def smry(f):
             'used to increment a summary'
             try:
-                nq = len(f(p.inputids))
-                foks = f(p.oks or [False] * nq)
-                fpoints = f(p.points)
+                nq = len(f(p.chinputids))
+                foks = f(p.choks or [False] * nq)
+                fpoints = f(p.choints)
                 cnt = 1
             except:
                 cnt, nq, foks, fpoints = 0, 0, [], []
             return Struct(counted=cnt,
-                          oks=sum(foks),
-                          of=len(foks),
-                          points=sum([foks[i] * fpoints[i] for i in range(nq)]),
-                          allpoints=sum(fpoints))
+                          choks=sum(foks),
+                          chof=len(foks),
+                          choints=sum([foks[i] * fpoints[i] for i in range(nq)]),
+                          challpoints=sum(fpoints))
         return (smry(lambda c: c),
-            smry(lambda c: [cc for i, cc in enumerate(c) if p.answers[i]]))
+            smry(lambda c: [cc for i, cc in enumerate(c) if p.chanswers[i]]))
 
 
 # course

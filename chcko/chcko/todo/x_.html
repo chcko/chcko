@@ -1,8 +1,8 @@
 % first = True
 
 <table style="margin:0px auto">
-% for ee in self.assign_table():
-    % te = db.table_entry(ee)
+% for ee in chelf.assign_table():
+    % te = chdb.table_entry(ee)
     % if te:
         % if first:
             % first = False
@@ -22,7 +22,7 @@
                 % if te[-1]:
                     overdue:
                 % end
-                <a href="/{{self.request.lang}}/contents?{{ate[1]}}">{{ate[0]}}</a>
+                <a href="/{{chelf.request.chlang}}/contents?{{ate[1]}}">{{ate[0]}}</a>
             % else:
                 {{! ate}}
             % end
@@ -35,13 +35,13 @@
 
 % if first:
 <p>
-<a href="/{{self.request.lang}}/contents">
+<a href="/{{chelf.request.chlang}}/contents">
     {{tnoassignment}}
 </a> 
 </p>
 % end
 
-% if self.request.user:
+% if chelf.request.user:
     <p>{{t_I_assigned}}:</p>
     % #difference is page_table
     % include('chcko/done')

@@ -14,7 +14,7 @@ class Model(ndb.Model):
 
 class UserToken(Model):
     email = ndb.StringProperty(required=False)
-    created = ndb.DateTimeProperty(auto_now_add=True)
+    chreated = ndb.DateTimeProperty(auto_now_add=True)
     updated = ndb.DateTimeProperty(auto_now=True)
 class User(Model):
     fullname = ndb.StringProperty(required=False)
@@ -22,12 +22,12 @@ class User(Model):
     verified = ndb.IntegerProperty()
     token = ndb.StringProperty()
     current_role = ndb.KeyProperty(kind='Role')
-    lang = ndb.StringProperty(required=False)
-    created = ndb.DateTimeProperty(auto_now_add=True)
+    chlang = ndb.StringProperty(required=False)
+    chreated = ndb.DateTimeProperty(auto_now_add=True)
 
 class Base(Model):
     userkey = ndb.KeyProperty(kind='User')
-    created = ndb.DateTimeProperty(auto_now_add=True)
+    chreated = ndb.DateTimeProperty(auto_now_add=True)
 
 class School(Base):
     'root'
@@ -43,34 +43,34 @@ class Role(Base):
 
 class Problem(Base):
     'parent: Role'
-    query_string = ndb.StringProperty()
-    lang = ndb.StringProperty()
+    chuery = ndb.StringProperty()
+    chlang = ndb.StringProperty()
     # the numbers randomly chosen, in python dict format
-    given = ndb.PickleProperty()
+    chiven = ndb.PickleProperty()
     #created already in Base
-    answered = ndb.DateTimeProperty()
+    chanswered = ndb.DateTimeProperty()
     # links to a collection: 1-n, p.problem_set.get()!
     collection = ndb.KeyProperty(kind='Problem')
     # a list of names given to the questions (e.g '1','2')
-    inputids = ndb.StringProperty(repeated=True)
+    chinputids = ndb.StringProperty(repeated=True)
     # calculated from given, then standard formatted to strings
-    results = ndb.StringProperty(repeated=True)
-    oks = ndb.BooleanProperty(repeated=True)
-    points = ndb.IntegerProperty(repeated=True)  # points for this sub-problem
+    chesults = ndb.StringProperty(repeated=True)
+    choks = ndb.BooleanProperty(repeated=True)
+    choints = ndb.IntegerProperty(repeated=True)  # points for this sub-problem
     # standard formatted from input
-    answers = ndb.StringProperty(repeated=True)
-    nr = ndb.IntegerProperty()  # needed to restore order
+    chanswers = ndb.StringProperty(repeated=True)
+    chumber = ndb.IntegerProperty()  # needed to restore order
     concatanswers = ndb.StringProperty() #concat duplicate of answers (set_answer)
 
 
 class Assignment(Base):
     'parent: Role'
-    query_string = ndb.StringProperty()
+    chuery = ndb.StringProperty()
     due = ndb.DateTimeProperty()
 
 
 class Index(Model):
-    #id=problemid + ':' + lang
+    #id=problemid + ':' + chlang
     path = ndb.StringProperty()
     knd = ndb.IntegerProperty()
     level = ndb.IntegerProperty()
@@ -146,8 +146,8 @@ class Ndb(db_mixin):
 
     def done_assignment(self,assignm):
         student = assignm.key.parent()
-        q = self.query(self.Problem, [self.Problem.query_string == normqs(assignm.query_string),
-                                 self.Problem.answered > assignm.created], parent = student)
+        q = self.query(self.Problem, [self.Problem.chuery == normqs(assignm.chuery),
+                                 self.Problem.chanswered > assignm.chreated], parent = student)
         if q.count() > 0:
             return True
         else:
@@ -159,7 +159,7 @@ class Ndb(db_mixin):
         tosave = []
         for entry in allentries:
             edict = dict(self.itemsof(entry))
-            edict['oks'] = [bool(x) for x in edict['oks']]
+            edict['choks'] = [bool(x) for x in edict['choks']]
             cpy = anentity.create(id=entry.key.string_id(), parent=newparent.key, **edict)
             tosave.append(cpy)
         self.save(tosave)

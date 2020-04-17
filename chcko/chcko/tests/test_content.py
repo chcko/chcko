@@ -39,9 +39,9 @@ def problems_for(student,cdb):
             rsv = resolver(pi, 'de')
             problem, pkwargs = cdb.problem_from_resolver(rsv, 1, student)
             assert problem
-            cdb.set_answer(problem, problem.results)
-            problem.answered = datetime.datetime.now()
-            problem.oks = [True] * len(problem.results)
+            cdb.set_answer(problem, problem.chesults)
+            problem.chanswered = datetime.datetime.now()
+            problem.choks = [True] * len(problem.chesults)
             cdb.save(problem)
 
 def allcontent():
@@ -61,23 +61,23 @@ def allcontent():
     ,('r.b=2', 'en', lambda x:True) # more non-problems
 ]+list(allcontent()))
 def newuserpage(request,cdb):
-    query_string,lang,tst = request.param
+    chuery,chlang,tst = request.param
     from chcko.chcko import contents
-    user,_ = cdb.user_login('email@email.com',fullname='first last',password='password1',lang=lang)
-    bddl=boddle(path=f'/{lang}/contents'
+    user,_ = cdb.user_login('email@email.com',fullname='first last',password='password1',chlang=chlang)
+    bddl=boddle(path=f'/{chlang}/contents'
                 ,user = user
                 ,student = cdb.add_student(['-']*5)
                 ,session = None
-                ,lang = lang
+                ,chlang = chlang
                 ,pagename = 'contents'
-                ,environ = {'QUERY_STRING':f'{query_string}'}
+                ,environ = {'QUERY_STRING':f'{chuery}'}
                 ,query=None
                 )
     #bddl.__enter__()
     with bddl:
         assert bottle.request.user is not None
         assert bottle.request.student is not None
-        newuserpage = cdb,contents.Page(contents),tst,query_string
+        newuserpage = cdb,contents.Page(contents),tst,chuery
         yield newuserpage
 
 def test_recursive_includes(newuserpage):
@@ -96,10 +96,10 @@ def test_recursive_includes(newuserpage):
     else:
         problem_set = [self.problem]
     assert len(problem_set) == len(subs)
-    if any([p.points for p in problem_set]):
-        assert re.search('problemkey', rrr)
+    if any([p.choints for p in problem_set]):
+        assert re.search('choblemkey', rrr)
     else:
-        assert not re.search('problemkey', rrr)
+        assert not re.search('choblemkey', rrr)
 
 def test_depth_1st(cdb):
     path = ['a', 'b', 'c', 'd', 'e']
@@ -107,14 +107,14 @@ def test_depth_1st(cdb):
     problems_for(student,cdb)
     lst = list(cdb.depth_1st(path+[[]]))
     assert len(lst) >= 8
-    lst = list(cdb.depth_1st(path+[[('query_string','=','r.u')]]))
+    lst = list(cdb.depth_1st(path+[[('chuery','=','r.u')]]))
     assert len(lst) == 7
     assert cdb.kindof(lst[0]) == 'School'
     assert cdb.kindof(lst[5]) == 'Problem'
     path = ['a', 'b', 'c', 'x', 'e'] #note same name for student
     student1 = cdb.add_student(path, None, '#EEE')
     problems_for(student1,cdb)
-    path = ['a','b','c',[],[],[('query_string','=','r.u')]]
+    path = ['a','b','c',[],[],[('chuery','=','r.u')]]
     lst = list(cdb.depth_1st(path))
     assert len(lst) == 11
     lst = list(cdb.depth_1st(path,keys=cdb.keys_to_omit(path)))
@@ -208,18 +208,18 @@ def test_assign_student(dbschool):
     asses = list(db.assign_table(stu.get(), None))
     assert asses
     ass = asses[0]
-    assert ass.query_string == 'r.i&r.u'
+    assert ass.chuery == 'r.i&r.u'
 
 def test_assign_to_class(dbschool):
     db,school=dbschool
     #school = school(finrequest)
     classkey = db.key_from_path(['Sc0', 'Fi0', 'Te0', 'Cl0'])
-    query_string = 'r.a&r.b'
+    chuery = 'r.a&r.b'
     duedays = '2'
     for st in db.depth_1st(keys=[classkey], kinds='Class Role'.split()):
         stk = st.key
         assert stk.parent().string_id() == 'Cl0'
-        db.assign_to_student(stk.urlsafe(), query_string, duedays)
+        db.assign_to_student(stk.urlsafe(), chuery, duedays)
         #eventually consistent only: make two tries
         assigned_1 =  db.student_assignments(st).count() == 1
         if not assigned_1:

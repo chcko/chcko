@@ -59,14 +59,14 @@ def test_user(cdb):
     assert u1.key == u2.key
 
 def test_problem(cdb,Student12345):
-    p = cdb.problem_create(Student12345,id='someid1',given=dict(zip('abc','ABC')),inputids=list('abc'),results=list('ABC'))
+    p = cdb.problem_create(Student12345,id='someid1',chiven=dict(zip('abc','ABC')),chinputids=list('abc'),chesults=list('ABC'))
     cdb.save(p)
     us = p.key.urlsafe()
     problem = cdb.Key(urlsafe=us).get()
-    problem.oks = [True,False,True]
-    problem.points=[2]*3
-    problem.answers=['1','','1']
+    problem.choks = [True,False,True]
+    problem.choints=[2]*3
+    problem.chanswers=['1','','1']
     cdb.save(problem)
     np = cdb.Key(urlsafe=us).get()
-    assert np.oks == [True,False,True]
+    assert np.choks == [True,False,True]
 

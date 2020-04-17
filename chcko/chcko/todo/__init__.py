@@ -28,7 +28,7 @@ class Page(PageBase):
     def post_response(self):
         for studentkeyurlsafe in self.request.forms.getall('assignee'):
             db.assign_to_student(studentkeyurlsafe,
-                              self.request.forms.get('query_string'),
+                              self.request.forms.get('chuery'),
                               self.request.forms.get('duedays'))
         todelete = []
         for urlsafe in self.request.forms.getall('deletee'):

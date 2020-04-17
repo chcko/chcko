@@ -185,21 +185,21 @@ chcko-{author_id}/setup.py
 chcko-{author_id}/chcko/{author_id}/__init__.py
 chcko-{author_id}/chcko/{author_id}/a/__init__.py
     from random import sample
-    from chcko.chcko.hlp import Struct, norm_int as norm
-    def given():
+    from chcko.chcko.hlp import Struct, norm_int as chorm
+    def chiven():
         a, c = sample(list(range(2, 9)) + list(range(-9, -2)), 2)
         x = sample(list(range(2, 9)) + list(range(-9, -2)), 1)[0]
         b = (c - a) * x
         g = Struct(a=a, b=b, c=c)
         return g
-    def calc(g):
-        res = g.b / (g.c - g.a)
+    def chalc(g):
+        res = chiven.b / (chiven.c - chiven.a)
         return [res]
 chcko-{author_id}/chcko/{author_id}/a/en.html
     %path = "maths/linear equation/with integers"
     %kind = 0 #"problems"
     %level = 9
-    \[{{g.a}} x {{util.sgn(g.b)}} {{abs(g.b)}} = {{g.c}} x\]
+    \[{{chiven.a}} x {{util.sgn(chiven.b)}} {{abs(chiven.b)}} = {{chiven.c}} x\]
     <br>
     x=
     %chq()

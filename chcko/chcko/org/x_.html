@@ -5,7 +5,7 @@
 }
 </style>
 
-% ancestors = self.request.student.key.pairs()
+% ancestors = chelf.request.student.key.pairs()
 
 <script>
 $(document).ready(function(){
@@ -51,7 +51,7 @@ $("input.newinput#Role").on("input paste", function(e){
 % end
     </div>
 % for i, a in enumerate(ancestors):
-    %langkind = util.translate(a[0])
+    %langkind = chutil.translate(a[0])
     <div class="grid_2"
 	style="text-align:left; padding-top:5px;"
     >

@@ -27,7 +27,8 @@ def main():
     ]
     setuptools.setup(
         name="chcko",
-        version = "1.0.6",
+        # The last two digits are occasionally aligned to ``chcko-r``'s, because that is used for testing
+        version = "1.3.0",
         description="chcko randomly parameterized exercises automatically checked (formerly mamchecker)",
         long_description=readme,
         long_description_content_type="text/x-rst",
@@ -38,13 +39,14 @@ def main():
             "Development Status :: 4 - Beta",
             "Intended Audience :: Developers",
             "Programming Language :: Python",
+            "Programming Language :: Python :: 3",
+            "Programming Language :: Python :: 3.7",
             "Programming Language :: Python :: 3.8",
             "Operating System :: OS Independent",
             "Topic :: Internet",
-            'Programming Language :: Python :: 3',
-            'License :: OSI Approved :: GNU General Public License (GPL)',
-            'Topic :: Education',
-            'Topic :: Education :: Computer Aided Instruction (CAI)'
+            "License :: OSI Approved :: GNU General Public License (GPL)",
+            "Topic :: Education",
+            "Topic :: Education :: Computer Aided Instruction (CAI)"
         ],
         packages=setuptools.find_namespace_packages(),
         include_package_data=True,

@@ -192,19 +192,19 @@ init_starter = '''
 # from chcko.chcko.hlp import Struct
 # # randomize numbers using e.g. sample and randrange
 # import random
-# def given():
+# def chiven():
 #     g = Struct()
 #     # fill g
 #     return g
-# def calc(g):
+# def chalc(g):
 #     res = []
 #     # fill res
 #     return res
 # # #remove if default norm_rounded works fine
-# # def norm(answers):
+# # def chorm(answers):
 # #     return norm_rounded(answers)
 # # #remove if default equal_eq works fine
-# # def equal(a, r):
+# # def chequal(a, r):
 # #     return equal_eq(a, r)
 '''
 
@@ -291,9 +291,9 @@ def task_initdb():
                         if lnstr1.strip().startswith('level'):
                             break # level must be last define
                 deftext = u'\n'.join(defines)
-                lang = langcode(langfile)
-                available_langs.add(lang)
-                defs = {'kinda':languages.langkindnum[lang]}
+                chlang = langcode(langfile)
+                available_langs.add(chlang)
+                defs = {'chindnum':languages.langkindnum[chlang]}
                 try:
                     exec(deftext, defs)
                 except KeyError:
@@ -301,7 +301,7 @@ def task_initdb():
                     raise
                 inits.append('    index_add("{0}", "{1}", "{2}", "{3}",\n        "{4}")'.format(
                     author_id+'.'+anid
-                    ,lang
+                    ,chlang
                     ,defs['kind']
                     ,defs['level']
                     ,defs['path']))

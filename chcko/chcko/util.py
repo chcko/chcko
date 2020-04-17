@@ -26,7 +26,7 @@ try:
 except:
     social_logins = {}
 
-langs = list(chlang.role_strings.keys())
+chlangs = list(chlang.role_strings.keys())
 
 class Util:
     ''' A Util instance named ``util`` is available in html files.
@@ -56,7 +56,7 @@ class Util:
     def newlang(self, lng):
         oldp = self.request.urlparts.path.strip('/')
         try:
-            curlng = next(l for l in langs if oldp==l or oldp.startswith(l+'/'))
+            curlng = next(l for l in chlangs if oldp==l or oldp.startswith(l+'/'))
         except StopIteration:
             curlng = ''
         if curlng:
@@ -69,14 +69,14 @@ class Util:
     def translate(self, word):
         try:
             idx = db.pathlevels.index(word)
-            res = chlang.role_strings[self.request.lang][idx]
+            res = chlang.role_strings[self.request.chlang][idx]
             return res
         except:
             return word
 
     @staticmethod
     def summary(withempty, noempty):
-        sf = "{oks}/{of}->{points}/{allpoints}"
+        sf = "{choks}/{chof}->{choints}/{challpoints}"
         s = sf.format(**withempty) + "  \\Ø:" + sf.format(**noempty)
         return s
 
@@ -124,32 +124,31 @@ class PageBase:
         self.request = bottle.request
         self.response = bottle.response
         self.util = Util(self.request)
+        self.social_logins = social_logins
         SimpleTemplate.defaults.clear()
         SimpleTemplate.defaults['rolecolor'] = self.request.student.color
         SimpleTemplate.defaults.update(mod.__dict__)
         SimpleTemplate.defaults.update({
-            'self': self,
-            'util': self.util,
-            'langs': langs,
-            'db': db,
-            'social_logins': social_logins,
-            #as default if no problem ...
-            'query_string': self.request.query_string,
+            'chelf': self,
+            'chutil': self.util,
+            'chlangs': chlangs,
+            'chdb': db,
+            'chuery': self.request.query_string,
         })
         try:
             SimpleTemplate.defaults.update({
-                'lang': self.request.lang,
-                'kinda': chlang.langkindnum[self.request.lang],
-                'numkind': chlang.langnumkind[self.request.lang]
+                'chlang': self.request.chlang,
+                'chindnum': chlang.langkindnum[self.request.chlang],
+                'chumkind': chlang.langnumkind[self.request.chlang]
             })
         except:
             pass
     def get_response(self,**kextra):
         res = template('chcko.'+self.request.pagename,**kextra,
-                template_lookup=mklookup(self.request.lang))
+                template_lookup=mklookup(self.request.chlang))
         return res
     def redirect(self, afterlang):
-        bottle.redirect(f'/{self.request.lang}/{afterlang}')
+        bottle.redirect(f'/{self.request.chlang}/{afterlang}')
     def renew_token(self):
         db.token_delete(self.request.user.token)
         email = db.user_email(self.request.user)

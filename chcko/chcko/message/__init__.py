@@ -5,8 +5,8 @@ from chcko.chcko.hlp import mklookup
 class Page(PageBase):
     def get_response(self,**kwextra):
         try:
-            lang = self.request.lang
+            chlang = self.request.chlang
         except:
-            lang = 'en'
-        res = template('chcko.message',**kwextra,template_lookup=mklookup(lang))
+            chlang = 'en'
+        res = template('chcko.message',**kwextra,template_lookup=mklookup(chlang))
         return res

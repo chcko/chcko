@@ -3,38 +3,35 @@
 if not defined('rolecolor'):
     rolecolor = '#EEE'
 end
-if not defined('social_logins'):
-    social_logins = {}
-end
 try:
-    language = self.request.lang
+    language = chelf.request.chlang
 except:
     language = 'en'
 end
 try:
-    pagename = self.request.pagename
+    pagename = chelf.request.pagename
 except:
     pagename = 'message'
 end
 try:
-    user = self.request.user
+    user = chelf.request.user
 except:
     user = None
 end
 try:
-    query_string = self.request.query_string
+    chuery = chelf.request.query_string
 except:
-    query_string = ''
+    chuery = ''
 end
 try:
-    key_ownd_path = db.key_ownd_path(self.request.student,user)
+    key_ownd_path = chdb.key_ownd_path(chelf.request.student,user)
 except:
     key_ownd_path = []
 end
 
-addqs = lambda x: self.request.query_string+'&'+x if self.request.query_string else x
+addqs = lambda x: chelf.request.query_string+'&'+x if chelf.request.query_string else x
 
-if 'bare' in self.request.params:
+if 'bare' in chelf.request.params:
 def header():
     pass
 end
@@ -73,7 +70,7 @@ end
             <p><a href="/{{language}}/{{page}}">{{txt}}</a></p>
         %else:
             %if user:
-                <p> {{ db.user_name(user) }} ☰ </p>
+                <p> {{ chdb.user_name(user) }} ☰ </p>
                 <nav class="grid_2" id="usermenu">
                 <div><a href="/{{language}}/password">{{ tprofile }} </a></div>
                 <div><a href="/{{language}}/logout">{{ tlogout }} </a></div>
@@ -82,7 +79,7 @@ end
                 <p> {{ tlogin }} ☰</p>
                 <nav class="grid_2" id="usermenu">
                 <div><a href="/{{language}}/login">chcko</a></div>
-                %for social in social_logins.keys():
+                %for social in chelf.social_logins.keys():
                 <div><a href="/auth/{{ social }}">{{ social }}</a></div>
                 %end
                 </nav>
@@ -91,8 +88,8 @@ end
     </div>
     %end
     <nav class="grid_1" id="langmenu">
-        %for lng in langs:
-        <div>{{!util.newlang(lng)}}</div>
+        %for lng in chlangs:
+        <div>{{!chutil.newlang(lng)}}</div>
         %end
     </nav>
 
@@ -107,9 +104,9 @@ end
         %if user and key2prnt.kind()=='Role':
         <span style="float:right">☰</span>
         %end
-        {{util.translate(key2prnt.kind())}}<br>
+        {{chutil.translate(key2prnt.kind())}}<br>
         %if not user and key2prnt.kind()=='Role':
-            <a href="/{{language}}/{{pagename}}?{{! addqs(db.urlstring(key2prnt)) }}">
+            <a href="/{{language}}/{{pagename}}?{{! addqs(chdb.urlstring(key2prnt)) }}">
                 {{key2prnt.string_id()}} 
             </a>
         %elif pagename in ['done','todo'] and level<4:
@@ -137,10 +134,10 @@ end
     &nbsp;
     </div>
 
-    % wp = pagename == 'contents' and query_string and '&&' not in query_string
+    % wp = pagename == 'contents' and chuery and '&&' not in chuery
     <div class="{{'grid_9' if wp else 'grid_10'}}">
-        %for lng in langs:
-        {{!util.newlang(lng)}} &nbsp;
+        %for lng in chlangs:
+        {{!chutil.newlang(lng)}} &nbsp;
         %end
     </div>
     % if wp:
@@ -165,7 +162,7 @@ end
 % if not defined('title'):
 % def title():
     % if user:
-        {{db.user_name(user)}}
+        {{chdb.user_name(user)}}
     % else:
         chcko
     % end
@@ -179,9 +176,9 @@ end
     %end
     <div id="rolemenu">
     <table>
-    % for key_ownd_list in db.userroles(user):
+    % for key_ownd_list in chdb.userroles(user):
         % studentkey = key_ownd_list[-1][0]
-        % urlstr = db.urlstring(studentkey)
+        % urlstr = chdb.urlstring(studentkey)
         % student = studentkey.get()
         % goto = [f"/{language}/{x}?{urlstr}" for x in "org contents done todo".split()]+[pagename+'?'+addqs(urlstr)]
         <li>
@@ -226,15 +223,15 @@ end
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 
     <%
-    if defined('scripts'):
-        for n,js in sorted(scripts.items()):
+    if defined('chripts'):
+        for n,js in sorted(chripts.items()):
            js()
         end
     end
     %>
 
     <style>
-    % if 'bare' not in self.request.params:
+    % if 'bare' not in chelf.request.params:
     % fntmin = 18
     % fntmax = 30
     html {
@@ -258,7 +255,7 @@ end
     }
     .chq {
         font-weight: bold;
-        % if 'bare' not in self.request.params:
+        % if 'bare' not in chelf.request.params:
         font-size: calc({{fntmin}}px + ({{fntmax}} - {{fntmin}}) * ((100vw - 300px) / (1600 - 300)));
         %end
     }

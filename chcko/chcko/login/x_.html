@@ -24,8 +24,8 @@ function validate() {
     <label for="email">{{temail}}</label>
     </div>
     <input class="grid_7 chq" type="email" name="email" id="email" class="chq"
-    %if 'email' in self.request.params:
-         value="{{self.request.params['email']}}"
+    %if 'email' in chelf.request.params:
+         value="{{chelf.request.params['email']}}"
     %end
     />
 </div>
@@ -40,10 +40,10 @@ function validate() {
 
 <div class="grid_10" style="margin:1em 1em;">
 <div class="grid_5" style="margin-left:-0.5em;">
-<a href="/{{self.request.lang}}/forgot" id="forgot">{{tforgot}}</a><br>
+<a href="/{{chelf.request.chlang}}/forgot" id="forgot">{{tforgot}}</a><br>
 </div>
 <div class="grid_5" style="text-align:right;">
-<a href="/{{self.request.lang}}/signup" id="signup">{{tsignup}}</a>
+<a href="/{{chelf.request.chlang}}/signup" id="signup">{{tsignup}}</a>
 </div>
 </div>
 
@@ -53,11 +53,11 @@ function validate() {
     forgot = document.getElementById('forgot');
     signup.onclick = function () {
         if (emailinput.value != "")
-            this.href = ('/{{self.request.lang}}/signup?email=')+emailinput.value;
+            this.href = ('/{{chelf.request.chlang}}/signup?email=')+emailinput.value;
     };
     forgot.onclick = function () {
         if (emailinput.value != "")
-            this.href = ('/{{self.request.lang}}/forgot?email=')+emailinput.value;
+            this.href = ('/{{chelf.request.chlang}}/forgot?email=')+emailinput.value;
     };
 </script>
 

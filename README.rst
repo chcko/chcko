@@ -30,7 +30,7 @@ Pages are requested with this URL format::
 
 Pages are:
 
-- ``org``: add roles and choose a color
+- ``org``: add roles and choose a role color
 - ``contents``: specific content items or overview if no ``query``
 - ``done``: done problems
 - ``todo``: assigned problems
@@ -218,9 +218,9 @@ when sending the link, because some programs drop the ``*``.
 
   https://chcko.eu/en/done?%2A&%2A
 
-``*&*`` means: don't take the default but any ``student`` and ``problem``.
-``?<school>&<period>&<teacher>&<class>&<student>&<problem>``
+``?<school>&<field>&<teacher>&<class>&<role>&<problem>``
 is *defaulted to the left* with the current role names *if omitted*.
+``*&*`` means: don't take the default, but show *any* ``role`` and ``problem``.
 
 See also `done`_.
 
@@ -265,8 +265,8 @@ to the new role and deletes the previous one.
 
 ``change`` is a way to
 
-- leave a ``class`` (``teacher``, ``period``, ``school``)
-- and join another one
+- leave a ``class`` (``teacher``, ``field``, ``school``) and
+- join another class
 
 without loosing one's history.
 
@@ -312,14 +312,9 @@ otherwise unique by encoding package ID, problem ID, content and possibly langua
 Altogether it is a `Python <https://docs.python.org>`__ package,
 with ``chcko`` `namespace <https://packaging.python.org/guides/packaging-namespace-packages/>`__
 
-For problems, ``given()`` in ``__init__.py`` provides random numbers
-and ``calc()`` solves the problem.
-The parameters from ``given()`` can be overridden via the URL parameters.
-``cheader`` URL parameter is text placed at the beginning of a page with problems.
-
 Generated files start with ``_`` (``_<language_id>.html``).
-``<language_id>.rst`` can contain `tikz <https://github.com/pgf-tikz/pgf>`__ images
-and are statically converted to ``_<language_id>.html`` with::
+``<language_id>.rst`` can contain `tikz <https://github.com/pgf-tikz/pgf>`__ images.
+``<language_id>.rst`` files are statically converted to ``_<language_id>.html`` with::
 
     doit -kd. html
 
@@ -327,42 +322,60 @@ and are statically converted to ``_<language_id>.html`` with::
 
     doit -kd. initdb
 
-
 .. _`example`:
 
-It is better to just stick to HTML, though.
+Often it is better to just stick to HTML, though.
 HTML files are actually `stpl <https://github.com/rpuntaie/stpl>`__ template snippets,
 for example ``r/a/en.html``::
 
     %path = "maths/trigonometry/sss"
-    %kind = 0 #problems (see languages.py)
+    %kind = 0 #problems (``chindnum`` converts from current's language kind names, see languages.py)
     %level = 11 # school year starting from elementary
     The sides of a triangle are
-    a={{ g.a }},
-    b={{ g.b }},
-    c={{ g.c }}.
+    a={{ chiven.a }},
+    b={{ chiven.b }},
+    c={{ chiven.c }}.
     How big are the angles (in degrees).
     %champles=['e.g.'+e for e in ['23.3','100','56.7']]
     %chq()
 
+Every content item must have the first 3 lines
+starting with ``%path``, ``%kind`` and ``%level``.
+They are used by ``doit -kd. initdb`` to create the index.
+
+The global defines for problem templates
+are made distinguishable from english words
+by replacing the first consonant with ``ch``.
+
+``chiven`` is what ``chiven()`` in ``__init__.py`` returns.
+
 ``chq`` (defined in 
 `chelper.html <https://github.com/chcko/chcko/blob/master/chcko/chcko/chelper.html>`__
 ) creates the input field or shows the result,
-according the output of ``calc()`` (normally a list of numbers),
+according the output of ``chalc()`` (normally a list of numbers),
 if no ``idx`` is specified.
+
+``chq`` uses
+
+- ``chesults``: calcuated result (from ``chalc()``)
+- ``chanswers``: answer given by user
+- ``chanswered``: None or datetime, when answered
+- ``choints``: points for the answer
+- ``choks``: answers that are OK (entries convertible to bool)
+
 ``chq`` optionally uses (if defined):
 
 - ``chames``: as input names (per idx a html/tex string, e.g. r"\(\alpha\)")
 - ``champles``: input examples ( " )
 - ``chadios``: texts for **radio buttons** (a tuple per idx).
-  ``calc()`` returns index number.
+  ``chalc()`` returns index number.
 - ``checkos``: texts for **check boxes** (a tuble per idx).
-  ``calc()`` returns list of indices as string of capital letters e.g. `AC` (``chr(65+i)``).
+  ``chalc()`` returns list of indices as string of capital letters e.g. `AC` (``chr(65+i)``).
 - ``chow``: function that shows the result, e.g. ``util.tx``
 
 If ``chq()`` is called for one ``idx`` only, the wrapping in a list can be dropped.
 
-``g`` is returned by ``given()`` in ``__init__.py``:
+Here is the ``__init__.py`` of the example:
 
 .. code:: python
 
@@ -370,19 +383,34 @@ If ``chq()`` is called for one ``idx`` only, the wrapping in a list can be dropp
     import math as m
     from chcko.chcko.hlp import Struct
     def angle_deg(i, g):
-        d = dict(zip('abc', ([g.a, g.b, g.c]*2)[i:]))
+        d = dict(zip('abc', ([chiven.a, chiven.b, chiven.c]*2)[i:]))
         return eval('180*acos((a*a+b*b-c*c)/2/a/b)/pi', {**d,'acos':m.acos,'pi':m.pi})
-    def given():
+    def chiven():
         random.seed()
         a, b = random.sample(range(1, 10), 2)
         c = random.randrange(max(a - b + 1, b - a + 1), a + b)
         return Struct(a=a, b=b, c=c)
-    def calc(g):
+    def chalc(g):
         return [angle_deg(i, g) for i in range(3)]
     names = [r'\(\alpha=\)', r'\(\beta=\)', r'\(\gamma=\)']
 
+``__init__.py`` provides:
+
+- ``chiven()``: returns ``Struct`` of given, randomly generated numbers
+- ``chalc()``: returns a list of wanted results as strings
+  (number string for ``chadios``, strings of ``A-Z`` for OK ``checkos``)
+- ``chorm()``: optional function ``chorm()`` to normalize the answer to make it comparable to the result
+- ``chequal()``: optional function to compare each index of ``chanswers`` and ``chesults``
+
+All other special defines of a problem in ``__init__.py`` are also made available to the template.
+
+The entries in the dict (``Struct``) returned from ``chiven()`` can be overridden via the URL parameters.
+
+``cheader`` URL parameter is text placed at the beginning of a page with problems.
+
+A problem can also define its own javascript. As an example:
 `r.i <https://github.com/chcko/chcko-r/blob/master/chcko/r/i/en.html>`__
-does ``%include('r/i/coord')``, which has a js script per problem number ``nr``
+does ``%include('r/i/coord')``, which has a js script per problem number ``chumber``
 (see the result: `r.i <https://chcko.eu/en?r.i>`__).
 
 .. code:: javascript
@@ -391,25 +419,25 @@ does ``%include('r/i/coord')``, which has a js script per problem number ``nr``
         <script type="text/javascript" src="/static/graph.js">
         </script>
     %end
-    %scripts['graph.js']=script
+    %chripts['graph.js']=script
 
     %def script():
         <script type="text/javascript">
-        %for i,f in enumerate(g.funcs):
-          function fun{{nr}}{{i}}(x) { {{f[1]}}; }
+        %for i,f in enumerate(chiven.funcs):
+          function fun{{chumber}}{{i}}(x) { {{f[1]}}; }
         %end
-        function drawall{{nr}}() {
-            var cs = createCS("{{nr}}","cs_div{{nr}}");
+        function drawall{{chumber}}() {
+            var cs = createCS("{{chumber}}","cs_div{{chumber}}");
             cs.context.font = "20px sans-serif";
-            % for i,f in enumerate(g.funcs):
-                lastpos = cs.show(fun{{nr}}{{i}},{{i}},2);
+            % for i,f in enumerate(chiven.funcs):
+                lastpos = cs.show(fun{{chumber}}{{i}},{{i}},2);
                 cs.context.strokeText("{{str(i+1)}}",lastpos[0],lastpos[1]);
             %end
         }
-        document.addEventListener("DOMContentLoaded",function(){drawall{{nr}}();})
+        document.addEventListener("DOMContentLoaded",function(){drawall{{chumber}}();})
         </script>
     %end
-    %scripts['funcs'+str(nr)]=script
+    %chripts['funcs'+str(chumber)]=script
 
 Non-problem texts are OK, too, but should be *context-free*,
 as they are combined with other texts/problems to a page via an URL query string.
@@ -455,7 +483,7 @@ Create a new content package with::
     runchcko --init chcko-<id>
 
 You run this command also to fill
-a repo you started on github and cloned.
+a repo you started on github and cloned local.
 
 Add a new content item with::
 
@@ -536,6 +564,19 @@ To run the server with installed packages::
 Development
 ===========
 
+There are some other defines for the templates:
+
+- ``chelf``: the class for the page (see folders in main ``chcko`` packages)
+- ``chutil``: instance of ``Util`` defined in ``chcko/util.py``
+- ``chlangs``: list of all languages figuring in any of the content packages
+- ``chdb``: database class defined in ``chcko/sql.py`` or ``chcko/ndb.py`` with mixin from ``chcko/hlp.py``
+- ``chuery``: the current query string
+- ``chlang``: current language (``<domain>/<chlang>[/<page>]?<query>``)
+- ``chindnum(), chumkind()``: convert between kind number and string for current language
+  (e.g. ``"Problem" <-> 0``, see ``language.py``)
+
+Now some historical development background.
+
 Purpose
 -------
 
@@ -546,7 +587,7 @@ The main purpose:
 
 - Automatically correct problems
 
-- Infrastructure to organize teaching (school, period, teacher, class, student)
+- Infrastructure to organize teaching (school, field, teacher, class, role/student)
 
 - allow teachers/coaches to quickly check the problems of students
 
@@ -581,7 +622,7 @@ This way the students
 - do not need to admit that they have not understood,
   because the teacher sees, if they are unable to do the problem.
   Some students are too shy to ask.
-  And there are other reasons,
+  There are other reasons,
   why student's incomprehension can stay unnoticed for too long.
 
 The teacher cannot look at all the done problems of a class at the same time,
@@ -600,7 +641,7 @@ better invested in a good preparation:
 
 - how to present the topic as easy as possible
 
-- which questions to ask to practice and verify that the students have understood
+- which questions to ask to practice and to verify that the students have understood
 
 Plan
 ====
@@ -631,13 +672,14 @@ Plan
     that will produce html.
     ``en.html`` should always be there as starting points for translations.
 
-  - A static off-line step is possible, to create content from other formats,
+  - A static off-line step is possible.
+    This allows to create content from other formats,
     currently from restructured text files (``.rst``) using Sphinx.
     This allows to use Sphinx contributions like tikz and texfigure (``tex``,
     ``tikz``, ``chemfig``, ...) to create graphics.
 
-- Human language context paths to problems and keywords are language dependent and are
-  therefore in the language files.
+- Human language context paths to problems are language dependent
+  and are therefore in the language files.
 
 - More problems can be combined in one URL / http request (*contents* query)
   e.g. to make a larger assignment.
@@ -645,12 +687,12 @@ Plan
 - Problem/Content pages can reference other content or inline it
   via the template engine (``% include(`r.cy`)`` for html or or *:inl:`r.cy`* for RST).
 
-- Answers to problems are stored in a DB and combined with the
-  language texts during loading.
+- Answers to problems are stored in a DB and
+  combined with the language texts during loading.
 
-- A user role is identified by an ID path/hierarchy::
+- A role is identified by an ID path/hierarchy::
 
-    school 1-n period 1-n teacher 1-n class 1-n student
+    school 1-n field 1-n teacher 1-n class 1-n role
 
 - Via this hierarchy a teacher has fast access to the done problems
   of his classes and students via an URL query.
@@ -676,7 +718,7 @@ Database:
 
 The data model is::
 
-  school 1-n period 1-n teacher 1-n class 1-n student 1-n problem
+  school 1-n field 1-n teacher 1-n class 1-n role 1-n problem
 
 The first 5 are called a role.
 A user has more roles.
@@ -710,7 +752,7 @@ The URL format is::
          | "done"[rlinc]
          | "todo"
          | "org"
-  rlinc = [[[[[school&]period&]teacher&]class&]student&]("*"|query)
+  rlinc = [[[[[school&]field&]teacher&]class&]role&]("*"|query)
   query = {field("~"|"="|"!"|"<"|">")value","}
 
 If ``<lang>`` is dropped, the last language or the browser setting is used.
@@ -719,9 +761,9 @@ See `languages.py`_.
 ``<page>`` is one of ``contents``, ``done``, ``todo``, ``org``.
 ``contents`` is default, if dropped.
 
-``<query>`` starts after the ``?`` and it is a ``&``-separated list.
-``<query>`` can contain
-``School=<LLL>&Field=<DDD>&Teacher=<RRR>&Class=<SSS>&Role=<TTT>``
+``<query>`` starts after the ``?``.
+``<query>`` is a ``&``-separated list.
+``<query>`` can contain ``School=<...>&Field=<...>&Teacher=<...>&Class=<...>&Role=<...>``
 for all pages.
 
 contents
@@ -761,7 +803,7 @@ It is possible to delete the selected problems.
 
 The query
 
-``../<lang>/done?<school>&<period>&<teacher>&<class>&<student>&<problem>``
+``../<lang>/done?<school>&<field>&<teacher>&<class>&<role>&<problem>``
 
 allows
 
@@ -781,14 +823,14 @@ An entry has this format::
 - ``name`` is the name of the record
 - ``field`` is a field of the record
 
-    All records have a name, ``userkey`` and ``created``. School, Field,
+    All records have a name, ``userkey`` and ``chreated``. School, Field,
     Teacher and Class have no other fields.  In addition Role has ``color``
-    and Problem has ``query_string``, ``lang``, ``given``, ``created``,
-    ``answered``, ``collection``, ``inputids``, ``results``, ``oks``,
-    ``points``, ``answers``, ``nr``.
+    and Problem has ``chuery``, ``chlang``, ``chiven``, ``chreated``,
+    ``chanswered``, ``chinputids``, ``chesults``, ``choks``,
+    ``choints``, ``chanswers``, ``chumber``.
 
 - ``op`` consists of ``~=!<>``, where ``~`` means ``=``.
-  For the age of a problem (since ``created``)
+  For the age of a problem (since ``chreated``)
   these abbreviations can be used::
 
     d=days, H=hours, M=minutes, S=seconds
@@ -843,7 +885,7 @@ unregistered user can query all other unregistered users' problems (non-owned).
 
 A logged-in user assumes ownership of non-owned roles.
 
-If you register and create instances of school, period, teacher, class and student,
+If you register and create instances of school, field, teacher, class and student,
 then they are associated to you as a user (owned).
 Then you can query all instances below your instance in the hierarchy::
 
@@ -868,10 +910,11 @@ On the other hand, if you start your query above an instance that does not belon
 to you, you will not see anything below, even if you have instances somewhere
 in the deeper levels of the hierarchy.
 
-In ``.../<lang>/done?<school>&<period>&<teacher>&<class>&<student>&<problem>``
+In ``.../<lang>/done?<school>&<field>&<teacher>&<class>&<role>&<problem>``
 you can drop instances from the left, immediately after the ``?``.
-``.../<lang>/done?aclass&*&d>2`` would query all problems of any student of class ``aclass``
-not older than 2 days. For this to work ``aclass`` needs to belong to you.
+``.../<lang>/done?aclass&*&d>2`` would query all problems of any student
+of class ``aclass`` not older than 2 days.
+For this to work ``aclass`` needs to belong to you.
 If it does not, but the teacher role above belongs to your, then you can still query
 by entering ``.../<lang>/done?ateacher&aclass&*&d>2``.
 
