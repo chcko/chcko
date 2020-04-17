@@ -5,21 +5,23 @@ CHANGELOG
 TODO
 ====
 
-- Offline pdf creation
-
 - Add man file
 
 - Reach near 100% test coverage.
   Fix ndb tests: Currently ndb tests sometimes fail,
   most likely due to the eventually consistent nature of ndb.
 
-- HTML modernize, dri
-
-- Auto-choose font size.
+- HTML modernize, DRI
 
 - CSS use http://getbem.com/naming/?
 
-0.1.5-0.1.8
+1.3.0
+===========
+
+Rename global defines for problem templates.
+
+
+0.1.5-1.2.x
 ===========
 
 - fixes

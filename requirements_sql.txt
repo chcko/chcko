@@ -12,4 +12,4 @@ scipy
 sympy
 lxml
 
-chcko-r==0.2.6
+chcko-r==0.3.0
