@@ -41,7 +41,7 @@ def prepare(
     '''
     @takelast
     def filters(x):
-        '''convert to GAE filters from
+        '''convert to Datastore filters from
         lst is ["<field><operator><value>",...]
         ~ -> =
         q = chuery
@@ -76,7 +76,7 @@ def prepare(
         return filters
     #qs = ''
     PR = db.pathlevels+[extraplace]
-    # q=query, qq=*->[], qqf=filter->gae filter (name,op,value)
+    # q=query, qq=*->[], qqf = datastore filter (name,op,value)
     q = filter(None, [k.strip() for k, v in parse_qsl(qs, True) if k not in db.pathlevels])
     qq = [[] if x == '*' else x for x in q]
     qqf = [filters() if filters(x) else x for x in qq]

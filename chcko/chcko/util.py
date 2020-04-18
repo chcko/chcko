@@ -36,10 +36,11 @@ class Util:
         self.request = request
 
     def parsedquerystring(self):
+        avoid = db.pathlevels + ['secret']
         return [
             d[0] if not d[1] else d for d in parse_qsl(
                 self.request.query_string,
-                True) if d[0] not in db.pathlevels]
+                True) if d[0] not in avoid]
 
     def a(self, alnk):
         return """<a href="#" onclick="a_lnk('"""+alnk+"""');return false;">"""+alnk+'</a>'

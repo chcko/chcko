@@ -664,6 +664,8 @@ class db_mixin:
         parentkey = keys and keys[-1] or None
         parentobj = parentkey and parentkey.get() or None
         permission = permission or parentobj and parentobj.userkey == userkey
+        if not permission and bottle.request.params.get('secret','') == chckosecret():
+            permission = True
         if isinstance(pathi,str):
             k = self.Key(modliname, pathi, parent=parentkey)
             obj = k.get()
@@ -690,6 +692,7 @@ class db_mixin:
                     for e in self.depth_1st(path, keys, kinds, permission):
                         yield e
                     del keys[-1]
+
     #XXX: https://stackoverflow.com/questions/33672412/python-functools-lru-cache-with-class-methods-release-object
     @lru_cache()
     def filtered_index(self, chlang, opt):
