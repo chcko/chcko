@@ -28,7 +28,7 @@ def main():
     setuptools.setup(
         name="chcko",
         # The last two digits are occasionally aligned to ``chcko-r``'s, because that is used for testing
-        version = "1.3.0",
+        version = "1.3.1",
         description="chcko randomly parameterized exercises automatically checked (formerly mamchecker)",
         long_description=readme,
         long_description_content_type="text/x-rst",
