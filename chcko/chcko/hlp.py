@@ -2,6 +2,7 @@
 
 import sys
 import os
+import re
 import importlib
 import string
 import datetime
@@ -416,6 +417,46 @@ def key_value_leaf_id(p_ll):  # key_value_leaf_depth
                 yield (kk, ll, depth == nkeys - 1, lvl_id)
                 previous = this[:]
 
+class Filtfilt(list):
+    def append_level(self, newlvl):
+        '''add ["<field><operator><value>",...] to list of filter list per level
+        ~ -> =
+        q = chuery
+        age fields: H = hours, S = seconds, M = minutes, d = days
+
+        '''
+        AGES = {'d': 'days', 'H': 'hours', 'M': 'minutes', 'S': 'seconds'}
+        ABBR = {'q': 'chuery'}
+        filters = []
+        if newlvl == '*':
+            newlvl = []
+        elif isinstance(newlvl, str):
+            for le in newlvl.split(','):
+                #le = next(iter(newlvl.split(',')))
+                le = le.replace('~', '=')
+                match = re.match(r'(\w+)([=!<>]+)([\w\d\.]+)', le)
+                if match:
+                    grps = match.groups()
+                    name, op, value = grps
+                    if name in ABBR:
+                        name = ABBR[name]
+                    age = None
+                    # le='d<~3'
+                    if name in AGES:
+                        age = AGES[name]
+                    if name in AGES.values():
+                        age = name
+                    if age:
+                        value = datetime.datetime.now(
+                        ) - datetime.timedelta(**{age: int(value)})
+                        name = 'chreated'
+                    filters.append((name, op, value))
+        if filters:
+            self.append(filters)
+        else:
+            self.append(newlvl)
+
+
 class db_mixin:
     def urlstring(self,key):
         #'School=myschool&Field=myfield&Teacher=myteacher&Class=myclass&Role=myself'
@@ -423,6 +464,17 @@ class db_mixin:
 
     def init_db(self):
         self.clear_index()
+
+        # TODO comment out when actually used
+        self.clear_assignments()
+        self.clear_problems()
+        self.delete_query(self.query(self.Role))
+        self.delete_query(self.query(self.Class))
+        self.delete_query(self.query(self.Teacher))
+        self.delete_query(self.query(self.Field))
+        self.delete_query(self.query(self.School))
+        # TODO comment out when actually used
+
         self.available_langs = []
         self.pathlevels = pathlevels
         chckopackages = set(os.path.basename(chckopath) for chckopath in AUTHORDIRS)
@@ -693,6 +745,47 @@ class db_mixin:
                         yield e
                     del keys[-1]
 
+    def depth_1st_params(self
+            ,qs    # url query_string = chuery (after ?)
+            ,skey  # start key, filter is filled up with it.
+                   # student key normally, but can be other, e.g. school, too.
+                   # if a parent belongs to user then all children can be queried
+            ,userkey
+            ,extraplace = 'Problem'
+    ):
+        '''prepares the parameters for depth_1st
+
+        >>> from chcko.chcko.db import db
+        >>> skey = self.key_from_path(['Sc1', 'Pe1', 'Te1','Cl1','St1'])
+        >>> #qs= "Sc0&*&*&*&*&*"
+        >>> qs= "q~r.be"
+        >>> self.depth_1st_params(qs,skey,None)[0]
+        ['Sc1', 'Pe1', 'Te1', 'Cl1', 'St1', [('chuery', '=', 'r.be')]]
+        >>> qs= '  '
+        >>> self.depth_1st_params(qs,skey,None)[0]
+        ['Sc1', 'Pe1', 'Te1', 'Cl1', 'St1', []]
+        >>> qs= "1DK&*&d>3"
+        >>> p = self.depth_1st_params(qs,skey,None)[0]
+
+        '''
+        urlparams = filter(None, [k.strip() for k, v in parse_qsl(qs, True) if k not in self.pathlevels])
+        dbfilters = Filtfilt()
+        for flvl in urlparams:
+            dbfilters.append_level(flvl)
+        delta = len(self.pathlevels) - len(dbfilters) + 1
+        if delta > 0:
+            ext = [str(v) for k, v in skey.pairs()]
+            extpart = min(len(ext), delta)
+            rest = delta - extpart
+            dbfilters = ext[:extpart] + [[]] * rest + dbfilters
+        keys = self.keys_to_omit(dbfilters)
+        obj = keys and keys[-1].get()  # parent to start from
+        alllvls = self.pathlevels+[extraplace]
+        if obj and obj.userkey == userkey:
+            return dbfilters, keys, alllvls, True
+        else:
+            return dbfilters, [], alllvls, False, userkey
+
     #XXX: https://stackoverflow.com/questions/33672412/python-functools-lru-cache-with-class-methods-release-object
     @lru_cache()
     def filtered_index(self, chlang, opt):
@@ -706,9 +799,9 @@ class db_mixin:
         >>> from chcko.chcko.db import db
         >>> chlang = 'en'
         >>> opt1 = [] #[('level', '2'), ('kind', 'exercise')]
-        >>> cnt1 = sum([len(list(gen[1])) for gen in db.filtered_index(chlang, opt1)])
+        >>> cnt1 = sum([len(list(gen[1])) for gen in self.filtered_index(chlang, opt1)])
         >>> opt2 = [('level', '10'),('kind','1'),('path','maths'),('link','r')]
-        >>> cnt2 = sum([len(list(gen[1])) for gen in db.filtered_index(chlang, opt2)])
+        >>> cnt2 = sum([len(list(gen[1])) for gen in self.filtered_index(chlang, opt2)])
         >>> cnt1 != 0 and cnt2 != 0 and cnt1 > cnt2
         True
 

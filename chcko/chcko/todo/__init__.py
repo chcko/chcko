@@ -1,12 +1,5 @@
-# -*- coding: utf-8 -*-
-
-import datetime
-
 from chcko.chcko.db import db
 from chcko.chcko.util import PageBase
-
-from chcko.chcko.done import prepare
-
 
 class Page(PageBase):
 
@@ -16,10 +9,12 @@ class Page(PageBase):
             self.request.student, self.request.user)
 
     def page_table(self):
-        qs = self.request.query_string
-        skey = self.request.student.key
-        userkey = self.request.user and db.idof(self.request.user)
-        yield from db.depth_1st(*prepare(qs,skey,userkey,extraplace="Assignment"))
+        yield from db.depth_1st(*db.depth_1st_params(
+            self.request.query_string
+            , self.request.student.key
+            , self.request.user and db.idof(self.request.user)
+            , extraplace="Assignment"
+                                ))
 
     def get_response(self,**kextra):
         db.clear_done_assignments(self.request.student, self.request.user)
