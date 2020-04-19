@@ -130,7 +130,7 @@ end
 % if not defined('footer'):
 % def footer():
 
-    <div class="footer" style="border-top:double;background-color:{{rolecolor}}">
+    <div class="footer" style="height:0.5em;border-top:double;background-color:{{rolecolor}}">
     &nbsp;
     </div>
 
@@ -146,12 +146,16 @@ end
     </div>
     %end
 
-    <div class="footer" style="background-color:{{rolecolor}}"> &nbsp; </div>
+    <div class="footer" style="height:0.5em;background-color:{{rolecolor}}">
+    &nbsp;
+    </div>
 
     <div class="grid_10 footer">
         Github:
         <a href="https://github.com/chcko/chcko">chcko</a>
         <a href="https://github.com/chcko/chcko-r">chcko-r</a>
+        &nbsp;
+        {{t_testing_notice}}
     </div>
 
     </div>
