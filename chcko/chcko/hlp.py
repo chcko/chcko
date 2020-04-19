@@ -838,7 +838,9 @@ class db_mixin:
             if len(self.problem_set(e)):
                 return [datefmt(e.chanswered), e.chanswers]
             else:
-                return [datefmt(e.chanswered), [bool(x) for x in e.choks] if e.choks else [], e.chanswers, e.chesults]
+                return [datefmt(e.chanswered),
+                        [bool(x) for x in e.choks] if e.choks else [],
+                        e.chanswers, e.chesults]
         elif isinstance(e, self.Role):
             return ['', '', '', '', e.key.string_id()]
         elif isinstance(e, self.Class):

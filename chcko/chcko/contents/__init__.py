@@ -207,8 +207,6 @@ class Page(PageBase):
             if not self.problem:
                 prebase(_new)
             else:
-                if len(self.problem_set):
-                    self.problem_set = db.problem_set(self.problem)
                 problem_set_iter[0] = iter(self.problem_set)
                 self.current = self.problem
                 try:
@@ -338,8 +336,8 @@ class Page(PageBase):
             'used to increment a summary'
             try:
                 nq = len(f(p.chinputids))
-                foks = f(p.choks or [False] * nq)
-                fpoints = f(p.choints)
+                foks = [x or False for x in f(p.choks or [False] * nq)]
+                fpoints = [x or 0 for x in f(p.choints)]
                 cnt = 1
             except:
                 cnt, nq, foks, fpoints = 0, 0, [], []
@@ -349,7 +347,7 @@ class Page(PageBase):
                           choints=sum([foks[i] * fpoints[i] for i in range(nq)]),
                           challpoints=sum(fpoints))
         return (smry(lambda c: c),
-            smry(lambda c: [cc for i, cc in enumerate(c) if p.chanswers[i]]))
+            smry(lambda c: [cc or '' for i, cc in enumerate(c) if p.chanswers[i]]))
 
 
 # course

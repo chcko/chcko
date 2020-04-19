@@ -127,7 +127,7 @@
     </p>
     %end
 
-    %cq = chelf.chuery
+    %cq = chelf.chuery if '&&' in chelf.chuery else choblem.chuery
     %pe = course_labels(cq)
     %alinks = ['/'+chelf.request.chlang+'/contents?'+x for x in [start_qs(cq),next_qs(cq,-1),cq,next_qs(cq),end_qs(cq)]]
 
@@ -135,7 +135,6 @@
     $(document).ready(()=>{
         window.sessionStorage.removeItem('chcko_selection');
         window.sessionStorage.removeItem('chcko_delim');
-        %# if pe and choblems and choblem.chanswered:
         % if pe and choblems and choblemkey:
             %lnk2save = chutil.query_without_key(alinks[2])
             window.sessionStorage.setItem('{{! lnk2save}}','{{choblemkey}}');
@@ -186,7 +185,7 @@
     % bhidden=''
     % end
 
-    <p>
+    <div class="grid_10">
     % bottonwidth = 'grid_10'
     %pe2=''
     %if pe:
@@ -211,8 +210,7 @@
         %qsnav(3,'> '+pe[3])
         %qsnav(4,'>> '+pe[4])
     %end
-    </p>
-    <br>
+    </div>
 
     % if choblems and not choblem.chanswered:
     </form>

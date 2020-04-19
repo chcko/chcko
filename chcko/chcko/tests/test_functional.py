@@ -366,3 +366,15 @@ class TestRunthrough(object):
         curx = self.resp.lxml
         u_student = [x for x in curx.xpath('//div/text()') if 'tst' in x]
         assert len(u_student) == 0
+
+    def test_2(self,chapp):
+        self._store('resp', chapp.get('/en/contents?r.l&r.bt'))
+        self._store('resp', self.resp.form.submit('submit'))
+        assert '0P' in self.resp
+        self._store('resp', chapp.get('/en/done'))
+        assert 'r.bt' in self.resp
+        curx = self.resp.lxml
+        self._store('rlrbthref',curx.xpath('//a[contains(text(),"r.l&r.bt")]/@href')[0])
+        self._store('resp', self.resp.goto(self.rlrbthref))
+        assert '0P' in self.resp
+

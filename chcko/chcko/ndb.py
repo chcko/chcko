@@ -47,7 +47,7 @@ class Problem(Base):
     chlang = ndb.StringProperty()
     # the numbers randomly chosen, in python dict format
     chiven = ndb.PickleProperty()
-    #created already in Base
+    # created already in Base
     chanswered = ndb.DateTimeProperty()
     # links to a collection: 1-n, p.problem_set.get()!
     collection = ndb.KeyProperty(kind='Problem')
@@ -100,7 +100,11 @@ class Ndb(db_mixin):
     def nameof(self,obj):
         return obj.key.string_id()
     def fieldsof(self,entity):
-        return {s: v.__get__(entity) for s,v in entity._properties.items()}
+        # only called for problem
+        kv = {s: v.__get__(entity) for s,v in entity._properties.items()}
+        # fix: local datastore return [None] for ['']
+        kv['chanswers'] = [x or '' for x in kv['chanswers']]
+        return kv
     def add_to_set(self,problem,other):
         problem.collection = other.key
     def current_role(self,user):
