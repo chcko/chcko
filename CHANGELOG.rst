@@ -15,13 +15,17 @@ TODO
 
 - CSS use http://getbem.com/naming/?
 
+1.3.1
+===========
+
+- Add permission to list schools for site-owner.
+
 1.3.0
 ===========
 
-Rename global defines for problem templates.
+- Rename global defines for problem templates.
 
-
-0.1.5-1.2.x
+0.1.5-1.3.0
 ===========
 
 - fixes
