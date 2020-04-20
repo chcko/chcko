@@ -465,15 +465,14 @@ class db_mixin:
     def init_db(self):
         self.clear_index()
 
-        # TODO comment out when actually used
-        self.clear_assignments()
-        self.clear_problems()
-        self.delete_query(self.query(self.Role))
-        self.delete_query(self.query(self.Class))
-        self.delete_query(self.query(self.Teacher))
-        self.delete_query(self.query(self.Field))
-        self.delete_query(self.query(self.School))
-        # TODO comment out when actually used
+        # # TODO move this to a periodic job and delete only older things
+        # self.delete_query(self.query(self.Assignment))
+        # self.delete_query(self.query(self.Problem))
+        # self.delete_query(self.query(self.Role))
+        # self.delete_query(self.query(self.Class))
+        # self.delete_query(self.query(self.Teacher))
+        # self.delete_query(self.query(self.Field))
+        # self.delete_query(self.query(self.School))
 
         self.available_langs = []
         self.pathlevels = pathlevels
