@@ -13,13 +13,49 @@ with example content package
 
     https://github.com/chcko/chcko-r
 
-``chcko`` wants to collect science problems,
+``ch[e]cko.e[d]u`` wants to collect science problems,
 usable by students with or without learn coaches around the world,
 as an infrastructure.
 
 The content packages are python packages.
 
+Goals
+=====
+
+- Collect problems
+- Make the problems readily usable, also over the distance
+- Make it less effort
+
+  - to check one's own understanding
+  - to check the progress of students
+  - to compose a school or home work
+  - to correct (as the server takes care of that)
+
+Help Bootstrap the Community
+============================
+
 ``chcko`` can be installed locally, too.
+But https://chcko.eu
+allows you to do without own hardware and server maintenance
+
+Currently https://chcko.eu is only on `gcloud <cloud.google.com>`_ free quota,
+which is regularly used up.
+
+Running https://chcko.eu for a broader community produces less overall cost, though,
+than everyone having their own servers.
+
+If you can identify with the goals of this project,
+*help bootstrap the community*,
+
+- first by a small `donation <https://paypal.me/pools/c/8p53MxxUbS>`_ to raise the server quota
+- and second by contributing your own problem packages (example: `chcko-r`_)
+
+Not just teacher,
+also students can make a *chcko-X* package out of problems they solve.
+Since they solve the problems anyway,
+
+- why not using Python?
+- and why not sharing the problems?
 
 URL
 ===
@@ -595,7 +631,7 @@ The main purpose:
   Teachers, professors, tutors, coaches, students, autodidacts, ...
   can add problems and check themselves or others.
 
-- Share content via separate content packages like `chcko-r`_.
+- Share content via separate content packages, like `chcko-r`_.
 
 - The numbers in problems are randomly generated.
   This way a problem can be reused.
