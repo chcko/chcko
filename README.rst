@@ -527,7 +527,7 @@ Add a new content item with::
 
 or::
 
-    doit -kd. rst
+    doit -kd. newrst
 
 Edit the problem text in ``en.html`` using a `text editor`_.
 See the example `above <#example>`_.

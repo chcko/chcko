@@ -22,7 +22,7 @@ Do this to add new content, html or rst::
 
     $ cd chcko-x/chcko
     $ doit -kd. new
-    $ doit -kd. rst
+    $ doit -kd. newrst
 
 task_included is internal.
 
@@ -253,7 +253,7 @@ def task_new():
             'actions':[newproblem],
            }
 
-def task_rst():
+def task_newrst():
     return {
             'actions':[newrst],
            }

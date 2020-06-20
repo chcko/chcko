@@ -19,7 +19,7 @@ Do this after any changes, especially in the main code::
 Do this to add new content, html or rst::
 
     $ doit -kd. new
-    $ doit -kd. rst
+    $ doit -kd. newrst
 
 task_included is internal.
 

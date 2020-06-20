@@ -72,7 +72,7 @@ chcko-{author_id}/README.rst
     Add new problem (there is one example you should edit first, though)::
 
         doit new
-        #or: doit rst
+        #or: doit newrst
         git status
         #open generated files and edit
 
@@ -93,17 +93,7 @@ chcko-{author_id}/dodo.py
     task_html = doit_tasks.task_html
     task_initdb = doit_tasks.task_initdb
     task_new = doit_tasks.task_new
-    task_rst = doit_tasks.task_rst
-chcko-{author_id}/authors.yaml
-    - author_id:      {author_id}
-      gitname:        {author_name}
-      gitemail:       {author_email}
-      default_lang:   {author_lang}
-      translate_to:   [{author_lang}]
-      translate_from: []
-chcko-{author_id}/nextids.yaml
-    -
-      {author_id}:  "b"
+    task_newrst = doit_tasks.task_newrst
 chcko-{author_id}/.gitignore
     .doit*
     **/_*
