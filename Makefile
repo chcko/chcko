@@ -2,7 +2,7 @@
 # is run automatically in conftest.py
 # but it fails sometimes, so better start it manually before testing
 
-.PHONY: test cov check dist up deploy mamchecker
+.PHONY: test cov check dist up deploy install
 
 test:
 	py.test chcko/chcko/tests --db=sql
@@ -26,3 +26,6 @@ deploy:
 	# gcloud app deploy .app.yaml --project chcko-262117
 	gcloud app deploy index.yaml
 	gcloud app deploy .app.yaml --project mamchecker
+
+install:
+	  pip install --user -r requirements_dev.txt
