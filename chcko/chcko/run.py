@@ -3,6 +3,7 @@ import os
 import argparse
 from txdir import to_tree
 from subprocess import check_output
+from chcko.chcko.version import __version__
 
 cwd = os.getcwd()
 if os.path.split(cwd)[-1].startswith('chcko-'):
@@ -146,7 +147,7 @@ chcko-{author_id}/setup.py
         readme = readme_file.read()
     setuptools.setup(
         name="chcko-{author_id}",
-        version = "0.1.1",
+        version = "0.0.0",
         description="{author_id} problems for chcko",
         long_description=readme,
         long_description_content_type="text/x-rst",
@@ -215,6 +216,7 @@ def main(**args):
             description =
             '''runs chcko server, if no parameters, else see parameter list.'''
         )
+        parser.add_argument('--version', action='version', version = __version__)
         parser.add_argument(
             '-i',
             '--init',

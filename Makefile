@@ -2,12 +2,12 @@
 # is run automatically in conftest.py
 # but it fails sometimes, so better start it manually before testing
 
-.PHONY: content test cov check dist up deploy install datastore
+.PHONY: content test cov check dist up deploy install datastore tag
 
 datastore:
 	gcloud beta emulators datastore start --no-store-on-disk --data-dir .
 
-content:
+content: install
 	cd ../chcko-r && doit -kd. html && doit -kd. initdb
 
 test: content
@@ -35,4 +35,11 @@ deploy:
 
 install:
 	pip install --user -r requirements_dev.txt
+	sudo pip install --user -e .
 
+tag: install
+	$(eval TAGMSG="v$(shell runchcko --version | cut -d ' ' -f 2)")
+	echo $(TAGMSG)
+	git tag -s $(TAGMSG) -m"$(TAGMSG)"
+	git verify-tag $(TAGMSG)
+	git push origin $(TAGMSG) --follow-tags
