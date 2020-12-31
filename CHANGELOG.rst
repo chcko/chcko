@@ -11,40 +11,28 @@ TODO
   Fix ndb tests: Currently ndb tests sometimes fail,
   most likely due to the eventually consistent nature of ndb.
 
-- HTML modernize, DRI
+- HTML modernize, DRY
 
 - CSS use http://getbem.com/naming/?
 
-1.3.1
-===========
+1.3.1 - 20201231
+================
 
 - Add permission to list schools for site-owner.
+- Check tests and adapt chcko-r to schemdraw changes
 
-1.3.0
-===========
+1.3.0, 20200113-20200417
+========================
 
-- Rename global defines for problem templates.
-
-0.1.5-1.3.0
-===========
-
-- fixes
-
-0.1.4
-=====
+- rename global defines for problem templates.
 
 - Courses via URL
+
 - math display improvements
+
 - find images, locally if non-installed, and on gcloud
 
-0.1.3
-=====
-
 - OAUTH login with google and facebook
-- Fixes for GCLOUD
-
-0.1.1
-=====
 
 - Adapt to changes in used 3rd party packages:
   ``google-cloud-ndb``, ``simpleauth`` dropped for ``loginpass``,
@@ -62,13 +50,15 @@ Mamchecker
 
 History as mamchecker:
 
-- 2013-01-01: first plans.
+- 20130101: first plans.
   How to get feedback from a class of pupils in parallel?
   Found GAE.
   Subsequently first implementation and trials in class.
-- 2013-08-09:
+
+- 20130809:
   Refactored language handling.
-- 2014-03-16:
+
+- 20140316:
   Cleanup.
   Drop git history.
   Upload to github.

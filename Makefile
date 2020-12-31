@@ -2,9 +2,15 @@
 # is run automatically in conftest.py
 # but it fails sometimes, so better start it manually before testing
 
-.PHONY: test cov check dist up deploy install
+.PHONY: content test cov check dist up deploy install datastore
 
-test:
+datastore:
+	gcloud beta emulators datastore start --no-store-on-disk --data-dir .
+
+content:
+	cd ../chcko-r && doit -kd. html && doit -kd. initdb
+
+test: content
 	py.test chcko/chcko/tests --db=sql
 	py.test chcko/chcko/tests --db=ndb
 
@@ -28,4 +34,5 @@ deploy:
 	gcloud app deploy .app.yaml --project mamchecker
 
 install:
-	  pip install --user -r requirements_dev.txt
+	pip install --user -r requirements_dev.txt
+
