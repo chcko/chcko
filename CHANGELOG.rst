@@ -15,13 +15,13 @@ TODO
 
 - CSS use http://getbem.com/naming/?
 
-1.3.1 - 20201231
+1.3.2 - 20201231
 ================
 
 - Add permission to list schools for site-owner.
 - Check tests and adapt chcko-r to schemdraw changes
 
-1.3.0, 20200113-20200417
+1.3.1, 20200113-20200417
 ========================
 
 - rename global defines for problem templates.
