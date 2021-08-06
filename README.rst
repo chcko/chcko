@@ -46,9 +46,8 @@ than everyone having their own servers.
 
 If you can identify with the goals of this project,
 *help bootstrap the community*,
-
-- first by a small `donation <https://paypal.me/pools/c/8p53MxxUbS>`_ to raise the server quota
-- and second by contributing your own problem packages (example: `chcko-r`_)
+by contributing your own problem packages (example: `chcko-r`_).
+Email me for closer cooperation (see git log).
 
 Not just teacher,
 also students can make a *chcko-X* package out of problems they solve.
